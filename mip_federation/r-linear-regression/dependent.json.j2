@@ -1,0 +1,71 @@
+{
+  "epsilon" : "PT5M",
+  "name": "r-federation-linear-regression-{{request.request_id}}",
+  "command": "compute",
+  "shell": false,
+  "runAsUser" : "root",
+  "container": {
+    "type": "DOCKER",
+    "image": "registry.federation.mip.hbp/mip_federation/r-linear-regression:latest"
+  },
+  "cpus": "0.2",
+  "mem": "128",
+  "uris": [
+  ],
+  "async": false,
+  "owner": "root@LAB02186.chuv.ch",
+  "retries" : 2,
+  "parents": [
+    "federation-workflow-{{request.request_id}}"
+  ],
+  "environmentVariables": [
+    {
+      "name": "REQUEST_ID",
+      "value": "{{request.request_id}}"
+    },
+    {
+      "name": "INPUT_TABLE",
+      "value": "{{request.input_table}}"
+    },
+    {
+      "name": "IN_JDBC_DRIVER",
+      "value": "{{in_database.jdbc_driver}}"
+    },
+    {
+      "name": "IN_JDBC_JAR_PATH",
+      "value": "{{in_database.jdbc_jar_path}}"
+    },
+    {
+      "name": "IN_JDBC_URL",
+      "value": "{{in_database.jdbc_url}}"
+    },
+    {
+      "name": "IN_JDBC_USER",
+      "value": "{{in_database.jdbc_user}}"
+    },
+    {
+      "name": "IN_JDBC_PASSWORD",
+      "value": "{{in_database.jdbc_password}}"
+    },
+    {
+      "name": "OUT_JDBC_DRIVER",
+      "value": "{{out_database.jdbc_driver}}"
+    },
+    {
+      "name": "OUT_JDBC_JAR_PATH",
+      "value": "{{out_database.jdbc_jar_path}}"
+    },
+    {
+      "name": "OUT_JDBC_URL",
+      "value": "{{out_database.jdbc_url}}"
+    },
+    {
+      "name": "OUT_JDBC_USER",
+      "value": "{{out_database.jdbc_user}}"
+    },
+    {
+      "name": "OUT_JDBC_PASSWORD",
+      "value": "{{out_database.jdbc_password}}"
+    }
+  ]
+}
