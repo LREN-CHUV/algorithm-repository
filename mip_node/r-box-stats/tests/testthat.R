@@ -20,7 +20,7 @@ result_q3 <- results$q3
 result_max <- results$max
 
 # Disconnect from the database
-disconnectdb()
+disconnectdbs()
 
 expect_equal(node, "Test")
 

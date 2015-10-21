@@ -52,4 +52,4 @@ results <- data.frame(request_id = rep(request_id, n), node = rep(node, n), id =
 RJDBC::dbWriteTable(out_conn, result_table, results, overwrite=FALSE, append=TRUE, row.names = FALSE)
 
 # Disconnect from the databases
-disconnectdb()
+disconnectdbs()

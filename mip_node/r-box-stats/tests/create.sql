@@ -1,5 +1,5 @@
 
-CREATE TABLE results_box_stats
+CREATE TABLE result_box_stats
 (
   request_id character varying(32) NOT NULL,
   node character varying(32) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE results_box_stats
   q3 numeric,
   max numeric,
 
-  CONSTRAINT results_linear_regression_pkey PRIMARY KEY (request_id, node, id)
+  CONSTRAINT pk_result_box_stats PRIMARY KEY (request_id, node, id)
 )
 WITH (
   OIDS=FALSE
