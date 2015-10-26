@@ -44,7 +44,7 @@ else
     -e OUT_JDBC_USER=test \
     -e OUT_JDBC_PASSWORD=test \
     -e OUT_SCHEMA=public \
-    -e RESULT_TABLE=results_box_stats \
+    -e RESULT_TABLE=result_box_stats \
     registry.federation.mip.hbp/mip_node/r-box-stats-test shell
 
 fi
