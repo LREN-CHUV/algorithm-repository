@@ -6,7 +6,7 @@ source("/src/main.R")
 connect2outdb()
 
 request_id <- Sys.getenv("REQUEST_ID")
-result_table <- Sys.getenv("RESULT_TABLE", "result_box_stats")
+result_table <- Sys.getenv("RESULT_TABLE", "result_summary_stats")
 result_columns <- "request_id, node, id, min, q1, median, q3, max"
 
 # Get the results

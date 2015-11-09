@@ -17,5 +17,5 @@ docker run --rm --link test-postgres:postgres \
   -e OUT_JDBC_USER=test \
   -e OUT_JDBC_PASSWORD=test \
   -e OUT_SCHEMA=public \
-  -e RESULT_TABLE=result_box_stats \
-  registry.federation.mip.hbp/mip_node/r-box-stats-test test
+  -e RESULT_TABLE=result_summary_stats \
+  registry.federation.mip.hbp/mip_node/r-summary-stats-test test

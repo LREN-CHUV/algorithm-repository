@@ -17,8 +17,8 @@ if [[ "$USER" == "vagrant" ]]; then
     -e OUT_JDBC_URL="jdbc:postgresql://172.17.42.1:31432/analytics" \
     -e OUT_JDBC_USER=analytics \
     -e OUT_JDBC_PASSWORD=neuroinfo \
-    -e RESULT_TABLE=result_box_stats \
-    registry.federation.mip.hbp/mip_node/r-box-stats-test R
+    -e RESULT_TABLE=result_summary_stats \
+    registry.federation.mip.hbp/mip_node/r-summary-stats-test R
 
 else
 
@@ -44,7 +44,7 @@ else
     -e OUT_JDBC_USER=test \
     -e OUT_JDBC_PASSWORD=test \
     -e OUT_SCHEMA=public \
-    -e RESULT_TABLE=result_box_stats \
-    registry.federation.mip.hbp/mip_node/r-box-stats-test shell
+    -e RESULT_TABLE=result_summary_stats \
+    registry.federation.mip.hbp/mip_node/r-summary-stats-test shell
 
 fi

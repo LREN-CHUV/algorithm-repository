@@ -21,7 +21,7 @@
 #      OUT_JDBC_URL : JDBC connection URL for output results
 #      OUT_JDBC_USER : User for the database connection for output results
 #      OUT_JDBC_PASSWORD : Password for the database connection for output results
-#      RESULT_TABLE: name of the result table, defaults to 'result_box_stats'
+#      RESULT_TABLE: name of the result table, defaults to 'result_summary_stats'
 #
 
 library(hbpsummarystats);
@@ -36,7 +36,7 @@ y <- fetchData();
 # Perform the computation
 res <- tablesummarystats(y, strsplit(columns, ","));
 
-result_table <- Sys.getenv("RESULT_TABLE", "result_box_stats");
+result_table <- Sys.getenv("RESULT_TABLE", "result_summary_stats");
 
 # Store results in the database
 saveResults(res);
