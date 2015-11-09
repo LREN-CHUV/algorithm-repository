@@ -24,32 +24,19 @@
 #      RESULT_TABLE: name of the result table, defaults to 'result_box_stats'
 #
 
-library(hbpboxstats)
-library(hbpjdbcconnect)
+library(hbpsummarystats);
+library(hbpjdbcconnect);
 
 # Initialisation
-connect2indb()
-request_id <- Sys.getenv("REQUEST_ID")
-node <- Sys.getenv("NODE")
-query <- Sys.getenv("PARAM_query")
-columns <- Sys.getenv("PARAM_colnames")
+columns <- Sys.getenv("PARAM_colnames");
 
 # Fetch the data
-y <- RJDBC::dbGetQuery(in_conn, query)
+y <- fetchData();
 
 # Perform the computation
-res <- tableboxstats(y, strsplit(columns, ","))
+res <- tablesummarystats(y, strsplit(columns, ","));
 
-result_table <- Sys.getenv("RESULT_TABLE", "result_box_stats")
-
-connect2outdb()
+result_table <- Sys.getenv("RESULT_TABLE", "result_box_stats");
 
 # Store results in the database
-n <- ncol(res)
-results <- data.frame(request_id = rep(request_id, n), node = rep(node, n), id = 1:n,
-	               min = res['min',], q1 = res['q1',], median = res['median',], q3 = res['q3',], max = res['max',])
-
-RJDBC::dbWriteTable(out_conn, result_table, results, overwrite=FALSE, append=TRUE, row.names = FALSE)
-
-# Disconnect from the databases
-disconnectdbs()
+saveResults(res);
