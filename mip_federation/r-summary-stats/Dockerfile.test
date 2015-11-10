@@ -1,0 +1,5 @@
+FROM registry.federation.mip.hbp/mip_federation/r-summary-stats:latest
+
+MAINTAINER ludovic.claude54@gmail.com
+
+COPY tests/testthat.R /src/tests/
