@@ -21,7 +21,7 @@ fi
 $DOCKER rm --force dummyldsm 2> /dev/null | true
 $DOCKER run --name dummyldsm \
     -v $(get_script_dir):/tests \
-    -e POSTGRES_PASSWORD=test -d postgres:9.4.4
+    -e POSTGRES_PASSWORD=test -d postgres:9.4.5
 
 $DOCKER exec dummyldsm \
     /bin/bash -c 'while ! pg_isready -U postgres ; do sleep 1; done && exec psql -U postgres -f /tests/create.sql'
