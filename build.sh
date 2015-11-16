@@ -14,7 +14,7 @@ get_script_dir () {
 
 ROOT_DIR="$(get_script_dir)"
 
-for image in mip_node/r-box-stats \
+for image in mip_node/r-summary-stats \
              mip_node/r-linear-regression \
              mip_federation/r-linear-regression; do
 
