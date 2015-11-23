@@ -27,7 +27,13 @@ else
   
   sleep 2
   
-  docker run -i -t --rm \
+  if groups $USER | grep &>/dev/null '\bdocker\b'; then
+    DOCKER="docker"
+  else
+    DOCKER="sudo docker"
+  fi
+
+  $DOCKER run -i -t --rm \
     --link dummyfederation:indb \
     --link analyticsdb:outdb \
     -e JOB_ID=001 \

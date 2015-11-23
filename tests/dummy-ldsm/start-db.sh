@@ -13,9 +13,9 @@ get_script_dir () {
 }
 
 if groups $USER | grep &>/dev/null '\bdocker\b'; then
-    DOCKER=docker
+    DOCKER="docker"
 else
-    DOCKER=sudo docker
+    DOCKER="sudo docker"
 fi
 
 $DOCKER rm --force dummyldsm 2> /dev/null | true
