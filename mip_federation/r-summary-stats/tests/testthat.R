@@ -1,34 +1,46 @@
-library(testthat)
+library(testthat);
+library(jsonlite);
 
 # Perform the computation
-source("/src/main.R")
+source("/src/main.R");
 
-connect2outdb()
+connect2outdb();
 
-request_id <- Sys.getenv("REQUEST_ID")
-result_table <- Sys.getenv("RESULT_TABLE", "result_summary_stats")
-result_columns <- "request_id, node, id, min, q1, median, q3, max"
+job_id <- Sys.getenv("JOB_ID");
 
 # Get the results
-results <- RJDBC::dbGetQuery(out_conn, paste("select ", result_columns ," from ", result_table, " where request_id = ?"), request_id)
+results <- RJDBC::dbGetQuery(out_conn, "select node, data from job_result where job_id = ?", job_id);
 
 node <- results$node[[1]]
-result_min <- results$min
-result_q1 <- results$q1
-result_median <- results$median
-result_q3 <- results$q3
-result_max <- results$max
+data <- results$data[[1]]
+
+data <- fromJSON(data);
+res <- sapply(data, fromJSON);
+tv <- res[,"tissue1_volume"];
+
+result_min <- tv$min;
+result_q1 <- tv$q1;
+result_median <- tv$median;
+result_q3 <- tv$q3;
+result_max <- tv$max;
+result_mean <- tv$mean;
+result_std <- tv$std;
+result_sum <- tv$sum;
+result_count <- tv$count;
 
 # Disconnect from the database
-disconnectdbs()
+disconnectdbs();
 
-expect_equal(node, "Test")
+expect_equal(node, "job_test");
 
-print (results)
-expect_equal(result_min, 0.0068206, tolerance = 1e-6)
-expect_equal(result_q1, 0.00857095, tolerance = 1e-6)
-expect_equal(result_median, 0.00931775, tolerance = 1e-6)
-expect_equal(result_q3, 0.009805875, tolerance = 1e-6)
-expect_equal(result_max, 0.011463, tolerance = 1e-6)
+expect_equal(tv$min,    0.0068206, tolerance = 1e-6);
+expect_equal(tv$q1,     0.00857095, tolerance = 1e-6);
+expect_equal(tv$median, 0.00931775, tolerance = 1e-6);
+expect_equal(tv$q3,     0.009805875, tolerance = 1e-6);
+expect_equal(tv$max,    0.011463, tolerance = 1e-6);
+expect_equal(tv$mean,   0.0091911, tolerance = 1e-6);
+expect_equal(tv$std,    0.00087956, tolerance = 1e-6);
+expect_equal(tv$sum,    0.9191096, tolerance = 1e-6);
+expect_equal(tv$count,  100);
 
-print ("Success!")
+print ("Success!");

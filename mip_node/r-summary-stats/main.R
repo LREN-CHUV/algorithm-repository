@@ -1,7 +1,7 @@
 #
-# XXX This script computes the linear regression.
-# XXX The data (input parameters: y, A) are obtained from the local databases using a specific query.
-# XXX These queries will be the same for all nodes.
+# Computes the summary statistics.
+# The data are obtained from the local databases using a specific query.
+# This query will be the same for all nodes.
 # 
 # Environment variables:
 # 

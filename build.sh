@@ -16,6 +16,7 @@ ROOT_DIR="$(get_script_dir)"
 
 for image in mip_node/r-summary-stats \
              mip_node/r-linear-regression \
+             mip_federation/r-summary-stats \
              mip_federation/r-linear-regression; do
 
 	cd $ROOT_DIR/$image
