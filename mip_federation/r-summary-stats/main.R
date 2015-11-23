@@ -33,14 +33,13 @@ columns <- Sys.getenv("PARAM_colnames");
 # Fetch the data
 y <- fetchData();
 
+listStats <- lapply(y[,'data'], fromJSON)
+listStats <- lapply(listStats, as.data.frame)
 
 # Perform the computation
-res <- tablesummarystats(y, strsplit(columns, ","));
+res <- tablesummarystats_group(listStats);
 
-res <- as.data.frame(res);
-ijson <- sapply(res, function(x) toJSON(x, auto_unbox=TRUE, digits=8));
-df <- as.data.frame(ijson);
-names(df) <- columns;
+print (res)
 
 # Store results in the database
-saveResults(toJSON(df));
+saveResults(df);

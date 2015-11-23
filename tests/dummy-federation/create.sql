@@ -13,17 +13,17 @@ WITH (
   OIDS=FALSE
 );
 
-# Intermediate results taken from selecting the left then the right Hippocampus
+-- Intermediate results taken from selecting the left then the right Hippocampus
 
 insert into job_result_nodes values (
-	"001",
-	"left",
+	'001',
+	'left',
 	now(),
-    "[{\"tissue1_volume\":\"{\\\"min\\\":0.0068206,\\\"q1\\\":0.00854425,\\\"median\\\":0.00931945,\\\"q3\\\":0.00988832,\\\"max\\\":0.011463,\\\"mean\\\":0.00919402,\\\"std\\\":0.00091985,\\\"sum\\\":0.4597012,\\\"count\\\":50}\",\"_row\":\"tissue1_volume\"}]"
+    '[{"tissue1_volume":0.0068206,"_row":"min"},{"tissue1_volume":0.00854425,"_row":"q1"},{"tissue1_volume":0.00931945,"_row":"median"},{"tissue1_volume":0.00988832,"_row":"q3"},{"tissue1_volume":0.011463,"_row":"max"},{"tissue1_volume":0.00919402,"_row":"mean"},{"tissue1_volume":0.00091985,"_row":"std"},{"tissue1_volume":0.4597012,"_row":"sum"},{"tissue1_volume":50,"_row":"count"}]'
   );
 insert into job_result_nodes values (
-	"001",
-	"right",
+	'001',
+	'right',
 	now(),
-    "[{\"tissue1_volume\":\"{\\\"min\\\":0.0073848,\\\"q1\\\":0.00873188,\\\"median\\\":0.009281,\\\"q3\\\":0.00979248,\\\"max\\\":0.011352,\\\"mean\\\":0.00918817,\\\"std\\\":0.00084669,\\\"sum\\\":0.4594084,\\\"count\\\":50}\",\"_row\":\"tissue1_volume\"}]"
+    '[{"tissue1_volume":0.0073848,"_row":"min"},{"tissue1_volume":0.00873188,"_row":"q1"},{"tissue1_volume":0.009281,"_row":"median"},{"tissue1_volume":0.00979248,"_row":"q3"},{"tissue1_volume":0.011352,"_row":"max"},{"tissue1_volume":0.00918817,"_row":"mean"},{"tissue1_volume":0.00084669,"_row":"std"},{"tissue1_volume":0.4594084,"_row":"sum"},{"tissue1_volume":50,"_row":"count"}]'
   );

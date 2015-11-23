@@ -10,7 +10,7 @@ fi
 
 http -v PUT localhost:8087/job \
          requestId="$id" \
-         dockerImage="registry.federation.mip.hbp/mip_node/r-summary-stats:latest" \
+         dockerImage="registry.federation.mip.hbp/mip_federation/r-summary-stats:latest" \
          inputDb=local \
          outputDb=analytics \
-         parameters:='{"PARAM_query":"select tissue1_volume from brain_feature order by tissue1_volume", "PARAM_colnames":"tissue1_volume"}'
+         parameters:='{"PARAM_query":"select * from job_result_nodes where job_id='$id'", "PARAM_colnames":"tissue1_volume"}'

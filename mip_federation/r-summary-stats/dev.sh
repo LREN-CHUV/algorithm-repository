@@ -3,9 +3,9 @@
 if [[ "$USER" == "vagrant" ]]; then
 
   docker run -i -t --rm \
-    -e REQUEST_ID=001 \
+    -e JOB_ID=001 \
     -e NODE=Test \
-    -e PARAM_query="select tissue1_volume from brain_feature order by tissue1_volume" \
+    -e PARAM_query="select * from job_result_nodes where job_id='001'" \
     -e PARAM_colnames="tissue1_volume" \
     -e IN_JDBC_DRIVER=org.postgresql.Driver \
     -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
@@ -23,16 +23,16 @@ if [[ "$USER" == "vagrant" ]]; then
 else
 
   ../../tests/analytics-db/start-db.sh
-  ../../tests/dummy-ldsm/start-db.sh
+  ../../tests/dummy-federation/start-db.sh
   
   sleep 2
   
   docker run -i -t --rm \
-    --link dummyldsm:indb \
+    --link dummyfederation:indb \
     --link analyticsdb:outdb \
     -e JOB_ID=001 \
     -e NODE=dev \
-    -e PARAM_query="select tissue1_volume from brain_feature order by tissue1_volume" \
+    -e PARAM_query="select * from job_result_nodes where job_id='001'" \
     -e PARAM_colnames="tissue1_volume" \
     -e IN_JDBC_DRIVER=org.postgresql.Driver \
     -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
@@ -47,6 +47,6 @@ else
     registry.federation.mip.hbp/mip_federation/r-summary-stats-test shell
 
   ../../tests/analytics-db/stop-db.sh
-  ../../tests/dummy-ldsm/stop-db.sh
+  ../../tests/dummy-federation/stop-db.sh
 
 fi
