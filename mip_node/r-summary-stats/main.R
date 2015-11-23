@@ -36,11 +36,7 @@ y <- fetchData();
 
 # Perform the computation
 res <- tablesummarystats(y, strsplit(columns, ","));
-
 res <- as.data.frame(res);
-ijson <- sapply(res, function(x) toJSON(x, auto_unbox=TRUE, digits=8));
-df <- as.data.frame(ijson);
-names(df) <- columns;
 
 # Store results in the database
-saveResults(toJSON(df));
+saveResults(toJSON(res, auto_unbox=TRUE, digits=8));

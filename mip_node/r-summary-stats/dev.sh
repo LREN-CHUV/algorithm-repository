@@ -3,7 +3,7 @@
 if [[ "$USER" == "vagrant" ]]; then
 
   docker run -i -t --rm \
-    -e REQUEST_ID=001 \
+    -e JOB_ID=001 \
     -e NODE=Test \
     -e PARAM_query="select tissue1_volume from brain_feature order by tissue1_volume" \
     -e PARAM_colnames="tissue1_volume" \
