@@ -5,8 +5,7 @@
 # Environment variables:
 # 
 # - Input Parameters:
-#      PARAM_query  : SQL query producing the dataframe to analyse
-#      PARAM_colnames : Column separated list of columns to include in the stats
+#      PARAM_query  : SQL query producing the list of intermediate results to analyse
 # - Execution context:
 #      JOB_ID : ID of the job
 #      NODE : Node used for the execution of the script
@@ -20,15 +19,11 @@
 #      OUT_JDBC_URL : JDBC connection URL for output results
 #      OUT_JDBC_USER : User for the database connection for output results
 #      OUT_JDBC_PASSWORD : Password for the database connection for output results
-#      RESULT_TABLE: name of the result table, defaults to 'result_summary_stats'
 #
 
 library(hbpsummarystats);
 library(hbpjdbcconnect);
 library(jsonlite);
-
-# Initialisation
-columns <- Sys.getenv("PARAM_colnames");
 
 # Fetch the data
 y <- fetchData();
@@ -37,9 +32,7 @@ listStats <- lapply(y[,'data'], fromJSON)
 listStats <- lapply(listStats, as.data.frame)
 
 # Perform the computation
-res <- tablesummarystats_group(listStats);
-
-print (res)
+globalStats <- tablesummarystats_group(listStats);
 
 # Store results in the database
-saveResults(df);
+saveResults(as.data.frame(globalStats));
