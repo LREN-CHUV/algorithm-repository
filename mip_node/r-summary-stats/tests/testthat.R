@@ -1,4 +1,5 @@
 library(testthat);
+library(hbpjdbcconnect);
 library(jsonlite);
 
 # Perform the computation
