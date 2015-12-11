@@ -42,4 +42,4 @@ expect_equal(result_std,    0.00087956, tolerance = 1e-6);
 expect_equal(result_sum,    0.9191096, tolerance = 1e-6);
 expect_equal(result_count,  100);
 
-print ("Success!");
+print ("[ok] Success!");
