@@ -41,7 +41,7 @@ data[sapply(data, is.character)] <- lapply(data[sapply(data, is.character)],
 # Perform the computation
 res <- LRegress_Node(data, varname, covarnames);
 
-coefficients <- as.data.frame(summary(res)$coefficients);
+res <- list(beta = res[[1]], sigma = res[[2]]);
 
 # Store results in the database
-saveResults(coefficients);
+saveResults(res);
