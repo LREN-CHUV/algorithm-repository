@@ -50,7 +50,7 @@ else
     -e OUT_JDBC_URL="jdbc:postgresql://outdb:5432/postgres" \
     -e OUT_JDBC_USER=postgres \
     -e OUT_JDBC_PASSWORD=test \
-    registry.federation.mip.hbp/mip_node/r-summary-stats-test shell
+    registry.federation.mip.hbp/mip_node/r-summary-stats-test R
 
   ../../tests/analytics-db/stop-db.sh
   ../../tests/dummy-ldsm/stop-db.sh

@@ -11,4 +11,4 @@ LABEL eu.humanbrainproject.function=linear-regression \
 
 COPY main.R /src/
 
-RUN installGithub.r LREN-CHUV/hbplregress@6f6a42e
+RUN installGithub.r LREN-CHUV/hbplregress@86b8939 

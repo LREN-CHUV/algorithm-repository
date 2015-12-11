@@ -5,8 +5,9 @@ if [[ "$USER" == "vagrant" ]]; then
   docker run -i -t --rm \
     -e JOB_ID=001 \
     -e NODE=Test \
-    -e PARAM_query="select tissue1_volume from brain_feature order by tissue1_volume" \
-    -e PARAM_colnames="tissue1_volume" \
+    -e PARAM_query="select feature_name, tissue1_volume from brain_feature order by tissue1_volume" \
+    -e PARAM_varname="feature_name" \
+    -e PARAM_covarnames="tissue1_volume" \
     -e IN_JDBC_DRIVER=org.postgresql.Driver \
     -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
     -e IN_JDBC_URL="jdbc:postgresql://172.17.42.1:31432/postgres" \
@@ -18,7 +19,7 @@ if [[ "$USER" == "vagrant" ]]; then
     -e OUT_JDBC_USER=analytics \
     -e OUT_JDBC_PASSWORD=neuroinfo \
     -e RESULT_TABLE=result_summary_stats \
-    registry.federation.mip.hbp/mip_node/r-summary-stats-test R
+    registry.federation.mip.hbp/mip_node/r-linear-regression-test R
 
 else
 
@@ -38,8 +39,9 @@ else
     --link analyticsdb:outdb \
     -e JOB_ID=001 \
     -e NODE=dev \
-    -e PARAM_query="select tissue1_volume from brain_feature order by tissue1_volume" \
-    -e PARAM_colnames="tissue1_volume" \
+    -e PARAM_query="select feature_name, tissue1_volume from brain_feature order by tissue1_volume" \
+    -e PARAM_varname="feature_name" \
+    -e PARAM_covarnames="tissue1_volume" \
     -e IN_JDBC_DRIVER=org.postgresql.Driver \
     -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
     -e IN_JDBC_URL="jdbc:postgresql://indb:5432/postgres" \
@@ -50,7 +52,7 @@ else
     -e OUT_JDBC_URL="jdbc:postgresql://outdb:5432/postgres" \
     -e OUT_JDBC_USER=postgres \
     -e OUT_JDBC_PASSWORD=test \
-    registry.federation.mip.hbp/mip_node/r-summary-stats-test shell
+    registry.federation.mip.hbp/mip_node/r-linear-regression-test R
 
   ../../tests/analytics-db/stop-db.sh
   ../../tests/dummy-ldsm/stop-db.sh

@@ -6,8 +6,9 @@
 # Environment variables:
 # 
 # - Input Parameters:
-#      PARAM_y  : SQL query producing the y parameter of L_Regress_Node
-#      PARAM_A : SQL query producing the A parameter of L_Regress_Node
+#      PARAM_query  : SQL query producing the dataframe to analyse
+#      PARAM_varname : Name of the variable
+#      PARAM_covarnames : Column separated list of covariables
 # - Execution context:
 #      JOB_ID : ID of the job
 #      NODE : Node used for the execution of the script
@@ -23,25 +24,24 @@
 #      OUT_JDBC_PASSWORD : Password for the database connection for output results
 #
 
-library(hbplregress)
+library(hbplregress);
 library(hbpjdbcconnect);
 
 # Initialisation
-yQuery <- Sys.getenv("PARAM_y")
-A_Query <- Sys.getenv("PARAM_A")
+varname <- Sys.getenv("PARAM_varname");
+covarnames <- strsplit(Sys.getenv("PARAM_covarnames"), ",");
 
 # Fetch the data
-y <- unlist(fetchData(yQuery));
-A <- unlist(fetchData(A_Query));
+data <- fetchData();
 
-if (length(A) %% length(y) != 0) stop(paste('Length of A is not a multiple of y, found length(A)=', length(A), " and length(y)=", length(y)))
+# Convert all strings to factors
+data[sapply(data, is.character)] <- lapply(data[sapply(data, is.character)], 
+                                       as.factor)
 
 # Perform the computation
+res <- LRegress_Node(data, varname, covarnames);
 
-A <- matrix(data = A, nrow = length(y), ncol = length(A) / length(y))
-res <- LRegress_Node(y, A)
-
-res <- as.data.frame(res);
+coefficients <- as.data.frame(summary(res)$coefficients);
 
 # Store results in the database
-saveResults(res);
+saveResults(coefficients);

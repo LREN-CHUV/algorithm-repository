@@ -10,8 +10,9 @@ docker run --rm \
   --link analyticsdb:outdb \
   -e JOB_ID=001 \
   -e NODE=Test \
-  -e PARAM_y="select tissue1_volume from brain_feature where feature_name='Hippocampus_L' order by tissue1_volume" \
-  -e PARAM_A="select tissue1_volume from brain_feature where feature_name='Hippocampus_R' order by tissue1_volume" \
+  -e PARAM_query="select feature_name, tissue1_volume from brain_feature order by tissue1_volume" \
+  -e PARAM_varname="feature_name" \
+  -e PARAM_covarnames="tissue1_volume" \
   -e IN_JDBC_DRIVER=org.postgresql.Driver \
   -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
   -e IN_JDBC_URL=jdbc:postgresql://indb:5432/postgres \

@@ -15,6 +15,8 @@ results <- RJDBC::dbGetQuery(out_conn, "select node, data from job_result where 
 node <- results$node[[1]]
 data <- results$data[[1]]
 
+print (data)
+
 res <- as.data.frame(fromJSON(data));
 
 print res
