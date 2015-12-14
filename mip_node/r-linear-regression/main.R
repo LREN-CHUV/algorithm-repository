@@ -34,14 +34,11 @@ covarnames <- strsplit(Sys.getenv("PARAM_covarnames"), ",");
 # Fetch the data
 data <- fetchData();
 
-# Convert all strings to factors
-data[sapply(data, is.character)] <- lapply(data[sapply(data, is.character)], 
-                                       as.factor)
-
 # Perform the computation
 res <- LRegress_Node(data, varname, covarnames);
-
-res <- list(beta = res[[1]], sigma = res[[2]]);
+coefficients <- res$coefficients;
+residuals <- res$residuals;
+res <- list(beta = as.data.frame(coefficients), sigma = as.data.frame(residuals));
 
 # Store results in the database
 saveResults(res);
