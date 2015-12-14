@@ -1,4 +1,5 @@
 library(testthat);
+library(hbpjdbcconnect);
 library(jsonlite);
 
 # Perform the computation
@@ -41,4 +42,4 @@ expect_equal(result_count,  100);
 
 expect_equal(node, "job_test");
 
-print ("Success!");
+print ("[ok] Success!");

@@ -48,7 +48,6 @@ if [[ "$USER" == "vagrant" ]]; then
     -e OUT_JDBC_URL="jdbc:postgresql://172.17.42.1:31432/analytics" \
     -e OUT_JDBC_USER=analytics \
     -e OUT_JDBC_PASSWORD=neuroinfo \
-    -e RESULT_TABLE=result_summary_stats \
     registry.federation.mip.hbp/mip_tools/r-interactive R
 
 else
