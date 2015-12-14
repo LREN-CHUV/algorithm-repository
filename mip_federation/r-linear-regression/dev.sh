@@ -35,9 +35,9 @@ if [[ "$USER" == "vagrant" ]]; then
   docker run -i -t --rm \
     -v $(pwd):/src/ \
     -v $(pwd)/tests:/src/tests/ \
-    -e JOB_ID=001 \
+    -e JOB_ID=002 \
     -e NODE=Test \
-    -e PARAM_query="select * from job_result_nodes where job_id='001'" \
+    -e PARAM_query="select * from job_result_nodes where job_id='002'" \
     -e PARAM_colnames="tissue1_volume" \
     -e IN_JDBC_DRIVER=org.postgresql.Driver \
     -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
@@ -71,9 +71,9 @@ else
     --link analyticsdb:outdb \
     -v $(pwd)/:/src/ \
     -v $(pwd)/tests:/src/tests/ \
-    -e JOB_ID=001 \
+    -e JOB_ID=002 \
     -e NODE=dev \
-    -e PARAM_query="select * from job_result_nodes where job_id='001'" \
+    -e PARAM_query="select * from job_result_nodes where job_id='002'" \
     -e PARAM_colnames="tissue1_volume" \
     -e IN_JDBC_DRIVER=org.postgresql.Driver \
     -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \

@@ -26,24 +26,17 @@ library(hbplregress);
 library(hbpjdbcconnect);
 library(jsonlite);
 
+Ndegree <- Sys.getenv("PARAM_ndegree", 99);
+
 # Fetch the data
 y <- fetchData();
 
-listStats <- lapply(y[,'data'], fromJSON)
-listStats <- lapply(listStats, as.data.frame)
+data <- lapply(y[,'data'], fromJSON);
+betas <- lapply(data, function (x) {x$beta});
+sigmas <- lapply(data, function (x) {x$sigma});
 
 # Perform the computation
-results <- unlist(dbGetQuery(conn, paste("select ", input_result_columns, "from ", input_table, " where request_id = ?"), request_id))
-names(results) <- c('beta1','beta2','Sigma1','Sigma2')
-
-res <- do.call(LRegress_Federation, as.list(results))
-n <- length(results)
-
-betas <- results[seq(1, n / 2)]
-sigmas <- results[seq(n / 2 + 1, n)]
-
-betas_arr <- paste('{', paste(betas, collapse=','), '}', sep='')
-sigmas_arr <- paste('{', paste(sigmas, collapse=','), '}', sep='')
+res <- LRegress_Federation(betas, sigmas, Ndegree);
 
 # Store results in the database
-saveResults(as.data.frame(globalStats));
+saveResults(res);

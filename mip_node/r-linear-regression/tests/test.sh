@@ -8,7 +8,7 @@ sleep 2
 docker run --rm \
   --link dummyldsm:indb \
   --link analyticsdb:outdb \
-  -e JOB_ID=001 \
+  -e JOB_ID=002 \
   -e NODE=Test \
   -e PARAM_query="select feature_name, tissue1_volume from brain_feature order by tissue1_volume" \
   -e PARAM_varname="feature_name" \

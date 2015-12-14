@@ -8,9 +8,9 @@ sleep 2
 docker run --rm \
   --link dummyfederation:indb \
   --link analyticsdb:outdb \
-  -e JOB_ID=001 \
+  -e JOB_ID=002 \
   -e NODE=job_test \
-  -e PARAM_query="select * from job_result_nodes where job_id='001'" \
+  -e PARAM_query="select * from job_result_nodes where job_id='002'" \
   -e PARAM_colnames="tissue1_volume" \
   -e IN_JDBC_DRIVER=org.postgresql.Driver \
   -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
