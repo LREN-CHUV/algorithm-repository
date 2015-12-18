@@ -12,6 +12,7 @@ docker run --rm \
   -e NODE=job_test \
   -e PARAM_query="select * from job_result_nodes where job_id='002'" \
   -e PARAM_colnames="tissue1_volume" \
+  -e PARAM_ndegree="99" \
   -e IN_JDBC_DRIVER=org.postgresql.Driver \
   -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
   -e IN_JDBC_URL=jdbc:postgresql://indb:5432/postgres \

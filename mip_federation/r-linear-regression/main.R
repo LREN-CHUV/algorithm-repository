@@ -26,7 +26,7 @@ library(hbplregress);
 library(hbpjdbcconnect);
 library(jsonlite);
 
-Ndegree <- Sys.getenv("PARAM_ndegree", 99);
+Ndegree <- as.numeric(Sys.getenv("PARAM_ndegree", 99));
 
 # Fetch the data
 y <- fetchData();
