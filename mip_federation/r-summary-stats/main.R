@@ -35,4 +35,4 @@ listStats <- lapply(listStats, as.data.frame)
 globalStats <- tablesummarystats_group(listStats);
 
 # Store results in the database
-saveResults(as.data.frame(globalStats));
+saveResults(toJSON(as.data.frame(globalStats), dataframe="columns");
