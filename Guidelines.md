@@ -109,7 +109,8 @@ Step-by-Step Guidelines
         - **Save the results** in the database using *saveResults* function.
           It can take as parameter a JSON string, a dataset or a matrix.
 
-   d\. *dev.sh:* **update this to test** **your main.R script**. This script
+   d\. *dev.sh:* 
+   **update this to test** **your main.R script**. This script
    is launching R (from Docker) with some libraries installed and an input
    and output database ready to use.
 
@@ -130,7 +131,7 @@ Step-by-Step Guidelines
 
 7.  Commit the results and make a pull request in GitHub
 
-If want to see the test data, go to */tests/dummy-ldsm/sql/create.sql *
+If want to see the test data, go to */tests/dummy-ldsm/sql/create.sql*
 
 Contact:
 =======
