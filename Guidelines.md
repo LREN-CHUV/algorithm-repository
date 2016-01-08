@@ -1,9 +1,9 @@
-  Human Brain Project / Medical Informatics Platform (SP8) / 8.4.2
-  -------------------- ------------------------------------
-  Document Title:    **User Guidelines : Algorithm Factory &gt; Pushing new algorithms into Algorithm pipeline**
+  Human Brain Project / Medical Informatics Platform (SP8) / 8.4.2 
+  -------------------- -----------------------------------------------------------------------------------------------------
+  **User Guidelines : Algorithm Factory &gt; Pushing new algorithms into Algorithm pipeline**
   ------------------ --------------------------------------------------------------------------------------------------------
-  Authors:   *Ludovic Claude, CHUV, <ludovic.claude54@gmail.com>*
-  ---------- ------------------------
+  *Ludovic Claude, CHUV, <ludovic.claude54@gmail.com>* (8 Jan 2016)
+  ---------- ----------------------------------------------------------------------------------------------------------------
 
 <span id="_Overview_of_the" class="anchor"><span id="_Toc439876557" class="anchor"></span></span>Purpose
 ======================================================================================================================
