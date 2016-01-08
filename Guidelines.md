@@ -1,4 +1,4 @@
-  <span id="_Overview_of_the" class="anchor"><span id="_Toc439876557" class="anchor"></span></span>USER GUIDELINES : Algorithm Factory &gt; Pushing new algorithms into Algorithm Factory pipeline
+ **USER GUIDELINES : Algorithm Factory &gt; Pushing new algorithms into Algorithm Factory pipeline**
   ------------------ --------------------------------------------------------------------------------------------------------
   *Ludovic Claude, CHUV, <ludovic.claude54@gmail.com>* (8 Jan 2016)
   ---------- ----------------------------------------------------------------------------------------------------------------
