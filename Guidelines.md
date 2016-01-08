@@ -1,4 +1,4 @@
-  **USER GUIDELINES : Algorithm Factory &gt; Pushing new algorithms into Algorithm Factory pipeline**
+  #USER GUIDELINES : Algorithm Factory &gt; Pushing new algorithms into Algorithm Factory pipeline**
   ------------------ --------------------------------------------------------------------------------------------------------
   *Ludovic Claude, CHUV, <ludovic.claude54@gmail.com>* (8 Jan 2016)
   ---------- ----------------------------------------------------------------------------------------------------------------
@@ -129,11 +129,10 @@ Step-by-Step Guidelines
 
     The tests can be executed by running the command *‘captain test’*
 
-
-
 7.  **Commit** the results and make a pull request in GitHub
 
-If want to see the test data, go to */tests/dummy-ldsm/sql/create.sql*
+---------------------------------------------------------------------------------------
+NOTE: If want to see the test data, go to */tests/dummy-ldsm/sql/create.sql*
 
 Contact:
 =======
