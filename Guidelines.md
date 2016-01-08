@@ -109,17 +109,16 @@ Step-by-Step Guidelines
         - **Save the results** in the database using *saveResults* function.
           It can take as parameter a JSON string, a dataset or a matrix.
 
-   d\. *dev.sh:* 
+   d\. *dev.sh:*    **update this to test** **your main.R script**. 
    
-   **update this to test** **your main.R script**. This script
-   is launching R (from Docker) with some libraries installed and an input
-   and output database ready to use.
+   This script is launching R (from Docker) with some libraries installed 
+   and an input and output database ready to use.
 
     You can change the SQL query here, and from R you can call *fetchData()*
     to get the results of the query. Paste the code from main.R into the R
     console to test that it works as expected.
 
-6.  Nice to have:
+6.  **Nice to have:**
 
     Update *tests/test.sh* and *tests/testthat.R* to test your function.
 
@@ -130,7 +129,9 @@ Step-by-Step Guidelines
 
     The tests can be executed by running the command *‘captain test’*
 
-7.  Commit the results and make a pull request in GitHub
+
+
+7.  **Commit** the results and make a pull request in GitHub
 
 If want to see the test data, go to */tests/dummy-ldsm/sql/create.sql*
 
