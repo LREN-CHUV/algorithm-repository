@@ -1,9 +1,5 @@
-  Project Title:       Human Brain Project
+  Human Brain Project / Medical Informatics Platform (SP8) / 8.4.2
   -------------------- ------------------------------------
-  Sub-Project Title:   Medical Informatics Platform (SP8)
-  
-  Task:             8.4.2
-  
   Document Title:    **User Guidelines : Algorithm Factory &gt; Pushing new algorithms into Algorithm pipeline**
   ------------------ --------------------------------------------------------------------------------------------------------
   Authors:   *Ludovic Claude, CHUV*
