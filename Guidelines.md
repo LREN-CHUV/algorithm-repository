@@ -110,6 +110,7 @@ Step-by-Step Guidelines
           It can take as parameter a JSON string, a dataset or a matrix.
 
    d\. *dev.sh:* 
+   
    **update this to test** **your main.R script**. This script
    is launching R (from Docker) with some libraries installed and an input
    and output database ready to use.
