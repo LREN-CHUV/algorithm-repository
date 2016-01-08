@@ -2,34 +2,14 @@
   -------------------- ------------------------------------
   Sub-Project Title:   Medical Informatics Platform (SP8)
   Task no:             8.4.2
-  Sub-task no:
-
+  
   Document Title:    **User Guidelines : Algorithm Factory &gt; Pushing new algorithms into Algorithm pipeline**
   ------------------ --------------------------------------------------------------------------------------------------------
-  Filename & Path:   Z:\\Miha\\CHUV\\UserGuidelines\\HBP\_SP8\_20160106\_CHUV\_AlgorithmFactory\_UserGuidelines001\_v1.docx
-
   Authors:   *Ludovic Claude, CHUV*
   ---------- ------------------------
 
-  Summary:   Steps of how new R algorithms may be tested and pushed into Algorithm Factory pipeline, for deployment into production.
+  Summary:   *Steps of how new R algorithms may be tested and pushed into Algorithm Factory pipeline, for deployment into production.*
   ---------- -------------------------------------------------------------------------------------------------------------------------
-
-**Versions, changes and contributors:**
-
-  Version    Date             Status      Name of person             Change details
-  ---------- ---------------- ----------- -------------------------- ------------------------------
-  **V0.1**   **5 Jan 2016**   **Draft**   **Ludovic Claude, CHUV**   **Created **
-  V1         6 Jan 2016       Final       Mihaela Damian, CHUV       Formatted, tested, released.
-
-Table of Contents
-
-[1. Purpose of Guidelines 3](#_Toc439876557)
-
-[2. Pre-requisites 3](#pre-requisites)
-
-[3. Step-by-Step Guidelines 3](#step-by-step-guidelines)
-
-[4. Contact 5](#contact)
 
 <span id="_Overview_of_the" class="anchor"><span id="_Toc439876557" class="anchor"></span></span>Purpose of Guidelines
 ======================================================================================================================
@@ -42,7 +22,7 @@ MIP.
 Guidelines for the other technologies (Matlab, Java etc) will be similar
 and will be developed soon.
 
-****Definitions:****
+***Definitions:***
 
 *Algorithm Pipeline = algorithms waiting to be deployed into production*
 
@@ -53,14 +33,6 @@ released into production (in pipeline), retired.*
 algorithm services -*
 [*http://www.itil.org.uk/what.htm*](http://www.itil.org.uk/what.htm)*)*
 
-Pre-requisites
-==============
-
-1.  R scripting (basic for committing code)
-
-2.  Basic familiarity with GitHub
-
-3.  GitHub account
 
 Step-by-Step Guidelines
 =======================
@@ -79,8 +51,8 @@ Step-by-Step Guidelines
 
     a.  *Dockerfile *:
 
-> Line 14: **replace** this line to install your packages. There are 3
-> possibilities:
+      Line 14: **replace** this line to install your packages. There are 3
+      possibilities:
 
 i.  If your package is available in R-CRAN, use the syntax :
 
@@ -149,7 +121,7 @@ You can change the SQL query here, and from R you can call *fetchData()*
 to get the results of the query. Paste the code from main.R into the R
 console to test that it works as expected.
 
-1.  Nice to have:
+6.  Nice to have:
 
     Update *tests/test.sh* and *tests/testthat.R* to test your function.
 
@@ -160,12 +132,12 @@ console to test that it works as expected.
 
     The tests can be executed by running the command *‘captain test’*
 
-2.  Commit the results and make a pull request in GitHub
+7.  Commit the results and make a pull request in GitHub
 
 If want to see the test data, go to */tests/dummy-ldsm/sql/create.sql *
 
-Contact
+Contact:
 =======
 
-For any questions or problems, contact Ludovic Claude (CHUV),
-<ludovic.claude54@gmail.com>
+**For any questions or problems, contact Ludovic Claude (CHUV),
+<ludovic.claude54@gmail.com>**
