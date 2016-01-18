@@ -38,7 +38,7 @@ insert into job_result_nodes values (
     '002',
     'even',
     now(),
-    'r_dataframe_intermediate',
+    'r_other',
     '{"beta":[{"coefficients":1.27349187,"_row":"(Intercept)"},{"coefficients":24.69966216,"_row":"tissue1_volume"}],"sigma":[{"_row":"(Intercept)"},{"_row":"tissue1_volume"}]}'
   );
 -- select feature_name, tissue1_volume from brain_feature where mod(id::int, 2) = 1 order by tissue1_volume
@@ -46,6 +46,6 @@ insert into job_result_nodes values (
     '002',
     'odd',
     now(),
-    'r_dataframe_intermediate',
+    'r_other',
     '{"beta":[{"coefficients":1.66529776,"_row":"(Intercept)"},{"coefficients":-17.95771987,"_row":"tissue1_volume"}],"sigma":[{"_row":"(Intercept)"},{"_row":"tissue1_volume"}]}'
   );

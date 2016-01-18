@@ -29,9 +29,8 @@ library(jsonlite);
 Ndegree <- as.numeric(Sys.getenv("PARAM_ndegree", 99));
 
 # Fetch the data
-y <- fetchData();
+data <- fetchData();
 
-data <- lapply(y[,'data'], fromJSON);
 betas <- lapply(data, function (x) {x$beta});
 sigmas <- lapply(data, function (x) {x$sigma});
 
