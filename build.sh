@@ -14,12 +14,10 @@ get_script_dir () {
 
 ROOT_DIR="$(get_script_dir)"
 
-for image in mip_node/r-summary-stats \
-             mip_node/r-linear-regression \
-             mip_federation/r-summary-stats \
-             mip_federation/r-linear-regression; do
+IMAGES="mip_node/r-summary-stats mip_node/r-linear-regression mip_federation/r-summary-stats mip_federation/r-linear-regression"
 
-	cd $ROOT_DIR/$image
-	captain push
+for image in $IMAGES ; do
+  cd $ROOT_DIR/$image
+  captain test
+  captain push
 done
-
