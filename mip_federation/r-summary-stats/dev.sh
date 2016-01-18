@@ -21,8 +21,10 @@ function cheat_sheet() {
 
 echo "Starting the results database..."
 ../../tests/analytics-db/start-db.sh
+echo
 echo "Starting the federation database..."
 ../../tests/dummy-federation/start-db.sh
+echo
   
 sleep 2
   
@@ -48,6 +50,7 @@ $DOCKER run -i -t --rm \
   -e IN_JDBC_URL="jdbc:postgresql://indb:5432/postgres" \
   -e IN_JDBC_USER=postgres \
   -e IN_JDBC_PASSWORD=test \
+  -e IN_FORMAT=INTERMEDIATE_RESULTS \
   -e OUT_JDBC_DRIVER=org.postgresql.Driver \
   -e OUT_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
   -e OUT_JDBC_URL="jdbc:postgresql://outdb:5432/postgres" \

@@ -17,15 +17,15 @@ data <- results$data[[1]]
 
 res <- fromJSON(data);
 
-result_min <- res[["min","tissue1_volume"]];
-result_q1 <- res[["q1","tissue1_volume"]];
-result_median <- res[["median","tissue1_volume"]];
-result_q3 <- res[["q3","tissue1_volume"]];
-result_max <- res[["max","tissue1_volume"]];
-result_mean <- res[["mean","tissue1_volume"]];
-result_std <- res[["std","tissue1_volume"]];
-result_sum <- res[["sum","tissue1_volume"]];
-result_count <- res[["count","tissue1_volume"]];
+result_min    <- res$tissue1_volume[[1]];
+result_q1     <- res$tissue1_volume[[2]];
+result_median <- res$tissue1_volume[[3]];
+result_q3     <- res$tissue1_volume[[4]];
+result_max    <- res$tissue1_volume[[5]];
+result_mean   <- res$tissue1_volume[[6]];
+result_std    <- res$tissue1_volume[[7]];
+result_sum    <- res$tissue1_volume[[8]];
+result_count  <- res$tissue1_volume[[9]];
 
 # Disconnect from the database
 disconnectdbs();
