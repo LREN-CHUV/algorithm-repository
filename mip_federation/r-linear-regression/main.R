@@ -31,11 +31,11 @@ Ndegree <- as.numeric(Sys.getenv("PARAM_ndegree", 99));
 # Fetch the data
 data <- fetchData();
 
-betas <- lapply(data, function (x) {x$beta});
-sigmas <- lapply(data, function (x) {x$sigma});
+coefficients <- lapply(data, function (x) {x$coefficients});
+residuals <- lapply(data, function (x) {x$residuals});
 
 # Perform the computation
-res <- LRegress_Federation(betas, sigmas, Ndegree);
+res <- LRegress_Federation(coefficients, residuals, Ndegree);
 
 # Store results in the database
 saveResults(res);

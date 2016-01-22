@@ -18,17 +18,17 @@ shape <- results$shape[[1]];
 
 res <- fromJSON(data);
 
-result_beta <- res$beta;
-result_sigma <- res$sigma;
+result_coefficients <- res$coefficients;
+result_residuals <- res$residuals;
 
 # Disconnect from the database
 disconnectdbs();
 
 expect_equal(node, "Test");
-expect_equal(shape, "r_other");
+expect_equal(shape, "r_other_intermediate");
 
-expect_equal(result_beta[1,1], 1.51756892,  tolerance = 1e-6);
-expect_equal(result_beta[2,1], -1.91151546, tolerance = 1e-6);
-expect_equal(ncol(result_sigma), 0);
+expect_equal(result_coefficients[[1]], 1.51756892,  tolerance = 1e-6);
+expect_equal(result_coefficients[[2]], -1.91151546, tolerance = 1e-6);
+expect_equal(ncol(result_residuals), 0);
 
 print ("[ok] Success!");
