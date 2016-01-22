@@ -43,4 +43,4 @@ residuals <- res$residuals;
 res <- list(coefficients = coefficients, residuals = as.data.frame(residuals));
 
 # Store results in the database
-saveResults(res, function = 'r-linear-regression');
+saveResults(res, fn = 'r-linear-regression');
