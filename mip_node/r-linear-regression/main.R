@@ -36,9 +36,11 @@ data <- fetchData();
 
 # Perform the computation
 res <- LRegress_Node(data, varname, covarnames);
+
+# Keep only coefficients and residuals
 coefficients <- res$coefficients;
 residuals <- res$residuals;
-res <- list(beta = as.data.frame(coefficients), sigma = as.data.frame(residuals));
+res <- list(coefficients = coefficients, residuals = as.data.frame(residuals));
 
 # Store results in the database
-saveResults(res);
+saveResults(res, fn = 'r-linear-regression');

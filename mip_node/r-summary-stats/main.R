@@ -37,4 +37,4 @@ y <- fetchData();
 res <- tablesummarystats(y, strsplit(columns, ","));
 
 # Store results in the database
-saveResults(as.data.frame(res));
+saveResults(as.data.frame(res), fn = 'r-summary-stats');
