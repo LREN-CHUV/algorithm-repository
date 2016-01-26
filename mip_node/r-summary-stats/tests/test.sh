@@ -1,7 +1,11 @@
 #!/bin/sh -e
 
+echo "Starting the results database..."
 ../../tests/analytics-db/start-db.sh
+echo
+echo "Starting the local database..."
 ../../tests/dummy-ldsm/start-db.sh
+echo
 
 sleep 2
 

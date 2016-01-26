@@ -36,8 +36,6 @@ test_that("We can perform summary statistics on one variable", {
   # Disconnect from the database
   disconnectdbs();
   
-  expect_equal(node, "job_test");
-  
   expect_equal(result_min,    0.0068206, tolerance = 1e-6);
   expect_equal(result_q1,     0.00857095, tolerance = 1e-6);
   expect_equal(result_median, 0.00931775, tolerance = 1e-6);
@@ -47,6 +45,8 @@ test_that("We can perform summary statistics on one variable", {
   expect_equal(result_std,    0.00087956, tolerance = 1e-6);
   expect_equal(result_sum,    0.9191096, tolerance = 1e-6);
   expect_equal(result_count,  100);
+  
+  expect_equal(node, "job_test");
   
   print ("[ok] Success!");
 

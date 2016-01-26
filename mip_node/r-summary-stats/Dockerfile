@@ -11,4 +11,5 @@ LABEL eu.humanbrainproject.function=summary-stats \
 
 COPY main.R /src/
 
-RUN installGithub.r LREN-CHUV/hbpsummarystats@2d79b85
+RUN installGithub.r LREN-CHUV/hbpsummarystats@374af9c5
+
