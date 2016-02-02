@@ -1,4 +1,4 @@
-FROM registry.federation.mip.hbp/mip_base/r-job:latest
+FROM hbpmip/r-job:239492a
 
 MAINTAINER ludovic.claude54@gmail.com
 

@@ -1,6 +1,6 @@
 r-linear-regression:
   build: Dockerfile
-  image: registry.federation.mip.hbp/mip_node/r-linear-regression
+  image: hbpmip/r-linear-regression
   pre:
     - echo "Preparing r-linear-regression"
   post:
@@ -8,7 +8,7 @@ r-linear-regression:
 
 r-linear-regression-test:
   build: Dockerfile.test
-  image: registry.federation.mip.hbp/mip_node/r-linear-regression-test
+  image: hbpmip/r-linear-regression-test
   pre:
     - echo "Preparing r-linear-regression-test"
   post:

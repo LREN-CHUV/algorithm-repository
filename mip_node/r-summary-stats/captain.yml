@@ -1,6 +1,6 @@
 r-summary-stats:
   build: Dockerfile
-  image: registry.federation.mip.hbp/mip_node/r-summary-stats
+  image: hbpmip/r-summary-stats
   pre:
     - echo "Preparing r-summary-stats"
   post:
@@ -8,7 +8,7 @@ r-summary-stats:
 
 r-summary-stats-test:
   build: Dockerfile.test
-  image: registry.federation.mip.hbp/mip_node/r-summary-stats-test
+  image: hbpmip/r-summary-stats-test
   pre:
     - echo "Preparing r-summary-stats-test"
   post:

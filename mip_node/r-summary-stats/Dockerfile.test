@@ -1,4 +1,4 @@
-FROM registry.federation.mip.hbp/mip_node/r-summary-stats:latest
+FROM hbpmip/r-summary-stats:latest
 
 MAINTAINER ludovic.claude54@gmail.com
 
