@@ -55,7 +55,7 @@ $DOCKER run -i -t --rm \
   -e OUT_JDBC_URL="jdbc:postgresql://outdb:5432/postgres" \
   -e OUT_JDBC_USER=postgres \
   -e OUT_JDBC_PASSWORD=test \
-  registry.federation.mip.hbp/mip_tools/r-interactive R
+  hbpmip/r-interactive:latest R
 
 ../../tests/analytics-db/stop-db.sh
 ../../tests/dummy-ldsm/stop-db.sh
