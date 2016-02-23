@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
 if groups $USER | grep &>/dev/null '\bdocker\b'; then
-    DOCKER=docker
+    DOCKER="docker"
 else
-    DOCKER=sudo docker
+    DOCKER="sudo docker"
 fi
 
 $DOCKER stop dummyldsm > /dev/null
