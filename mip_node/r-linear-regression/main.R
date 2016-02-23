@@ -37,10 +37,8 @@ data <- fetchData();
 # Perform the computation
 res <- LRegress_Node(data, varname, covarnames);
 
-# Keep only coefficients and residuals
-coefficients <- res$coefficients;
-residuals <- res$residuals;
-res <- list(coefficients = coefficients, residuals = as.data.frame(residuals));
+# Ensure that we use only supported types: list, data.frame
+res <- list(coefficients = res$coefficients, residuals = as.data.frame(res$residuals), anova = as.data.frame(res$anova), summary = res$summary);
 
 # Store results in the database
 saveResults(res, fn = 'r-linear-regression');
