@@ -1,6 +1,8 @@
-FROM hbpmip/r-job:239492a
+FROM hbpmip/r-job:bbd168c
 
 MAINTAINER ludovic.claude54@gmail.com
+
+RUN installGithub.r LREN-CHUV/hbpsummarystats@374af9c5
 
 LABEL eu.humanbrainproject.function=summary-stats \
       eu.humanbrainproject.function.location=node \
@@ -10,6 +12,5 @@ LABEL eu.humanbrainproject.function=summary-stats \
       eu.humanbrainproject.function.date="2015-06-27"
 
 COPY main.R /src/
-
-RUN installGithub.r LREN-CHUV/hbpsummarystats@374af9c5
-
+COPY tests/testthat.R /src/tests/
+COPY tests/testthat/ /src/tests/testthat/

@@ -1,6 +1,0 @@
-FROM hbpmip/r-summary-stats:latest
-
-MAINTAINER ludovic.claude54@gmail.com
-
-COPY tests/testthat.R /src/tests/
-COPY tests/testthat/ /src/tests/testthat/

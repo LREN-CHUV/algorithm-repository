@@ -9,6 +9,7 @@
 #      PARAM_query  : SQL query producing the dataframe to analyse
 #      PARAM_varname : Name of the variable
 #      PARAM_covarnames : Column separated list of covariables
+#      PARAM_groups : Column separated list of groups
 # - Execution context:
 #      JOB_ID : ID of the job
 #      NODE : Node used for the execution of the script
@@ -30,15 +31,20 @@ library(hbpjdbcconnect);
 # Initialisation
 varname <- Sys.getenv("PARAM_varname");
 covarnames <- strsplit(Sys.getenv("PARAM_covarnames"), ",");
+groupstr <- Sys.getenv("PARAM_groups", "");
+if (groupstr == "") {
+	groups <- c();
+} else {
+    groups <- strsplit(Sys.getenv("PARAM_groups", ""), ",");
+}
 
 # Fetch the data
 data <- fetchData();
 
 # Perform the computation
-res <- LRegress_Node(data, varname, covarnames);
+res <- LRegress_Node(data, varname, covarnames, groups);
 
 summary <- list(coefficients = as.data.frame(res$summary$coefficients),
-	            summary_residuals = res$summary$residuals,
 	            aliased = res$summary$aliased,
 	            sigma = res$summary$sigma,
 	            df = res$summary$df,
@@ -47,8 +53,10 @@ summary <- list(coefficients = as.data.frame(res$summary$coefficients),
 	            cov_unscaled = as.data.frame(res$summary$cov.unscaled)
 	           );
 
+#	            summary_residuals = res$summary$residuals,
+
 # Ensure that we use only supported types: list, data.frame
-res <- list(coefficients = res$coefficients, residuals = as.data.frame(res$residuals), anova = as.data.frame(res$anova), summary = summary);
+store <- list(coefficients = res$coefficients, residuals = as.data.frame(res$residuals), anova = as.data.frame(res$anova), summary = summary);
 
 # Store results in the database
-saveResults(res, fn = 'r-linear-regression');
+saveResults(store, fn = 'r-linear-regression');

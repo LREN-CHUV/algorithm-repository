@@ -27,7 +27,7 @@ docker run --rm \
   -e OUT_JDBC_USER=postgres \
   -e OUT_JDBC_PASSWORD=test \
   -e OUT_FORMAT=INTERMEDIATE_RESULTS \
-  registry.federation.mip.hbp/mip_node/r-summary-stats-test test
+  hbpmip/r-summary-stats test
 
 ../../tests/analytics-db/stop-db.sh
 ../../tests/dummy-ldsm/stop-db.sh

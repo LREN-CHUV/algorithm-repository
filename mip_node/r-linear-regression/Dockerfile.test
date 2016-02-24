@@ -1,5 +1,0 @@
-FROM hbpmip/r-linear-regression:latest
-
-MAINTAINER ludovic.claude54@gmail.com
-
-COPY tests/testthat.R /src/tests/

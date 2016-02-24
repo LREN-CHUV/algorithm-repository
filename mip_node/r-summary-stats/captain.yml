@@ -5,13 +5,5 @@ r-summary-stats:
     - echo "Preparing r-summary-stats"
   post:
     - echo "Finished r-summary-stats"
-
-r-summary-stats-test:
-  build: Dockerfile.test
-  image: hbpmip/r-summary-stats-test
-  pre:
-    - echo "Preparing r-summary-stats-test"
-  post:
-    - echo "Finished r-summary-stats-test"
   test:
     - tests/test.sh
