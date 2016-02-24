@@ -37,8 +37,18 @@ data <- fetchData();
 # Perform the computation
 res <- LRegress_Node(data, varname, covarnames);
 
+summary <- list(coefficients = as.data.frame(res$summary$coefficients),
+	            summary_residuals = res$summary$residuals,
+	            aliased = res$summary$aliased,
+	            sigma = res$summary$sigma,
+	            df = res$summary$df,
+	            r_squared = res$summary$r.squared,
+	            adj_r_squared = res$summary$adj.r.squared,
+	            cov_unscaled = as.data.frame(res$summary$cov.unscaled)
+	           );
+
 # Ensure that we use only supported types: list, data.frame
-res <- list(coefficients = res$coefficients, residuals = as.data.frame(res$residuals), anova = as.data.frame(res$anova), summary = res$summary);
+res <- list(coefficients = res$coefficients, residuals = as.data.frame(res$residuals), anova = as.data.frame(res$anova), summary = summary);
 
 # Store results in the database
 saveResults(res, fn = 'r-linear-regression');
