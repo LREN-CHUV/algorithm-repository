@@ -27,8 +27,10 @@ disconnectdbs();
 expect_equal(node, "Test");
 expect_equal(shape, "r_other_intermediate");
 
-expect_equal(result_coefficients[[1]], 1.51756892,  tolerance = 1e-6);
-expect_equal(result_coefficients[[2]], -1.91151546, tolerance = 1e-6);
-expect_equal(ncol(result_residuals), 0);
+expected_result_residuals = "[{\"(Intercept)\":1.563e-08,\"feature_nameHippocampus_R\":-1.563e-08,\"_row\":\"(Intercept)\"},{\"(Intercept)\":-1.563e-08,\"feature_nameHippocampus_R\":3.126e-08,\"_row\":\"feature_nameHippocampus_R\"}]"
+
+expect_equal(result_coefficients[[1]], 0.009194024,  tolerance = 1e-6);
+expect_equal(result_coefficients[[2]], -0.000005856, tolerance = 1e-6);
+expect_equal(result_residuals, fromJSON(expected_result_residuals), tolerance=1e-5);
 
 print ("[ok] Success!");
