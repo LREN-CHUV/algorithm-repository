@@ -7,13 +7,13 @@ function cheat_sheet() {
   echo "library(devtools)"
   echo
   echo "devtools::install_github(\"LREN-CHUV/hbpsummarystats\")"
-  echo "  Load the library"
+  echo "  # Load the library"
   echo
   echo "source(\"/src/main.R\")"
-  echo "  Perform the computation"
+  echo "  # Perform the computation"
   echo
   echo "lintr::lint(\"/src/main.R\")"
-  echo "  Checks the style of the source code"
+  echo "  # Checks the style of the source code"
   echo
   echo "-----------------------------------------"
 

@@ -1,4 +1,12 @@
-#!/bin/sh -e
+#!/bin/bash -e
+
+OPTS=""
+OPERATION="test"
+
+if [ "$1" = "--interactive" ]; then
+  OPTS="-i -t"
+  OPERATION="R"
+fi
 
 echo "Starting the results database..."
 ../../tests/analytics-db/start-db.sh
@@ -9,7 +17,13 @@ echo
 
 sleep 2
 
-docker run --rm \
+if groups $USER | grep &>/dev/null '\bdocker\b'; then
+  DOCKER="docker"
+else
+  DOCKER="sudo docker"
+fi
+
+$DOCKER run --rm $OPTS \
   --link dummyldsm:indb \
   --link analyticsdb:outdb \
   -e JOB_ID=001 \
@@ -27,7 +41,7 @@ docker run --rm \
   -e OUT_JDBC_USER=postgres \
   -e OUT_JDBC_PASSWORD=test \
   -e OUT_FORMAT=INTERMEDIATE_RESULTS \
-  hbpmip/r-summary-stats test
+  hbpmip/r-summary-stats $OPERATION
 
 ../../tests/analytics-db/stop-db.sh
 ../../tests/dummy-ldsm/stop-db.sh
