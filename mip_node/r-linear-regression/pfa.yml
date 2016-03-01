@@ -6,8 +6,7 @@ input:
   type: record
   name: Covariables
   fields:
-    - {name: covar1, type: double}
-    - {name: covar2, type: double}
+    - {name: feature_nameHippocampus_R, type: double}
 output:
   doc: "Output is the estimate of the variable"
   type: double
@@ -18,15 +17,33 @@ cells:
       type: record
       name: Coefficients
       fields:
-        - {name: _intercept_, type: number}
-        - {name: covar1, type: number}
-        - {name: covar2, type: number}
+        - {name: _intercept_, type: double}
+        - {name: feature_nameHippocampus_R, type: double}
     init:
-      { _intercept_: 0.1, covar1: 0.2, covar2: 0.3 }
+      _intercept_: 0.009194024
+      feature_nameHippocampus_R: -0.000005856
   residuals:
-    doc: "Matrix of residuals"
+    doc: "Matrix of residuals. Same columns as coefficients"
+    type:
+      type: array
+      items:
+        type: array
+        items:
+          type: double
+    init:
+      [
+        [1.563012e-08, -1.563012e-08],
+        [-1.563012e-08, 3.126024e-08]
+      ]
   anova:
     doc: "Result from Anova"
+    type: array
+    items:
+      type: array
+      items:
+        type: double
+    init:
+      [[]]
   summary:
     doc: "R summary"
     type:
@@ -36,46 +53,72 @@ cells:
         - name: residuals
           doc: "The _weighted_ residuals, the usual residuals rescaled by
                 the square root of the weights specified in the call to ‘lm’"
+          type: array
+          items:
+            type: array
+            items:
+              type: double
         - name: coefficients
           doc: "a p x 4 matrix with columns for the estimated
                 coefficient, its standard error, t-statistic and
                 corresponding (two-sided) p-value. Aliased coefficients are omitted"
-          type: array
-          items:
+          type:
             type: record
-            name: SummaryCoefficient
+            name: CoefficientMatrix
+            namespace: summary
             fields:
-              - {name: }
+              - name: _intercept_
+                type:
+                  type: record
+                  name: Coefficient
+                  namespace: summary
+                  fields:
+                    - { name: estimate, type: double, doc: "Estimated coefficient" }
+                    - { name: std_error, type: double, doc: "Standard error" }
+                    - { name: t_value, type: double, doc: "t-statistic" }
+                    - { name: p_value, type: double, doc: "Corresponding (two-sided) p-value" }
+              - name: feature_nameHippocampus_R
+                type: "summary.Coefficient"
         - name: aliased
           doc: "named logical vector showing if the original coefficients are aliased"
-          type: record
-          fields:
-            - { name: _intercept_, type: boolean }
-            - { name: covar1, type: boolean }
-            - { name: covar2, type: boolean }
+          type:
+            type: record
+            fields:
+              - { name: _intercept_, type: boolean }
+              - { name: feature_nameHippocampus_R, type: boolean }
         - name: sigma
           doc: "the square root of the estimated variance of the random error
                        sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),
                 where R[i] is the i-th residual, ‘residuals[i]’"
           type: double
-        - name: degree_freedom
+        - name: degrees_freedom
           doc: "Degrees of freedom, a 3-vector (p, n-p, p*), the first being
                 the number of non-aliased coefficients, the last being the
                 total number of coefficients"
+          type:
+            type: array
+            items:
+              type: double
         - name: r_squared
           doc: "R squared"
           type: double
         - name: adj_r_squared
           doc: "Adjusted R squared"
         - name: cov_unscaled
-          doc: "Matrix of covariance unscaled"
+          doc: "Matrix of covariance unscaled. Same columns as coefficients"
+          type:
+            type: array
+            items:
+              type: double
     init:
       coefficients:
+        _intercept: { estimate: 0.009194024, std_error: 0.0001250205, t_value: 73.54014356, p_value: 1.505059e-87 }
+        feature_nameHippocampus_R: { estimate: -0.000005856, std_error: 0.0001768057, t_value: -0.03312111, p_value: 9.736454e-01 }
       aliased:
         _intercept_: false
-        covar1: false
+        feature_nameHippocampus_R: false
       sigma: 0.0008840283
-      degree_freedom: [2, 98, 2]
+      degrees_freedom: [2, 98, 2]
       r_squared: 1.119383e-05
       adj_r_squared: -0.01019277
       cov_unscaled: [
