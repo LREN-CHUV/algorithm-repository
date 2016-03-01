@@ -23,8 +23,8 @@
 #'      OUT_JDBC_PASSWORD : Password for the database connection for output results
 #'
 
+suppressMessages(library(hbpjdbcconnect));
 library(hbpsummarystats);
-library(hbpjdbcconnect);
 library(jsonlite);
 
 # Initialisation
