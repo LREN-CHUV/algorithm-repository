@@ -1,3 +1,4 @@
+---
 # TODO: Use whisker for templating?
 
 input:
@@ -5,41 +6,80 @@ input:
   type: record
   name: Covariables
   fields:
-    - {name: covar1, type: number}
-    - {name: covar2, type: number}
-output: double
+    - {name: covar1, type: double}
+    - {name: covar2, type: double}
+output:
+  doc: "Output is the estimate of the variable"
+  type: double
 cells:
   coefficients:
-    doc: "List of coefficients for the model parameters"
-    type: record
-    name: Coefficients
-    fields:
-      - {name: _intercept_, type: number}
-      - {name: covar1, type: number}
-      - {name: covar2, type: number}
+    doc: "List of coefficients of the model parameters"
+    type:
+      type: record
+      name: Coefficients
+      fields:
+        - {name: _intercept_, type: number}
+        - {name: covar1, type: number}
+        - {name: covar2, type: number}
     init:
-      {_intercept_: 0.1, covar1: 0.2, covar2: 0.3}
+      { _intercept_: 0.1, covar1: 0.2, covar2: 0.3 }
   residuals:
     doc: "Matrix of residuals"
   anova:
     doc: "Result from Anova"
   summary:
     doc: "R summary"
-    type: record
-    name: Summary
-    fields:
-      - name: coefficients
-        doc: "List of coefficients and their std error and p-value"
-      - name: aliased
-        doc: "Indicates if a coefficient was aliased"
-      - name: sigma
-        doc: "Sigma"
-      - name: df
-        doc: "Data frame?"
-      - name: r_squared
-        doc: "R squared"
-      - name: adj_r_squared
-        doc: "Adjusted R squared"
-      - name: cov_unscaled
-        doc: "Matrix of covariance unscaled"
+    type:
+      type: record
+      name: Summary
+      fields:
+        - name: residuals
+          doc: "The _weighted_ residuals, the usual residuals rescaled by
+                the square root of the weights specified in the call to ‘lm’"
+        - name: coefficients
+          doc: "a p x 4 matrix with columns for the estimated
+                coefficient, its standard error, t-statistic and
+                corresponding (two-sided) p-value. Aliased coefficients are omitted"
+          type: array
+          items:
+            type: record
+            name: SummaryCoefficient
+            fields:
+              - {name: }
+        - name: aliased
+          doc: "named logical vector showing if the original coefficients are aliased"
+          type: record
+          fields:
+            - { name: _intercept_, type: boolean }
+            - { name: covar1, type: boolean }
+            - { name: covar2, type: boolean }
+        - name: sigma
+          doc: "the square root of the estimated variance of the random error
+                       sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),
+                where R[i] is the i-th residual, ‘residuals[i]’"
+          type: double
+        - name: degree_freedom
+          doc: "Degrees of freedom, a 3-vector (p, n-p, p*), the first being
+                the number of non-aliased coefficients, the last being the
+                total number of coefficients"
+        - name: r_squared
+          doc: "R squared"
+          type: double
+        - name: adj_r_squared
+          doc: "Adjusted R squared"
+        - name: cov_unscaled
+          doc: "Matrix of covariance unscaled"
+    init:
+      coefficients:
+      aliased:
+        _intercept_: false
+        covar1: false
+      sigma: 0.0008840283
+      degree_freedom: [2, 98, 2]
+      r_squared: 1.119383e-05
+      adj_r_squared: -0.01019277
+      cov_unscaled: [
+        [0.02, -0.02],
+        [-0.02, 0.04]
+      ]
 action: null
