@@ -1,0 +1,45 @@
+# TODO: Use whisker for templating?
+
+input:
+  doc: "Input is the list of covariables"
+  type: record
+  name: Covariables
+  fields:
+    - {name: covar1, type: number}
+    - {name: covar2, type: number}
+output: double
+cells:
+  coefficients:
+    doc: "List of coefficients for the model parameters"
+    type: record
+    name: Coefficients
+    fields:
+      - {name: _intercept_, type: number}
+      - {name: covar1, type: number}
+      - {name: covar2, type: number}
+    init:
+      {_intercept_: 0.1, covar1: 0.2, covar2: 0.3}
+  residuals:
+    doc: "Matrix of residuals"
+  anova:
+    doc: "Result from Anova"
+  summary:
+    doc: "R summary"
+    type: record
+    name: Summary
+    fields:
+      - name: coefficients
+        doc: "List of coefficients and their std error and p-value"
+      - name: aliased
+        doc: "Indicates if a coefficient was aliased"
+      - name: sigma
+        doc: "Sigma"
+      - name: df
+        doc: "Data frame?"
+      - name: r_squared
+        doc: "R squared"
+      - name: adj_r_squared
+        doc: "Adjusted R squared"
+      - name: cov_unscaled
+        doc: "Matrix of covariance unscaled"
+action: null
