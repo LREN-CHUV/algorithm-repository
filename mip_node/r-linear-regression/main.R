@@ -26,6 +26,7 @@
 #
 
 suppressMessages(library(hbpjdbcconnect));
+library(whisker);
 library(hbplregress);
 
 # Initialisation
@@ -43,8 +44,10 @@ data <- fetchData();
 
 # Perform the computation
 res <- LRegress_Node(data, varname, covarnames, groups);
+coefficients <- as.data.frame(res$summary$coefficients);
 
-summary <- list(coefficients = as.data.frame(res$summary$coefficients),
+summary <- list(names = colnames(coefficients),
+	            coefficients = coefficients,
 	            aliased = res$summary$aliased,
 	            sigma = res$summary$sigma,
 	            df = res$summary$df,
@@ -54,6 +57,8 @@ summary <- list(coefficients = as.data.frame(res$summary$coefficients),
 	           );
 
 #	            summary_residuals = res$summary$residuals,
+
+template <- readLines("/src/pfa.yml");
 
 # Ensure that we use only supported types: list, data.frame
 store <- list(coefficients = res$coefficients, residuals = as.data.frame(res$residuals), anova = as.data.frame(res$anova), summary = summary);

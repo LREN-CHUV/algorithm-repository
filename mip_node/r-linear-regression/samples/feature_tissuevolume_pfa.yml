@@ -1,18 +1,15 @@
 ---
+# TODO: Use whisker for templating?
 
 input:
   doc: "Input is the list of covariables"
   type: record
   name: Covariables
   fields:
-{{#names}}
-    - {name: {{.}}, type: double}
-{{/names}}
-
+    - {name: feature_nameHippocampus_R, type: double}
 output:
   doc: "Output is the estimate of the variable"
   type: double
-
 cells:
   coefficients:
     doc: "List of coefficients of the model parameters"
@@ -21,9 +18,7 @@ cells:
       name: Coefficients
       fields:
         - {name: _intercept_, type: double}
-{{#names}}
-        - {name: {{.}}, type: double}
-{{/names}}
+        - {name: feature_nameHippocampus_R, type: double}
     init:
       _intercept_: 0.009194024
       feature_nameHippocampus_R: -0.000005856
@@ -130,5 +125,4 @@ cells:
         [0.02, -0.02],
         [-0.02, 0.04]
       ]
-
 action: null
