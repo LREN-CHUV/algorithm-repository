@@ -87,4 +87,4 @@ store <- list(names = coeff_names,
 template <- readLines("/src/pfa.yml");
 
 # Store results in the database
-saveResults(whisker.render(template, store), fn = 'r-linear-regression');
+saveResults(whisker.render(template, store), fn = 'r-linear-regression', shape = 'pfa_yaml');
