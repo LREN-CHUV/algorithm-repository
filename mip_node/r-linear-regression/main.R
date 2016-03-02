@@ -48,7 +48,6 @@ res <- LRegress_Node(data, varname, covarnames, groups);
 # Build the response
 coeff_names <- names(res$coefficients);
 coeff_names[1] <- "_intercept_";
-coeff_names0 <- coeff_name[2:length(coeff_names)];
 
 coefficients <- as.data.frame(cbind(coeff_names, res$coefficients));
 colnames(coefficients) <- c("coeff_name", "coefficient");
@@ -73,7 +72,6 @@ summary_cov_unscaled <- as.matrix(res$summary$cov.unscaled);
 
 # Ensure that we use only supported types: list, data.frame
 store <- list(names = coeff_names,
-              names0 = coeff_names0,
               coefficients = unname(rowSplit(coefficients)),
               if_anova = if_anova,
               anova = toJSON(anova),
