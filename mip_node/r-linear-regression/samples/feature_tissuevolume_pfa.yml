@@ -1,18 +1,19 @@
 ---
-# TODO: Use whisker for templating?
 
 input:
-  doc: "Input is the list of covariables"
+  doc: \"Input is the list of covariables\"
   type: record
   name: Covariables
   fields:
+    - {name: _intercept_, type: double}
     - {name: feature_nameHippocampus_R, type: double}
 output:
-  doc: "Output is the estimate of the variable"
+  doc: \"Output is the estimate of the variable\"
   type: double
+
 cells:
   coefficients:
-    doc: "List of coefficients of the model parameters"
+    doc: \"List of coefficients of the model parameters\"
     type:
       type: record
       name: Coefficients
@@ -21,47 +22,25 @@ cells:
         - {name: feature_nameHippocampus_R, type: double}
     init:
       _intercept_: 0.009194024
-      feature_nameHippocampus_R: -0.000005856
-  residuals:
-    doc: "Matrix of residuals. Same columns as coefficients"
-    type:
-      type: array
-      items:
-        type: array
-        items:
-          type: double
-    init:
-      [
-        [1.563012e-08, -1.563012e-08],
-        [-1.563012e-08, 3.126024e-08]
-      ]
-  anova:
-    doc: "Result from Anova"
-    type: array
-    items:
-      type: array
-      items:
-        type: double
-    init:
-      [[]]
+      feature_nameHippocampus_R: -5.85599999999931e-06
   summary:
-    doc: "R summary"
+    doc: \"R summary\"
     type:
       type: record
       name: Summary
       fields:
         - name: residuals
-          doc: "The _weighted_ residuals, the usual residuals rescaled by
-                the square root of the weights specified in the call to ‘lm’"
+          doc: \"The _weighted_ residuals, the usual residuals rescaled by
+                the square root of the weights specified in the call to ‘lm’\"
           type: array
           items:
             type: array
             items:
               type: double
         - name: coefficients
-          doc: "a p x 4 matrix with columns for the estimated
+          doc: \"a p x 4 matrix with columns for the estimated
                 coefficient, its standard error, t-statistic and
-                corresponding (two-sided) p-value. Aliased coefficients are omitted"
+                corresponding (two-sided) p-value. Aliased coefficients are omitted\"
           type:
             type: record
             name: CoefficientMatrix
@@ -73,56 +52,54 @@ cells:
                   name: Coefficient
                   namespace: summary
                   fields:
-                    - { name: estimate, type: double, doc: "Estimated coefficient" }
-                    - { name: std_error, type: double, doc: "Standard error" }
-                    - { name: t_value, type: double, doc: "t-statistic" }
-                    - { name: p_value, type: double, doc: "Corresponding (two-sided) p-value" }
+                    - { name: estimate, type: double, doc: \"Estimated coefficient\" }
+                    - { name: std_error, type: double, doc: \"Standard error\" }
+                    - { name: t_value, type: double, doc: \"t-statistic\" }
+                    - { name: p_value, type: double, doc: \"Corresponding (two-sided) p-value\" }
               - name: feature_nameHippocampus_R
-                type: "summary.Coefficient"
+                type: \"summary.Coefficient\"
         - name: aliased
-          doc: "named logical vector showing if the original coefficients are aliased"
+          doc: \"named logical vector showing if the original coefficients are aliased\"
           type:
             type: record
             fields:
               - { name: _intercept_, type: boolean }
               - { name: feature_nameHippocampus_R, type: boolean }
         - name: sigma
-          doc: "the square root of the estimated variance of the random error
+          doc: \"the square root of the estimated variance of the random error
                        sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),
-                where R[i] is the i-th residual, ‘residuals[i]’"
+                where R[i] is the i-th residual, ‘residuals[i]’\"
           type: double
         - name: degrees_freedom
-          doc: "Degrees of freedom, a 3-vector (p, n-p, p*), the first being
+          doc: \"Degrees of freedom, a 3-vector (p, n-p, p*), the first being
                 the number of non-aliased coefficients, the last being the
-                total number of coefficients"
+                total number of coefficients\"
           type:
             type: array
             items:
               type: double
         - name: r_squared
-          doc: "R squared"
+          doc: \"R squared\"
           type: double
         - name: adj_r_squared
-          doc: "Adjusted R squared"
+          doc: \"Adjusted R squared\"
         - name: cov_unscaled
-          doc: "Matrix of covariance unscaled. Same columns as coefficients"
+          doc: \"Matrix of covariance unscaled. Same columns as coefficients\"
           type:
             type: array
             items:
               type: double
     init:
       coefficients:
-        _intercept: { estimate: 0.009194024, std_error: 0.0001250205, t_value: 73.54014356, p_value: 1.505059e-87 }
-        feature_nameHippocampus_R: { estimate: -0.000005856, std_error: 0.0001768057, t_value: -0.03312111, p_value: 9.736454e-01 }
+        _intercept_: { estimate: 0.009194024, std_error: 0.000125020479350956, t_value: 73.5401435647245, p_value: 1.50505881578065e-87 }
+        feature_nameHippocampus_R: { estimate: -5.85599999999931e-06, std_error: 0.000176805657472508, t_value: -0.0331211120939944, p_value: 0.973645372090369 }
       aliased:
-        _intercept_: false
-        feature_nameHippocampus_R: false
-      sigma: 0.0008840283
-      degrees_freedom: [2, 98, 2]
-      r_squared: 1.119383e-05
-      adj_r_squared: -0.01019277
-      cov_unscaled: [
-        [0.02, -0.02],
-        [-0.02, 0.04]
-      ]
+        _intercept_: FALSE
+        feature_nameHippocampus_R: FALSE
+      sigma: 0.000884028287362539
+      degrees_freedom: [2,98,2]
+      r_squared: 1.1193834557313e-05
+      adj_r_squared: -0.010192773575294
+      cov_unscaled: [[0.02,-0.02],[-0.02,0.04]]
+
 action: null

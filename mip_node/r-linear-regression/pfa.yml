@@ -20,26 +20,14 @@ cells:
       type: record
       name: Coefficients
       fields:
-        - {name: _intercept_, type: double}
 {{#names}}
         - {name: {{.}}, type: double}
 {{/names}}
     init:
-      _intercept_: 0.009194024
-      feature_nameHippocampus_R: -0.000005856
-  residuals:
-    doc: "Matrix of residuals. Same columns as coefficients"
-    type:
-      type: array
-      items:
-        type: array
-        items:
-          type: double
-    init:
-      [
-        [1.563012e-08, -1.563012e-08],
-        [-1.563012e-08, 3.126024e-08]
-      ]
+{{#coefficients}}
+      {{ coeff_name }}: {{ coefficient }}
+{{/coefficients}}
+{{#if_anova}}
   anova:
     doc: "Result from Anova"
     type: array
@@ -47,8 +35,8 @@ cells:
       type: array
       items:
         type: double
-    init:
-      [[]]
+    init: {{ anova }}
+{{/if_anova}}
   summary:
     doc: "R summary"
     type:
@@ -117,18 +105,17 @@ cells:
               type: double
     init:
       coefficients:
-        _intercept: { estimate: 0.009194024, std_error: 0.0001250205, t_value: 73.54014356, p_value: 1.505059e-87 }
-        feature_nameHippocampus_R: { estimate: -0.000005856, std_error: 0.0001768057, t_value: -0.03312111, p_value: 9.736454e-01 }
+{{#summary_coefficients}}
+        {{ coeff_name }}: { estimate: {{ estimate }}, std_error: {{ std_error }}, t_value: {{ t_value }}, p_value: {{ p_value }} }
+{{/summary_coefficients}}
       aliased:
-        _intercept_: false
-        feature_nameHippocampus_R: false
-      sigma: 0.0008840283
-      degrees_freedom: [2, 98, 2]
-      r_squared: 1.119383e-05
-      adj_r_squared: -0.01019277
-      cov_unscaled: [
-        [0.02, -0.02],
-        [-0.02, 0.04]
-      ]
+{{#summary_aliased}}
+        {{ coeff_name }}: {{ aliased }}
+{{/summary_aliased}}
+      sigma: {{ summary_sigma }}
+      degrees_freedom: {{ summary_degrees_freedom }}
+      r_squared: {{ summary_r_squared }}
+      adj_r_squared: {{ summary_adj_r_squared }}
+      cov_unscaled: {{ summary_cov_unscaled }}
 
 action: null

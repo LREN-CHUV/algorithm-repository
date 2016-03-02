@@ -34,7 +34,7 @@ varname <- Sys.getenv("PARAM_varname");
 covarnames <- strsplit(Sys.getenv("PARAM_covarnames"), ",");
 groupstr <- Sys.getenv("PARAM_groups", "");
 if (groupstr == "") {
-	groups <- c();
+    groups <- c();
 } else {
     groups <- strsplit(Sys.getenv("PARAM_groups", ""), ",");
 }
@@ -44,24 +44,49 @@ data <- fetchData();
 
 # Perform the computation
 res <- LRegress_Node(data, varname, covarnames, groups);
-coefficients <- as.data.frame(res$summary$coefficients);
 
-summary <- list(names = colnames(coefficients),
-	            coefficients = coefficients,
-	            aliased = res$summary$aliased,
-	            sigma = res$summary$sigma,
-	            df = res$summary$df,
-	            r_squared = res$summary$r.squared,
-	            adj_r_squared = res$summary$adj.r.squared,
-	            cov_unscaled = as.data.frame(res$summary$cov.unscaled)
-	           );
+# Build the response
+coeff_names <- names(res$coefficients);
+coeff_names[1] <- "_intercept_";
+coeff_names0 <- coeff_name[2:length(coeff_names)];
 
-#	            summary_residuals = res$summary$residuals,
+coefficients <- as.data.frame(cbind(coeff_names, res$coefficients));
+colnames(coefficients) <- c("coeff_name", "coefficient");
+
+if (is.na(res$anova)) {
+    anova <- matrix(nrow=0,ncol=0);
+    if_anova <- FALSE;
+} else {
+    anova <- as.matrix(res$anova);
+    if_anova <- TRUE;
+}
+
+summary_coefficients <- as.data.frame(cbind(coeff_names, res$summary$coefficients));
+colnames(summary_coefficients) <- c("coeff_name", "estimate", "std_error", "t_value", "p_value");
+
+summary_aliased <- as.data.frame(cbind(coeff_names, res$summary$aliased));
+colnames(summary_aliased) <- c("coeff_name", "aliased");
+
+summary_degrees_freedom <- as.vector(res$summary$df);
+
+summary_cov_unscaled <- as.matrix(res$summary$cov.unscaled);
+
+# Ensure that we use only supported types: list, data.frame
+store <- list(names = coeff_names,
+              names0 = coeff_names0,
+              coefficients = unname(rowSplit(coefficients)),
+              if_anova = if_anova,
+              anova = toJSON(anova),
+              summary_coefficients = unname(rowSplit(summary_coefficients)),
+              summary_aliased = unname(rowSplit(summary_aliased)),
+              summary_sigma = res$summary$sigma,
+              summary_degrees_freedom = toJSON(summary_degrees_freedom),
+              summary_r_squared = res$summary$r.squared,
+              summary_adj_r_squared = res$summary$adj.r.squared,
+              summary_cov_unscaled = toJSON(summary_cov_unscaled));
+#                summary_residuals = res$summary$residuals,
 
 template <- readLines("/src/pfa.yml");
 
-# Ensure that we use only supported types: list, data.frame
-store <- list(coefficients = res$coefficients, residuals = as.data.frame(res$residuals), anova = as.data.frame(res$anova), summary = summary);
-
 # Store results in the database
-saveResults(store, fn = 'r-linear-regression');
+saveResults(whisker.render(template, store), fn = 'r-linear-regression');
