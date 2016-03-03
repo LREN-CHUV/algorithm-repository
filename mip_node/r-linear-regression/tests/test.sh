@@ -28,9 +28,6 @@ $DOCKER run --rm $OPTS \
   --link analyticsdb:outdb \
   -e JOB_ID=002 \
   -e NODE=Test \
-  -e PARAM_query="select feature_name, tissue1_volume from brain_feature order by tissue1_volume" \
-  -e PARAM_varname="tissue1_volume" \
-  -e PARAM_covarnames="feature_name" \
   -e IN_JDBC_DRIVER=org.postgresql.Driver \
   -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
   -e IN_JDBC_URL=jdbc:postgresql://indb:5432/postgres \
