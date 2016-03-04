@@ -11,14 +11,14 @@ input:
 
 output:
   doc: "Output is the estimate of the variable"
-  type: double
+  type: null
 
 cells:
   coefficients:
-    doc: "List of coefficients of the model parameters"
     type:
-      type: record
       name: Coefficients
+      type: record
+      doc: "List of coefficients of the model parameters"
       fields:
 {{#names}}
         - {name: {{.}}, type: double}
@@ -38,23 +38,26 @@ cells:
     init: {{ anova }}
 {{/if_anova}}
   summary:
-    doc: "R summary"
     type:
       type: record
       name: Summary
+      doc: "R summary"
       fields:
         - name: residuals
-          doc: "The _weighted_ residuals, the usual residuals rescaled by
-                the square root of the weights specified in the call to ‘lm’"
-          type: array
-          items:
+          doc: >
+            The _weighted_ residuals, the usual residuals rescaled by
+            the square root of the weights specified in the call to ‘lm’
+          type:
             type: array
             items:
-              type: double
+              type: array
+              items:
+                type: double
         - name: coefficients
-          doc: "a p x 4 matrix with columns for the estimated
-                coefficient, its standard error, t-statistic and
-                corresponding (two-sided) p-value. Aliased coefficients are omitted"
+          doc: >
+            a p x 4 matrix with columns for the estimated
+            coefficient, its standard error, t-statistic and
+            corresponding (two-sided) p-value. Aliased coefficients are omitted
           type:
             type: record
             name: CoefficientMatrix
@@ -76,18 +79,22 @@ cells:
           doc: "named logical vector showing if the original coefficients are aliased"
           type:
             type: record
+            name: Aliased
+            namespace: summary
             fields:
               - { name: _intercept_, type: boolean }
               - { name: feature_nameHippocampus_R, type: boolean }
         - name: sigma
-          doc: "the square root of the estimated variance of the random error
-                       sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),
-                where R[i] is the i-th residual, ‘residuals[i]’"
+          doc: >
+            the square root of the estimated variance of the random error
+                sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),
+            where R[i] is the i-th residual, ‘residuals[i]’
           type: double
         - name: degrees_freedom
-          doc: "Degrees of freedom, a 3-vector (p, n-p, p*), the first being
-                the number of non-aliased coefficients, the last being the
-                total number of coefficients"
+          doc: >
+            Degrees of freedom, a 3-vector (p, n-p, p*), the first being
+            the number of non-aliased coefficients, the last being the
+            total number of coefficients
           type:
             type: array
             items:
@@ -97,17 +104,21 @@ cells:
           type: double
         - name: adj_r_squared
           doc: "Adjusted R squared"
+          type: double
         - name: cov_unscaled
           doc: "Matrix of covariance unscaled. Same columns as coefficients"
           type:
             type: array
             items:
-              type: double
+              type: array
+              items:
+                type: double
     init:
       coefficients:
 {{#summary_coefficients}}
         {{ coeff_name }}: { estimate: {{ estimate }}, std_error: {{ std_error }}, t_value: {{ t_value }}, p_value: {{ p_value }} }
 {{/summary_coefficients}}
+      residuals: [] #TODO
       aliased:
 {{#summary_aliased}}
         {{ coeff_name }}: {{ aliased }}
