@@ -1,8 +1,8 @@
 {
   "input": {
     "doc": "Input is the list of covariables",
-    "type": "record",
     "name": "Covariables",
+    "type": "record",
     "fields": [
       {
         "name": "_intercept_",
@@ -15,14 +15,15 @@
     ]
   },
   "output": {
-    "type": null
+    "doc": "Output is the estimate of the variable",
+    "type": "null"
   },
   "cells": {
     "coefficients": {
       "type": {
-        "type": "record",
         "doc": "List of coefficients of the model parameters",
         "name": "Coefficients",
+        "type": "record",
         "fields": [
           {
             "name": "_intercept_",
@@ -39,15 +40,46 @@
         "feature_nameHippocampus_R": -0.00000585599999999931
       }
     },
+    "anova": {
+      "type": {
+        "doc": "Result from Anova",
+        "type": "array",
+        "items": {
+          "type": "array",
+          "items": {
+            "type": [
+              "double",
+              "null"
+            ]
+          }
+        }
+      },
+      "init": [
+        [
+          1,
+          8.5732e-10,
+          8.5732e-10,
+          0.0011,
+          0.9736
+        ],
+        [
+          98,
+          0.0001,
+          7.8151e-7,
+          null,
+          null
+        ]
+      ]
+    },
     "summary": {
       "type": {
-        "type": "record",
-        "name": "Summary",
         "doc": "R summary",
+        "name": "Summary",
+        "type": "record",
         "fields": [
           {
             "name": "residuals",
-            "doc": "The _weighted_ residuals, the usual residuals rescaled by the square root of the weights specified in the call to ‘lm’\n",
+            "doc": "The _weighted_ residuals, the usual residuals rescaled by the square root of the weights specified in the call to lm\n",
             "type": {
               "type": "array",
               "items": {
@@ -124,7 +156,7 @@
           },
           {
             "name": "sigma",
-            "doc": "the square root of the estimated variance of the random error     sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),\nwhere R[i] is the i-th residual, ‘residuals[i]’\n",
+            "doc": "the square root of the estimated variance of the random error     sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),\nwhere R[i] is the i-th residual, residuals[i]\n",
             "type": "double"
           },
           {
@@ -177,6 +209,7 @@
             "p_value": 0.973645372090369
           }
         },
+        "residuals": [],
         "aliased": {
           "_intercept_": false,
           "feature_nameHippocampus_R": false

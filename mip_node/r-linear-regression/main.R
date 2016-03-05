@@ -56,7 +56,19 @@ if (is.na(res$anova)) {
     anova <- matrix(nrow=0,ncol=0);
     if_anova <- FALSE;
 } else {
-    anova <- as.matrix(res$anova);
+    a <- as.matrix(res$anova);
+    # R scripter, abandon any attempt at high level programming
+    anova <- list();
+    for (i in 1:nrow(a)) {
+        anova <- cbind(anova, "      -");
+        for (j in 1:ncol(a)) {
+          if (is.na(a[i,j])) {
+            anova <- c(anova, "        - null");
+          } else {
+            anova <- c(anova, paste("        - double:", a[i,j]));
+          }
+        }
+    }
     if_anova <- TRUE;
 }
 
@@ -74,7 +86,7 @@ summary_cov_unscaled <- as.matrix(res$summary$cov.unscaled);
 store <- list(names = coeff_names,
               coefficients = unname(rowSplit(coefficients)),
               if_anova = if_anova,
-              anova = toJSON(anova),
+              anova = anova,
               summary_coefficients = unname(rowSplit(summary_coefficients)),
               summary_aliased = unname(rowSplit(summary_aliased)),
               summary_sigma = res$summary$sigma,

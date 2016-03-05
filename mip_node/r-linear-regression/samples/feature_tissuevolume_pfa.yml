@@ -2,37 +2,47 @@
 
 input:
   doc: "Input is the list of covariables"
-  type: record
   name: Covariables
+  type: record
   fields:
     - {name: _intercept_, type: double}
     - {name: feature_nameHippocampus_R, type: double}
 output:
   doc: "Output is the estimate of the variable"
-  type: null
+  type: "null"
 
 cells:
   coefficients:
     type:
-      type: record
-      name: Coefficients
       doc: "List of coefficients of the model parameters"
+      name: Coefficients
+      type: record
       fields:
         - {name: _intercept_, type: double}
         - {name: feature_nameHippocampus_R, type: double}
     init:
       _intercept_: 0.009194024
       feature_nameHippocampus_R: -5.85599999999931e-06
+
+  anova:
+    type:
+      doc: "Result from Anova"
+      type: array
+      items:
+        type: array
+        items:
+          type: ["double", "null"]
+    init: [[1,8.5732e-10,8.5732e-10,0.0011,0.9736],[98,0.0001,7.8151e-07,null,null]]
   summary:
     type:
-      type: record
-      name: Summary
       doc: "R summary"
+      name: Summary
+      type: record
       fields:
         - name: residuals
           doc: >
             The _weighted_ residuals, the usual residuals rescaled by
-            the square root of the weights specified in the call to ‘lm’
+            the square root of the weights specified in the call to lm
           type:
             type: array
             items:
@@ -74,7 +84,7 @@ cells:
           doc: >
             the square root of the estimated variance of the random error
                 sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),
-            where R[i] is the i-th residual, ‘residuals[i]’
+            where R[i] is the i-th residual, residuals[i]
           type: double
         - name: degrees_freedom
           doc: >
@@ -103,6 +113,7 @@ cells:
       coefficients:
         _intercept_: { estimate: 0.009194024, std_error: 0.000125020479350956, t_value: 73.5401435647245, p_value: 1.50505881578065e-87 }
         feature_nameHippocampus_R: { estimate: -5.85599999999931e-06, std_error: 0.000176805657472508, t_value: -0.0331211120939944, p_value: 0.973645372090369 }
+      residuals: [] #TODO
       aliased:
         _intercept_: FALSE
         feature_nameHippocampus_R: FALSE

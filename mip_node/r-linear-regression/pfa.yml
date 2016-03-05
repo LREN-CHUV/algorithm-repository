@@ -2,8 +2,8 @@
 
 input:
   doc: "Input is the list of covariables"
-  type: record
   name: Covariables
+  type: record
   fields:
 {{#names}}
     - {name: {{.}}, type: double}
@@ -11,14 +11,14 @@ input:
 
 output:
   doc: "Output is the estimate of the variable"
-  type: null
+  type: "null"
 
 cells:
   coefficients:
     type:
+      doc: "List of coefficients of the model parameters"
       name: Coefficients
       type: record
-      doc: "List of coefficients of the model parameters"
       fields:
 {{#names}}
         - {name: {{.}}, type: double}
@@ -29,30 +29,35 @@ cells:
 {{/coefficients}}
 {{#if_anova}}
   anova:
-    doc: "Result from Anova"
-    type: array
-    items:
+    type:
+      doc: "Result from Anova"
       type: array
       items:
-        type: double
-    init: {{ anova }}
+        type: array
+        items:
+          type: ["double", "null"]
+    init:
+{{#anova}}
+{{.}}
+{{/anova}}
 {{/if_anova}}
   summary:
     type:
-      type: record
-      name: Summary
       doc: "R summary"
+      name: Summary
+      type: record
       fields:
         - name: residuals
           doc: >
             The _weighted_ residuals, the usual residuals rescaled by
             the square root of the weights specified in the call to ‘lm’
           type:
-            type: array
-            items:
-              type: array
+            - "null"
+            - type: array
               items:
-                type: double
+                type: array
+                items:
+                  type: double
         - name: coefficients
           doc: >
             a p x 4 matrix with columns for the estimated
