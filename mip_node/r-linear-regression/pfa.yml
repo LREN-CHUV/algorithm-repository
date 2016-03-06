@@ -31,15 +31,39 @@ cells:
   anova:
     type:
       doc: "Result from Anova"
-      type: array
-      items:
-        type: array
-        items:
-          type: ["double", "null"]
+      type: record
+      fields:
+        - name: {{ anova_coeff_header }}
+          type:
+            type: record
+            name: AnovaCoefficient
+            namespace: anova
+            fields:
+              - { name: degree_freedom, type: int, doc: "Degree of freedom" }
+              - { name: sum_sq, type: double, doc: "Sum Sq" }
+              - { name: mean_sq, type: double, doc: "Mean Sq" }
+              - { name: f_value, type: double, doc: "f-value" }
+              - { name: p_value, type: double, doc: "p-value" }
+{{#anova_coeff_tail}}
+        - name: {{ . }}
+          type: anova.AnovaCoefficient
+{{/anova_coeff_tail}}
+        - name: residuals
+          type:
+            type: record
+            name: AnovaResiduals
+            namespace: anova
+            fields:
+              - { name: degree_freedom, type: int, doc: "Degree of freedom" }
+              - { name: sum_sq, type: double, doc: "Sum Sq" }
+              - { name: mean_sq, type: double, doc: "Mean Sq" }
     init:
-{{#anova}}
-{{.}}
-{{/anova}}
+{{#anova_coefficients}}
+      {{ coeff_name }}: { degree_freedom: {{ degree_freedom }}, sum_sq: {{ sum_sq }}, mean_sq: {{ mean_sq }}, f_value: {{ f_value}}, p_value: {{ p_value }} }
+{{/anova_coefficients}}
+{{#anova_residuals}}
+      residuals: { degree_freedom: {{ degree_freedom }}, sum_sq: {{ sum_sq }}, mean_sq: {{ mean_sq }} }
+{{/anova_residuals}}
 {{/if_anova}}
   summary:
     type:

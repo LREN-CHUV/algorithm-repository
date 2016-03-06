@@ -56,20 +56,15 @@ if (is.na(res$anova)) {
     anova <- matrix(nrow=0,ncol=0);
     if_anova <- FALSE;
 } else {
-    a <- as.matrix(res$anova);
-    # R scripter, abandon any attempt at high level programming
-    anova <- list();
-    for (i in 1:nrow(a)) {
-        anova <- cbind(anova, "      -");
-        for (j in 1:ncol(a)) {
-          if (is.na(a[i,j])) {
-            anova <- c(anova, "        - null");
-          } else {
-            anova <- c(anova, paste("        - double:", a[i,j]));
-          }
-        }
-    }
     if_anova <- TRUE;
+    anova_residuals <- res$anova[nrow(res$anova),];
+    colnames(anova_residuals) <- c("degree_freedom", "sum_sq", "mean_sq", "f_value", "p_value");
+    anova_coefficients <- res$anova[-nrow(res$anova),];
+    anova_coefficients <- as.data.frame(cbind(rownames(anova_coefficients), anova_coefficients));
+    colnames(anova_coefficients) <- c("coeff_name", "degree_freedom", "sum_sq", "mean_sq", "f_value", "p_value");
+    anova_coeffs <- as.list(rownames(anova_coefficients));
+    anova_coeff_header <- anova_coeffs[[1]];
+    anova_coeff_tail <- anova_coeffs[-1];
 }
 
 summary_coefficients <- as.data.frame(cbind(coeff_names, res$summary$coefficients));
@@ -86,7 +81,10 @@ summary_cov_unscaled <- as.matrix(res$summary$cov.unscaled);
 store <- list(names = coeff_names,
               coefficients = unname(rowSplit(coefficients)),
               if_anova = if_anova,
-              anova = anova,
+              anova_coeff_header = anova_coeff_header,
+              anova_coeff_tail = anova_coeff_tail,
+              anova_coefficients = anova_coefficients,
+              anova_residuals = anova_residuals,
               summary_coefficients = unname(rowSplit(summary_coefficients)),
               summary_aliased = unname(rowSplit(summary_aliased)),
               summary_sigma = res$summary$sigma,
