@@ -38,6 +38,7 @@ if (groupstr == "") {
 } else {
     groups <- strsplit(Sys.getenv("PARAM_groups", ""), ",");
 }
+docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-linear-regression:latest");
 
 # Fetch the data
 data <- fetchData();
@@ -96,6 +97,7 @@ summary_residuals <- list(
 store <- list(variable = varname,
               covariables = toJSON(covarnames, auto_unbox=T),
               groups = toJSON(c(paste(groups, sep=":"))),
+              docker_image = docker_image,
               model_names = model_names,
               model_const = model_const,
               model_coeff = unname(rowSplit(model_coeff)),

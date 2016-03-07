@@ -1,15 +1,14 @@
 {
-  "doc": "Linear Regression Model\n",
-  "meta": null,
+  "name": "linear_regression",
+  "doc": "Univariate Linear Regression Model\n",
+  "metadata": {
+    "docker_image": "hbpmip/r-linear-regression:latest"
+  },
   "input": {
     "doc": "Input is the list of covariables",
     "name": "Covariables",
     "type": "record",
     "fields": [
-      {
-        "name": "(Intercept)",
-        "type": "double"
-      },
       {
         "name": "feature_nameHippocampus_R",
         "type": "double"
@@ -18,9 +17,50 @@
   },
   "output": {
     "doc": "Output is the estimate of the variable",
-    "type": "null"
+    "type": "double"
   },
   "cells": {
+    "query": {
+      "type": {
+        "doc": "Definition of the query that has produced this model",
+        "name": "Query",
+        "type": "record",
+        "fields": [
+          {
+            "name": "variable",
+            "type": "string",
+            "doc": "Dependent variable"
+          },
+          {
+            "name": "covariables",
+            "doc": "List of explanatory variables",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "groups",
+            "doc": "The form ‘first:second’ indicates the set of terms obtained by taking the interactions of all terms in ‘first’\nwith all terms in ‘second’.\nThe specification ‘first*second’ indicates the _cross_ of ‘first’ and ‘second’.\nThis is the same as ‘first + second + first:second’\"\n",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "init": {
+        "variable": "tissue1_volume",
+        "covariables": [
+          "feature_name"
+        ],
+        "groups": []
+      }
+    },
     "model": {
       "type": {
         "doc": "List of coefficients of the model parameters, compatible with PFA function model.reg.linear",
@@ -33,16 +73,19 @@
             "doc": "Constant of the linear regression model"
           },
           {
-            "name": "Coefficients",
+            "name": "coeff",
             "doc": "Coefficients of the linear regression model",
-            "type": "record",
-            "namespace": "model",
-            "fields": [
-              {
-                "name": "feature_nameHippocampus_R",
-                "type": "double"
-              }
-            ]
+            "type": {
+              "type": "record",
+              "name": "Coefficients",
+              "namespace": "model",
+              "fields": [
+                {
+                  "name": "feature_nameHippocampus_R",
+                  "type": "double"
+                }
+              ]
+            }
           }
         ]
       },
@@ -187,7 +230,7 @@
               "namespace": "summary",
               "fields": [
                 {
-                  "name": "(Intercept)",
+                  "name": "_intercept_",
                   "type": {
                     "type": "record",
                     "name": "Coefficient",
@@ -232,7 +275,7 @@
               "namespace": "summary",
               "fields": [
                 {
-                  "name": "(Intercept)",
+                  "name": "_intercept_",
                   "type": "boolean"
                 },
                 {
@@ -284,7 +327,7 @@
       },
       "init": {
         "coefficients": {
-          "(Intercept)": {
+          "_intercept_": {
             "estimate": 0.009194024,
             "std_error": 0.000125020479350956,
             "t_value": 73.5401435647245,
@@ -305,7 +348,7 @@
           "max": 0.002268976
         },
         "aliased": {
-          "(Intercept)": false,
+          "_intercept_": false,
           "feature_nameHippocampus_R": false
         },
         "sigma": 0.000884028287362539,
@@ -329,5 +372,14 @@
       }
     }
   },
-  "action": null
+  "action": [
+    {
+      "model.reg.linear": [
+        "input",
+        {
+          "cell": "model"
+        }
+      ]
+    }
+  ]
 }

@@ -5,18 +5,18 @@ name: linear_regression
 doc: |
   Univariate Linear Regression Model
 
-meta:
-
+metadata:
+  docker_image: "hbpmip/r-linear-regression:latest"
 
 input:
   doc: "Input is the list of covariables"
   name: Covariables
   type: record
   fields:
-    - {name: "feature_name", type: double}
+    - { name: "feature_nameHippocampus_R", type: double }
 output:
   doc: "Output is the estimate of the variable"
-  type: "null"
+  type: "double"
 
 cells:
   query:
@@ -28,18 +28,20 @@ cells:
         - { name: "variable", type: "string", doc: "Dependent variable" }
         - name: "covariables"
           doc: "List of explanatory variables"
-          type: "array"
-          items:
-            type: "string"
+          type:
+            type: "array"
+            items:
+              type: "string"
         - name: "groups"
           doc: |
             The form ‘first:second’ indicates the set of terms obtained by taking the interactions of all terms in ‘first’
             with all terms in ‘second’.
             The specification ‘first*second’ indicates the _cross_ of ‘first’ and ‘second’.
             This is the same as ‘first + second + first:second’"
-          type: "array"
-          items:
-            type: "string"
+          type:
+            type: "array"
+            items:
+              type: "string"
     init:
       variable: "tissue1_volume"
       covariables: ["feature_name"]
@@ -53,11 +55,12 @@ cells:
         - { name: "const", type: "double", doc: "Constant of the linear regression model" }
         - name: "coeff"
           doc: "Coefficients of the linear regression model"
-          type: record
-          name: Coefficients
-          namespace: model
-          fields:
-            - {name: "feature_nameHippocampus_R", type: double}
+          type:
+            type: record
+            name: Coefficients
+            namespace: model
+            fields:
+              - {name: "feature_nameHippocampus_R", type: double}
     init:
       const: 0.009194024
       coeff:
@@ -193,4 +196,7 @@ cells:
       adj_r_squared: -0.010192773575294
       cov_unscaled: [[0.02,-0.02],[-0.02,0.04]]
 
-action: null
+action:
+  - model.reg.linear:
+    - input
+    - cell: model
