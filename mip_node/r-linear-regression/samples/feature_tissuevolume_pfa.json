@@ -1,11 +1,13 @@
 {
+  "doc": "Linear Regression Model\n",
+  "meta": null,
   "input": {
     "doc": "Input is the list of covariables",
     "name": "Covariables",
     "type": "record",
     "fields": [
       {
-        "name": "_intercept_",
+        "name": "(Intercept)",
         "type": "double"
       },
       {
@@ -19,25 +21,36 @@
     "type": "null"
   },
   "cells": {
-    "coefficients": {
+    "model": {
       "type": {
-        "doc": "List of coefficients of the model parameters",
-        "name": "Coefficients",
+        "doc": "List of coefficients of the model parameters, compatible with PFA function model.reg.linear",
+        "name": "LinearModel",
         "type": "record",
         "fields": [
           {
-            "name": "_intercept_",
-            "type": "double"
+            "name": "const",
+            "type": "double",
+            "doc": "Constant of the linear regression model"
           },
           {
-            "name": "feature_nameHippocampus_R",
-            "type": "double"
+            "name": "Coefficients",
+            "doc": "Coefficients of the linear regression model",
+            "type": "record",
+            "namespace": "model",
+            "fields": [
+              {
+                "name": "feature_nameHippocampus_R",
+                "type": "double"
+              }
+            ]
           }
         ]
       },
       "init": {
-        "_intercept_": 0.009194024,
-        "feature_nameHippocampus_R": -0.00000585599999999931
+        "const": 0.009194024,
+        "coeff": {
+          "feature_nameHippocampus_R": -0.00000585599999999931
+        }
       }
     },
     "anova": {
@@ -82,7 +95,7 @@
             }
           },
           {
-            "name": "residuals",
+            "name": "Residuals",
             "type": {
               "type": "record",
               "name": "AnovaResiduals",
@@ -116,7 +129,7 @@
           "f_value": 0.00109700806634294,
           "p_value": 0.973645372090369
         },
-        "residuals": {
+        "Residuals": {
           "degree_freedom": 98,
           "sum_sq": 0.0000765875892600001,
           "mean_sq": 7.81506012857144e-7
@@ -174,7 +187,7 @@
               "namespace": "summary",
               "fields": [
                 {
-                  "name": "_intercept_",
+                  "name": "(Intercept)",
                   "type": {
                     "type": "record",
                     "name": "Coefficient",
@@ -219,7 +232,7 @@
               "namespace": "summary",
               "fields": [
                 {
-                  "name": "_intercept_",
+                  "name": "(Intercept)",
                   "type": "boolean"
                 },
                 {
@@ -271,7 +284,7 @@
       },
       "init": {
         "coefficients": {
-          "_intercept_": {
+          "(Intercept)": {
             "estimate": 0.009194024,
             "std_error": 0.000125020479350956,
             "t_value": 73.5401435647245,
@@ -292,7 +305,7 @@
           "max": 0.002268976
         },
         "aliased": {
-          "_intercept_": false,
+          "(Intercept)": false,
           "feature_nameHippocampus_R": false
         },
         "sigma": 0.000884028287362539,

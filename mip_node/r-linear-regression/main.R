@@ -47,12 +47,13 @@ res <- LRegress_Node(data, varname, covarnames, groups);
 
 # Build the response
 coeff_names <- names(res$coefficients);
-coeff_names[1] <- "_intercept_";
 
-coefficients <- as.data.frame(cbind(coeff_names, res$coefficients));
-colnames(coefficients) <- c("coeff_name", "coefficient");
+model_const <- res$coefficients[[1]];
+model_coeff <- as.data.frame(cbind(coeff_names[-1], res$coefficients[-1]));
+colnames(model_coeff) <- c("coeff_name", "coefficient");
+model_names <- coeff_names[-1];
 
-if (is.na(res$anova)) {
+if (length(res$anova) == 1 && is.na(res$anova)) {
     anova <- matrix(nrow=0,ncol=0);
     if_anova <- FALSE;
 } else {
@@ -72,7 +73,7 @@ colnames(summary_coefficients) <- c("coeff_name", "estimate", "std_error", "t_va
 summary_coefficient_names <- rownames(summary_coefficients);
 summary_coefficient_names <- summary_coefficient_names[-1];
 
-summary_aliased <- as.data.frame(cbind(coeff_names, res$summary$aliased));
+summary_aliased <- as.data.frame(cbind(coeff_names, sapply(res$summary$aliased, function(x) {tolower(as.character(x))} )));
 colnames(summary_aliased) <- c("coeff_name", "aliased");
 summary_aliased_names <- rownames(summary_aliased);
 summary_aliased_names <- summary_aliased_names[-1];
@@ -91,8 +92,9 @@ summary_residuals <- list(
   max = max(summary_residual_values));
 
 # Ensure that we use only supported types: list, data.frame
-store <- list(names = coeff_names,
-              coefficients = unname(rowSplit(coefficients)),
+store <- list(names = model_names,
+              model_const = model_const,
+              model_coeff = unname(rowSplit(model_coeff)),
               if_anova = if_anova,
               anova_coeff_header = anova_coeff_header,
               anova_coeff_tail = anova_coeff_tail,

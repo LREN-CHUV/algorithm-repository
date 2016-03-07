@@ -20,19 +20,28 @@ output:
   type: "null"
 
 cells:
-  coefficients:
+  model:
     type:
-      doc: "List of coefficients of the model parameters"
-      name: Coefficients
+      doc: "List of coefficients of the model parameters, compatible with PFA function model.reg.linear"
+      name: LinearModel
       type: record
       fields:
+        - name: "const", type: double, doc="Constant of the linear regression model"
+        - name: "coeff"
+          doc: "Coefficients of the linear regression model"
+          type: record
+          name: Coefficients
+          namespace: model
+          fields:
 {{#names}}
-        - {name: "{{.}}", type: double}
+            - {name: "{{.}}", type: double}
 {{/names}}
     init:
-{{#coefficients}}
-      "{{ coeff_name }}": {{ coefficient }}
-{{/coefficients}}
+      const: {{ model_const }}
+      coeff:
+{{#model_coeff}}
+        "{{ coeff_name }}": {{ coefficient }}
+{{/model_coeff}}
 {{#if_anova}}
   anova:
     type:
@@ -55,7 +64,7 @@ cells:
         - name: "{{ . }}"
           type: anova.AnovaCoefficient
 {{/anova_coeff_tail}}
-        - name: residuals
+        - name: Residuals
           type:
             type: record
             name: AnovaResiduals
@@ -69,7 +78,7 @@ cells:
       "{{ coeff_name }}": { degree_freedom: {{ degree_freedom }}, sum_sq: {{ sum_sq }}, mean_sq: {{ mean_sq }}, f_value: {{ f_value}}, p_value: {{ p_value }} }
 {{/anova_coefficients}}
 {{#anova_residuals}}
-      residuals: { degree_freedom: {{ degree_freedom }}, sum_sq: {{ sum_sq }}, mean_sq: {{ mean_sq }} }
+      "Residuals": { degree_freedom: {{ degree_freedom }}, sum_sq: {{ sum_sq }}, mean_sq: {{ mean_sq }} }
 {{/anova_residuals}}
 {{/if_anova}}
   summary:
