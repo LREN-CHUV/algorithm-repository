@@ -92,8 +92,11 @@ summary_residuals <- list(
   q3 = summary_residual_quantile[[4]],
   max = max(summary_residual_values));
 
-# Ensure that we use only supported types: list, data.frame
-store <- list(names = model_names,
+# Ensure that we use only supported types: list, string
+store <- list(variable = varname,
+              covariables = toJSON(covarnames, auto_unbox=T),
+              groups = toJSON(c(paste(groups, sep=":"))),
+              model_names = model_names,
               model_const = model_const,
               model_coeff = unname(rowSplit(model_coeff)),
               if_anova = if_anova,

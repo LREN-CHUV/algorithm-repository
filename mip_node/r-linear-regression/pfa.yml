@@ -3,7 +3,7 @@
 name: linear_regression
 
 doc: |
-  Linear Regression Model
+  Univariate Linear Regression Model
 
 meta:
 
@@ -13,31 +13,56 @@ input:
   name: Covariables
   type: record
   fields:
-{{#names}}
+{{#model_names}}
     - {name: "{{.}}", type: double}
-{{/names}}
+{{/model_names}}
 
 output:
   doc: "Output is the estimate of the variable"
   type: "null"
 
 cells:
+  query:
+    type:
+      doc: "Definition of the query that has produced this model"
+      name: Query
+      type: record
+      fields:
+        - { name: "variable", type: "string", doc: "Dependent variable" }
+        - name: "covariables"
+          doc: "List of explanatory variables"
+          type: "array"
+          items:
+            type: "string"
+        - name: "groups"
+          doc: |
+            The form ‘first:second’ indicates the set of terms obtained by taking the interactions of all terms in ‘first’
+            with all terms in ‘second’.
+            The specification ‘first*second’ indicates the _cross_ of ‘first’ and ‘second’.
+            This is the same as ‘first + second + first:second’"
+          type: "array"
+          items:
+            type: "string"
+    init:
+      variable: "{{ variable }}"
+      covariables: {{{ covariables }}}
+      groups: {{{ groups }}}
   model:
     type:
       doc: "List of coefficients of the model parameters, compatible with PFA function model.reg.linear"
       name: LinearModel
       type: record
       fields:
-        - name: "const", type: double, doc="Constant of the linear regression model"
+        - { name: "const", type: "double", doc: "Constant of the linear regression model" }
         - name: "coeff"
           doc: "Coefficients of the linear regression model"
           type: record
           name: Coefficients
           namespace: model
           fields:
-{{#names}}
+{{#model_names}}
             - {name: "{{.}}", type: double}
-{{/names}}
+{{/model_names}}
     init:
       const: {{ model_const }}
       coeff:
