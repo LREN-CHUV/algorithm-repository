@@ -1,12 +1,18 @@
 ---
 
+doc: |
+  Linear Regression Model
+
+meta:
+
+
 input:
   doc: "Input is the list of covariables"
   name: Covariables
   type: record
   fields:
 {{#names}}
-    - {name: {{.}}, type: double}
+    - {name: "{{.}}", type: double}
 {{/names}}
 
 output:
@@ -21,11 +27,11 @@ cells:
       type: record
       fields:
 {{#names}}
-        - {name: {{.}}, type: double}
+        - {name: "{{.}}", type: double}
 {{/names}}
     init:
 {{#coefficients}}
-      {{ coeff_name }}: {{ coefficient }}
+      "{{ coeff_name }}": {{ coefficient }}
 {{/coefficients}}
 {{#if_anova}}
   anova:
@@ -46,7 +52,7 @@ cells:
               - { name: f_value, type: double, doc: "f-value" }
               - { name: p_value, type: double, doc: "p-value" }
 {{#anova_coeff_tail}}
-        - name: {{ . }}
+        - name: "{{ . }}"
           type: anova.AnovaCoefficient
 {{/anova_coeff_tail}}
         - name: residuals
@@ -60,7 +66,7 @@ cells:
               - { name: mean_sq, type: double, doc: "Mean Sq" }
     init:
 {{#anova_coefficients}}
-      {{ coeff_name }}: { degree_freedom: {{ degree_freedom }}, sum_sq: {{ sum_sq }}, mean_sq: {{ mean_sq }}, f_value: {{ f_value}}, p_value: {{ p_value }} }
+      "{{ coeff_name }}": { degree_freedom: {{ degree_freedom }}, sum_sq: {{ sum_sq }}, mean_sq: {{ mean_sq }}, f_value: {{ f_value}}, p_value: {{ p_value }} }
 {{/anova_coefficients}}
 {{#anova_residuals}}
       residuals: { degree_freedom: {{ degree_freedom }}, sum_sq: {{ sum_sq }}, mean_sq: {{ mean_sq }} }
@@ -96,7 +102,7 @@ cells:
             name: CoefficientMatrix
             namespace: summary
             fields:
-              - name: _intercept_
+              - name: "(Intercept)"
                 type:
                   type: record
                   name: Coefficient
@@ -107,7 +113,7 @@ cells:
                     - { name: t_value, type: double, doc: "t-statistic" }
                     - { name: p_value, type: double, doc: "Corresponding (two-sided) p-value" }
 {{#summary_coefficient_names}}
-              - name: {{.}}
+              - name: "{{.}}"
                 type: "summary.Coefficient"
 {{/summary_coefficient_names}}
         - name: aliased
@@ -117,9 +123,9 @@ cells:
             name: Aliased
             namespace: summary
             fields:
-              - { name: _intercept_, type: boolean }
+              - { name: "(Intercept)", type: boolean }
 {{#summary_aliased_names}}
-              - { name: {{.}}, type: boolean }
+              - { name: "{{.}}", type: boolean }
 {{/summary_aliased_names}}
         - name: sigma
           doc: >
@@ -153,7 +159,7 @@ cells:
     init:
       coefficients:
 {{#summary_coefficients}}
-        {{ coeff_name }}: { estimate: {{ estimate }}, std_error: {{ std_error }}, t_value: {{ t_value }}, p_value: {{ p_value }} }
+        "{{ coeff_name }}": { estimate: {{ estimate }}, std_error: {{ std_error }}, t_value: {{ t_value }}, p_value: {{ p_value }} }
 {{/summary_coefficients}}
       residuals:
         min: {{ summary_residuals.min }}
@@ -163,7 +169,7 @@ cells:
         max: {{ summary_residuals.max }}
       aliased:
 {{#summary_aliased}}
-        {{ coeff_name }}: {{ aliased }}
+        "{{ coeff_name }}": {{ aliased }}
 {{/summary_aliased}}
       sigma: {{ summary_sigma }}
       degrees_freedom: {{ summary_degrees_freedom }}
