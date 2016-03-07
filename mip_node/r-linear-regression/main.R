@@ -47,6 +47,7 @@ res <- LRegress_Node(data, varname, covarnames, groups);
 
 # Build the response
 coeff_names <- names(res$coefficients);
+coeff_names[1] <- "_intercept_";
 
 model_const <- res$coefficients[[1]];
 model_coeff <- as.data.frame(cbind(coeff_names[-1], res$coefficients[-1]));

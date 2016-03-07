@@ -1,5 +1,7 @@
 ---
 
+name: linear_regression
+
 doc: |
   Linear Regression Model
 
@@ -111,7 +113,7 @@ cells:
             name: CoefficientMatrix
             namespace: summary
             fields:
-              - name: "(Intercept)"
+              - name: "_intercept_"
                 type:
                   type: record
                   name: Coefficient
@@ -132,7 +134,7 @@ cells:
             name: Aliased
             namespace: summary
             fields:
-              - { name: "(Intercept)", type: boolean }
+              - { name: "_intercept_", type: boolean }
 {{#summary_aliased_names}}
               - { name: "{{.}}", type: boolean }
 {{/summary_aliased_names}}
