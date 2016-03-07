@@ -69,13 +69,26 @@ if (is.na(res$anova)) {
 
 summary_coefficients <- as.data.frame(cbind(coeff_names, res$summary$coefficients));
 colnames(summary_coefficients) <- c("coeff_name", "estimate", "std_error", "t_value", "p_value");
+summary_coefficient_names <- rownames(summary_coefficients);
+summary_coefficient_names <- summary_coefficient_names[-1];
 
 summary_aliased <- as.data.frame(cbind(coeff_names, res$summary$aliased));
 colnames(summary_aliased) <- c("coeff_name", "aliased");
+summary_aliased_names <- rownames(summary_aliased);
+summary_aliased_names <- summary_aliased_names[-1];
 
 summary_degrees_freedom <- as.vector(res$summary$df);
 
 summary_cov_unscaled <- as.matrix(res$summary$cov.unscaled);
+
+summary_residual_values  <- res$summary$residuals;
+summary_residual_quantile <- quantile(summary_residual_values);
+summary_residuals <- list(
+  min = min(summary_residual_values),
+  q1 = summary_residual_quantile[[2]],
+  median = median(summary_residual_values),
+  q3 = summary_residual_quantile[[4]],
+  max = max(summary_residual_values));
 
 # Ensure that we use only supported types: list, data.frame
 store <- list(names = coeff_names,
@@ -86,13 +99,15 @@ store <- list(names = coeff_names,
               anova_coefficients = anova_coefficients,
               anova_residuals = anova_residuals,
               summary_coefficients = unname(rowSplit(summary_coefficients)),
+              summary_coefficient_names = summary_coefficient_names,
+              summary_residuals = summary_residuals,
               summary_aliased = unname(rowSplit(summary_aliased)),
+              summary_aliased_names = summary_aliased_names,
               summary_sigma = res$summary$sigma,
               summary_degrees_freedom = toJSON(summary_degrees_freedom),
               summary_r_squared = res$summary$r.squared,
               summary_adj_r_squared = res$summary$adj.r.squared,
               summary_cov_unscaled = toJSON(summary_cov_unscaled));
-#                summary_residuals = res$summary$residuals,
 
 template <- readLines("/src/pfa.yml");
 

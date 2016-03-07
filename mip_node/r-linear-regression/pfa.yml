@@ -32,6 +32,7 @@ cells:
     type:
       doc: "Result from Anova"
       type: record
+      name: Anova
       fields:
         - name: {{ anova_coeff_header }}
           type:
@@ -73,15 +74,18 @@ cells:
       fields:
         - name: residuals
           doc: >
-            The _weighted_ residuals, the usual residuals rescaled by
+            Statistical summary of the _weighted_ residuals, the usual residuals rescaled by
             the square root of the weights specified in the call to ‘lm’
           type:
-            - "null"
-            - type: array
-              items:
-                type: array
-                items:
-                  type: double
+            type: record
+            name: ResidualsSummary
+            namespace: summary
+            fields:
+              - {name: min, type: double, doc: "Minimum value" }
+              - {name: q1, type: double, doc: "First quartile" }
+              - {name: median, type: double, doc: "Median value" }
+              - {name: q3, type: double, doc: "Third quartile" }
+              - {name: max, type: double, doc: "Maximum value" }
         - name: coefficients
           doc: >
             a p x 4 matrix with columns for the estimated
@@ -102,8 +106,10 @@ cells:
                     - { name: std_error, type: double, doc: "Standard error" }
                     - { name: t_value, type: double, doc: "t-statistic" }
                     - { name: p_value, type: double, doc: "Corresponding (two-sided) p-value" }
-              - name: feature_nameHippocampus_R
+{{#summary_coefficient_names}}
+              - name: {{.}}
                 type: "summary.Coefficient"
+{{/summary_coefficient_names}}
         - name: aliased
           doc: "named logical vector showing if the original coefficients are aliased"
           type:
@@ -112,7 +118,9 @@ cells:
             namespace: summary
             fields:
               - { name: _intercept_, type: boolean }
-              - { name: feature_nameHippocampus_R, type: boolean }
+{{#summary_aliased_names}}
+              - { name: {{.}}, type: boolean }
+{{/summary_aliased_names}}
         - name: sigma
           doc: >
             the square root of the estimated variance of the random error
@@ -147,7 +155,12 @@ cells:
 {{#summary_coefficients}}
         {{ coeff_name }}: { estimate: {{ estimate }}, std_error: {{ std_error }}, t_value: {{ t_value }}, p_value: {{ p_value }} }
 {{/summary_coefficients}}
-      residuals: [] #TODO
+      residuals:
+        min: {{ summary_residuals.min }}
+        q1: {{ summary_residuals.q1 }}
+        median: {{ summary_residuals.median }}
+        q3: {{ summary_residuals.q3 }}
+        max: {{ summary_residuals.max }}
       aliased:
 {{#summary_aliased}}
         {{ coeff_name }}: {{ aliased }}
