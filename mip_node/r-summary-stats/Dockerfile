@@ -11,6 +11,6 @@ LABEL eu.humanbrainproject.function=summary-stats \
       eu.humanbrainproject.function.organisation="LREN, CHUV" \
       eu.humanbrainproject.function.date="2015-06-27"
 
-COPY main.R /src/
+COPY main.R pfa.yml /src/
 COPY tests/testthat.R /src/tests/
 COPY tests/testthat/ /src/tests/testthat/

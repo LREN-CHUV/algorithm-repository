@@ -7,7 +7,9 @@
 #'
 #' - Input Parameters:
 #'      PARAM_query  : SQL query producing the dataframe to analyse
-#'      PARAM_colnames : Column separated list of columns to include in the stats
+#'      PARAM_varnames : Column separated list of variables
+#'      PARAM_covarnames : Column separated list of covariables
+#'      PARAM_groups : Column separated list of groups
 #' - Execution context:
 #'      JOB_ID : ID of the job
 #'      NODE : Node used for the execution of the script
@@ -24,17 +26,33 @@
 #'
 
 suppressMessages(library(hbpjdbcconnect));
-library(hbpsummarystats);
 library(jsonlite);
+library(whisker);
+library(hbpsummarystats);
 
 # Initialisation
-columns <- Sys.getenv("PARAM_colnames");
+varnames <- strsplit(Sys.getenv("PARAM_varnames"), ",");
+covarnames <- strsplit(Sys.getenv("PARAM_covarnames"), ",");
+groupstr <- Sys.getenv("PARAM_groups", "");
+if (groupstr == "") {
+    groups <- c();
+} else {
+    groups <- strsplit(Sys.getenv("PARAM_groups", ""), ",");
+}
+docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-summary-stats:latest");
+
+columns <- c(varnames, covarnames, groups);
 
 # Fetch the data
-y <- fetchData();
+data <- fetchData();
 
 # Perform the computation
-res <- tablesummarystats(y, strsplit(columns, ","));
+res <- tablesummarystats(data, columns);
+
+# Ensure that we use only supported types: list, string
+store <- list();
+
+template <- readLines("/src/pfa.yml");
 
 # Store results in the database
-saveResults(as.data.frame(res), fn = 'r-summary-stats');
+saveResults(whisker.render(template, store), fn = 'r-summary-stats', shape = 'pfa_yaml');

@@ -14,4 +14,3 @@ LABEL eu.humanbrainproject.function=linear-regression \
 COPY main.R pfa.yml /src/
 COPY tests/testthat.R /src/tests/
 COPY tests/testthat/ /src/tests/testthat/
-

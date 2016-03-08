@@ -1,0 +1,89 @@
+---
+
+name: summary_statistics
+
+doc: |
+  Descriptive statistics for a dataset
+
+metadata:
+  docker_image: "{{ docker_image }}"
+
+input:
+  type: "null"
+
+output:
+  type: "null"
+
+cells:
+  query:
+    type:
+      doc: "Definition of the query that has produced this model"
+      name: Query
+      type: record
+      fields:
+        -
+          name: "variables"
+          doc: "List of dependent variables"
+          type:
+            type: "array"
+            items:
+              type: "string"
+        -
+          name: "covariables"
+          doc: "List of explanatory variables"
+          type:
+            type: "array"
+            items:
+              type: "string"
+        -
+          name: "groups"
+          doc: |
+            The form ‘first:second’ indicates the set of terms obtained by taking the interactions of all terms in ‘first’
+            with all terms in ‘second’.
+            The specification ‘first*second’ indicates the _cross_ of ‘first’ and ‘second’.
+            This is the same as ‘first + second + first:second’"
+          type:
+            type: "array"
+            items:
+              type: "string"
+        - { name: "sql", type: "string", doc: "SQL query" }
+        - { name: "count", type: "int", doc: "Number of records selected by the query" }
+    init:
+      variables: {{{ variables }}}
+      covariables: {{{ covariables }}}
+      groups: {{{ groups }}}
+      sql: "{{ sql }}"
+      count: "{{ data_count }}"
+  summary:
+    type:
+      doc: "Descriptive summary"
+      type: record
+      name: DescriptiveSummary
+      fields:
+        - {name: min, type: double, doc: "Minimum value" }
+        - {name: q1, type: double, doc: "First quartile" }
+        - {name: median, type: double, doc: "Median value" }
+        - {name: q3, type: double, doc: "Third quartile" }
+        - {name: max, type: double, doc: "Maximum value" }
+        - {name: mean, type: double, doc: "Mean value" }
+        - {name: std, type: double, doc: "Standard deviation" }
+        - {name: sum, type: double, doc: "Sum" }
+        - {name: count, type: double, doc: "Count" }
+    init:
+{{#summary}}
+      "{{ name }}":
+        min: {{ min }}
+        q1: {{ q1 }}
+        median: {{ median }}
+        q3: {{ q3 }}
+        max: {{ max }}
+        mean: {{ mean }}
+        std: {{ std }}
+        sum: {{ sum }}
+        count: {{ count }}
+{{/summary}}
+
+action:
+  null
+
+...
