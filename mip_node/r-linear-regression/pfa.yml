@@ -158,8 +158,7 @@ cells:
                     - { name: t_value, type: double, doc: "t-statistic" }
                     - { name: p_value, type: double, doc: "Corresponding (two-sided) p-value" }
 {{#summary_coefficient_names}}
-              - name: "{{.}}"
-                type: "summary.Coefficient"
+              - { name: "{{.}}", type: "summary.Coefficient" }
 {{/summary_coefficient_names}}
         -
           name: aliased

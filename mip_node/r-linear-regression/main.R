@@ -51,11 +51,15 @@ input_defs <- apply(inputs[c('name','type')], 1, function(y) {
     character=toJSON(list(name=y['name'], type=list(type="enum", name=paste("Enum", y['name'], sep=''), symbols=levels(factor(data[,y['name']])))), auto_unbox=T),
     numeric=toJSON(list(name=y['name'], type="double"), auto_unbox=T)
 )});
+input_defs <- as.list(input_defs);
+names(input_defs) <- NULL;
 input_conv <- apply(inputs[c('name','type')], 1, function(y) {
   switch(y['type'],
     character=paste('"cast.fanoutDouble": [ "input.', y['name'], '" ]', sep=''),
-    paste('[ "input.', y['name'], '" ]', sep='')
+    paste('{ "type": { "type": "array", "items": { "type": "double"} }, "new": ["input.', y['name'], '"] }', sep='')
 )});
+input_conv <- as.list(input_conv);
+names(input_conv) <- NULL;
 
 # Perform the computation
 res <- LRegress_Node(data, varname, covarnames, groups);
@@ -114,14 +118,13 @@ store <- list(input_defs = input_defs,
               sql = Sys.getenv("PARAM_query", ""),
               data_count = nrow(data),
               docker_image = docker_image,
-              model_names = model_names,
               model_const = model_const,
               model_coeff = toJSON(model_coeff),
               if_anova = if_anova,
               anova_coeff_header = anova_coeff_header,
               anova_coeff_tail = anova_coeff_tail,
-              anova_coefficients = anova_coefficients,
-              anova_residuals = anova_residuals,
+              anova_coefficients = unname(rowSplit(anova_coefficients)),
+              anova_residuals = unname(rowSplit(anova_residuals)),
               summary_coefficients = unname(rowSplit(summary_coefficients)),
               summary_coefficient_names = summary_coefficient_names,
               summary_residuals = summary_residuals,
