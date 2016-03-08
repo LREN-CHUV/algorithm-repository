@@ -1,18 +1,19 @@
 ---
 
-name: "linear_regression"
+name: linear_regression
 
-doc: "Univariate Linear Regression Model"
+doc: |
+  Univariate Linear Regression Model
 
 metadata:
   docker_image: "hbpmip/r-linear-regression:latest"
 
 input:
-  doc: "Input is the list of covariables"
-  name: Covariables
+  doc: "Input is the list of covariables and groups"
+  name: DependentVariables
   type: record
   fields:
-    - { name: "feature_name", type: string }
+    - {"name":"feature_name","type":{"type":"enum","name":"Enumfeature_name","symbols":["Hippocampus_L","Hippocampus_R"]}}
 output:
   doc: "Output is the estimate of the variable"
   type: "double"
@@ -43,10 +44,14 @@ cells:
             type: "array"
             items:
               type: "string"
+        - { name: "sql", type: "string", doc: "SQL query" }
+        - { name: "count", type: "int", doc: "Number of records selected by the query" }
     init:
       variable: "tissue1_volume"
       covariables: ["feature_name"]
       groups: []
+      sql: "select feature_name, tissue1_volume from brain_feature order by tissue1_volume"
+      count: "100"
   model:
     type:
       doc: "List of coefficients of the model parameters, compatible with PFA function model.reg.linear"
@@ -58,13 +63,12 @@ cells:
           name: "coeff"
           doc: "Coefficients of the linear regression model"
           type:
-            type: map
-            values: double
+            type: array
+            items:
+              type: double
     init:
       const: 0.009194024
-      coeff:
-        "feature_nameHippocampus_R": -5.85599999999931e-06
-
+      coeff: [-5.856e-06]
   anova:
     type:
       doc: "Result from Anova"
@@ -95,6 +99,7 @@ cells:
               - { name: mean_sq, type: double, doc: "Mean Sq" }
     init:
       "feature_name": { degree_freedom: 1, sum_sq: 8.57318399999798e-10, mean_sq: 8.57318399999798e-10, f_value: 0.00109700806634294, p_value: 0.973645372090369 }
+
       "Residuals": { degree_freedom: 98, sum_sq: 7.65875892600001e-05, mean_sq: 7.81506012857144e-07 }
 
   summary:
@@ -208,22 +213,19 @@ cells:
 action:
   -
     let: 
-      feature_nameHippocampus_R: 
-        if:
-          "==":
-            - "input.feature_name"
-            - { string: "Hippocampus_R" }
-        then: { double: 1.0 }
-        else: { double: 0.0 }
-  -
-    let:
-      model: { cell: "model" }
-
+      in:
+        "a.flatten":
+          type:
+            type: array
+            items:
+              type: array
+              items:
+                type: double
+          new:
+            - "cast.fanoutDouble": [ "input.feature_name" ]
   -
     "model.reg.linear":
-      - 
-        type: { type: "map", values: "double" }
-        new: 
-          feature_nameHippocampus_R: "feature_nameHippocampus_R"
-      - "model"
+      - in
+      - { cell: "model" }
+
 ...

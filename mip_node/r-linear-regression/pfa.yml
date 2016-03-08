@@ -9,13 +9,13 @@ metadata:
   docker_image: "{{ docker_image }}"
 
 input:
-  doc: "Input is the list of covariables"
-  name: Covariables
+  doc: "Input is the list of covariables and groups"
+  name: DependentVariables
   type: record
   fields:
-{{#names}}
-    - { name: "{{ name }}", type: {{ type }} }
-{{/names}}
+{{#input_defs}}
+    - {{{.}}}
+{{/input_defs}}
 
 output:
   doc: "Output is the estimate of the variable"
@@ -47,10 +47,14 @@ cells:
             type: "array"
             items:
               type: "string"
+        - { name: "sql", type: "string", doc: "SQL query" }
+        - { name: "count", type: "int", doc: "Number of records selected by the query" }
     init:
       variable: "{{ variable }}"
       covariables: {{{ covariables }}}
       groups: {{{ groups }}}
+      sql: "{{ sql }}"
+      count: "{{ data_count }}"
   model:
     type:
       doc: "List of coefficients of the model parameters, compatible with PFA function model.reg.linear"
@@ -62,14 +66,12 @@ cells:
           name: "coeff"
           doc: "Coefficients of the linear regression model"
           type:
-            type: map
-            values: double
+            type: array
+            items:
+              type: double
     init:
       const: {{ model_const }}
-      coeff:
-{{#model_coeff}}
-        "{{ coeff_name }}": {{ coefficient }}
-{{/model_coeff}}
+      coeff: {{{ model_coeff }}}
 {{#if_anova}}
   anova:
     type:
@@ -229,22 +231,22 @@ cells:
 action:
   -
     let: 
-      feature_nameHippocampus_R: 
-        if:
-          "==":
-            - "input.feature_name"
-            - { string: "Hippocampus_R" }
-        then: { double: 1.0 }
-        else: { double: 0.0 }
-  -
-    let:
-      model: { cell: "model" }
+      in:
+        "a.flatten":
+          type:
+            type: array
+            items:
+              type: array
+              items:
+                type: double
+          new:
+{{#input_conv}}
+            - {{{ . }}}
+{{/input_conv}}
 
   -
     "model.reg.linear":
-      - 
-        type: { type: "map", values: "double" }
-        new: 
-          feature_nameHippocampus_R: "feature_nameHippocampus_R"
-      - "model"
+      - in
+      - { cell: "model" }
+
 ...

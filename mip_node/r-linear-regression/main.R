@@ -43,6 +43,20 @@ docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-linear-regression:latest");
 # Fetch the data
 data <- fetchData();
 
+input_types <- sapply(data, class);
+input_types <- input_types[simplify2array(c(covarnames, groups))];
+inputs <- data.frame(name=names(input_types), type=input_types);
+input_defs <- apply(inputs[c('name','type')], 1, function(y) {
+  switch(y['type'],
+    character=toJSON(list(name=y['name'], type=list(type="enum", name=paste("Enum", y['name'], sep=''), symbols=levels(factor(data[,y['name']])))), auto_unbox=T),
+    numeric=toJSON(list(name=y['name'], type="double"), auto_unbox=T)
+)});
+input_conv <- apply(inputs[c('name','type')], 1, function(y) {
+  switch(y['type'],
+    character=paste('"cast.fanoutDouble": [ "input.', y['name'], '" ]', sep=''),
+    paste('[ "input.', y['name'], '" ]', sep='')
+)});
+
 # Perform the computation
 res <- LRegress_Node(data, varname, covarnames, groups);
 
@@ -51,9 +65,7 @@ coeff_names <- names(res$coefficients);
 coeff_names[1] <- "_intercept_";
 
 model_const <- res$coefficients[[1]];
-model_coeff <- as.data.frame(cbind(coeff_names[-1], res$coefficients[-1]));
-colnames(model_coeff) <- c("coeff_name", "coefficient");
-model_names <- coeff_names[-1];
+model_coeff <- as.vector(res$coefficients[-1]);
 
 if (length(res$anova) == 1 && is.na(res$anova)) {
     anova <- matrix(nrow=0,ncol=0);
@@ -94,13 +106,17 @@ summary_residuals <- list(
   max = max(summary_residual_values));
 
 # Ensure that we use only supported types: list, string
-store <- list(variable = varname,
+store <- list(input_defs = input_defs,
+              input_conv = input_conv,
+              variable = varname,
               covariables = toJSON(covarnames, auto_unbox=T),
               groups = toJSON(c(paste(groups, sep=":"))),
+              sql = Sys.getenv("PARAM_query", ""),
+              data_count = nrow(data),
               docker_image = docker_image,
               model_names = model_names,
               model_const = model_const,
-              model_coeff = unname(rowSplit(model_coeff)),
+              model_coeff = toJSON(model_coeff),
               if_anova = if_anova,
               anova_coeff_header = anova_coeff_header,
               anova_coeff_tail = anova_coeff_tail,

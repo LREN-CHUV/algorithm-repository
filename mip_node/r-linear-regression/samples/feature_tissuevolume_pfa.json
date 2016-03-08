@@ -1,17 +1,24 @@
 {
   "name": "linear_regression",
-  "doc": "Univariate Linear Regression Model",
+  "doc": "Univariate Linear Regression Model\n",
   "metadata": {
     "docker_image": "hbpmip/r-linear-regression:latest"
   },
   "input": {
-    "doc": "Input is the list of covariables",
-    "name": "Covariables",
+    "doc": "Input is the list of covariables and groups",
+    "name": "DependentVariables",
     "type": "record",
     "fields": [
       {
         "name": "feature_name",
-        "type": "string"
+        "type": {
+          "type": "enum",
+          "name": "Enumfeature_name",
+          "symbols": [
+            "Hippocampus_L",
+            "Hippocampus_R"
+          ]
+        }
       }
     ]
   },
@@ -50,6 +57,16 @@
                 "type": "string"
               }
             }
+          },
+          {
+            "name": "sql",
+            "type": "string",
+            "doc": "SQL query"
+          },
+          {
+            "name": "count",
+            "type": "int",
+            "doc": "Number of records selected by the query"
           }
         ]
       },
@@ -58,7 +75,9 @@
         "covariables": [
           "feature_name"
         ],
-        "groups": []
+        "groups": [],
+        "sql": "select feature_name, tissue1_volume from brain_feature order by tissue1_volume",
+        "count": "100"
       }
     },
     "model": {
@@ -76,17 +95,19 @@
             "name": "coeff",
             "doc": "Coefficients of the linear regression model",
             "type": {
-              "type": "map",
-              "values": "double"
+              "type": "array",
+              "items": {
+                "type": "double"
+              }
             }
           }
         ]
       },
       "init": {
         "const": 0.009194024,
-        "coeff": {
-          "feature_nameHippocampus_R": -0.00000585599999999931
-        }
+        "coeff": [
+          -0.000005856
+        ]
       }
     },
     "anova": {
@@ -368,43 +389,34 @@
   "action": [
     {
       "let": {
-        "feature_nameHippocampus_R": {
-          "if": {
-            "==": [
-              "input.feature_name",
+        "in": {
+          "a.flatten": {
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "double"
+                }
+              }
+            },
+            "new": [
               {
-                "string": "Hippocampus_R"
+                "cast.fanoutDouble": [
+                  "input.feature_name"
+                ]
               }
             ]
-          },
-          "then": {
-            "double": 1
-          },
-          "else": {
-            "double": 0
           }
-        }
-      }
-    },
-    {
-      "let": {
-        "model": {
-          "cell": "model"
         }
       }
     },
     {
       "model.reg.linear": [
+        "in",
         {
-          "type": {
-            "type": "map",
-            "values": "double"
-          },
-          "new": {
-            "feature_nameHippocampus_R": "feature_nameHippocampus_R"
-          }
-        },
-        "model"
+          "cell": "model"
+        }
       ]
     }
   ]
