@@ -1,9 +1,8 @@
 ---
 
-name: linear_regression
+name: "linear_regression"
 
-doc: |
-  Univariate Linear Regression Model
+doc: "Univariate Linear Regression Model"
 
 metadata:
   docker_image: "hbpmip/r-linear-regression:latest"
@@ -13,7 +12,7 @@ input:
   name: Covariables
   type: record
   fields:
-    - { name: "feature_nameHippocampus_R", type: double }
+    - { name: "feature_name", type: string }
 output:
   doc: "Output is the estimate of the variable"
   type: "double"
@@ -26,13 +25,15 @@ cells:
       type: record
       fields:
         - { name: "variable", type: "string", doc: "Dependent variable" }
-        - name: "covariables"
+        -
+          name: "covariables"
           doc: "List of explanatory variables"
           type:
             type: "array"
             items:
               type: "string"
-        - name: "groups"
+        -
+          name: "groups"
           doc: |
             The form ‘first:second’ indicates the set of terms obtained by taking the interactions of all terms in ‘first’
             with all terms in ‘second’.
@@ -53,14 +54,12 @@ cells:
       type: record
       fields:
         - { name: "const", type: "double", doc: "Constant of the linear regression model" }
-        - name: "coeff"
+        -
+          name: "coeff"
           doc: "Coefficients of the linear regression model"
           type:
-            type: record
-            name: Coefficients
-            namespace: model
-            fields:
-              - {name: "feature_nameHippocampus_R", type: double}
+            type: map
+            values: double
     init:
       const: 0.009194024
       coeff:
@@ -72,7 +71,8 @@ cells:
       type: record
       name: Anova
       fields:
-        - name: feature_name
+        -
+          name: feature_name
           type:
             type: record
             name: AnovaCoefficient
@@ -83,7 +83,8 @@ cells:
               - { name: mean_sq, type: double, doc: "Mean Sq" }
               - { name: f_value, type: double, doc: "f-value" }
               - { name: p_value, type: double, doc: "p-value" }
-        - name: Residuals
+        -
+          name: Residuals
           type:
             type: record
             name: AnovaResiduals
@@ -94,7 +95,6 @@ cells:
               - { name: mean_sq, type: double, doc: "Mean Sq" }
     init:
       "feature_name": { degree_freedom: 1, sum_sq: 8.57318399999798e-10, mean_sq: 8.57318399999798e-10, f_value: 0.00109700806634294, p_value: 0.973645372090369 }
-
       "Residuals": { degree_freedom: 98, sum_sq: 7.65875892600001e-05, mean_sq: 7.81506012857144e-07 }
 
   summary:
@@ -103,7 +103,8 @@ cells:
       name: Summary
       type: record
       fields:
-        - name: residuals
+        -
+          name: residuals
           doc: >
             Statistical summary of the _weighted_ residuals, the usual residuals rescaled by
             the square root of the weights specified in the call to ‘lm’
@@ -117,7 +118,8 @@ cells:
               - {name: median, type: double, doc: "Median value" }
               - {name: q3, type: double, doc: "Third quartile" }
               - {name: max, type: double, doc: "Maximum value" }
-        - name: coefficients
+        -
+          name: coefficients
           doc: >
             a p x 4 matrix with columns for the estimated
             coefficient, its standard error, t-statistic and
@@ -127,7 +129,8 @@ cells:
             name: CoefficientMatrix
             namespace: summary
             fields:
-              - name: "_intercept_"
+              -
+                name: "_intercept_"
                 type:
                   type: record
                   name: Coefficient
@@ -139,7 +142,8 @@ cells:
                     - { name: p_value, type: double, doc: "Corresponding (two-sided) p-value" }
               - name: "feature_nameHippocampus_R"
                 type: "summary.Coefficient"
-        - name: aliased
+        -
+          name: aliased
           doc: "named logical vector showing if the original coefficients are aliased"
           type:
             type: record
@@ -148,13 +152,15 @@ cells:
             fields:
               - { name: "_intercept_", type: boolean }
               - { name: "feature_nameHippocampus_R", type: boolean }
-        - name: sigma
+        -
+          name: sigma
           doc: >
             the square root of the estimated variance of the random error
                 sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),
             where R[i] is the i-th residual, ‘residuals[i]’
           type: double
-        - name: degrees_freedom
+        -
+          name: degrees_freedom
           doc: >
             Degrees of freedom, a 3-vector (p, n-p, p*), the first being
             the number of non-aliased coefficients, the last being the
@@ -163,13 +169,16 @@ cells:
             type: array
             items:
               type: double
-        - name: r_squared
+        -
+          name: r_squared
           doc: "R squared"
           type: double
-        - name: adj_r_squared
+        -
+          name: adj_r_squared
           doc: "Adjusted R squared"
           type: double
-        - name: cov_unscaled
+        -
+          name: cov_unscaled
           doc: "Matrix of covariance unscaled. Same columns as coefficients"
           type:
             type: array
@@ -197,6 +206,24 @@ cells:
       cov_unscaled: [[0.02,-0.02],[-0.02,0.04]]
 
 action:
-  - model.reg.linear:
-    - input
-    - cell: model
+  -
+    let: 
+      feature_nameHippocampus_R: 
+        if:
+          "==":
+            - "input.feature_name"
+            - { string: "Hippocampus_R" }
+        then: { double: 1.0 }
+        else: { double: 0.0 }
+  -
+    let:
+      model: { cell: "model" }
+
+  -
+    "model.reg.linear":
+      - 
+        type: { type: "map", values: "double" }
+        new: 
+          feature_nameHippocampus_R: "feature_nameHippocampus_R"
+      - "model"
+...

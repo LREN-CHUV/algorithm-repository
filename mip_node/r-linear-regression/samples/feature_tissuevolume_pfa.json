@@ -1,6 +1,6 @@
 {
   "name": "linear_regression",
-  "doc": "Univariate Linear Regression Model\n",
+  "doc": "Univariate Linear Regression Model",
   "metadata": {
     "docker_image": "hbpmip/r-linear-regression:latest"
   },
@@ -10,8 +10,8 @@
     "type": "record",
     "fields": [
       {
-        "name": "feature_nameHippocampus_R",
-        "type": "double"
+        "name": "feature_name",
+        "type": "string"
       }
     ]
   },
@@ -76,15 +76,8 @@
             "name": "coeff",
             "doc": "Coefficients of the linear regression model",
             "type": {
-              "type": "record",
-              "name": "Coefficients",
-              "namespace": "model",
-              "fields": [
-                {
-                  "name": "feature_nameHippocampus_R",
-                  "type": "double"
-                }
-              ]
+              "type": "map",
+              "values": "double"
             }
           }
         ]
@@ -374,11 +367,44 @@
   },
   "action": [
     {
-      "model.reg.linear": [
-        "input",
-        {
+      "let": {
+        "feature_nameHippocampus_R": {
+          "if": {
+            "==": [
+              "input.feature_name",
+              {
+                "string": "Hippocampus_R"
+              }
+            ]
+          },
+          "then": {
+            "double": 1
+          },
+          "else": {
+            "double": 0
+          }
+        }
+      }
+    },
+    {
+      "let": {
+        "model": {
           "cell": "model"
         }
+      }
+    },
+    {
+      "model.reg.linear": [
+        {
+          "type": {
+            "type": "map",
+            "values": "double"
+          },
+          "new": {
+            "feature_nameHippocampus_R": "feature_nameHippocampus_R"
+          }
+        },
+        "model"
       ]
     }
   ]
