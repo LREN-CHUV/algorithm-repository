@@ -30,7 +30,7 @@ test_that("We can perform linear regression on one variable and one covariable",
   result_model_const <- res$cells$model$init$const;
   result_model_coeff <- res$cells$model$init$coeff;
   result_residuals <- res$residuals;
-  result_r_square <- res$cells$summary$init$r_squared;
+  result_r_squared <- res$cells$summary$init$r_squared;
   result_degrees_freedom <- res$cells$summary$init$degrees_freedom;
   
   # Disconnect from the database
@@ -45,7 +45,7 @@ test_that("We can perform linear regression on one variable and one covariable",
   expect_equal(result_model_coeff[1], -0.000005856, tolerance = 1e-6);
   # expect_equal(result_residuals, fromJSON(expected_result_residuals), tolerance=1e-5);
   
-  expect_equal(result_r_square, 1.119383e-05, tolerance = 1e-6);
+  expect_equal(result_r_squared, 1.119383e-05, tolerance = 1e-6);
   expect_equal(result_degrees_freedom, c(2, 98, 2));
   
   print ("[ok] Success!");

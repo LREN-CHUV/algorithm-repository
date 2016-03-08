@@ -28,9 +28,10 @@ test_that("We can perform linear regression on one variable, one covariable and 
   
   res <- yaml.load(data);
   
-  result_coefficients <- res$cells$coefficients$init;
-  result_residuals <- res$residuals;
-  result_r_square <- res$cells$summary$init$r_squared;
+  result_model_const <- res$cells$model$init$const;
+  result_model_coeff <- res$cells$model$init$coeff;
+  result_residuals <- res$cells$summary$init$residuals;
+  result_r_squared <- res$cells$summary$init$r_squared;
   result_degrees_freedom <- res$cells$summary$init$degrees_freedom;
   
   # Disconnect from the database
@@ -39,14 +40,12 @@ test_that("We can perform linear regression on one variable, one covariable and 
   expect_equal(node, "Test");
   expect_equal(shape, "pfa_yaml");
   
-  expected_result_residuals = "[{\"(Intercept)\":1.563e-08,\"feature_nameHippocampus_R\":-1.563e-08,\"_row\":\"(Intercept)\"},{\"(Intercept)\":-1.563e-08,\"feature_nameHippocampus_R\":3.126e-08,\"_row\":\"feature_nameHippocampus_R\"}]"
-  
-  expect_equal(result_coefficients$'_intercept_', 0.009194024, tolerance = 1e-6);
-  expect_equal(result_coefficients$feature_nameHippocampus_R, -0.000005856, tolerance = 1e-6);
-  # expect_equal(result_residuals, fromJSON(expected_result_residuals), tolerance=1e-5);
-  
-  expect_equal(result_r_square, 1.119383e-05, tolerance = 1e-6);
-  expect_equal(result_degrees_freedom, c(2, 98, 2));
+  expect_equal(result_model_const, 9.005107, tolerance = 1e-6);
+  expect_equal(result_model_coeff, c(4.9500, 4.7906, -2.4789, -4.0122, -2.2789, 13.9480, 3.8587, 6.7714, 8.4587, 6.9211, 13.8480, 10.4480, 6.9714, 12.3714, 5.8000, 7.1250, -0.4677, 14.9323, 9.3990, 8.5323, 4.6980), tolerance = 1e-6);
+  expect_equal(result_residuals, list(min=-8.438266, q1=-1.435457, median=0.35, q3=2.113858, max=8.438266), tolerance=1e-5);
+
+  expect_equal(result_r_squared, 0.8350627, tolerance = 1e-6);
+  expect_equal(result_degrees_freedom, c(22, 38, 22));
   
   print ("[ok] Success!");
 
