@@ -42,6 +42,7 @@ if (groupstr == "") {
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-summary-stats:latest");
 
 columns <- c(variables, covariables, groups);
+columns <- columns[lapply(columns,length)>0];
 
 # Fetch the data
 data <- fetchData();
@@ -56,8 +57,8 @@ store <- list(
               groups = toJSON(c(paste(groups, sep=":"))),
               sql = Sys.getenv("PARAM_query", ""),
               data_count = nrow(data),
-              docker_image = docker_image,
-	);
+              docker_image = docker_image
+    );
 
 template <- readLines("/src/pfa.yml");
 

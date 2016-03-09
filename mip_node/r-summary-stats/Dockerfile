@@ -2,7 +2,7 @@ FROM hbpmip/r-job:eca7867
 
 MAINTAINER ludovic.claude54@gmail.com
 
-RUN installGithub.r LREN-CHUV/hbpsummarystats@374af9c5
+RUN installGithub.r LREN-CHUV/hbpsummarystats@2de14707
 
 LABEL eu.humanbrainproject.function=summary-stats \
       eu.humanbrainproject.function.location=node \

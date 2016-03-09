@@ -6,7 +6,7 @@ doc: |
   Descriptive statistics for a dataset
 
 metadata:
-  docker_image: "{{ docker_image }}"
+  docker_image: "hbpmip/r-summary-stats:latest"
 
 input:
   type: "null"
@@ -49,11 +49,11 @@ cells:
         - { name: "sql", type: "string", doc: "SQL query" }
         - { name: "count", type: "int", doc: "Number of records selected by the query" }
     init:
-      variables: {{{ variables }}}
-      covariables: {{{ covariables }}}
-      groups: {{{ groups }}}
-      sql: "{{ sql }}"
-      count: {{ data_count }}
+      variables: [[]]
+      covariables: ["tissue1_volume"]
+      groups: ["feature_name"]
+      sql: "select tissue1_volume, feature_name from brain_feature order by tissue1_volume"
+      count: 100
   summary:
     type:
       doc: "Descriptive summary"
@@ -70,19 +70,6 @@ cells:
         - {name: sum, type: double, doc: "Sum" }
         - {name: count, type: double, doc: "Count" }
     init:
-{{#summary}}
-      "{{ name }}":
-        min: {{ min }}
-        q1: {{ q1 }}
-        median: {{ median }}
-        q3: {{ q3 }}
-        max: {{ max }}
-        mean: {{ mean }}
-        std: {{ std }}
-        sum: {{ sum }}
-        count: {{ count }}
-{{/summary}}
-
 action:
   null
 
