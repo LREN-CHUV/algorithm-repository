@@ -32,9 +32,9 @@ library(hbpsummarystats);
 
 # Initialisation
 variables <- strsplit(Sys.getenv("PARAM_variables"), ",");
-variables <- columns[lapply(variables,length)>0];
+variables <- variables[lapply(variables,length)>0];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
-covariables <- columns[lapply(covariables,length)>0];
+covariables <- covariables[lapply(covariables,length)>0];
 groupstr <- Sys.getenv("PARAM_groups", "");
 if (groupstr == "") {
     groups <- c();
@@ -58,9 +58,9 @@ res <- as.data.frame(cbind(name=unlist(columns), res));
 intRows <- res[res$type == 'integer', ];
 rownames(intRows) <- NULL;
 if (nrow(intRows) == 0) {
-	intRows <- NA;
-	intRowHeader <- NA;
-	intRowTail <- NA;
+	intRows <- c();
+	intRowHeader <- c();
+	intRowTail <- c();
 } else {
 	intRowHeader <- unname(rowSplit(intRows[1,]));
 	intRowTail <- unname(rowSplit(intRows[-1,]));
@@ -71,26 +71,41 @@ if (nrow(intRows) == 0) {
 numRows <- res[res$type == 'numeric', ];
 rownames(numRows) <- NULL;
 if (nrow(numRows) == 0) {
-	numRows <- NA;
-	numRowHeader <- NA;
-	numRowTail <- NA;
+	numRows <- c();
+	numRowHeader <- c();
+	numRowTail <- c();
 } else {
 	numRowHeader <- unname(rowSplit(numRows[1,]));
 	numRowTail <- unname(rowSplit(numRows[-1,]));
 	numRows <- unname(rowSplit(numRows));
 }
 
-# Extract type = character
-strRows <- res[res$type == 'character', ];
+# Extract type = character with empty factors
+charRows <- res[res$type == 'character', ];
+strRows <- charRows[is.na(charRows$factors), ];
 rownames(strRows) <- NULL;
 if (nrow(strRows) == 0) {
-	strRows <- NA;
-	strRowHeader <- NA;
-	strRowTail <- NA;
+	strRows <- c();
+	strRowHeader <- c();
+	strRowTail <- c();
 } else {
 	strRowHeader <- unname(rowSplit(strRows[1,]));
 	strRowTail <- unname(rowSplit(strRows[-1,]));
 	strRows <- unname(rowSplit(strRows));
+}
+
+# Extract type = character with factors
+factorRows <- charRows[!is.na(charRows$factors), ];
+rownames(factorRows) <- NULL;
+if (nrow(factorRows) == 0) {
+	factorRows <- c();
+	factorRowHeader <- c();
+	factorRowTail <- c();
+} else {
+	factorRows$factors <- sapply(factorRows$factors, toJSON);
+	factorRowHeader <- unname(rowSplit(factorRows[1,]));
+	factorRowTail <- unname(rowSplit(factorRows[-1,]));
+	factorRows <- unname(rowSplit(factorRows));
 }
 
 # Ensure that we use only supported types: list, string
@@ -109,7 +124,10 @@ store <- list(
               numRows = numRows,
               strRowHeader = strRowHeader,
               strRowTail = strRowTail,
-              strRows = strRows
+              strRows = strRows,
+              factorRowHeader = factorRowHeader,
+              factorRowTail = factorRowTail,
+              factorRows = factorRows
     );
 
 template <- readLines("/src/pfa.yml");

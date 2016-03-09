@@ -95,6 +95,31 @@ cells:
 {{#numRowTail}}
         - { name: {{ name }}, type: "summary.ContinousVariableSummary" }
 {{/numRowTail}}
+{{#strRowHeader}}
+        -
+          name: {{ name }}
+          type: record
+          name: StringVariableSummary
+          namespace: summary
+          fields:
+            - { name: count, type: double, doc: "Count" }
+{{/strRowHeader}}
+{{#strRowTail}}
+        - { name: {{ name }}, type: "summary.StringVariableSummary" }
+{{/strRowTail}}
+{{#factorRowHeader}}
+        -
+          name: {{ name }}
+          type: record
+          name: FactorVariableSummary
+          namespace: summary
+          fields:
+            - { name: count, type: double, doc: "Count" }
+            - { name: factors, type: array, items: { type: string } , doc: "List of values" }
+{{/factorRowHeader}}
+{{#factorRowTail}}
+        - { name: {{ name }}, type: "summary.FactorVariableSummary" }
+{{/factorRowTail}}
     init:
 {{#intRows}}
       "{{ name }}":
@@ -115,6 +140,15 @@ cells:
         sum: {{ sum }}
         count: {{ count }}
 {{/numRows}}
+{{#strRows}}
+      "{{ name }}":
+        count: {{ count }}
+{{/strRows}}
+{{#factorRows}}
+      "{{ name }}":
+        count: {{ count }}
+        factors: {{{ factors }}}
+{{/factorRows}}
 
 action:
   null

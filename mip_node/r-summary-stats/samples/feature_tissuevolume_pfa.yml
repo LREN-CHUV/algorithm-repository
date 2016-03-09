@@ -50,7 +50,7 @@ cells:
         - { name: "count", type: "int", doc: "Number of records selected by the query" }
     init:
       variables: []
-      covariables: ["tissue1_volume","feature_name"]
+      covariables: ["tissue1_volume"]
       groups: ["feature_name"]
       sql: "select tissue1_volume, feature_name from brain_feature order by tissue1_volume"
       count: 100
@@ -60,16 +60,6 @@ cells:
       type: record
       name: DescriptiveStatistics
       fields:
-        -
-          name: NA
-          type: record
-          name: IntegerVariableSummary
-          namespace: summary
-          fields:
-            - { name: min, type: double, doc: "Minimum value" }
-            - { name: max, type: double, doc: "Maximum value" }
-            - { name: sum, type: double, doc: "Sum" }
-            - { name: count, type: double, doc: "Count" }
 
         -
           name: tissue1_volume
@@ -86,6 +76,15 @@ cells:
             - { name: std, type: double, doc: "Standard deviation" }
             - { name: sum, type: double, doc: "Sum" }
             - { name: count, type: double, doc: "Count" }
+
+        -
+          name: feature_name
+          type: record
+          name: FactorVariableSummary
+          namespace: summary
+          fields:
+            - { name: count, type: double, doc: "Count" }
+            - { name: factors, type: array, items: { type: string } , doc: "List of values" }
     init:
 
       "tissue1_volume":
@@ -98,6 +97,10 @@ cells:
         std: 0.000879557088828855
         sum: 0.9191096
         count: 100
+
+      "feature_name":
+        count: 100
+        factors: ["Hippocampus_L","Hippocampus_R"]
 action:
   null
 
