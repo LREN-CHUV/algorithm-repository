@@ -2,7 +2,6 @@ context("BrainData");
 
 library(testthat);
 library(hbpjdbcconnect);
-library(jsonlite);
 library(yaml);
 
 test_that("We can perform linear regression on one variable and one covariable", {
