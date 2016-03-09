@@ -36,7 +36,7 @@ Step-by-Step Guidelines
 2.  **Clone** the *functions-repository* folder -
     <https://github.com/LREN-CHUV/functions-repository>
 
-3.  In your clone, **go to** *mip\_node*
+3.  **Go to** the root folder of your cloned project
 
 4.  **Make a copy** of *r-summary-stats* directory and rename it into
     the name of your algorithm (r-…)
@@ -54,7 +54,7 @@ Step-by-Step Guidelines
 
        ii. If your package is available on GitHub, use:
 
-            RUN installGithub.r &lt;github coordinates&gt; where the Github
+            RUN installGithub.r <github coordinates> where the Github
             coordinates look like username/projectname, and optionally add a @
             sign followed by the Git version to use, for example
             LREN-CHUV/hbpsummarystats@6f6a42e
