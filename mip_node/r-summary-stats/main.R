@@ -7,8 +7,8 @@
 #'
 #' - Input Parameters:
 #'      PARAM_query  : SQL query producing the dataframe to analyse
-#'      PARAM_varnames : Column separated list of variables
-#'      PARAM_covarnames : Column separated list of covariables
+#'      PARAM_variables : Column separated list of variables
+#'      PARAM_covariables : Column separated list of covariables
 #'      PARAM_groups : Column separated list of groups
 #' - Execution context:
 #'      JOB_ID : ID of the job
@@ -31,8 +31,8 @@ library(whisker);
 library(hbpsummarystats);
 
 # Initialisation
-varnames <- strsplit(Sys.getenv("PARAM_varnames"), ",");
-covarnames <- strsplit(Sys.getenv("PARAM_covarnames"), ",");
+variables <- strsplit(Sys.getenv("PARAM_variables"), ",");
+covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
 groupstr <- Sys.getenv("PARAM_groups", "");
 if (groupstr == "") {
     groups <- c();
@@ -41,7 +41,7 @@ if (groupstr == "") {
 }
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-summary-stats:latest");
 
-columns <- c(varnames, covarnames, groups);
+columns <- c(variables, covariables, groups);
 
 # Fetch the data
 data <- fetchData();
@@ -50,7 +50,14 @@ data <- fetchData();
 res <- tablesummarystats(data, columns);
 
 # Ensure that we use only supported types: list, string
-store <- list();
+store <- list(
+              variables = toJSON(variables, auto_unbox=T),
+              covariables = toJSON(covariables, auto_unbox=T),
+              groups = toJSON(c(paste(groups, sep=":"))),
+              sql = Sys.getenv("PARAM_query", ""),
+              data_count = nrow(data),
+              docker_image = docker_image,
+	);
 
 template <- readLines("/src/pfa.yml");
 

@@ -43,8 +43,10 @@ $DOCKER run -i -t --rm \
   -v $(pwd)/tests:/src/tests/ \
   -e JOB_ID=001 \
   -e NODE=dev \
-  -e PARAM_query="select tissue1_volume from brain_feature order by tissue1_volume" \
-  -e PARAM_colnames="tissue1_volume" \
+  -e PARAM_query="select tissue1_volume, feature_name from brain_feature order by tissue1_volume" \
+  -e PARAM_variables="" \
+  -e PARAM_covariables="tissue1_volume" \
+  -e PARAM_groups="feature_name" \
   -e IN_JDBC_DRIVER=org.postgresql.Driver \
   -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
   -e IN_JDBC_URL="jdbc:postgresql://indb:5432/postgres" \

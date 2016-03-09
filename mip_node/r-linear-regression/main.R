@@ -7,8 +7,8 @@
 #'
 #' - Input Parameters:
 #'      PARAM_query  : SQL query producing the dataframe to analyse
-#'      PARAM_varname : Name of the variable
-#'      PARAM_covarnames : Column separated list of covariables
+#'      PARAM_variable : Name of the variable
+#'      PARAM_covariables : Column separated list of covariables
 #'      PARAM_groups : Column separated list of groups
 #' - Execution context:
 #'      JOB_ID : ID of the job
@@ -31,8 +31,8 @@ library(whisker);
 library(hbplregress);
 
 # Initialisation
-varname <- Sys.getenv("PARAM_varname");
-covarnames <- strsplit(Sys.getenv("PARAM_covarnames"), ",");
+variable <- Sys.getenv("PARAM_variable");
+covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
 groupstr <- Sys.getenv("PARAM_groups", "");
 if (groupstr == "") {
     groups <- c();
@@ -45,7 +45,7 @@ docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-linear-regression:latest");
 data <- fetchData();
 
 input_types <- sapply(data, class);
-input_types <- input_types[simplify2array(c(covarnames, groups))];
+input_types <- input_types[simplify2array(c(covariables, groups))];
 inputs <- data.frame(name=names(input_types), type=input_types);
 input_defs <- apply(inputs[c('name','type')], 1, function(y) {
   switch(y['type'],
@@ -63,7 +63,7 @@ input_conv <- as.list(input_conv);
 names(input_conv) <- NULL;
 
 # Perform the computation
-res <- LRegress_Node(data, varname, covarnames, groups);
+res <- LRegress_Node(data, variable, covariables, groups);
 
 # Build the response
 coeff_names <- names(res$coefficients);
@@ -113,8 +113,8 @@ summary_residuals <- list(
 # Ensure that we use only supported types: list, string
 store <- list(input_defs = input_defs,
               input_conv = input_conv,
-              variable = varname,
-              covariables = toJSON(covarnames, auto_unbox=T),
+              variable = variable,
+              covariables = toJSON(covariables, auto_unbox=T),
               groups = toJSON(c(paste(groups, sep=":"))),
               sql = Sys.getenv("PARAM_query", ""),
               data_count = nrow(data),

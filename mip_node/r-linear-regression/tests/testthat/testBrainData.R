@@ -10,8 +10,8 @@ test_that("We can perform linear regression on one variable and one covariable",
   job_id <- '001';
   Sys.setenv(JOB_ID=job_id,
     PARAM_query="select feature_name, tissue1_volume from brain_feature order by tissue1_volume",
-    PARAM_varname="tissue1_volume",
-    PARAM_covarnames="feature_name");
+    PARAM_variable="tissue1_volume",
+    PARAM_covariables="feature_name");
 
   # Perform the computation
   source("/src/main.R");

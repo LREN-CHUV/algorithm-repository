@@ -1,6 +1,6 @@
 # r-summary-stats
 
-Implementation of a linear regression in R
+Implementation of a descriptive summary statistics in R
 
 ## Development process
 
@@ -8,7 +8,7 @@ The goal of this project is to create a Docker image containing the full R envir
 
 1. Read parameters from the environment and connect to a database
 2. Query the database and prepare the data
-3. Run the algorithm (here, a linear regression)
+3. Run the algorithm (here, summary statistics)
 4. Format the results into a format that can be easily shared. We are using the [PFA format](http://dmg.org/pfa/) here in its YAML form. It will get translated to JSON automatically be the workflow application which provides web services which execute this Docker container.
 5. Save the results into the result database.
 
@@ -33,7 +33,7 @@ This script provides a R runtime executed inside a Docker container. It also sta
 To develop the main.R script, you should type the following in the R shell:
 ```
   library(devtools)
-  devtools::install_github("LREN-CHUV/hbplregress")
+  devtools::install_github("LREN-CHUV/hbpsummarystats")
   source(\"/src/main.R\")
 ```
 

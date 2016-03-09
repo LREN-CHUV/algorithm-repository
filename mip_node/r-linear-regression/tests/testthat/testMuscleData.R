@@ -10,8 +10,8 @@ test_that("We can perform linear regression on one variable, one covariable and 
   job_id <- '002';
   Sys.setenv(JOB_ID=job_id,
     PARAM_query="select strip, conc, length from muscle",
-    PARAM_varname="length",
-    PARAM_covarnames="conc",
+    PARAM_variable="length",
+    PARAM_covariables="conc",
     PARAM_groups="strip");
 
   # Perform the computation
