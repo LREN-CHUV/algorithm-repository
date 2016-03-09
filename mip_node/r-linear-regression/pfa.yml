@@ -54,7 +54,7 @@ cells:
       covariables: {{{ covariables }}}
       groups: {{{ groups }}}
       sql: "{{ sql }}"
-      count: "{{ data_count }}"
+      count: {{ data_count }}
   model:
     type:
       doc: "List of coefficients of the model parameters, compatible with PFA function model.reg.linear"

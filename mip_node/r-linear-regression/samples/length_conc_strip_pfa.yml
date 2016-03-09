@@ -52,7 +52,7 @@ cells:
       covariables: ["conc"]
       groups: ["strip"]
       sql: "select strip, conc, length from muscle"
-      count: "60"
+      count: 60
   model:
     type:
       doc: "List of coefficients of the model parameters, compatible with PFA function model.reg.linear"

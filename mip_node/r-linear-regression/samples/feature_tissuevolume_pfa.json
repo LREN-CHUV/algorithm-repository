@@ -77,7 +77,7 @@
         ],
         "groups": [],
         "sql": "select feature_name, tissue1_volume from brain_feature order by tissue1_volume",
-        "count": "100"
+        "count": 100
       }
     },
     "model": {
