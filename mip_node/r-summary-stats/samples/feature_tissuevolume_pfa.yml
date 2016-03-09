@@ -63,28 +63,30 @@ cells:
 
         -
           name: tissue1_volume
-          type: record
-          name: ContinuousVariableSummary
-          namespace: summary
-          fields:
-            - { name: min, type: double, doc: "Minimum value" }
-            - { name: q1, type: double, doc: "First quartile" }
-            - { name: median, type: double, doc: "Median value" }
-            - { name: q3, type: double, doc: "Third quartile" }
-            - { name: max, type: double, doc: "Maximum value" }
-            - { name: mean, type: double, doc: "Mean value" }
-            - { name: std, type: double, doc: "Standard deviation" }
-            - { name: sum, type: double, doc: "Sum" }
-            - { name: count, type: double, doc: "Count" }
+          type:
+            type: record
+            name: ContinuousVariableSummary
+            namespace: summary
+            fields:
+              - { name: min, type: double, doc: "Minimum value" }
+              - { name: q1, type: double, doc: "First quartile" }
+              - { name: median, type: double, doc: "Median value" }
+              - { name: q3, type: double, doc: "Third quartile" }
+              - { name: max, type: double, doc: "Maximum value" }
+              - { name: mean, type: double, doc: "Mean value" }
+              - { name: std, type: double, doc: "Standard deviation" }
+              - { name: sum, type: double, doc: "Sum" }
+              - { name: count, type: double, doc: "Count" }
 
         -
           name: feature_name
-          type: record
-          name: FactorVariableSummary
-          namespace: summary
-          fields:
-            - { name: count, type: double, doc: "Count" }
-            - { name: factors, type: array, items: { type: string } , doc: "List of values" }
+          type:
+            type: record
+            name: FactorVariableSummary
+            namespace: summary
+            fields:
+              - { name: count, type: double, doc: "Count" }
+              - { name: factors, type: { type: array, items: { type: string }}, doc: "List of values" }
     init:
 
       "tissue1_volume":
@@ -102,6 +104,6 @@ cells:
         count: 100
         factors: ["Hippocampus_L","Hippocampus_R"]
 action:
-  null
+  - null
 
 ...

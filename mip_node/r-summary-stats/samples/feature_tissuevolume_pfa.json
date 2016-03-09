@@ -1,0 +1,185 @@
+{
+  "name": "summary_statistics",
+  "doc": "Descriptive statistics for a dataset\n",
+  "metadata": {
+    "docker_image": "hbpmip/r-summary-stats:latest"
+  },
+  "input": {
+    "type": "null"
+  },
+  "output": {
+    "type": "null"
+  },
+  "cells": {
+    "query": {
+      "type": {
+        "doc": "Definition of the query that has produced this model",
+        "name": "Query",
+        "type": "record",
+        "fields": [
+          {
+            "name": "variables",
+            "doc": "List of dependent variables",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "covariables",
+            "doc": "List of explanatory variables",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "groups",
+            "doc": "The form ‘first:second’ indicates the set of terms obtained by taking the interactions of all terms in ‘first’\nwith all terms in ‘second’.\nThe specification ‘first*second’ indicates the _cross_ of ‘first’ and ‘second’.\nThis is the same as ‘first + second + first:second’\"\n",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "sql",
+            "type": "string",
+            "doc": "SQL query"
+          },
+          {
+            "name": "count",
+            "type": "int",
+            "doc": "Number of records selected by the query"
+          }
+        ]
+      },
+      "init": {
+        "variables": [],
+        "covariables": [
+          "tissue1_volume"
+        ],
+        "groups": [
+          "feature_name"
+        ],
+        "sql": "select tissue1_volume, feature_name from brain_feature order by tissue1_volume",
+        "count": 100
+      }
+    },
+    "summary": {
+      "type": {
+        "doc": "Descriptive statistics for the dataset",
+        "type": "record",
+        "name": "DescriptiveStatistics",
+        "fields": [
+          {
+            "name": "tissue1_volume",
+            "type": {
+              "type": "record",
+              "name": "ContinuousVariableSummary",
+              "namespace": "summary",
+              "fields": [
+                {
+                  "name": "min",
+                  "type": "double",
+                  "doc": "Minimum value"
+                },
+                {
+                  "name": "q1",
+                  "type": "double",
+                  "doc": "First quartile"
+                },
+                {
+                  "name": "median",
+                  "type": "double",
+                  "doc": "Median value"
+                },
+                {
+                  "name": "q3",
+                  "type": "double",
+                  "doc": "Third quartile"
+                },
+                {
+                  "name": "max",
+                  "type": "double",
+                  "doc": "Maximum value"
+                },
+                {
+                  "name": "mean",
+                  "type": "double",
+                  "doc": "Mean value"
+                },
+                {
+                  "name": "std",
+                  "type": "double",
+                  "doc": "Standard deviation"
+                },
+                {
+                  "name": "sum",
+                  "type": "double",
+                  "doc": "Sum"
+                },
+                {
+                  "name": "count",
+                  "type": "double",
+                  "doc": "Count"
+                }
+              ]
+            }
+          },
+          {
+            "name": "feature_name",
+            "type": {
+              "type": "record",
+              "name": "FactorVariableSummary",
+              "namespace": "summary",
+              "fields": [
+                {
+                  "name": "count",
+                  "type": "double",
+                  "doc": "Count"
+                },
+                {
+                  "name": "factors",
+                  "type": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "doc": "List of values"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "init": {
+        "tissue1_volume": {
+          "min": 0.0068206,
+          "q1": 0.00857095,
+          "median": 0.00931775,
+          "q3": 0.009805875,
+          "max": 0.011463,
+          "mean": 0.009191096,
+          "std": 0.000879557088828855,
+          "sum": 0.9191096,
+          "count": 100
+        },
+        "feature_name": {
+          "count": 100,
+          "factors": [
+            "Hippocampus_L",
+            "Hippocampus_R"
+          ]
+        }
+      }
+    }
+  },
+  "action": null
+}

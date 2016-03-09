@@ -63,14 +63,15 @@ cells:
 {{#intRowHeader}}
         -
           name: {{ name }}
-          type: record
-          name: IntegerVariableSummary
-          namespace: summary
-          fields:
-            - { name: min, type: double, doc: "Minimum value" }
-            - { name: max, type: double, doc: "Maximum value" }
-            - { name: sum, type: double, doc: "Sum" }
-            - { name: count, type: double, doc: "Count" }
+          type:
+            type: record
+            name: IntegerVariableSummary
+            namespace: summary
+            fields:
+              - { name: min, type: double, doc: "Minimum value" }
+              - { name: max, type: double, doc: "Maximum value" }
+              - { name: sum, type: double, doc: "Sum" }
+              - { name: count, type: double, doc: "Count" }
 {{/intRowHeader}}
 {{#intRowTail}}
         - { name: {{ name }}, type: "summary.IntegerVariableSummary" }
@@ -78,19 +79,20 @@ cells:
 {{#numRowHeader}}
         -
           name: {{ name }}
-          type: record
-          name: ContinuousVariableSummary
-          namespace: summary
-          fields:
-            - { name: min, type: double, doc: "Minimum value" }
-            - { name: q1, type: double, doc: "First quartile" }
-            - { name: median, type: double, doc: "Median value" }
-            - { name: q3, type: double, doc: "Third quartile" }
-            - { name: max, type: double, doc: "Maximum value" }
-            - { name: mean, type: double, doc: "Mean value" }
-            - { name: std, type: double, doc: "Standard deviation" }
-            - { name: sum, type: double, doc: "Sum" }
-            - { name: count, type: double, doc: "Count" }
+          type:
+            type: record
+            name: ContinuousVariableSummary
+            namespace: summary
+            fields:
+              - { name: min, type: double, doc: "Minimum value" }
+              - { name: q1, type: double, doc: "First quartile" }
+              - { name: median, type: double, doc: "Median value" }
+              - { name: q3, type: double, doc: "Third quartile" }
+              - { name: max, type: double, doc: "Maximum value" }
+              - { name: mean, type: double, doc: "Mean value" }
+              - { name: std, type: double, doc: "Standard deviation" }
+              - { name: sum, type: double, doc: "Sum" }
+              - { name: count, type: double, doc: "Count" }
 {{/numRowHeader}}
 {{#numRowTail}}
         - { name: {{ name }}, type: "summary.ContinousVariableSummary" }
@@ -98,11 +100,12 @@ cells:
 {{#strRowHeader}}
         -
           name: {{ name }}
-          type: record
-          name: StringVariableSummary
-          namespace: summary
-          fields:
-            - { name: count, type: double, doc: "Count" }
+          type:
+            type: record
+            name: StringVariableSummary
+            namespace: summary
+            fields:
+              - { name: count, type: double, doc: "Count" }
 {{/strRowHeader}}
 {{#strRowTail}}
         - { name: {{ name }}, type: "summary.StringVariableSummary" }
@@ -110,12 +113,13 @@ cells:
 {{#factorRowHeader}}
         -
           name: {{ name }}
-          type: record
-          name: FactorVariableSummary
-          namespace: summary
-          fields:
-            - { name: count, type: double, doc: "Count" }
-            - { name: factors, type: array, items: { type: string } , doc: "List of values" }
+          type:
+            type: record
+            name: FactorVariableSummary
+            namespace: summary
+            fields:
+              - { name: count, type: double, doc: "Count" }
+              - { name: factors, type: { type: array, items: { type: string }}, doc: "List of values" }
 {{/factorRowHeader}}
 {{#factorRowTail}}
         - { name: {{ name }}, type: "summary.FactorVariableSummary" }
@@ -151,6 +155,6 @@ cells:
 {{/factorRows}}
 
 action:
-  null
+  - null
 
 ...
