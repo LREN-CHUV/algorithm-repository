@@ -32,7 +32,9 @@ library(hbpsummarystats);
 
 # Initialisation
 variables <- strsplit(Sys.getenv("PARAM_variables"), ",");
+variables <- columns[lapply(variables,length)>0];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
+covariables <- columns[lapply(covariables,length)>0];
 groupstr <- Sys.getenv("PARAM_groups", "");
 if (groupstr == "") {
     groups <- c();
@@ -41,14 +43,55 @@ if (groupstr == "") {
 }
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-summary-stats:latest");
 
-columns <- c(variables, covariables, groups);
-columns <- columns[lapply(columns,length)>0];
+columns <- unique(c(variables, covariables, groups));
 
 # Fetch the data
 data <- fetchData();
 
 # Perform the computation
-res <- tablesummarystats(data, columns);
+results <- as.data.frame(tablesummarystats(data, columns));
+
+res <- as.data.frame(t(results));
+res <- as.data.frame(cbind(name=unlist(columns), res));
+
+# Extract type = integer
+intRows <- res[res$type == 'integer', ];
+rownames(intRows) <- NULL;
+if (nrow(intRows) == 0) {
+	intRows <- NA;
+	intRowHeader <- NA;
+	intRowTail <- NA;
+} else {
+	intRowHeader <- unname(rowSplit(intRows[1,]));
+	intRowTail <- unname(rowSplit(intRows[-1,]));
+	intRows <- unname(rowSplit(intRows));
+}
+
+# Extract type = numeric
+numRows <- res[res$type == 'numeric', ];
+rownames(numRows) <- NULL;
+if (nrow(numRows) == 0) {
+	numRows <- NA;
+	numRowHeader <- NA;
+	numRowTail <- NA;
+} else {
+	numRowHeader <- unname(rowSplit(numRows[1,]));
+	numRowTail <- unname(rowSplit(numRows[-1,]));
+	numRows <- unname(rowSplit(numRows));
+}
+
+# Extract type = character
+strRows <- res[res$type == 'character', ];
+rownames(strRows) <- NULL;
+if (nrow(strRows) == 0) {
+	strRows <- NA;
+	strRowHeader <- NA;
+	strRowTail <- NA;
+} else {
+	strRowHeader <- unname(rowSplit(strRows[1,]));
+	strRowTail <- unname(rowSplit(strRows[-1,]));
+	strRows <- unname(rowSplit(strRows));
+}
 
 # Ensure that we use only supported types: list, string
 store <- list(
@@ -57,7 +100,16 @@ store <- list(
               groups = toJSON(c(paste(groups, sep=":"))),
               sql = Sys.getenv("PARAM_query", ""),
               data_count = nrow(data),
-              docker_image = docker_image
+              docker_image = docker_image,
+              intRowHeader = intRowHeader,
+              intRowTail = intRowTail,
+              intRows = intRows,
+              numRowHeader = numRowHeader,
+              numRowTail = numRowTail,
+              numRows = numRows,
+              strRowHeader = strRowHeader,
+              strRowTail = strRowTail,
+              strRows = strRows
     );
 
 template <- readLines("/src/pfa.yml");

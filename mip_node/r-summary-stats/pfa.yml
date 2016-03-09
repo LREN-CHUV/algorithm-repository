@@ -56,21 +56,54 @@ cells:
       count: {{ data_count }}
   summary:
     type:
-      doc: "Descriptive summary"
+      doc: "Descriptive statistics for the dataset"
       type: record
-      name: DescriptiveSummary
+      name: DescriptiveStatistics
       fields:
-        - {name: min, type: double, doc: "Minimum value" }
-        - {name: q1, type: double, doc: "First quartile" }
-        - {name: median, type: double, doc: "Median value" }
-        - {name: q3, type: double, doc: "Third quartile" }
-        - {name: max, type: double, doc: "Maximum value" }
-        - {name: mean, type: double, doc: "Mean value" }
-        - {name: std, type: double, doc: "Standard deviation" }
-        - {name: sum, type: double, doc: "Sum" }
-        - {name: count, type: double, doc: "Count" }
+{{#intRowHeader}}
+        -
+          name: {{ name }}
+          type: record
+          name: IntegerVariableSummary
+          namespace: summary
+          fields:
+            - { name: min, type: double, doc: "Minimum value" }
+            - { name: max, type: double, doc: "Maximum value" }
+            - { name: sum, type: double, doc: "Sum" }
+            - { name: count, type: double, doc: "Count" }
+{{/intRowHeader}}
+{{#intRowTail}}
+        - { name: {{ name }}, type: "summary.IntegerVariableSummary" }
+{{/intRowTail}}
+{{#numRowHeader}}
+        -
+          name: {{ name }}
+          type: record
+          name: ContinuousVariableSummary
+          namespace: summary
+          fields:
+            - { name: min, type: double, doc: "Minimum value" }
+            - { name: q1, type: double, doc: "First quartile" }
+            - { name: median, type: double, doc: "Median value" }
+            - { name: q3, type: double, doc: "Third quartile" }
+            - { name: max, type: double, doc: "Maximum value" }
+            - { name: mean, type: double, doc: "Mean value" }
+            - { name: std, type: double, doc: "Standard deviation" }
+            - { name: sum, type: double, doc: "Sum" }
+            - { name: count, type: double, doc: "Count" }
+{{/numRowHeader}}
+{{#numRowTail}}
+        - { name: {{ name }}, type: "summary.ContinousVariableSummary" }
+{{/numRowTail}}
     init:
-{{#summary}}
+{{#intRows}}
+      "{{ name }}":
+        min: {{ min }}
+        max: {{ max }}
+        sum: {{ sum }}
+        count: {{ count }}
+{{/intRows}}
+{{#numRows}}
       "{{ name }}":
         min: {{ min }}
         q1: {{ q1 }}
@@ -81,7 +114,7 @@ cells:
         std: {{ std }}
         sum: {{ sum }}
         count: {{ count }}
-{{/summary}}
+{{/numRows}}
 
 action:
   null
