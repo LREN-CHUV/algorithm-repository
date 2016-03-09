@@ -402,8 +402,12 @@
             },
             "new": [
               {
-                "cast.fanoutDouble": [
-                  "input.feature_name"
+                "a.tail": [
+                  {
+                    "cast.fanoutDouble": [
+                      "input.feature_name"
+                    ]
+                  }
                 ]
               }
             ]

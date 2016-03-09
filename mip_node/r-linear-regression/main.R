@@ -56,7 +56,7 @@ input_defs <- as.list(input_defs);
 names(input_defs) <- NULL;
 input_conv <- apply(inputs[c('name','type')], 1, function(y) {
   switch(y['type'],
-    character=paste('"cast.fanoutDouble": [ "input.', y['name'], '" ]', sep=''),
+    character=paste('{ "a.tail": [{ "cast.fanoutDouble": [ "input.', y['name'], '" ] }] }', sep=''),
     paste('{ "type": { "type": "array", "items": { "type": "double"} }, "new": ["input.', y['name'], '"] }', sep='')
 )});
 input_conv <- as.list(input_conv);

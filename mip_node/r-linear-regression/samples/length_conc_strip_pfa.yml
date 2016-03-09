@@ -328,7 +328,7 @@ action:
                 type: double
           new:
             - { "type": { "type": "array", "items": { "type": "double"} }, "new": ["input.conc"] }
-            - "cast.fanoutDouble": [ "input.strip" ]
+            - { "a.tail": [{"cast.fanoutDouble": [ "input.strip" ] }] }
   -
     "model.reg.linear":
       - in

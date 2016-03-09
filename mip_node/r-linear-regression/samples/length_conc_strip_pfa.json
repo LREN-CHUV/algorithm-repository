@@ -1289,8 +1289,12 @@
                 ]
               },
               {
-                "cast.fanoutDouble": [
-                  "input.strip"
+                "a.tail": [
+                  {
+                    "cast.fanoutDouble": [
+                      "input.strip"
+                    ]
+                  }
                 ]
               }
             ]

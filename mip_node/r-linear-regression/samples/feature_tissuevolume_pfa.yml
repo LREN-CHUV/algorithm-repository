@@ -222,7 +222,7 @@ action:
               items:
                 type: double
           new:
-            - "cast.fanoutDouble": [ "input.feature_name" ]
+            - { "a.tail": [{"cast.fanoutDouble": [ "input.feature_name" ] }] }
   -
     "model.reg.linear":
       - in
