@@ -52,7 +52,7 @@ data <- fetchData();
 results <- as.data.frame(tablesummarystats(data, columns));
 
 res <- as.data.frame(t(results));
-res <- as.data.frame(cbind(name=unlist(columns), res));
+res <- as.data.frame(cbind(name=rownames(res), res));
 
 # Extract type = integer
 intRows <- res[res$type == 'integer', ];
