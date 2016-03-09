@@ -7,7 +7,7 @@
 #'
 #' - Input Parameters:
 #'      PARAM_query  : SQL query producing the dataframe to analyse
-#'      PARAM_variable : Name of the variable
+#'      PARAM_variables : Column separated list of variables, only the first variable will be used
 #'      PARAM_covariables : Column separated list of covariables
 #'      PARAM_groups : Column separated list of groups
 #' - Execution context:
@@ -31,7 +31,7 @@ library(whisker);
 library(hbplregress);
 
 # Initialisation
-variable <- Sys.getenv("PARAM_variable");
+variable <- strsplit(Sys.getenv("PARAM_variables"), ",")[1];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
 covariables <- columns[lapply(covariables,length)>0];
 groupstr <- Sys.getenv("PARAM_groups", "");

@@ -17,7 +17,7 @@ test_that("We can perform linear regression on one variable, one covariable and 
   # Perform the computation
   source("/src/main.R");
 
-  connect2outdb();
+  out_conn <- connect2outdb();
 
   # Get the results
   results <- RJDBC::dbGetQuery(out_conn, "select node, data, shape from job_result where job_id = ?", job_id);
