@@ -1,5 +1,19 @@
 #!/bin/bash -e
 
+get_script_dir () {
+     SOURCE="${BASH_SOURCE[0]}"
+
+     while [ -h "$SOURCE" ]; do
+          DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+          SOURCE="$( readlink "$SOURCE" )"
+          [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+     done
+     cd -P "$( dirname "$SOURCE" )"
+     pwd
+}
+
+ROOT_DIR="$(get_script_dir)/../.."
+
 OPTS=""
 OPERATION="test"
 
@@ -9,10 +23,10 @@ if [ "$1" = "--interactive" ]; then
 fi
 
 echo "Starting the results database..."
-../../tests/analytics-db/start-db.sh
+$ROOT_DIR/tests/analytics-db/start-db.sh
 echo
 echo "Starting the local database..."
-../../tests/dummy-ldsm/start-db.sh
+$ROOT_DIR/tests/dummy-ldsm/start-db.sh
 echo
 
 sleep 2
@@ -41,5 +55,5 @@ $DOCKER run --rm $OPTS \
   -e OUT_FORMAT=INTERMEDIATE_RESULTS \
   hbpmip/r-linear-regression $OPERATION
 
-../../tests/analytics-db/stop-db.sh
-../../tests/dummy-ldsm/stop-db.sh
+$ROOT_DIR/tests/analytics-db/stop-db.sh
+$ROOT_DIR/tests/dummy-ldsm/stop-db.sh
