@@ -33,7 +33,7 @@ library(hbplregress);
 # Initialisation
 variable <- strsplit(Sys.getenv("PARAM_variables"), ",")[1];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
-covariables <- columns[lapply(covariables,length)>0];
+covariables <- covariables[lapply(covariables,length)>0];
 groupstr <- Sys.getenv("PARAM_groups", "");
 if (groupstr == "") {
     groups <- c();
