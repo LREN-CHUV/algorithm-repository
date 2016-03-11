@@ -1,4 +1,4 @@
-FROM hbpmip/r-job:eca7867
+FROM hbpmip/r-job:629ae86
 
 MAINTAINER ludovic.claude54@gmail.com
 
