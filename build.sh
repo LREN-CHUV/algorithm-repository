@@ -14,10 +14,16 @@ get_script_dir () {
 
 ROOT_DIR="$(get_script_dir)"
 
+if groups $USER | grep &>/dev/null '\bdocker\b'; then
+  CAPTAIN="captain"
+else
+  CAPTAIN="sudo captain"
+fi
+
 IMAGES="r-summary-stats r-linear-regression"
 
 for image in $IMAGES ; do
   cd $ROOT_DIR/$image
-  captain test
-  captain push
+  $CAPTAIN test
+  $CAPTAIN push
 done
