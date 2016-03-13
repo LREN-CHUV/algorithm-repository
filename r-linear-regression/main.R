@@ -31,7 +31,7 @@ library(whisker);
 library(hbplregress);
 
 # Initialisation
-variable <- strsplit(Sys.getenv("PARAM_variables"), ",")[1];
+variable <- strsplit(Sys.getenv("PARAM_variables"), ",")[[1]];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
 covariables <- covariables[lapply(covariables,length)>0];
 groupstr <- Sys.getenv("PARAM_groups", "");
@@ -64,7 +64,7 @@ input_conv <- as.list(input_conv);
 names(input_conv) <- NULL;
 
 # Perform the computation
-res <- LRegress_Node(data, variable, covariables, groups);
+res <- LRegress(data, variable, covariables, groups);
 
 # Build the response
 coeff_names <- names(res$coefficients);
@@ -121,7 +121,7 @@ store <- list(input_defs = input_defs,
               data_count = nrow(data),
               docker_image = docker_image,
               model_const = model_const,
-              model_coeff = toJSON(model_coeff),
+              model_coeff = toJSON(model_coeff, digits = 8),
               if_anova = if_anova,
               anova_coeff_header = anova_coeff_header,
               anova_coeff_tail = anova_coeff_tail,
@@ -136,7 +136,7 @@ store <- list(input_defs = input_defs,
               summary_degrees_freedom = toJSON(summary_degrees_freedom),
               summary_r_squared = res$summary$r.squared,
               summary_adj_r_squared = res$summary$adj.r.squared,
-              summary_cov_unscaled = toJSON(summary_cov_unscaled));
+              summary_cov_unscaled = toJSON(summary_cov_unscaled, digits = 8));
 
 template <- readLines("/src/pfa.yml");
 

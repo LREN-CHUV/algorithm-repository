@@ -228,3 +228,26 @@ INSERT INTO muscle VALUES (119, 'S20', 3, 32.2);
 INSERT INTO muscle VALUES (123, 'S21', 1, 23);
 INSERT INTO muscle VALUES (124, 'S21', 2, 27.4);
 INSERT INTO muscle VALUES (125, 'S21', 3, 30.4);
+
+--- ADNI inspired dataset
+
+CREATE TABLE brain
+(
+    id integer NOT NULL,
+    prov character varying(32) NOT NULL,
+    age numeric,
+    left_amygdala numeric,
+
+    CONSTRAINT brain_pkey PRIMARY KEY (id)
+
+);
+
+INSERT INTO brain VALUES(1, 'AD1', 81.2, 0.764);
+INSERT INTO brain VALUES(2, 'AD1', 81.2, 0.763);
+INSERT INTO brain VALUES(3, 'AD1', 81.2, 0.763);
+INSERT INTO brain VALUES(4, 'AD1', 73.6, 0.721);
+INSERT INTO brain VALUES(5, 'AD1', 73.6, 0.715);
+INSERT INTO brain VALUES(6, 'AD1', 73.6, 0.727);
+INSERT INTO brain VALUES(7, 'AD1', 73.6, 0.727);
+INSERT INTO brain VALUES(8, 'AD2', 70.1, 0.916);
+INSERT INTO brain VALUES(9, 'AD2', 70.1, 0.865);

@@ -1,4 +1,4 @@
-context("BrainData");
+context("Brain");
 
 library(testthat);
 library(hbpjdbcconnect);
@@ -6,12 +6,12 @@ library(yaml);
 
 test_that("We can perform linear regression on one variable and one covariable", {
 
-  job_id <- '001';
+  job_id <- '003';
   Sys.setenv(JOB_ID=job_id,
-    PARAM_query="select feature_name, tissue1_volume from brain_feature order by tissue1_volume",
-    PARAM_variables="tissue1_volume",
-    PARAM_covariables="feature_name",
-    PARAM_groups="");
+    PARAM_query="select age, prov, left_amygdala from brain",
+    PARAM_variables="left_amygdala",
+    PARAM_covariables="age",
+    PARAM_groups="prov");
 
   # Perform the computation
   source("/src/main.R");
@@ -39,14 +39,13 @@ test_that("We can perform linear regression on one variable and one covariable",
   expect_equal(node, "Test");
   expect_equal(shape, "pfa_yaml");
   
-  expected_result_residuals = "[{\"(Intercept)\":1.563e-08,\"feature_nameHippocampus_R\":-1.563e-08,\"_row\":\"(Intercept)\"},{\"(Intercept)\":-1.563e-08,\"feature_nameHippocampus_R\":3.126e-08,\"_row\":\"feature_nameHippocampus_R\"}]"
   
-  expect_equal(result_model_const, 0.009194024, tolerance = 1e-6);
-  expect_equal(result_model_coeff[1], -0.000005856, tolerance = 1e-6);
-  # expect_equal(result_residuals, fromJSON(expected_result_residuals), tolerance=1e-5);
+  expect_equal(result_model_const, 0.3270614,     tolerance = 1e-6, scale = 1);
+  expect_equal(result_model_coeff[1], 0.18680482, tolerance = 1e-6, scale = 1);
+  expect_equal(result_model_coeff[2], 0.00537280, tolerance = 1e-6, scale = 1);
   
-  expect_equal(result_r_squared, 1.119383e-05, tolerance = 1e-6);
-  expect_equal(result_degrees_freedom, c(2, 98, 2));
+  expect_equal(result_r_squared, 0.96454576, tolerance = 1e-6);
+  expect_equal(result_degrees_freedom, c(3,6,3));
   
   print ("[ok] Success!");
 

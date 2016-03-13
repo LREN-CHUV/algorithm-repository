@@ -1,5 +1,19 @@
 #!/bin/bash -e
 
+get_script_dir () {
+     SOURCE="${BASH_SOURCE[0]}"
+
+     while [ -h "$SOURCE" ]; do
+          DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+          SOURCE="$( readlink "$SOURCE" )"
+          [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+     done
+     cd -P "$( dirname "$SOURCE" )"
+     pwd
+}
+
+ROOT_DIR="$(get_script_dir)/.."
+
 function cheat_sheet() {
 
   echo "Cheat sheet - run the following commands:"
@@ -20,10 +34,10 @@ function cheat_sheet() {
 }
 
 echo "Starting the results database..."
-../../tests/analytics-db/start-db.sh
+$ROOT_DIR/tests/analytics-db/start-db.sh
 echo
 echo "Starting the local database..."
-../../tests/dummy-ldsm/start-db.sh
+$ROOT_DIR/tests/dummy-ldsm/start-db.sh
 echo
 
 sleep 2
@@ -59,5 +73,5 @@ $DOCKER run -i -t --rm \
   -e OUT_JDBC_PASSWORD=test \
   hbpmip/r-interactive:latest R
 
-../../tests/analytics-db/stop-db.sh
-../../tests/dummy-ldsm/stop-db.sh
+$ROOT_DIR/tests/analytics-db/stop-db.sh
+$ROOT_DIR/tests/dummy-ldsm/stop-db.sh

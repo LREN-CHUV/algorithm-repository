@@ -2,7 +2,7 @@ FROM hbpmip/r-job:629ae86
 
 MAINTAINER ludovic.claude54@gmail.com
 
-RUN installGithub.r LREN-CHUV/hbplregress@535af0a0 
+RUN installGithub.r LREN-CHUV/hbplregress@cfa2dae5
 
 LABEL eu.humanbrainproject.function=linear-regression \
       eu.humanbrainproject.function.location=node \
