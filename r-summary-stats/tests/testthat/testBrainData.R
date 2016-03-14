@@ -11,7 +11,7 @@ test_that("We can perform summary statistics on one variable", {
     PARAM_query="select tissue1_volume from brain_feature",
     PARAM_variables="tissue1_volume",
     PARAM_covariables="",
-    PARAM_groups="");
+    PARAM_grouping="");
 
   # Perform the computation
   source("/src/main.R");
@@ -64,7 +64,7 @@ test_that("We can perform summary statistics on 2 variables, one is a factor", {
     PARAM_query="select feature_name, tissue1_volume from brain_feature",
     PARAM_variables="tissue1_volume",
     PARAM_covariables="feature_name",
-    PARAM_groups="");
+    PARAM_grouping="");
 
   # Perform the computation
   source("/src/main.R");

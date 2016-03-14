@@ -9,7 +9,7 @@
 #'      PARAM_query  : SQL query producing the dataframe to analyse
 #'      PARAM_variables : Column separated list of variables, only the first variable will be used
 #'      PARAM_covariables : Column separated list of covariables
-#'      PARAM_groups : Column separated list of groups
+#'      PARAM_grouping : Column separated list of groupings
 #' - Execution context:
 #'      JOB_ID : ID of the job
 #'      NODE : Node used for the execution of the script
@@ -34,11 +34,11 @@ library(hbplregress);
 variable <- strsplit(Sys.getenv("PARAM_variables"), ",")[[1]];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
 covariables <- covariables[lapply(covariables,length)>0];
-groupstr <- Sys.getenv("PARAM_groups", "");
-if (groupstr == "") {
-    groups <- c();
+groupingstr <- Sys.getenv("PARAM_grouping", "");
+if (groupingstr == "") {
+    grouping <- c();
 } else {
-    groups <- strsplit(Sys.getenv("PARAM_groups", ""), ",");
+    grouping <- strsplit(groupingstr, ",");
 }
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-linear-regression:latest");
 
@@ -46,7 +46,7 @@ docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-linear-regression:latest");
 data <- fetchData();
 
 input_types <- sapply(data, class);
-input_types <- input_types[simplify2array(c(covariables, groups))];
+input_types <- input_types[simplify2array(c(covariables, grouping))];
 inputs <- data.frame(name=names(input_types), type=input_types);
 input_defs <- apply(inputs[c('name','type')], 1, function(y) {
   switch(y['type'],
@@ -64,7 +64,7 @@ input_conv <- as.list(input_conv);
 names(input_conv) <- NULL;
 
 # Perform the computation
-res <- LRegress(data, variable, covariables, groups);
+res <- LRegress(data, variable, covariables, grouping);
 
 # Build the response
 coeff_names <- names(res$coefficients);
@@ -116,7 +116,7 @@ store <- list(input_defs = input_defs,
               input_conv = input_conv,
               variable = variable,
               covariables = toJSON(covariables, auto_unbox=T),
-              groups = toJSON(c(paste(groups, sep=":"))),
+              grouping = toJSON(c(paste(grouping, sep=":"))),
               sql = Sys.getenv("PARAM_query", ""),
               data_count = nrow(data),
               docker_image = docker_image,

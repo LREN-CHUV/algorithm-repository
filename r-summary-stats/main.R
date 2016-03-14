@@ -9,7 +9,7 @@
 #'      PARAM_query  : SQL query producing the dataframe to analyse
 #'      PARAM_variables : Column separated list of variables
 #'      PARAM_covariables : Column separated list of covariables
-#'      PARAM_groups : Column separated list of groups
+#'      PARAM_grouping : Column separated list of groupings
 #' - Execution context:
 #'      JOB_ID : ID of the job
 #'      NODE : Node used for the execution of the script
@@ -35,15 +35,15 @@ variables <- strsplit(Sys.getenv("PARAM_variables"), ",");
 variables <- variables[lapply(variables,length)>0];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
 covariables <- covariables[lapply(covariables,length)>0];
-groupstr <- Sys.getenv("PARAM_groups", "");
-if (groupstr == "") {
-    groups <- c();
+groupingstr <- Sys.getenv("PARAM_grouping", "");
+if (groupingstr == "") {
+    grouping <- c();
 } else {
-    groups <- strsplit(Sys.getenv("PARAM_groups", ""), ",");
+    grouping <- strsplit(groupingstr, ",");
 }
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-summary-stats:latest");
 
-columns <- unique(c(variables, covariables, groups));
+columns <- unique(c(variables, covariables, grouping));
 
 # Fetch the data
 data <- fetchData();
@@ -112,7 +112,7 @@ if (nrow(factorRows) == 0) {
 store <- list(
               variables = toJSON(variables, auto_unbox=T),
               covariables = toJSON(covariables, auto_unbox=T),
-              groups = toJSON(c(paste(groups, sep=":"))),
+              grouping = toJSON(c(paste(grouping, sep=":"))),
               sql = Sys.getenv("PARAM_query", ""),
               data_count = nrow(data),
               docker_image = docker_image,

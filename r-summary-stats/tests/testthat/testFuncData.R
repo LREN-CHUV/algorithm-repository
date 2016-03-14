@@ -11,7 +11,7 @@ test_that("We can perform summary statistics on 2 variables", {
     PARAM_query="select efc,fber from func",
     PARAM_variables="efc,fber",
     PARAM_covariables="",
-    PARAM_groups="");
+    PARAM_grouping="");
 
   # Perform the computation
   source("/src/main.R");

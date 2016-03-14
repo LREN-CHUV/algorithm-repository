@@ -11,7 +11,7 @@ test_that("We can perform linear regression on one variable and one covariable",
     PARAM_query="select age, prov, left_amygdala from brain",
     PARAM_variables="left_amygdala",
     PARAM_covariables="age",
-    PARAM_groups="prov");
+    PARAM_grouping="prov");
 
   # Perform the computation
   source("/src/main.R");
@@ -36,7 +36,7 @@ test_that("We can perform linear regression on one variable and one covariable",
   # Disconnect from the database
   disconnectdbs();
   
-  expect_equal(node, "Test");
+  expect_equal(node, "job_test");
   expect_equal(shape, "pfa_yaml");
   
   

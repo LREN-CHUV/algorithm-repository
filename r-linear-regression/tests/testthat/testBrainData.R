@@ -11,7 +11,7 @@ test_that("We can perform linear regression on one variable and one covariable",
     PARAM_query="select feature_name, tissue1_volume from brain_feature order by tissue1_volume",
     PARAM_variables="tissue1_volume",
     PARAM_covariables="feature_name",
-    PARAM_groups="");
+    PARAM_grouping="");
 
   # Perform the computation
   source("/src/main.R");
@@ -36,7 +36,7 @@ test_that("We can perform linear regression on one variable and one covariable",
   # Disconnect from the database
   disconnectdbs();
   
-  expect_equal(node, "Test");
+  expect_equal(node, "job_test");
   expect_equal(shape, "pfa_yaml");
   
   expected_result_residuals = "[{\"(Intercept)\":1.563e-08,\"feature_nameHippocampus_R\":-1.563e-08,\"_row\":\"(Intercept)\"},{\"(Intercept)\":-1.563e-08,\"feature_nameHippocampus_R\":3.126e-08,\"_row\":\"feature_nameHippocampus_R\"}]"

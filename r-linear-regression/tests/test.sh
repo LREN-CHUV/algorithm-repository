@@ -40,7 +40,6 @@ fi
 $DOCKER run --rm $OPTS \
   --link dummyldsm:indb \
   --link analyticsdb:outdb \
-  -e JOB_ID=002 \
   -e NODE=Test \
   -e IN_JDBC_DRIVER=org.postgresql.Driver \
   -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \

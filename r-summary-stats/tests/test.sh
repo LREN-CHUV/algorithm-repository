@@ -40,10 +40,7 @@ fi
 $DOCKER run --rm $OPTS \
   --link dummyldsm:indb \
   --link analyticsdb:outdb \
-  -e JOB_ID=001 \
   -e NODE=job_test \
-  -e PARAM_query="select tissue1_volume from brain_feature order by tissue1_volume" \
-  -e PARAM_colnames="tissue1_volume" \
   -e IN_JDBC_DRIVER=org.postgresql.Driver \
   -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
   -e IN_JDBC_URL=jdbc:postgresql://indb:5432/postgres \

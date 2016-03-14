@@ -12,7 +12,7 @@ test_that("We can perform linear regression on one variable, one covariable and 
     PARAM_query="select strip, conc, length from muscle",
     PARAM_variables="length",
     PARAM_covariables="conc",
-    PARAM_groups="strip");
+    PARAM_grouping="strip");
 
   # Perform the computation
   source("/src/main.R");
@@ -37,7 +37,7 @@ test_that("We can perform linear regression on one variable, one covariable and 
   # Disconnect from the database
   disconnectdbs();
   
-  expect_equal(node, "Test");
+  expect_equal(node, "job_test");
   expect_equal(shape, "pfa_yaml");
   
   expect_equal(result_model_const, 9.005107, tolerance = 1e-6);
