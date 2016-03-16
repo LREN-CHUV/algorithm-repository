@@ -87,11 +87,11 @@ test_that("We can perform linear regression on one variable and two covariables"
   expect_equal(shape, "pfa_yaml");
   
   
-  expect_equal(result_model_const, 0.3270614,     tolerance = 1e-6, scale = 1);
-  expect_equal(result_model_coeff[1], 0.18680482, tolerance = 1e-6, scale = 1);
-  expect_equal(result_model_coeff[2], 0.00537280, tolerance = 1e-6, scale = 1);
+  expect_equal(result_model_const, -0.03204289,  tolerance = 1e-6, scale = 1);
+  expect_equal(result_model_coeff[1], 0.4448689, tolerance = 1e-6, scale = 1);
+  expect_equal(result_model_coeff[2], 0.1286247, tolerance = 1e-6, scale = 1);
   
-  expect_equal(result_r_squared, 0.96454576, tolerance = 1e-6);
+  expect_equal(result_r_squared, 0.6961309, tolerance = 1e-6);
   expect_equal(result_degrees_freedom, c(3,6,3));
   
   print ("[ok] Success!");

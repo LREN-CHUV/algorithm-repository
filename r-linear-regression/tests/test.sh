@@ -1,4 +1,8 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 
 get_script_dir () {
      SOURCE="${BASH_SOURCE[0]}"
@@ -29,6 +33,15 @@ echo "Starting the local database..."
 $ROOT_DIR/tests/dummy-ldsm/start-db.sh
 echo
 
+function _cleanup() {
+  local error_code="$?"
+  echo "Stopping the databases..."
+  $ROOT_DIR/tests/analytics-db/stop-db.sh
+  $ROOT_DIR/tests/dummy-ldsm/stop-db.sh
+  exit $error_code
+}
+trap _cleanup EXIT INT TERM
+
 sleep 2
 
 if groups $USER | grep &>/dev/null '\bdocker\b'; then
@@ -40,7 +53,7 @@ fi
 $DOCKER run --rm $OPTS \
   --link dummyldsm:indb \
   --link analyticsdb:outdb \
-  -e NODE=Test \
+  -e NODE=job_test \
   -e IN_JDBC_DRIVER=org.postgresql.Driver \
   -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
   -e IN_JDBC_URL=jdbc:postgresql://indb:5432/postgres \
@@ -53,6 +66,3 @@ $DOCKER run --rm $OPTS \
   -e OUT_JDBC_PASSWORD=test \
   -e OUT_FORMAT=INTERMEDIATE_RESULTS \
   hbpmip/r-linear-regression $OPERATION
-
-$ROOT_DIR/tests/analytics-db/stop-db.sh
-$ROOT_DIR/tests/dummy-ldsm/stop-db.sh

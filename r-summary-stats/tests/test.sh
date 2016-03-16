@@ -29,6 +29,15 @@ echo "Starting the local database..."
 $ROOT_DIR/tests/dummy-ldsm/start-db.sh
 echo
 
+function _cleanup() {
+  local error_code="$?"
+  echo "Stopping the databases..."
+  $ROOT_DIR/tests/analytics-db/stop-db.sh
+  $ROOT_DIR/tests/dummy-ldsm/stop-db.sh
+  exit $error_code
+}
+trap _cleanup EXIT INT TERM
+
 sleep 2
 
 if groups $USER | grep &>/dev/null '\bdocker\b'; then
@@ -53,6 +62,3 @@ $DOCKER run --rm $OPTS \
   -e OUT_JDBC_PASSWORD=test \
   -e OUT_FORMAT=INTERMEDIATE_RESULTS \
   hbpmip/r-summary-stats $OPERATION
-
-$ROOT_DIR/tests/analytics-db/stop-db.sh
-$ROOT_DIR/tests/dummy-ldsm/stop-db.sh
