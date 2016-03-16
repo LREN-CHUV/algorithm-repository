@@ -1,6 +1,6 @@
 #'
 #' This script computes the linear regression.
-#' The data (input parameters: y, A) are obtained from the local databases using a specific query.
+#' The data (input parameters: variables, covariables, grouping) are obtained from the local databases using a specific query.
 #' This query will be the same for all nodes.
 #'
 #' Environment variables:
@@ -137,4 +137,4 @@ store <- list(input_defs = input_defs,
 template <- readLines("/src/pfa.yml");
 
 # Store results in the database
-saveResults(whisker.render(template, store), fn = 'r-linear-regression', shape = 'pfa_yaml');
+saveResults(whisker.render(template, store), shape = 'pfa_yaml');

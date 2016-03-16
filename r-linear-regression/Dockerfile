@@ -1,4 +1,4 @@
-FROM hbpmip/r-job:629ae86
+FROM hbpmip/r-job:1ed44df
 
 MAINTAINER ludovic.claude54@gmail.com
 
@@ -14,3 +14,5 @@ LABEL eu.humanbrainproject.function=linear-regression \
 COPY main.R pfa.yml /src/
 COPY tests/testthat.R /src/tests/
 COPY tests/testthat/ /src/tests/testthat/
+
+ENV FUNCTION r-linear-regression

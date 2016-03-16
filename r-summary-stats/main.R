@@ -129,4 +129,4 @@ store <- list(
 template <- readLines("/src/pfa.yml");
 
 # Store results in the database
-saveResults(whisker.render(template, store), fn = 'r-summary-stats', shape = 'pfa_yaml');
+saveResults(whisker.render(template, store), shape = 'pfa_yaml');
