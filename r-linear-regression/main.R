@@ -35,11 +35,7 @@ variable <- strsplit(Sys.getenv("PARAM_variables"), ",")[[1]];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
 covariables <- covariables[lapply(covariables,length)>0];
 groupingstr <- Sys.getenv("PARAM_grouping", "");
-if (groupingstr == "") {
-    grouping <- c();
-} else {
-    grouping <- strsplit(groupingstr, ",");
-}
+grouping <- if (groupingstr == "") list() else strsplit(groupingstr, ",");
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-linear-regression:latest");
 
 # Fetch the data

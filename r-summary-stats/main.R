@@ -36,11 +36,7 @@ variables <- variables[lapply(variables,length)>0];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
 covariables <- covariables[lapply(covariables,length)>0];
 groupingstr <- Sys.getenv("PARAM_grouping", "");
-if (groupingstr == "") {
-    grouping <- c();
-} else {
-    grouping <- strsplit(groupingstr, ",");
-}
+grouping <- if (groupingstr == "") list() else strsplit(groupingstr, ",");
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-summary-stats:latest");
 
 columns <- unique(c(variables, covariables, grouping));

@@ -237,17 +237,20 @@ CREATE TABLE brain
     prov character varying(32) NOT NULL,
     age numeric,
     left_amygdala numeric,
+    left_splsupparlob numeric,
+    right_poparoper numeric,
+    right_pogpostcgyr numeric,
 
     CONSTRAINT brain_pkey PRIMARY KEY (id)
 
 );
 
-INSERT INTO brain VALUES(1, 'AD1', 81.2, 0.764);
-INSERT INTO brain VALUES(2, 'AD1', 81.2, 0.763);
-INSERT INTO brain VALUES(3, 'AD1', 81.2, 0.763);
-INSERT INTO brain VALUES(4, 'AD1', 73.6, 0.721);
-INSERT INTO brain VALUES(5, 'AD1', 73.6, 0.715);
-INSERT INTO brain VALUES(6, 'AD1', 73.6, 0.727);
-INSERT INTO brain VALUES(7, 'AD1', 73.6, 0.727);
-INSERT INTO brain VALUES(8, 'AD2', 70.1, 0.916);
-INSERT INTO brain VALUES(9, 'AD2', 70.1, 0.865);
+INSERT INTO brain VALUES(1, 'AD1', 81.2, 0.764, 0.521, 0.943, 1.123);
+INSERT INTO brain VALUES(2, 'AD1', 81.2, 0.763, 0.493, 0.856, 1.112);
+INSERT INTO brain VALUES(3, 'AD1', 81.2, 0.763, 0.542, 0.894, 1.167);
+INSERT INTO brain VALUES(4, 'AD1', 73.6, 0.721, 0.535, 0.952, 1.201);
+INSERT INTO brain VALUES(5, 'AD1', 73.6, 0.715, 0.512, 0.901, 1.097);
+INSERT INTO brain VALUES(6, 'AD1', 73.6, 0.727, 0.489, 0.878, 1.115);
+INSERT INTO brain VALUES(7, 'AD1', 73.6, 0.727, 0.563, 0.987, 1.098);
+INSERT INTO brain VALUES(8, 'AD2', 70.1, 0.916, 0.535, 0.956, 1.129);
+INSERT INTO brain VALUES(9, 'AD2', 70.1, 0.865, 0.515, 0.921, 1.114);
