@@ -1,0 +1,9 @@
+r-tsne:
+  build: Dockerfile
+  image: hbpmip/r-tsne
+  pre:
+    - echo "Preparing r-tsne"
+  post:
+    - echo "Finished r-tsne"
+  test:
+    - tests/test.sh
