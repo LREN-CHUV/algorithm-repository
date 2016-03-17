@@ -1,6 +1,6 @@
 # r-tsne
 
-Implementation of a linear regression in R
+Implementation of t-Distributed Stochastic Neighbor Embedding in R
 
 ## Development process
 
@@ -33,7 +33,7 @@ This script provides a R runtime executed inside a Docker container. It also sta
 To develop the main.R script, you should type the following in the R shell:
 ```
   library(devtools)
-  devtools::install_github("LREN-CHUV/hbplregress")
+  devtools::install_github("jkrijthe/Rtsne")
   source(\"/src/main.R\")
 ```
 

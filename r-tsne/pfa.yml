@@ -1,25 +1,20 @@
 ---
 
-name: linear_regression
+name: t-SNE
 
 doc: |
-  Univariate Linear Regression Model
+  t-Distributed Stochastic Neighbor Embedding,
+  a technique for dimensionality reduction.
 
 metadata:
   docker_image: "{{ docker_image }}"
 
 input:
-  doc: "Input is the list of covariables and groups"
-  name: DependentVariables
-  type: record
-  fields:
-{{#input_defs}}
-    - {{{.}}}
-{{/input_defs}}
+  type: "null"
 
 output:
-  doc: "Output is the estimate of the variable"
-  type: "double"
+  doc: "No output"
+  type: "null"
 
 cells:
   query:
@@ -28,7 +23,13 @@ cells:
       name: Query
       type: record
       fields:
-        - { name: "variable", type: "string", doc: "Dependent variable" }
+        -
+          name: "variables"
+          doc: "List of dependent variables"
+          type:
+            type: "array"
+            items:
+              type: "string"
         -
           name: "covariables"
           doc: "List of explanatory variables"
@@ -50,11 +51,27 @@ cells:
         - { name: "sql", type: "string", doc: "SQL query" }
         - { name: "count", type: "int", doc: "Number of records selected by the query" }
     init:
-      variable: "{{ variable }}"
+      variables: {{{ variables }}}
       covariables: {{{ covariables }}}
       groups: {{{ groups }}}
       sql: "{{ sql }}"
       count: {{ data_count }}
+
+#       Y: Matrix containing the new representations for the objects
+#
+#       N: Number of objects
+#
+#   origD: Original Dimensionality before TSNE
+#
+#   perplexity: See above
+#
+#   theta: See above
+#
+#   costs: The cost for every object after the final iteration
+#
+#   itercosts: The total costs for all objects in every 50th + the last
+#          iteration
+
   model:
     type:
       doc: "List of coefficients of the model parameters, compatible with PFA function model.reg.linear"

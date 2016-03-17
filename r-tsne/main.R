@@ -7,9 +7,39 @@
 #'
 #' - Input Parameters:
 #'      PARAM_query  : SQL query producing the dataframe to analyse
-#'      PARAM_variables : Column separated list of variables, only the first variable will be used
+#'      PARAM_variables : Column separated list of variables
 #'      PARAM_covariables : Column separated list of covariables
 #'      PARAM_grouping : Column separated list of groupings
+    dims: integer; Output dimensionality (default: 2)
+
+initial_dims: integer; the number of dimensions that should be retained
+          in the initial PCA step (default: 50)
+
+perplexity: numeric; Perplexity parameter
+
+   theta: numeric; Speed/accuracy trade-off (increase for less
+          accuracy), set to 0.0 for exact TSNE (default: 0.5)
+
+check_duplicates: logical; Checks whether duplicates are present. It is
+          best to make sure there are no duplicates present and set
+          this option to FALSE, especially for large datasets (default:
+          TRUE)
+
+     pca: logical; Whether an initial PCA step should be performed
+          (default: TRUE)
+max_iter: integer; Maximum number of iterations (default: 1000)
+
+ verbose: logical; Whether progress updates should be printed (default:
+          FALSE)
+
+is_distance: logical; Indicate whether X is a distance matrix
+          (experimental, default: FALSE)
+
+  Y_init: matrix; Initial locations of the objects. If NULL, random
+          initialization will be used (default: NULL). Note that when
+          using this, the initial stage with false perplexity values
+          and a larger momentum term will be skipped.
+
 #' - Execution context:
 #'      JOB_ID : ID of the job
 #'      NODE : Node used for the execution of the script
@@ -31,7 +61,8 @@ library(whisker);
 library(Rtsne);
 
 # Initialisation
-variable <- strsplit(Sys.getenv("PARAM_variables"), ",")[[1]];
+variables <- strsplit(Sys.getenv("PARAM_variables"), ",");
+variables <- variables[lapply(variables,length)>0];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
 covariables <- covariables[lapply(covariables,length)>0];
 groupingstr <- Sys.getenv("PARAM_grouping", "");
@@ -41,26 +72,11 @@ docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-tsne:latest");
 # Fetch the data
 data <- fetchData();
 
-input_types <- sapply(data, class);
-input_types <- input_types[simplify2array(c(covariables, grouping))];
-inputs <- data.frame(name=names(input_types), type=input_types);
-input_defs <- apply(inputs[c('name','type')], 1, function(y) {
-  switch(y['type'],
-    character=toJSON(list(name=y['name'], type=list(type="enum", name=paste("Enum", y['name'], sep=''), symbols=levels(factor(data[,y['name']])))), auto_unbox=T),
-    numeric=toJSON(list(name=y['name'], type="double"), auto_unbox=T)
-)});
-input_defs <- as.list(input_defs);
-names(input_defs) <- NULL;
-input_conv <- apply(inputs[c('name','type')], 1, function(y) {
-  switch(y['type'],
-    character=paste('{ "a.tail": [{ "cast.fanoutDouble": [ "input.', y['name'], '" ] }] }', sep=''),
-    paste('{ "type": { "type": "array", "items": { "type": "double"} }, "new": ["input.', y['name'], '"] }', sep='')
-)});
-input_conv <- as.list(input_conv);
-names(input_conv) <- NULL;
 
 # Perform the computation
-res <- LRegress(data, variable, covariables, grouping);
+res <- Rtsne(data, dims = 2, initial_dims = 50, perplexity = 30,
+       theta = 0.5, check_duplicates = TRUE, pca = TRUE, max_iter = 1000,
+       verbose = FALSE, is_distance = FALSE, Y_init = NULL);
 
 # Build the response
 coeff_names <- names(res$coefficients);
@@ -108,9 +124,7 @@ summary_residuals <- list(
   max = max(summary_residual_values));
 
 # Ensure that we use only supported types: list, string
-store <- list(input_defs = input_defs,
-              input_conv = input_conv,
-              variable = variable,
+store <- list(variables = toJSON(variables, auto_unbox=T),
               covariables = toJSON(covariables, auto_unbox=T),
               grouping = toJSON(c(paste(grouping, sep=":"))),
               sql = Sys.getenv("PARAM_query", ""),
