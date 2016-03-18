@@ -38,44 +38,43 @@ cells:
             items:
               type: "string"
         -
-          name: "groups"
-          doc: |
-            The form ‘first:second’ indicates the set of terms obtained by taking the interactions of all terms in ‘first’
-            with all terms in ‘second’.
-            The specification ‘first*second’ indicates the _cross_ of ‘first’ and ‘second’.
-            This is the same as ‘first + second + first:second’"
+          name: "grouping"
+          doc: "List of groupings"
           type:
             type: "array"
             items:
               type: "string"
+        -
+          name: "parameters"
+          doc: "Additional parameters for tSNE function"
+          type:
+            type: record
+            fields:
+              - { name: "dims", type: "int", doc: "Output dimensionality" }
+              - { name: "initial_dims", type: "int", doc: "the number of dimensions that should be retained in the initial PCA step" }
+              - { name: "perplexity", type: "double", doc: "Perplexity parameter" }
+              - { name: "theta", type: "double", doc: "Speed/accuracy trade-off" }
+              - { name: "pca", type: "boolean", doc: "Whether an initial PCA step should be performed" }
+              - { name: "max_iter", type: "int", doc: "Maximum number of iterations" }
         - { name: "sql", type: "string", doc: "SQL query" }
         - { name: "count", type: "int", doc: "Number of records selected by the query" }
     init:
       variables: {{{ variables }}}
       covariables: {{{ covariables }}}
-      groups: {{{ groups }}}
+      grouping: {{{ grouping }}}
+      parameters:
+        dims: {{ parameters.dims }}
+        initial_dims: {{ parameters.initial_dims }}
+        perplexity: {{ parameters.perplexity }}
+        theta: {{ parameters.theta }}
+        pca: {{ parameters.pca | lower }}
+        max_iter: {{ parameters.max_iter }}
       sql: "{{ sql }}"
       count: {{ data_count }}
-
-#       Y: Matrix containing the new representations for the objects
-#
-#       N: Number of objects
-#
-#   origD: Original Dimensionality before TSNE
-#
-#   perplexity: See above
-#
-#   theta: See above
-#
-#   costs: The cost for every object after the final iteration
-#
-#   itercosts: The total costs for all objects in every 50th + the last
-#          iteration
-
-  model:
+  reduced_data:
     type:
-      doc: "List of coefficients of the model parameters, compatible with PFA function model.reg.linear"
-      name: LinearModel
+      doc: "New representation for the objects, with the groupings added for visualisation and further processing"
+      name: ReducedData
       type: record
       fields:
         - { name: "const", type: "double", doc: "Constant of the linear regression model" }
@@ -89,180 +88,39 @@ cells:
     init:
       const: {{ model_const }}
       coeff: {{{ model_coeff }}}
-{{#if_anova}}
-  anova:
-    type:
-      doc: "Result from Anova"
-      type: record
-      name: Anova
-      fields:
-        -
-          name: {{ anova_coeff_header }}
-          type:
-            type: record
-            name: AnovaCoefficient
-            namespace: anova
-            fields:
-              - { name: degree_freedom, type: int, doc: "Degree of freedom" }
-              - { name: sum_sq, type: double, doc: "Sum Sq" }
-              - { name: mean_sq, type: double, doc: "Mean Sq" }
-              - { name: f_value, type: double, doc: "f-value" }
-              - { name: p_value, type: double, doc: "p-value" }
-{{#anova_coeff_tail}}
-        -
-          name: "{{ . }}"
-          type: anova.AnovaCoefficient
-{{/anova_coeff_tail}}
-        -
-          name: Residuals
-          type:
-            type: record
-            name: AnovaResiduals
-            namespace: anova
-            fields:
-              - { name: degree_freedom, type: int, doc: "Degree of freedom" }
-              - { name: sum_sq, type: double, doc: "Sum Sq" }
-              - { name: mean_sq, type: double, doc: "Mean Sq" }
-    init:
-{{#anova_coefficients}}
-      "{{ coeff_name }}": { degree_freedom: {{ degree_freedom }}, sum_sq: {{ sum_sq }}, mean_sq: {{ mean_sq }}, f_value: {{ f_value}}, p_value: {{ p_value }} }
-{{/anova_coefficients}}
-{{#anova_residuals}}
-      "Residuals": { degree_freedom: {{ degree_freedom }}, sum_sq: {{ sum_sq }}, mean_sq: {{ mean_sq }} }
-{{/anova_residuals}}
-{{/if_anova}}
   summary:
     type:
-      doc: "R summary"
+      doc: "tSNE summary"
       name: Summary
       type: record
       fields:
+        - { name: "number_of_objects", type: "int", doc: "Numer of objects" }
+        - { name: "original_dimensionality", type: "int", doc: "Original Dimensionality before TSNE" }
+        - { name: "perplexity", type: "double", doc: "Perplexity parameter" }
+        - { name: "theta", type: "double", doc: "Speed/accuracy trade-off" }
         -
-          name: residuals
-          doc: >
-            Statistical summary of the _weighted_ residuals, the usual residuals rescaled by
-            the square root of the weights specified in the call to ‘lm’
-          type:
-            type: record
-            name: ResidualsSummary
-            namespace: summary
-            fields:
-              - {name: min, type: double, doc: "Minimum value" }
-              - {name: q1, type: double, doc: "First quartile" }
-              - {name: median, type: double, doc: "Median value" }
-              - {name: q3, type: double, doc: "Third quartile" }
-              - {name: max, type: double, doc: "Maximum value" }
-        -
-          name: coefficients
-          doc: >
-            a p x 4 matrix with columns for the estimated
-            coefficient, its standard error, t-statistic and
-            corresponding (two-sided) p-value. Aliased coefficients are omitted
-          type:
-            type: record
-            name: CoefficientMatrix
-            namespace: summary
-            fields:
-              -
-                name: "_intercept_"
-                type:
-                  type: record
-                  name: Coefficient
-                  namespace: summary
-                  fields:
-                    - { name: estimate, type: double, doc: "Estimated coefficient" }
-                    - { name: std_error, type: double, doc: "Standard error" }
-                    - { name: t_value, type: double, doc: "t-statistic" }
-                    - { name: p_value, type: double, doc: "Corresponding (two-sided) p-value" }
-{{#summary_coefficient_names}}
-              - { name: "{{.}}", type: "summary.Coefficient" }
-{{/summary_coefficient_names}}
-        -
-          name: aliased
-          doc: "named logical vector showing if the original coefficients are aliased"
-          type:
-            type: record
-            name: Aliased
-            namespace: summary
-            fields:
-              - { name: "_intercept_", type: boolean }
-{{#summary_aliased_names}}
-              - { name: "{{.}}", type: boolean }
-{{/summary_aliased_names}}
-        -
-          name: sigma
-          doc: >
-            the square root of the estimated variance of the random error
-                sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),
-            where R[i] is the i-th residual, ‘residuals[i]’
-          type: double
-        -
-          name: degrees_freedom
-          doc: >
-            Degrees of freedom, a 3-vector (p, n-p, p*), the first being
-            the number of non-aliased coefficients, the last being the
-            total number of coefficients
+          name: "costs"
+          doc: "The cost for every object after the final iteration"
           type:
             type: array
             items:
               type: double
         -
-          name: r_squared
-          doc: "R squared"
-          type: double
-        -
-          name: adj_r_squared
-          doc: "Adjusted R squared"
-          type: double
-        -
-          name: cov_unscaled
-          doc: "Matrix of covariance unscaled. Same columns as coefficients"
+          name: "iter_costs"
+          doc: "The total costs for all objects in every 50th + the last iteration"
           type:
             type: array
             items:
-              type: array
-              items:
-                type: double
+              type: double
     init:
-      coefficients:
-{{#summary_coefficients}}
-        "{{ coeff_name }}": { estimate: {{ estimate }}, std_error: {{ std_error }}, t_value: {{ t_value }}, p_value: {{ p_value }} }
-{{/summary_coefficients}}
-      residuals:
-        min: {{ summary_residuals.min }}
-        q1: {{ summary_residuals.q1 }}
-        median: {{ summary_residuals.median }}
-        q3: {{ summary_residuals.q3 }}
-        max: {{ summary_residuals.max }}
-      aliased:
-{{#summary_aliased}}
-        "{{ coeff_name }}": {{ aliased }}
-{{/summary_aliased}}
-      sigma: {{ summary_sigma }}
-      degrees_freedom: {{ summary_degrees_freedom }}
-      r_squared: {{ summary_r_squared }}
-      adj_r_squared: {{ summary_adj_r_squared }}
-      cov_unscaled: {{ summary_cov_unscaled }}
+      number_of_objects: {{ summary_number_of_objects }}
+      original_dimensionality: {{ summary_original_dimensionality }}
+      perplexity: {{ summary_perplexity }}
+      theta: {{ summary_theta }}
+      costs: {{{ summary_costs }}}
+      iter_costs: {{{ summary_iter_costs }}}
 
 action:
-  -
-    let: 
-      in:
-        "a.flatten":
-          type:
-            type: array
-            items:
-              type: array
-              items:
-                type: double
-          new:
-{{#input_conv}}
-            - {{{ . }}}
-{{/input_conv}}
-
-  -
-    "model.reg.linear":
-      - in
-      - { cell: "model" }
+  - null
 
 ...

@@ -10,36 +10,14 @@
 #'      PARAM_variables : Column separated list of variables
 #'      PARAM_covariables : Column separated list of covariables
 #'      PARAM_grouping : Column separated list of groupings
-    dims: integer; Output dimensionality (default: 2)
-
-initial_dims: integer; the number of dimensions that should be retained
-          in the initial PCA step (default: 50)
-
-perplexity: numeric; Perplexity parameter
-
-   theta: numeric; Speed/accuracy trade-off (increase for less
-          accuracy), set to 0.0 for exact TSNE (default: 0.5)
-
-check_duplicates: logical; Checks whether duplicates are present. It is
-          best to make sure there are no duplicates present and set
-          this option to FALSE, especially for large datasets (default:
-          TRUE)
-
-     pca: logical; Whether an initial PCA step should be performed
-          (default: TRUE)
-max_iter: integer; Maximum number of iterations (default: 1000)
-
- verbose: logical; Whether progress updates should be printed (default:
-          FALSE)
-
-is_distance: logical; Indicate whether X is a distance matrix
-          (experimental, default: FALSE)
-
-  Y_init: matrix; Initial locations of the objects. If NULL, random
-          initialization will be used (default: NULL). Note that when
-          using this, the initial stage with false perplexity values
-          and a larger momentum term will be skipped.
-
+#'      PARAM_dims: integer; Output dimensionality (default: 2)
+#'      PARAM_initial_dims: integer; the number of dimensions that should be retained
+#'          in the initial PCA step (default: 50)
+#'      PARAM_perplexity: numeric; Perplexity parameter (default: 30)
+#'      PARAM_theta: numeric; Speed/accuracy trade-off (increase for less
+#'          accuracy), set to 0.0 for exact TSNE (default: 0.5)
+#'      PARAM_pca: logical; Whether an initial PCA step should be performed (default: TRUE)
+#'      PARAM_max_iter: integer; Maximum number of iterations (default: 1000)
 #' - Execution context:
 #'      JOB_ID : ID of the job
 #'      NODE : Node used for the execution of the script
@@ -61,92 +39,52 @@ library(whisker);
 library(Rtsne);
 
 # Initialisation
-variables <- strsplit(Sys.getenv("PARAM_variables"), ",");
-variables <- variables[lapply(variables,length)>0];
-covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
-covariables <- covariables[lapply(covariables,length)>0];
-groupingstr <- Sys.getenv("PARAM_grouping", "");
-grouping <- if (groupingstr == "") list() else strsplit(groupingstr, ",");
+variables    <- strsplit(Sys.getenv("PARAM_variables"), ",");
+variables    <- variables[lapply(variables,length)>0];
+covariables  <- strsplit(Sys.getenv("PARAM_covariables"), ",");
+covariables  <- covariables[lapply(covariables,length)>0];
+groupingstr  <- Sys.getenv("PARAM_grouping", "");
+grouping     <- if (groupingstr == "") list() else strsplit(groupingstr, ",");
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-tsne:latest");
+
+dims         <- as.integer(Sys.getenv("PARAM_dims", 2));
+initial_dims <- as.integer(Sys.getenv("PARAM_initial_dims", 50));
+perplexity   <- as.numeric(Sys.getenv("PARAM_perplexity", 30));
+theta        <- as.numeric(Sys.getenv("PARAM_theta", 0.5));
+pca          <- as.logical(Sys.getenv("PARAM_pca", T));
+max_iter     <- as.integer(Sys.getenv("PARAM_max_iter", 1000));
+
+parameters   <- list(dims = dims, initial_dims = initial_dims, perplexity = perplexity,
+                                theta = theta, pca = pca, max_iter = max_iter);
 
 # Fetch the data
 data <- fetchData();
-
+# Remove duplicates
+data <- unique(data);
 
 # Perform the computation
-res <- Rtsne(data, dims = 2, initial_dims = 50, perplexity = 30,
-       theta = 0.5, check_duplicates = TRUE, pca = TRUE, max_iter = 1000,
-       verbose = FALSE, is_distance = FALSE, Y_init = NULL);
+res <- Rtsne(data, dims = dims, initial_dims = initial_dims, perplexity = perplexity,
+       theta = theta, pca = pca, max_iter = max_iter,
+       check_duplicates = TRUE, verbose = FALSE, is_distance = FALSE, Y_init = NULL);
 
 # Build the response
-coeff_names <- names(res$coefficients);
-coeff_names[1] <- "_intercept_";
-
-model_const <- res$coefficients[[1]];
-model_coeff <- as.vector(res$coefficients[-1]);
-
-if (length(res$anova) == 1 && is.na(res$anova)) {
-    anova <- matrix(nrow=0,ncol=0);
-    if_anova <- FALSE;
-} else {
-    if_anova <- TRUE;
-    anova_residuals <- res$anova[nrow(res$anova),];
-    colnames(anova_residuals) <- c("degree_freedom", "sum_sq", "mean_sq", "f_value", "p_value");
-    anova_coefficients <- res$anova[-nrow(res$anova),];
-    anova_coefficients <- as.data.frame(cbind(rownames(anova_coefficients), anova_coefficients));
-    colnames(anova_coefficients) <- c("coeff_name", "degree_freedom", "sum_sq", "mean_sq", "f_value", "p_value");
-    anova_coeffs <- as.list(rownames(anova_coefficients));
-    anova_coeff_header <- anova_coeffs[[1]];
-    anova_coeff_tail <- anova_coeffs[-1];
-}
-
-summary_coefficients <- as.data.frame(cbind(coeff_names, res$summary$coefficients));
-colnames(summary_coefficients) <- c("coeff_name", "estimate", "std_error", "t_value", "p_value");
-summary_coefficient_names <- rownames(summary_coefficients);
-summary_coefficient_names <- summary_coefficient_names[-1];
-
-summary_aliased <- as.data.frame(cbind(coeff_names, sapply(res$summary$aliased, function(x) {tolower(as.character(x))} )));
-colnames(summary_aliased) <- c("coeff_name", "aliased");
-summary_aliased_names <- rownames(summary_aliased);
-summary_aliased_names <- summary_aliased_names[-1];
-
-summary_degrees_freedom <- as.vector(res$summary$df);
-
-summary_cov_unscaled <- as.matrix(res$summary$cov.unscaled);
-
-summary_residual_values  <- res$summary$residuals;
-summary_residual_quantile <- quantile(summary_residual_values);
-summary_residuals <- list(
-  min = min(summary_residual_values),
-  q1 = summary_residual_quantile[[2]],
-  median = median(summary_residual_values),
-  q3 = summary_residual_quantile[[4]],
-  max = max(summary_residual_values));
 
 # Ensure that we use only supported types: list, string
 store <- list(variables = toJSON(variables, auto_unbox=T),
               covariables = toJSON(covariables, auto_unbox=T),
-              grouping = toJSON(c(paste(grouping, sep=":"))),
+              grouping = toJSON(grouping, auto_unbox=T),
+              parameters = parameters,
               sql = Sys.getenv("PARAM_query", ""),
               data_count = nrow(data),
               docker_image = docker_image,
-              model_const = model_const,
-              model_coeff = toJSON(model_coeff, digits = 8),
-              if_anova = if_anova,
-              anova_coeff_header = anova_coeff_header,
-              anova_coeff_tail = anova_coeff_tail,
-              anova_coefficients = unname(rowSplit(anova_coefficients)),
-              anova_residuals = unname(rowSplit(anova_residuals)),
-              summary_coefficients = unname(rowSplit(summary_coefficients)),
-              summary_coefficient_names = summary_coefficient_names,
-              summary_residuals = summary_residuals,
-              summary_aliased = unname(rowSplit(summary_aliased)),
-              summary_aliased_names = summary_aliased_names,
-              summary_sigma = res$summary$sigma,
-              summary_degrees_freedom = toJSON(summary_degrees_freedom),
-              summary_r_squared = res$summary$r.squared,
-              summary_adj_r_squared = res$summary$adj.r.squared,
-              summary_cov_unscaled = toJSON(summary_cov_unscaled, digits = 8));
+              reduced_data ,
+              summary_number_of_objects = res$N,
+              summary_original_dimensionality = res$origD,
+              summary_perplexity = res$perplexity,
+              summary_theta = res$theta,
+              summary_costs = toJSON(res$costs),
+              summary_iter_costs = toJSON(res$itercosts)
+              );
 
 template <- readLines("/src/pfa.yml");
 

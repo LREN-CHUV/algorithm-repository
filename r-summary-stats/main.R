@@ -108,7 +108,7 @@ if (nrow(factorRows) == 0) {
 store <- list(
               variables = toJSON(variables, auto_unbox=T),
               covariables = toJSON(covariables, auto_unbox=T),
-              grouping = toJSON(c(paste(grouping, sep=":"))),
+              grouping = toJSON(grouping, auto_unbox=T),
               sql = Sys.getenv("PARAM_query", ""),
               data_count = nrow(data),
               docker_image = docker_image,

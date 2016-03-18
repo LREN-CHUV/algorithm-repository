@@ -36,12 +36,8 @@ cells:
             items:
               type: "string"
         -
-          name: "groups"
-          doc: |
-            The form ‘first:second’ indicates the set of terms obtained by taking the interactions of all terms in ‘first’
-            with all terms in ‘second’.
-            The specification ‘first*second’ indicates the _cross_ of ‘first’ and ‘second’.
-            This is the same as ‘first + second + first:second’"
+          name: "grouping"
+          doc: "List of groupings"
           type:
             type: "array"
             items:
@@ -51,7 +47,7 @@ cells:
     init:
       variables: {{{ variables }}}
       covariables: {{{ covariables }}}
-      groups: {{{ groups }}}
+      grouping: {{{ grouping }}}
       sql: "{{ sql }}"
       count: {{ data_count }}
   summary:
