@@ -68,6 +68,7 @@ res <- Rtsne(data, dims = dims, initial_dims = initial_dims, perplexity = perple
        check_duplicates = TRUE, verbose = FALSE, is_distance = FALSE, Y_init = NULL);
 
 # Build the response
+groupingcolumns <- as.data.frame(data[ , names(data) %in% unlist(grouping)]);
 
 # Ensure that we use only supported types: list, string
 store <- list(variables = toJSON(variables, auto_unbox=T),
