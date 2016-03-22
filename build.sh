@@ -16,8 +16,10 @@ ROOT_DIR="$(get_script_dir)"
 
 if groups $USER | grep &>/dev/null '\bdocker\b'; then
   CAPTAIN="captain"
+  DOCKER="docker"
 else
   CAPTAIN="sudo captain"
+  DOCKER="sudo docker"
 fi
 
 IMAGES="r-summary-stats r-linear-regression"
