@@ -22,8 +22,11 @@ fi
 
 IMAGES="r-summary-stats r-linear-regression"
 
+commit_id="$(git rev-parse --short HEAD)"
+
 for image in $IMAGES ; do
   cd $ROOT_DIR/$image
   $CAPTAIN test
-  $CAPTAIN push
+  $DOCKER push $image:$commit_id
+  $DOCKER push $image:latest
 done
