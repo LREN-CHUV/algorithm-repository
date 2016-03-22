@@ -42,7 +42,7 @@ docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-linear-regression:latest");
 data <- fetchData();
 
 input_types <- sapply(data, class);
-input_types <- input_types[simplify2array(c(covariables, grouping))];
+input_types <- input_types[simplify2array(c(unlist(covariables), unlist(grouping)))];
 inputs <- data.frame(name=names(input_types), type=input_types);
 input_defs <- apply(inputs[c('name','type')], 1, function(y) {
   switch(y['type'],
