@@ -13,11 +13,12 @@
 #'      PARAM_dims: integer; Output dimensionality (default: 2)
 #'      PARAM_initial_dims: integer; the number of dimensions that should be retained
 #'          in the initial PCA step (default: 50)
-#'      PARAM_perplexity: numeric; Perplexity parameter (default: 30)
+#'      PARAM_perplexity: numeric; Perplexity parameter (default: 1)
 #'      PARAM_theta: numeric; Speed/accuracy trade-off (increase for less
 #'          accuracy), set to 0.0 for exact TSNE (default: 0.5)
 #'      PARAM_pca: logical; Whether an initial PCA step should be performed (default: TRUE)
 #'      PARAM_max_iter: integer; Maximum number of iterations (default: 1000)
+#'      PARAM_scale: logical; Whether to scale the covariables to  a mean of 0 and a standard deviation of 1 (default: FALSE)
 #' - Execution context:
 #'      JOB_ID : ID of the job
 #'      NODE : Node used for the execution of the script
@@ -49,10 +50,11 @@ docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-tsne:latest");
 
 dims         <- as.integer(Sys.getenv("PARAM_dims", 2));
 initial_dims <- as.integer(Sys.getenv("PARAM_initial_dims", 50));
-perplexity   <- as.numeric(Sys.getenv("PARAM_perplexity", 30));
+perplexity   <- as.numeric(Sys.getenv("PARAM_perplexity", 1));
 theta        <- as.numeric(Sys.getenv("PARAM_theta", 0.5));
 pca          <- as.logical(Sys.getenv("PARAM_pca", T));
 max_iter     <- as.integer(Sys.getenv("PARAM_max_iter", 1000));
+scale        <- as.logical(Sys.getenv("PARAM_scale", F));
 
 parameters   <- list(dims = dims, initial_dims = initial_dims, perplexity = perplexity,
                                 theta = theta, pca = pca, max_iter = max_iter);
@@ -62,13 +64,33 @@ data <- fetchData();
 # Remove duplicates
 data <- unique(data);
 
+# Split data: covariables are used by tSNE, the other columns will be merged with the result
+tsne_data <- as.data.frame(data[ , names(data) %in% unlist(covariables)]);
+
+other_data <- as.data.frame(data[ , !names(data) %in% unlist(covariables)]);
+
+if (scale) {
+  tsne_data <- scale(tsne_data);
+}
+
 # Perform the computation
-res <- Rtsne(data, dims = dims, initial_dims = initial_dims, perplexity = perplexity,
+res <- Rtsne(tsne_data, dims = dims, initial_dims = initial_dims, perplexity = perplexity,
        theta = theta, pca = pca, max_iter = max_iter,
        check_duplicates = TRUE, verbose = FALSE, is_distance = FALSE, Y_init = NULL);
 
 # Build the response
-groupingcolumns <- as.data.frame(data[ , names(data) %in% unlist(grouping)]);
+
+reduced_data <- as.data.frame(cbind(res$Y, other_data));
+
+reduced_types <- sapply(reduced_data, class);
+reduced_types_df <- data.frame(name=names(reduced_types), type=reduced_types);
+reduced_defs <- apply(reduced_types_df[c('name','type')], 1, function(y) {
+  switch(y['type'],
+    character=toJSON(list(name=y['name'], type=list(type="enum", name=paste("Enum", y['name'], sep=''), symbols=levels(factor(data[,y['name']])))), auto_unbox=T),
+    numeric=toJSON(list(name=y['name'], type="double"), auto_unbox=T)
+)});
+reduced_defs <- as.list(reduced_defs);
+names(reduced_defs) <- NULL;
 
 # Ensure that we use only supported types: list, string
 store <- list(variables = toJSON(variables, auto_unbox=T),
@@ -78,7 +100,7 @@ store <- list(variables = toJSON(variables, auto_unbox=T),
               sql = Sys.getenv("PARAM_query", ""),
               data_count = nrow(data),
               docker_image = docker_image,
-              reduced_data ,
+              reduced_data = reduced_data,
               summary_number_of_objects = res$N,
               summary_original_dimensionality = res$origD,
               summary_perplexity = res$perplexity,

@@ -4,13 +4,13 @@ library(testthat);
 library(hbpjdbcconnect);
 library(yaml);
 
-test_that("We can perform linear regression on one variable and one covariable", {
+test_that("We can perform tSNE on several covariables and one grouping", {
 
   job_id <- '003';
   Sys.setenv(JOB_ID=job_id,
-    PARAM_query="select age, prov, left_amygdala from brain",
-    PARAM_variables="left_amygdala",
-    PARAM_covariables="age",
+    PARAM_query="select * from brain",
+    PARAM_variables="age",
+    PARAM_covariables="left_amygdala,left_splsupparlob,right_poparoper,right_pogpostcgyr",
     PARAM_grouping="prov");
 
   # Perform the computation
