@@ -57,7 +57,7 @@ max_iter     <- as.integer(Sys.getenv("PARAM_max_iter", 1000));
 scale        <- as.logical(Sys.getenv("PARAM_scale", F));
 
 parameters   <- list(dims = dims, initial_dims = initial_dims, perplexity = perplexity,
-                                theta = theta, pca = pca, max_iter = max_iter);
+                                theta = theta, pca = tolower(pca), max_iter = max_iter);
 
 # Fetch the data
 data <- fetchData();
@@ -86,21 +86,31 @@ reduced_types <- sapply(reduced_data, class);
 reduced_types_df <- data.frame(name=names(reduced_types), type=reduced_types);
 reduced_defs <- apply(reduced_types_df[c('name','type')], 1, function(y) {
   switch(y['type'],
-    character=toJSON(list(name=y['name'], type=list(type="enum", name=paste("Enum", y['name'], sep=''), symbols=levels(factor(data[,y['name']])))), auto_unbox=T),
+    character={
+      if (length(data[,y['name']]) < 100) {
+        toJSON(list(name=y['name'], type=list(type="enum", name=paste("Enum", y['name'], sep=''), symbols=levels(factor(data[,y['name']])))), auto_unbox=T)
+      } else {
+        toJSON(list(name=y['name'], type="string"), auto_unbox=T)
+      }
+    },
     numeric=toJSON(list(name=y['name'], type="double"), auto_unbox=T)
 )});
 reduced_defs <- as.list(reduced_defs);
 names(reduced_defs) <- NULL;
 
+reduced_values <- unname(rowSplit(reduced_data));
+reduced_values <- sapply(reduced_values, function(row) {toJSON(as.list(row), auto_unbox=TRUE, digits=8, Date = "ISO8601")});
+
 # Ensure that we use only supported types: list, string
-store <- list(variables = toJSON(variables, auto_unbox=T),
-              covariables = toJSON(covariables, auto_unbox=T),
-              grouping = toJSON(grouping, auto_unbox=T),
+store <- list(variables = toJSON(unlist(variables)),
+              covariables = toJSON(unlist(covariables)),
+              grouping = toJSON(unlist(grouping)),
               parameters = parameters,
               sql = Sys.getenv("PARAM_query", ""),
               data_count = nrow(data),
               docker_image = docker_image,
-              reduced_data = reduced_data,
+              reduced_defs = reduced_defs,
+              reduced_values = reduced_values,
               summary_number_of_objects = res$N,
               summary_original_dimensionality = res$origD,
               summary_perplexity = res$perplexity,
