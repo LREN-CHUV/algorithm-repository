@@ -8,8 +8,41 @@
     "type": "null"
   },
   "output": {
-    "doc": "No output",
-    "type": "null"
+    "doc": "New representation for the data, with the covariables projected to N dimensions, where N is the dims parameter\nand groupings added for visualisation and further processing\n",
+    "type": "array",
+    "items": {
+      "type": "record",
+      "name": "ReducedData",
+      "fields": [
+        {
+          "name": "1",
+          "type": "double",
+          "doc": "Reduced dimension 1"
+        },
+        {
+          "name": "2",
+          "type": "double",
+          "doc": "Reduced dimension 2"
+        },
+        {
+          "name": "prov",
+          "type": {
+            "type": "enum",
+            "name": "Enumprov",
+            "symbols": [
+              "AD1",
+              "AD2"
+            ]
+          },
+          "doc": "Variable prov"
+        },
+        {
+          "name": "age",
+          "type": "double",
+          "doc": "Variable age"
+        }
+      ]
+    }
   },
   "cells": {
     "query": {
@@ -127,7 +160,7 @@
     },
     "reduced_data": {
       "type": {
-        "doc": "New representation for the objects, with the covariables projected to N dimensions, where N is the dims parameter\nand groupings added for visualisation and further processing\n",
+        "doc": "New representation for the data, with the covariables projected to N dimensions, where N is the dims parameter\nand groupings added for visualisation and further processing\n",
         "type": "array",
         "items": {
           "type": "record",
@@ -221,5 +254,9 @@
       ]
     }
   },
-  "action": null
+  "action": [
+    {
+      "cell": "reduced_data"
+    }
+  ]
 }
