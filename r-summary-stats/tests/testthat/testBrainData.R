@@ -53,8 +53,6 @@ test_that("We can perform summary statistics on one variable", {
   expect_equal(tv1_sum,    0.9191096,   tolerance = 1e-6, scale = 1);
   expect_equal(tv1_count,  100);
 
-  print ("[ok] Success!");
-
 });
 
 test_that("We can perform summary statistics on 2 variables, one is a factor", {
@@ -109,7 +107,5 @@ test_that("We can perform summary statistics on 2 variables, one is a factor", {
   expect_equal(tv1_count,  100);
   expect_equal(fn_count,   100);
   expect_equal(fn_factors, c("Hippocampus_L", "Hippocampus_R"));
-
-  print ("[ok] Success!");
 
 });

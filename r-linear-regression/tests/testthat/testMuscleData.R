@@ -47,6 +47,4 @@ test_that("We can perform linear regression on one variable, one covariable and 
   expect_equal(result_r_squared, 0.8350627, tolerance = 1e-6);
   expect_equal(result_degrees_freedom, c(22, 38, 22));
   
-  print ("[ok] Success!");
-
 });

@@ -87,13 +87,7 @@ cells:
         New representation for the data, with the covariables projected to N dimensions, where N is the dims parameter
         and groupings added for visualisation and further processing
       type: array
-      items:
-        type: record
-        name: ReducedData
-        fields:
-{{#reduced_defs}}
-          - {{{ . }}}
-{{/reduced_defs}}
+      items: "ReducedData"
     init:
 {{#reduced_values}}
         - {{{ . }}}

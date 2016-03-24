@@ -55,6 +55,4 @@ test_that("We can perform summary statistics on 2 variables", {
   expect_equal(fbers$sum,   2665.866435,tolerance = 1e-6);
   expect_equal(fbers$count, 31,         tolerance = 1e-6);
 
-  print ("[ok] Success!");
-
 });
