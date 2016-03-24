@@ -67,7 +67,7 @@ data <- unique(data);
 # Split data: covariables are used by tSNE, the other columns will be merged with the result
 tsne_data <- as.data.frame(data[ , names(data) %in% unlist(covariables)]);
 
-other_data <- as.data.frame(data[ , !names(data) %in% unlist(covariables)]);
+other_data <- as.data.frame(data[ , names(data) %in% c(unlist(variables), unlist(grouping))]);
 
 if (scale) {
   tsne_data <- scale(tsne_data);
@@ -83,17 +83,21 @@ res <- Rtsne(tsne_data, dims = dims, initial_dims = initial_dims, perplexity = p
 reduced_data <- as.data.frame(cbind(res$Y, other_data));
 
 reduced_types <- sapply(reduced_data, class);
-reduced_types_df <- data.frame(name=names(reduced_types), type=reduced_types);
-reduced_defs <- apply(reduced_types_df[c('name','type')], 1, function(y) {
+reduced_types_df <- data.frame(name=names(reduced_types), type=reduced_types, doc="");
+reduced_defs <- apply(reduced_types_df[c('name','type','doc')], 1, function(y) {
+  doc <- paste('Variable', y['name']);
+  if (grepl("\\d+", y['name'])) {
+    doc <- paste('Reduced dimension', y['name']);
+  }
   switch(y['type'],
     character={
       if (length(data[,y['name']]) < 100) {
-        toJSON(list(name=y['name'], type=list(type="enum", name=paste("Enum", y['name'], sep=''), symbols=levels(factor(data[,y['name']])))), auto_unbox=T)
+        toJSON(list(name=y['name'], type=list(type="enum", name=paste("Enum", y['name'], sep=''), symbols=levels(factor(data[,y['name']]))), doc=doc), auto_unbox=T)
       } else {
-        toJSON(list(name=y['name'], type="string"), auto_unbox=T)
+        toJSON(list(name=y['name'], type="string", doc=doc), auto_unbox=T)
       }
     },
-    numeric=toJSON(list(name=y['name'], type="double"), auto_unbox=T)
+    numeric=toJSON(list(name=y['name'], type="double", doc=doc), auto_unbox=T)
 )});
 reduced_defs <- as.list(reduced_defs);
 names(reduced_defs) <- NULL;
