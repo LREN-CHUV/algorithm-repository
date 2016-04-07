@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.lren.hbpmip.rapidminer</groupId>
+    <artifactId>java-rapidminer-knn</artifactId>
+    <packaging>jar</packaging>
+    <version>0.0.1</version>
+    <name>java-rapidminer-knn</name>
+
+    <properties>
+        <version.jdk>1.8</version.jdk>
+        <version.rapidminer>7.0.1</version.rapidminer>
+    </properties>
+
+    <repositories>
+        <repository>
+            <url>https://maven.rapidminer.com/content/groups/public/</url>
+            <id>rapidminer</id>
+            <layout>default</layout>
+            <name>Repository for RapidMiner</name>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.lren.hbpmip</groupId>
+            <artifactId>java-rapidminer</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.collections</groupId>
+            <artifactId>collections-generic</artifactId>
+            <version>4.01</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.rapidminer.studio</groupId>
+            <artifactId>rapidminer-studio-core</artifactId>
+            <version>${version.rapidminer}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.9</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <sourceDirectory>${basedir}/src/</sourceDirectory>
+        <testSourceDirectory>${basedir}/tests</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>${version.jdk}</source>
+                    <target>${version.jdk}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
