@@ -22,7 +22,7 @@ else
   DOCKER="sudo docker"
 fi
 
-IMAGES="r-summary-stats r-linear-regression"
+IMAGES="r-summary-stats r-linear-regression java-rapidminer"
 
 commit_id="$(git rev-parse --short HEAD)"
 
