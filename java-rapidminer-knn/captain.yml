@@ -11,6 +11,8 @@ java-rapidminer-knn-build:
     - mkdir -p target
     - docker cp build-cont:/dist/target/java-rapidminer-knn-0.0.1.jar target/java-rapidminer-knn.jar
     - docker rm build-cont
+  test:
+      - tests/test.sh
 
 java-rapidminer-knn:
   build: Dockerfile
@@ -19,5 +21,3 @@ java-rapidminer-knn:
     - echo "Preparing java-rapidminer-knn"
   post:
     - echo "Finished java-rapidminer-knn"
-  test:
-    - tests/test.sh

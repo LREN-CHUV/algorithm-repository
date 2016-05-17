@@ -15,6 +15,13 @@
     </properties>
 
     <repositories>
+
+        <repository>
+            <id>opendatagroup</id>
+            <url>http://repository.opendatagroup.com/maven</url>
+            <name>Repository for Hadrian</name>
+        </repository>
+
         <repository>
             <url>https://maven.rapidminer.com/content/groups/public/</url>
             <id>rapidminer</id>
@@ -24,6 +31,7 @@
     </repositories>
 
     <dependencies>
+
         <dependency>
             <groupId>ch.lren.hbpmip</groupId>
             <artifactId>java-rapidminer</artifactId>
@@ -46,6 +54,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.9</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.opendatagroup</groupId>
+            <artifactId>hadrian</artifactId>
+            <version>0.8.3</version>
             <scope>test</scope>
         </dependency>
 
