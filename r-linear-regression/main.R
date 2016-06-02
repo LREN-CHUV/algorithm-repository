@@ -34,6 +34,7 @@ library(hbplregress);
 variable <- strsplit(Sys.getenv("PARAM_variables"), ",")[[1]];
 covariables <- strsplit(Sys.getenv("PARAM_covariables"), ",");
 covariables <- covariables[lapply(covariables,length)>0];
+covariables <- if (substring(covariables, 1, 1) == '[') substring(covariables, 2, nchar(covariables) - 1) else covariables
 groupingstr <- Sys.getenv("PARAM_grouping", "");
 grouping <- if (groupingstr == "") list() else strsplit(groupingstr, ",");
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-linear-regression:latest");
