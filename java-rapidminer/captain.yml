@@ -1,9 +1,0 @@
-java-rapidminer:
-  build: Dockerfile
-  image: hbpmip/java-rapidminer
-  pre:
-    - echo "Preparing java-rapidminer"
-  post:
-    - echo "Finished java-rapidminer"
-  test:
-    - tests/test.sh

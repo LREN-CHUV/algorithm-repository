@@ -1,0 +1,23 @@
+java-rapidminer-knn-build:
+  build: Dockerfile.BUILD
+  image: hbpmip/java-rapidminer-knn-build
+  pre:
+    - echo "Preparing java-rapidminer-knn-build"
+  post:
+    - echo "Finished java-rapidminer-knn-build"
+    - echo "Building project..."
+    - docker run -ti --rm -v ~/.m2:/root/.m2 hbpmip/java-rapidminer-knn-build mvn -f /dist install -Dmaven.test.skip=true
+    - docker run -ti --name build-cont -v ~/.m2:/root/.m2 hbpmip/java-rapidminer-knn-build mvn -f /dist package package -Dmaven.test.skip=true
+    - mkdir -p target
+    - docker cp build-cont:/dist/target/java-rapidminer-knn-0.0.1.jar target/java-rapidminer-knn.jar
+    - docker rm build-cont
+  test:
+      - tests/test.sh
+
+java-rapidminer-knn:
+  build: Dockerfile
+  image: hbpmip/java-rapidminer-knn
+  pre:
+    - echo "Preparing java-rapidminer-knn"
+  post:
+    - echo "Finished java-rapidminer-knn"
