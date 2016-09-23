@@ -48,6 +48,7 @@ public class Knn extends RapidMinerModel<UpdateablePredictionModel> {
 
 		boolean isRegression = trainedModel.getLabel().getValueType() == Ontology.REAL;
 
+		//TODO Remove this dirty and dangerous trick
 		Class<? extends UpdateablePredictionModel> modelClass = isRegression? KNNRegressionModel.class : KNNClassificationModel.class;
 		ArrayList<?> storedValues;
 		ArrayList<String> sampleAttributeNames;
