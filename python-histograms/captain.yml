@@ -1,0 +1,7 @@
+python-histograms:
+  build: Dockerfile
+  image: hbpmip/python-histograms
+  pre:
+    - echo "Preparing python-histograms"
+  post:
+    - echo "Finished python-histograms"
