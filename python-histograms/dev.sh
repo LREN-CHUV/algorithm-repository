@@ -5,7 +5,7 @@ docker run \
 -e "NODE=federation" \
 -e "PARAM_variables=rightorifgorbitalpartoftheinferiorfrontalgyrus" \
 -e "PARAM_grouping=DX" \
--e "PARAM_query=select * from ADNI_MERGE" \
+-e "PARAM_query=select rightorifgorbitalpartoftheinferiorfrontalgyrus,dx from ADNI_MERGE where rightorifgorbitalpartoftheinferiorfrontalgyrus is not null and dx is not null" \
 -e "IN_JDBC_URL=jdbc:postgresql://192.168.0.1:65432/science" \
 -e "IN_JDBC_USER=science" \
 -e "IN_JDBC_PASSWORD=sciencepass" \

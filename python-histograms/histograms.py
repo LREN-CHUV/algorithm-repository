@@ -27,6 +27,8 @@ def main():
     error = ''
     shape = 'pfa_json'
 
+    print(pfa)
+
     # Store results
     database_connector.save_results(pfa, error, shape)
 
@@ -62,7 +64,7 @@ def generate_histogram(data, variable, variable_type, group):
     variable_type = "real"
     group_data = ""
     group_type = "polynomial"
-    group_categories = ["AD, MCI", "CN"]
+    group_categories = ["AD", "MCI", "CN"]
     # < ==
 
     if group:
