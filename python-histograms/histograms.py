@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 
-import datetime
 import json
-import os
 import re
 import numpy
 
 import database_connector
 
 # Settings and global variables
-groups = re.split(', |,', str(os.environ['GROUPS']))
+var = database_connector.get_var()
+groups = re.split(', |,', str(database_connector.get_gvars()))
 bins = 50  # Number of bins
 variables = {}
 columns = []
@@ -19,10 +18,11 @@ data = []
 def main():
 
     # Link global variables
+    global var
+    global groups
     global variables
     global columns
     global data
-    global groups
 
     # Read input data
     metadata = database_connector.get_vars_metadata()
@@ -36,17 +36,16 @@ def main():
     dtype = numpy.dtype([(c, type_to_python(variables[c]["type"])) for c in columns])
     data = numpy.asarray(data, dtype=dtype)
 
-    pfa = generate_pfa(os.environ['CODE'], os.environ['NAME'], os.environ['DOCKER_IMAGE'], os.environ['MODEL'],
-                       os.environ['VARIABLE'], groups,
-                       json.dumps(generate_descriptive_stats(os.environ['VARIABLE']),
+    # Compute results
+    pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
+                       database_connector.get_docker_image(), database_connector.get_model(), var, groups,
+                       json.dumps(generate_descriptive_stats(var),
                                   sort_keys=True, indent=4, separators=(',', ': ')))
-
-    timestamp = datetime.datetime.now()
     error = ''
     shape = 'pfa_json'
 
     # Store results
-    database_connector.save_results(os.environ['JOB_ID'], os.environ['NODE'], timestamp, pfa, error, shape, os.environ['FUNCTION'])
+    database_connector.save_results(pfa, error, shape)
 
 
 def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, results):

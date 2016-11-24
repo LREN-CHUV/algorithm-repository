@@ -16,8 +16,8 @@ docker run \
 -e "ANALYTICS_DB_NAME=postgres" \
 -e "ANALYTICS_DB_USER=postgres" \
 -e "ANALYTICS_DB_PASSWORD=test" \
--e "VARIABLE=DX" \
--e "GROUPS=PTGENDER,DX,APOE4,AgeGroup" \
+-e "PARAM_variables=DX" \
+-e "PARAM_grouping=PTGENDER,DX,APOE4,AgeGroup" \
 -e "JOB_ID=$(uuidgen)" \
 -e "NODE=federation" \
 hbpmip/python-histograms python histograms.py
