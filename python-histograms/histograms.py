@@ -57,7 +57,6 @@ def get_var_type(value):
 
 def generate_histogram(data, variable, variable_type, group):
     label = "Histogram"
-    header = []
     category = []
 
     # ==> Temporary : Should use meta-db
@@ -71,81 +70,13 @@ def generate_histogram(data, variable, variable_type, group):
         label += " - " + group
 
     if variable_type == "real":
-        data = [float(d) for d in data]  # Temporary
-        histogram = numpy.histogram(data, bins=bins)
-        header = histogram[1].tolist()
-        value = histogram[0].tolist()
-
-        if group and group_type != "real":
-            # Histogram using grouping variable
-            cat_header = []
-            for gc in group_categories:
-                category += [gc]*bins
-                cat_data = []
-                for v, g in zip(data, group_data):
-                    if gc['code'] == str(g, encoding='utf-8').rstrip():
-                        cat_data.append(float(v))
-                histogram = numpy.histogram(cat_data, bins=header)
-                cat_header += histogram[1].tolist()
-                value += histogram[0].tolist()
-            header = cat_header
+        category, header, value = histo_real(category, data, group, group_categories, group_data, group_type)
 
     elif variable_type == "integer":
-        h_min = data.min()
-        h_max = data.max()
-        h_step = ((h_max - h_min)//bins)+1
-        histogram = numpy.histogram(data, bins=numpy.arange(h_min, h_max + (2 * h_step), h_step))
-        header = histogram[1].tolist()
-        value = histogram[0].tolist()
-
-        header = [int(h) for h in header]
-
-        if group and group_type != "real":
-            # Histogram using grouping variable
-            cat_header = []
-            value = []
-            for gc in group_categories:
-                category += [gc["code"]]*len(header)
-                cat_data = []  # Store only data for the current gc
-                for v, g in zip(data, group_data):
-                    if gc['code'] == str(g, encoding='utf-8').rstrip():
-                        cat_data.append(int(v))
-                histogram = numpy.histogram(cat_data, bins=header)
-                cat_header += histogram[1].tolist()
-                value += histogram[0].tolist()
-            header = cat_header
+        category, header, value = histo_integer(category, data, group, group_categories, group_data, group_type)
 
     else:
-        variable_categories = list(set(data))
-        # Nominal variable
-        sums = {}
-        for c1 in variable_categories:
-            code = c1["code"]
-            header.append(code)
-            sums[code] = 0
-
-        for v in group_data:
-            sums[str(v, encoding='utf-8').rstrip()] += 1
-
-        value = list(map(lambda h: sums[h], header))
-
-        if group and group_type != "real":
-            # Histogram using grouping variable
-            cat_header = []
-            value = []
-            n = len(header)  # number of possible values for this variable
-            for gc in group_categories:
-                cat_header += header
-                category += [gc["code"]] * n
-                cat_data = []  # Store only data for the current gc
-                for v, g in zip(data, group_data):
-                    if gc['code'] == str(g, encoding='utf-8').rstrip():
-                        cat_data.append(str(v, encoding='utf-8').rstrip())
-                hist = [0] * n
-                for d in cat_data:
-                    hist[header.index(d)] += 1
-                value += hist
-            header = cat_header
+        category, header, value = histo_nominal(category, data, group, group_categories, group_data, group_type)
 
     return {
         "code": variable,
@@ -161,6 +92,84 @@ def generate_histogram(data, variable, variable_type, group):
             "name": "Count"
         }
     }
+
+
+def histo_nominal(category, data, group, group_categories, group_data, group_type):
+    header = []
+    variable_categories = list(set(data))
+    # Nominal variable
+    sums = {}
+    for c1 in variable_categories:
+        code = c1["code"]
+        header.append(code)
+        sums[code] = 0
+    for v in group_data:
+        sums[str(v, encoding='utf-8').rstrip()] += 1
+    value = list(map(lambda h: sums[h], header))
+    if group and group_type != "real":
+        # Histogram using grouping variable
+        cat_header = []
+        value = []
+        n = len(header)  # number of possible values for this variable
+        for gc in group_categories:
+            cat_header += header
+            category += [gc["code"]] * n
+            cat_data = []  # Store only data for the current gc
+            for v, g in zip(data, group_data):
+                if gc['code'] == str(g, encoding='utf-8').rstrip():
+                    cat_data.append(str(v, encoding='utf-8').rstrip())
+            hist = [0] * n
+            for d in cat_data:
+                hist[header.index(d)] += 1
+            value += hist
+        header = cat_header
+    return category, header, value
+
+
+def histo_integer(category, data, group, group_categories, group_data, group_type):
+    h_min = data.min()
+    h_max = data.max()
+    h_step = ((h_max - h_min) // bins) + 1
+    histogram = numpy.histogram(data, bins=numpy.arange(h_min, h_max + (2 * h_step), h_step))
+    header = histogram[1].tolist()
+    value = histogram[0].tolist()
+    header = [int(h) for h in header]
+    if group and group_type != "real":
+        # Histogram using grouping variable
+        cat_header = []
+        value = []
+        for gc in group_categories:
+            category += [gc["code"]] * len(header)
+            cat_data = []  # Store only data for the current gc
+            for v, g in zip(data, group_data):
+                if gc['code'] == str(g, encoding='utf-8').rstrip():
+                    cat_data.append(int(v))
+            histogram = numpy.histogram(cat_data, bins=header)
+            cat_header += histogram[1].tolist()
+            value += histogram[0].tolist()
+        header = cat_header
+    return category, header, value
+
+
+def histo_real(category, data, group, group_categories, group_data, group_type):
+    data = [float(d) for d in data]  # Temporary
+    histogram = numpy.histogram(data, bins=bins)
+    header = histogram[1].tolist()
+    value = histogram[0].tolist()
+    if group and group_type != "real":
+        # Histogram using grouping variable
+        cat_header = []
+        for gc in group_categories:
+            category += [gc] * bins
+            cat_data = []
+            for v, g in zip(data, group_data):
+                if gc['code'] == str(g, encoding='utf-8').rstrip():
+                    cat_data.append(float(v))
+            histogram = numpy.histogram(cat_data, bins=header)
+            cat_header += histogram[1].tolist()
+            value += histogram[0].tolist()
+        header = cat_header
+    return category, header, value
 
 
 def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, results):
