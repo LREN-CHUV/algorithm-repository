@@ -13,16 +13,16 @@ bins = 50  # Number of bins
 def main():
 
     # Get inputs
-    data = database_connector.fetch_data()['data']
-    metadata = database_connector.fetch_data()['headers']
-    colnames = [col.name for col in metadata]
-    var = colnames[0]
-    groups = colnames[1:]
+    var = database_connector.get_var()
+    groups = database_connector.get_covars() + database_connector.get_gvars()
+    fetched_data = database_connector.fetch_data()
+    data = fetched_data['data']
+    data_columns = fetched_data['columns']
 
     # Compute results
     pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
                        database_connector.get_docker_image(), database_connector.get_model(), var, groups,
-                       json.dumps(generate_descriptive_stats(var, groups, data, metadata),
+                       json.dumps(generate_descriptive_stats(var, groups, data, data_columns),
                                   sort_keys=True, indent=4, separators=(',', ': ')))
     error = ''
     shape = 'pfa_json'
@@ -34,50 +34,36 @@ def main():
 
 
 # Generate an object containing the descriptive statistics for the given variable
-def generate_descriptive_stats(var, groups, data, metadata):
-    var_data = [row[0] for row in data]
-    var_type = get_var_type(metadata[0].type_code)
-
+def generate_descriptive_stats(var, groups, data, data_columns):
     output = list()
-    output.append(generate_histogram(var_data, var, var_type, None))
+    output.append(generate_histogram(data, data_columns, var, None))
     for group in groups:
-        output.append(generate_histogram(var_data, var, var_type, group))
+        output.append(generate_histogram(data, data_columns, var, group))
 
     return output
 
 
-def get_var_type(value):
-    # ==> Temporary : Should use meta-db
-    return {
-        1042: "string",
-        1082: "float",
-        1700: "date"
-    }[value]
-    # < ==
+def generate_histogram(data, data_columns, variable, group):
+    var_data = [row[0] for row in data]
+    group_data = [row[data_columns.index(group.lower())] for row in data] if group else []
+    variable_type = database_connector.var_type(variable)['type']
+    group_type = database_connector.var_type(group)['type'] if group else None
+    group_categories = database_connector.var_type(group)['values'] if group else None
 
-
-def generate_histogram(data, variable, variable_type, group):
-    label = "Histogram"
     category = []
-
-    # ==> Temporary : Should use meta-db
-    variable_type = "real"
-    group_data = ""
-    group_type = "polynomial"
-    group_categories = ["AD", "MCI", "CN"]
-    # < ==
-
+    label = "Histogram"
     if group:
         label += " - " + group
 
     if variable_type == "real":
-        category, header, value = histo_real(category, data, group, group_categories, group_data, group_type)
-
+        var_data = [float(d) for d in var_data]
+        category, header, value = histo_real(category, var_data, group, group_categories, group_data, group_type)
     elif variable_type == "integer":
-        category, header, value = histo_integer(category, data, group, group_categories, group_data, group_type)
-
+        var_data = [int(d) for d in var_data]
+        category, header, value = histo_integer(category, var_data, group, group_categories, group_data, group_type)
     else:
-        category, header, value = histo_nominal(category, data, group, group_categories, group_data, group_type)
+        var_data = [str(d) for d in var_data]
+        category, header, value = histo_nominal(category, var_data, group, group_categories, group_data, group_type)
 
     return {
         "code": variable,
@@ -96,6 +82,7 @@ def generate_histogram(data, variable, variable_type, group):
 
 
 def histo_nominal(category, data, group, group_categories, group_data, group_type):
+    data = [str(d) for d in data]
     header = []
     variable_categories = list(set(data))
     # Nominal variable
@@ -114,10 +101,10 @@ def histo_nominal(category, data, group, group_categories, group_data, group_typ
         n = len(header)  # number of possible values for this variable
         for gc in group_categories:
             cat_header += header
-            category += [gc["code"]] * n
+            category += [gc] * n
             cat_data = []  # Store only data for the current gc
             for v, g in zip(data, group_data):
-                if gc['code'] == str(g, encoding='utf-8').rstrip():
+                if gc == g:
                     cat_data.append(str(v, encoding='utf-8').rstrip())
             hist = [0] * n
             for d in cat_data:
@@ -128,8 +115,9 @@ def histo_nominal(category, data, group, group_categories, group_data, group_typ
 
 
 def histo_integer(category, data, group, group_categories, group_data, group_type):
-    h_min = data.min()
-    h_max = data.max()
+    data = [int(d) for d in data]
+    h_min = min(data)
+    h_max = max(data)
     h_step = ((h_max - h_min) // bins) + 1
     histogram = numpy.histogram(data, bins=numpy.arange(h_min, h_max + (2 * h_step), h_step))
     header = histogram[1].tolist()
@@ -140,10 +128,10 @@ def histo_integer(category, data, group, group_categories, group_data, group_typ
         cat_header = []
         value = []
         for gc in group_categories:
-            category += [gc["code"]] * len(header)
+            category += [gc] * len(header)
             cat_data = []  # Store only data for the current gc
             for v, g in zip(data, group_data):
-                if gc['code'] == str(g, encoding='utf-8').rstrip():
+                if gc == g:
                     cat_data.append(int(v))
             histogram = numpy.histogram(cat_data, bins=header)
             cat_header += histogram[1].tolist()
@@ -153,7 +141,7 @@ def histo_integer(category, data, group, group_categories, group_data, group_typ
 
 
 def histo_real(category, data, group, group_categories, group_data, group_type):
-    data = [float(d) for d in data]  # Temporary
+    data = [float(d) for d in data]
     histogram = numpy.histogram(data, bins=bins)
     header = histogram[1].tolist()
     value = histogram[0].tolist()
@@ -164,7 +152,7 @@ def histo_real(category, data, group, group_categories, group_data, group_type):
             category += [gc] * bins
             cat_data = []
             for v, g in zip(data, group_data):
-                if gc['code'] == str(g, encoding='utf-8').rstrip():
+                if gc == g:
                     cat_data.append(float(v))
             histogram = numpy.histogram(cat_data, bins=header)
             cat_header += histogram[1].tolist()
@@ -175,7 +163,6 @@ def histo_real(category, data, group, group_categories, group_data, group_type):
 
 def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, results):
     str_grps = '","'.join(grps)
-
     output = ('''
 {
   "code": "%s",
@@ -271,7 +258,6 @@ def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, resu
   }
 }
     ''' % (algo_code, algo_name, results, model, str_grps, variable, algo_name, docker_image))
-
     return output
 
 
