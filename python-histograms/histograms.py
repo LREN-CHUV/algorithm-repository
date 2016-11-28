@@ -14,7 +14,7 @@ def main():
 
     # Get inputs
     var = database_connector.get_var()
-    groups = database_connector.get_covars() + database_connector.get_gvars()
+    groups = [x for x in (database_connector.get_covars() + database_connector.get_gvars()) if len(x) > 0]
     fetched_data = database_connector.fetch_data()
     data = fetched_data['data']
     data_columns = fetched_data['columns']
@@ -50,7 +50,7 @@ def generate_histogram(data, data_columns, variable, group):
     group_type = database_connector.var_type(group)['type'] if group else None
     group_categories = database_connector.var_type(group)['values'] if group else None
 
-    category = []
+    category = list()
     label = "Histogram"
     if group:
         label += " - " + group
@@ -63,7 +63,9 @@ def generate_histogram(data, data_columns, variable, group):
         category, header, value = histo_integer(category, var_data, group, group_categories, group_data, group_type)
     else:
         var_data = [str(d) for d in var_data]
-        category, header, value = histo_nominal(category, var_data, group, group_categories, group_data, group_type)
+        var_categories = database_connector.var_type(variable)['values']
+        category, header, value = histo_nominal(category, var_data, group, group_categories, group_data, group_type,
+                                                var_categories)
 
     return {
         "code": variable,
@@ -81,18 +83,16 @@ def generate_histogram(data, data_columns, variable, group):
     }
 
 
-def histo_nominal(category, data, group, group_categories, group_data, group_type):
+def histo_nominal(category, data, group, group_categories, group_data, group_type, variable_categories):
     data = [str(d) for d in data]
     header = []
-    variable_categories = list(set(data))
     # Nominal variable
     sums = {}
-    for c1 in variable_categories:
-        code = c1["code"]
+    for code in variable_categories:
         header.append(code)
         sums[code] = 0
-    for v in group_data:
-        sums[str(v, encoding='utf-8').rstrip()] += 1
+    for v in data:
+        sums[v.rstrip()] += 1
     value = list(map(lambda h: sums[h], header))
     if group and group_type != "real":
         # Histogram using grouping variable
@@ -104,11 +104,11 @@ def histo_nominal(category, data, group, group_categories, group_data, group_typ
             category += [gc] * n
             cat_data = []  # Store only data for the current gc
             for v, g in zip(data, group_data):
-                if gc == g:
-                    cat_data.append(str(v, encoding='utf-8').rstrip())
+                if str(gc).rstrip() == str(g).rstrip():
+                    cat_data.append(v)
             hist = [0] * n
             for d in cat_data:
-                hist[header.index(d)] += 1
+                hist[header.index(str(d).rstrip())] += 1
             value += hist
         header = cat_header
     return category, header, value
