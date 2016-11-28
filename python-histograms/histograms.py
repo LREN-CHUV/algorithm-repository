@@ -36,21 +36,21 @@ def main():
 # Generate an object containing the descriptive statistics for the given variable
 def generate_descriptive_stats(var, groups, data, data_columns):
     output = list()
-    output.append(generate_histogram(data, data_columns, var, None))
+    output.append(generate_histogram(data, data_columns, var))
     for group in groups:
         output.append(generate_histogram(data, data_columns, var, group))
 
     return output
 
 
-def generate_histogram(data, data_columns, variable, group):
+def generate_histogram(data, data_columns, variable, group=None):
     var_data = [row[0] for row in data]
     group_data = [row[data_columns.index(group.lower())] for row in data] if group else []
     variable_type = database_connector.var_type(variable)['type']
     group_type = database_connector.var_type(group)['type'] if group else None
     group_categories = database_connector.var_type(group)['values'] if group else None
 
-    category = list()
+    category = []
     label = "Histogram"
     if group:
         label += " - " + group
@@ -148,6 +148,7 @@ def histo_real(category, data, group, group_categories, group_data, group_type):
     if group and group_type != "real":
         # Histogram using grouping variable
         cat_header = []
+        value = []
         for gc in group_categories:
             category += [gc] * bins
             cat_data = []
