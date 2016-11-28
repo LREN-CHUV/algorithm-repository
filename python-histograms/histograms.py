@@ -131,7 +131,7 @@ def histo_integer(category, data, group, group_categories, group_data, group_typ
             category += [gc] * len(header)
             cat_data = []  # Store only data for the current gc
             for v, g in zip(data, group_data):
-                if gc == g:
+                if str(gc).rstrip() == str(g).rstrip():
                     cat_data.append(int(v))
             histogram = numpy.histogram(cat_data, bins=header)
             cat_header += histogram[1].tolist()
@@ -152,7 +152,7 @@ def histo_real(category, data, group, group_categories, group_data, group_type):
             category += [gc] * bins
             cat_data = []
             for v, g in zip(data, group_data):
-                if gc == g:
+                if str(gc).rstrip() == str(g).rstrip():
                     cat_data.append(float(v))
             histogram = numpy.histogram(cat_data, bins=header)
             cat_header += histogram[1].tolist()

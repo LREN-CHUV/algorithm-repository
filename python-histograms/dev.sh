@@ -3,10 +3,10 @@
 docker run \
 -e "JOB_ID=$(uuidgen)" \
 -e "NODE=federation" \
--e "PARAM_variables=DX" \
+-e "PARAM_variables=dx" \
 -e "PARAM_covariables=" \
--e "PARAM_grouping=PTGENDER,DX,APOE4,AgeGroup,lefthippocampus" \
--e "PARAM_query=select dx, ptgender, apoe4, agegroup, lefthippocampus from ADNI_MERGE where dx is not null and ptgender is not null and apoe4 is not null and agegroup is not null and lefthippocampus is not null" \
+-e "PARAM_grouping=PTGENDER,DX,APOE4,AgeGroup" \
+-e "PARAM_query=select dx, ptgender, dx, apoe4, agegroup from ADNI_MERGE where dx is not null and ptgender is not null and dx is not null and apoe4 is not null and agegroup is not null" \
 -e "IN_JDBC_URL=jdbc:postgresql://192.168.0.1:65432/science" \
 -e "IN_JDBC_USER=science" \
 -e "IN_JDBC_PASSWORD=sciencepass" \
