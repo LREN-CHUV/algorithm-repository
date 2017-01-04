@@ -5,8 +5,8 @@ docker run \
 -e "NODE=federation" \
 -e "PARAM_variables=lefthippocampus" \
 -e "PARAM_covariables=" \
--e "PARAM_grouping=DX" \
--e "PARAM_meta={\"righthippocampus\":{\"type\": \"real\"},\"leftventraldc\":{\"type\": \"real\"},\"rightventraldc\":{\"type\": \"real\"}}" \
+-e "PARAM_grouping=dx" \
+-e "PARAM_meta={\"lefthippocampus\":{\"type\":\"real\"},\"dx\":{\"type\":\"polynominal\",\"enumerations\":[{\"code\":\"CN\",\"label\":\"CN\"},{\"code\":\"MCI\",\"label\":\"MCI\"},{\"code\":\"AD\",\"label\":\"AD\"}]}}" \
 -e "PARAM_query=select lefthippocampus, dx from ADNI_MERGE where lefthippocampus is not null and dx is not null" \
 -e "IN_JDBC_URL=jdbc:postgresql://192.168.0.1:65432/postgres" \
 -e "IN_JDBC_USER=postgres" \
