@@ -1,4 +1,4 @@
-FROM hbpmip/python-mip:222f8eb
+FROM hbpmip/python-mip:53c6b8c
 
 RUN conda install -y numpy
 RUN conda update numpy
