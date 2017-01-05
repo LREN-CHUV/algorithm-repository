@@ -168,94 +168,92 @@ def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, resu
 {
   "code": "%s",
   "name": "%s",
-  "data": {
-    "cells": {
-      "validations": [],
-      "data": {
-        "init": %s,
-        "type": {
-          "type": "array",
-          "doc": "Histograms computation",
-          "items":
-            {
-              "type": {
-                "namespace": "%s",
-                "type": "record",
-                "fields": [
-                  {
-                    "type": "string",
-                    "doc": "Shape",
-                    "name": "shape"
-                  },
-                  {
-                    "type": "array",
-                    "items": "string",
-                    "doc": "Categories",
-                    "name": "categories"
-                  },
-                  {
-                    "type": "array",
-                    "items": "string",
-                    "doc": "Header",
-                    "name": "header"
-                  },
-                  {
-                    "type": "array",
-                    "items": "int",
-                    "doc": "Value",
-                    "name": "value"
-                  }
-                ]
-              }
-            },
-          "name": "Histograms"
-        }
-      },
-      "query": {
-        "init": {
-          "grouping": ["%s"],
-          "variable": "%s"
-        },
-        "type": {
-          "type": "record",
-          "doc": "Definition of the inputs",
-          "fields": [
-            {
-              "type": {
-                "type": "string"
-              },
-              "doc": "Main histogram variable",
-              "name": "variable"
-            },
-            {
-              "type": {
-                "items": {
-                  "type": "string"
+  "cells": {
+    "validations": [],
+    "data": {
+      "init": %s,
+      "type": {
+        "type": "array",
+        "doc": "Histograms computation",
+        "items":
+          {
+            "type": {
+              "namespace": "%s",
+              "type": "record",
+              "fields": [
+                {
+                  "type": "string",
+                  "doc": "Shape",
+                  "name": "shape"
                 },
-                "type": "array"
-              },
-              "doc": "Categories used for specific histograms",
-              "name": "groups"
+                {
+                  "type": "array",
+                  "items": "string",
+                  "doc": "Categories",
+                  "name": "categories"
+                },
+                {
+                  "type": "array",
+                  "items": "string",
+                  "doc": "Header",
+                  "name": "header"
+                },
+                {
+                  "type": "array",
+                  "items": "int",
+                  "doc": "Value",
+                  "name": "value"
+                }
+              ]
             }
-          ],
-          "name": "Query"
-        }
+          },
+        "name": "Histograms"
       }
     },
-    "name": "%s",
-    "doc": "Histograms computation",
-    "metadata": {
-      "docker_image": "%s"
-    },
-    "output": {
-      "type": "null"
-    },
-    "action": [
-      null
-    ],
-    "input": {
-      "type": "null"
+    "query": {
+      "init": {
+        "grouping": ["%s"],
+        "variable": "%s"
+      },
+      "type": {
+        "type": "record",
+        "doc": "Definition of the inputs",
+        "fields": [
+          {
+            "type": {
+              "type": "string"
+            },
+            "doc": "Main histogram variable",
+            "name": "variable"
+          },
+          {
+            "type": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "doc": "Categories used for specific histograms",
+            "name": "groups"
+          }
+        ],
+        "name": "Query"
+      }
     }
+  },
+  "name": "%s",
+  "doc": "Histograms computation",
+  "metadata": {
+    "docker_image": "%s"
+  },
+  "output": {
+    "type": "null"
+  },
+  "action": [
+    null
+  ],
+  "input": {
+    "type": "null"
   }
 }
     ''' % (algo_code, algo_name, results, model, str_grps, variable, algo_name, docker_image))
