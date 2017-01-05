@@ -14,4 +14,4 @@ docker run \
 -e "OUT_JDBC_URL=jdbc:postgresql://192.168.0.1:5432/postgres" \
 -e "OUT_JDBC_USER=postgres" \
 -e "OUT_JDBC_PASSWORD=test" \
-hbpmip/python-histograms python histograms.py
+hbpmip/python-histograms compute
