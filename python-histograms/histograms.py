@@ -241,7 +241,6 @@ def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, resu
       }
     }
   },
-  "name": "%s",
   "doc": "Histograms computation",
   "metadata": {
     "docker_image": "%s"
@@ -256,7 +255,7 @@ def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, resu
     "type": "null"
   }
 }
-    ''' % (algo_code, algo_name, results, model, str_grps, variable, algo_name, docker_image))
+    ''' % (algo_code, algo_name, results, model, str_grps, variable, docker_image))
     return output
 
 
