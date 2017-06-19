@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>eu.hbp.mip.container.rapidminer</groupId>
+    <groupId>eu.hbp.mip.container</groupId>
     <artifactId>java-rapidminer-knn</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1</version>

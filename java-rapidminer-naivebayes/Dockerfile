@@ -1,4 +1,4 @@
-FROM hbpmip/java-rapidminer:ab6aa23
+FROM hbpmip/java-rapidminer:3412f80
 
 MAINTAINER arnaud@ahead.solutions.ch
 
