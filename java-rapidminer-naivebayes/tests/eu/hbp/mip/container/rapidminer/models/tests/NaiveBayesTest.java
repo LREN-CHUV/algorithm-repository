@@ -1,12 +1,12 @@
-package ch.lren.hbpmip.rapidminer.models.tests;
+package eu.hbp.mip.container.rapidminer.models.tests;
 
-import ch.lren.hbpmip.rapidminer.InputData;
-import ch.lren.hbpmip.rapidminer.RapidMinerExperiment;
-import ch.lren.hbpmip.rapidminer.exceptions.InvalidDataException;
-import ch.lren.hbpmip.rapidminer.exceptions.InvalidModelException;
-import ch.lren.hbpmip.rapidminer.exceptions.RapidMinerException;
-import ch.lren.hbpmip.rapidminer.models.NaiveBayes;
-import ch.lren.hbpmip.rapidminer.models.RapidMinerModel;
+import eu.hbp.mip.container.rapidminer.InputData;
+import eu.hbp.mip.container.rapidminer.RapidMinerExperiment;
+import eu.hbp.mip.container.rapidminer.exceptions.InvalidDataException;
+import eu.hbp.mip.container.rapidminer.exceptions.InvalidModelException;
+import eu.hbp.mip.container.rapidminer.exceptions.RapidMinerException;
+import eu.hbp.mip.container.rapidminer.models.NaiveBayes;
+import eu.hbp.mip.container.rapidminer.models.RapidMinerModel;
 import com.opendatagroup.hadrian.jvmcompiler.PFAEngine;
 import com.opendatagroup.hadrian.jvmcompiler.PFAEngine$;
 import com.rapidminer.example.Attribute;
@@ -20,8 +20,8 @@ import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import ch.lren.hbpmip.rapidminer.db.DBConnector;
-import ch.lren.hbpmip.rapidminer.db.DBException;
+import eu.hbp.mip.container.rapidminer.db.DBConnector;
+import eu.hbp.mip.container.rapidminer.db.DBException;
 import scala.Option;
 import scala.collection.immutable.HashMap;
 
@@ -229,7 +229,7 @@ public class NaiveBayesTest {
 		}
 	}
 
-	public String perform_classification_continuous_input(String[] featureNames, String[][] data, String[] labels, String[] test) throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
+	public String perform_classification_nominal_input(String[] featureNames, String[][] data, String[] labels, String[] test) throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
 
 		String variableName = "output";
 
@@ -260,7 +260,7 @@ public class NaiveBayesTest {
 		return json_output.substring(1, json_output.toString().length() - 1);
 	}
 
-	@Test
+	//@Test
 	public void test_classification_with_nominal_input() throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
 
 		{
@@ -279,7 +279,7 @@ public class NaiveBayesTest {
 
 			String[] test = new String[]{"0", "1"};
 
-			String result = perform_classification_continuous_input(featureNames, data, labels, test);
+			String result = perform_classification_nominal_input(featureNames, data, labels, test);
 			Assert.assertEquals(result, "YES");
 		}
 

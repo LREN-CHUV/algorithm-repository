@@ -1,12 +1,12 @@
-package ch.lren.hbpmip.rapidminer.models.tests;
+package eu.hbp.mip.container.rapidminer.models.tests;
 
-import ch.lren.hbpmip.rapidminer.InputData;
-import ch.lren.hbpmip.rapidminer.RapidMinerExperiment;
-import ch.lren.hbpmip.rapidminer.exceptions.InvalidDataException;
-import ch.lren.hbpmip.rapidminer.exceptions.InvalidModelException;
-import ch.lren.hbpmip.rapidminer.exceptions.RapidMinerException;
-import ch.lren.hbpmip.rapidminer.models.Knn;
-import ch.lren.hbpmip.rapidminer.models.RapidMinerModel;
+import eu.hbp.mip.container.rapidminer.InputData;
+import eu.hbp.mip.container.rapidminer.RapidMinerExperiment;
+import eu.hbp.mip.container.rapidminer.exceptions.InvalidDataException;
+import eu.hbp.mip.container.rapidminer.exceptions.InvalidModelException;
+import eu.hbp.mip.container.rapidminer.exceptions.RapidMinerException;
+import eu.hbp.mip.container.rapidminer.models.Knn;
+import eu.hbp.mip.container.rapidminer.models.RapidMinerModel;
 import com.rapidminer.example.Attribute;
 import com.rapidminer.example.table.AttributeFactory;
 import com.rapidminer.example.table.DoubleArrayDataRow;

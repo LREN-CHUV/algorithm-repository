@@ -1,4 +1,4 @@
-package ch.lren.hbpmip.rapidminer.models;
+package eu.hbp.mip.container.rapidminer.models;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

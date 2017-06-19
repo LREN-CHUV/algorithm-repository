@@ -1,4 +1,4 @@
-package ch.lren.hbpmip.rapidminer.models;
+package eu.hbp.mip.container.rapidminer.models;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -134,7 +134,7 @@ public class Knn extends RapidMinerModel<UpdateablePredictionModel> {
 			if(isRegression) {
 				jgen.writeNumberField("label", (Double) storedValues.get(i));
 			}else {
-				jgen.writeStringField("label", trainedModel.getLabel().getMapping().mapIndex((Integer)  storedValues.get(i)));
+				jgen.writeStringField("label", trainedModel.getLabel().getMapping().mapIndex((Integer) storedValues.get(i)));
 			}
 
 			jgen.writeEndObject();

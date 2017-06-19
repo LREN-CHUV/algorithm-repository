@@ -3,4 +3,5 @@
 *.iml
 java-rapidminer-naivebayes/target/
 java-rapidminer-knn/target/
+*.jar
 
