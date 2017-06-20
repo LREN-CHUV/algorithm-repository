@@ -61,7 +61,11 @@ def generate_histogram(data, data_columns, variable, group=None):
     if group:
         label += " - " + group
 
-    if variable_type == "real":
+    if not var_data or len(var_data) < 1:
+        category = []
+        header = []
+        value = []
+    elif variable_type == "real":
         var_data = [float(d) for d in var_data]
         category, header, value = histo_real(category, var_data, group, group_categories, group_data, group_type)
     elif variable_type == "integer":
