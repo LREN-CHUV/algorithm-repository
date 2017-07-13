@@ -1,9 +1,9 @@
-FROM hbpmip/python-mip:05572e9
+FROM hbpmip/python-mip:d2c0f87
 
-RUN conda install -y numpy
-RUN conda update numpy
-
+COPY requirements.txt /requirements.txt
 COPY histograms.py /main.py
+
+RUN conda install -y --file /requirements.txt
 
 ENV DOCKER_IMAGE=hbpmip/python-histograms
 ENV MODEL histograms

@@ -1,4 +1,4 @@
-FROM hbpmip/java-base-build:latest
+FROM hbpmip/java-base-build:e259b84
 
 MAINTAINER arnaud@ahead.solutions.ch
 

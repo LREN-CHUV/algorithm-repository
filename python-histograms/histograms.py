@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import logging
 import json
 import numpy
 
@@ -11,6 +12,7 @@ bins = 50  # Number of bins
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
 
     # Get inputs
     var = database_connector.get_var()
@@ -18,6 +20,10 @@ def main():
     fetched_data = database_connector.fetch_data()
     data = fetched_data['data']
     data_columns = fetched_data['columns']
+
+    logging.info("variable: %s", str(var))
+    logging.info("groups: %s", str(groups))
+    logging.info("columns: %s", str(data_columns))
 
     # Compute results
     pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
@@ -27,7 +33,7 @@ def main():
     error = ''
     shape = 'pfa_json'
 
-    print(pfa)
+    logging.info("PFA: %s", pfa)
 
     # Store results
     database_connector.save_results(pfa, error, shape)
@@ -55,7 +61,11 @@ def generate_histogram(data, data_columns, variable, group=None):
     if group:
         label += " - " + group
 
-    if variable_type == "real":
+    if not var_data or len(var_data) < 1:
+        category = []
+        header = []
+        value = []
+    elif variable_type == "real":
         var_data = [float(d) for d in var_data]
         category, header, value = histo_real(category, var_data, group, group_categories, group_data, group_type)
     elif variable_type == "integer":
