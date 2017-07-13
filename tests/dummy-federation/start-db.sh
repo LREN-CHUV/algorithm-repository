@@ -43,7 +43,7 @@ fi
 $DOCKER rm --force dummyfederation 2> /dev/null | true
 $DOCKER run --name dummyfederation $DOCKER_PORT_OPTS \
     -v $(get_script_dir)/sql:/docker-entrypoint-initdb.d/ \
-    -e POSTGRES_PASSWORD=test -d postgres:9.4.5
+    -e POSTGRES_PASSWORD=test -d postgres:9.6.3-alpine
 
 $DOCKER exec dummyfederation \
     /bin/bash -c 'while ! pg_isready -U postgres ; do sleep 1; done'

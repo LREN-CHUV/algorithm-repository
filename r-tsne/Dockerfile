@@ -2,7 +2,7 @@ FROM hbpmip/r-job:6cd5c17
 
 MAINTAINER ludovic.claude54@gmail.com
 
-RUN installGithub.r HBPSP8Repo/Rtsne@f72a26d
+RUN installGithub.r HBPMedical/Rtsne@f72a26d
 
 LABEL eu.humanbrainproject.function=tsne \
       eu.humanbrainproject.function.location=node \
