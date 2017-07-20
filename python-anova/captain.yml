@@ -1,0 +1,7 @@
+python-anova:
+  build: Dockerfile
+  image: hbpmip/python-anova
+  pre:
+    - echo "Preparing python-anova"
+  post:
+    - echo "Finished python-anova"
