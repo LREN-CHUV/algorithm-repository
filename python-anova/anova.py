@@ -44,7 +44,9 @@ def main():
 # Compute Anova
 def compute_anova(var, gvars, cvars, data):
     formula = generate_formula(var, gvars, cvars)
+    logging.info("Formula: %s" % formula)
     lm = ols(formula, data).fit()
+    logging.info(lm.summary())
     return anova_lm(lm)
 
 
