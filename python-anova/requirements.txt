@@ -1,1 +1,1 @@
-statsmodel==0.8.0
+statsmodels==0.8.0
