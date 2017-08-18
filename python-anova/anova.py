@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import logging
-import json
 
 from statsmodels.formula.api import ols
 from statsmodels.stats.anova import anova_lm
