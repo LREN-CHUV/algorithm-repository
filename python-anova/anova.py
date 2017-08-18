@@ -30,8 +30,7 @@ def main():
     # Compute results
     pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
                        database_connector.get_docker_image(), database_connector.get_model(), var, covs,
-                       json.dumps(compute_anova(var, gvars, cvars, data),
-                                  sort_keys=True, indent=4, separators=(',', ': ')))
+                       compute_anova(var, gvars, cvars, data).to_json())
     error = ''
     shape = 'pfa_json'
 
@@ -45,9 +44,9 @@ def main():
 def compute_anova(var, gvars, cvars, data):
     formula = generate_formula(var, gvars, cvars)
     logging.info("Formula: %s" % formula)
-    lm = ols(formula, data).fit()
+    lm = ols(data=data, formula=formula).fit()
     logging.info(lm.summary())
-    return anova_lm(lm)
+    return anova_lm(lm, typ=2)
 
 
 # Generate formula for Anova
@@ -64,10 +63,14 @@ def generate_formula(var, gvars, cvars):
 def format_data(fetched_data):
     data = dict()
     i = 0
-    for v in fetched_data['columns']:
-        data[v] = list()
-        for r in fetched_data['data']:
-            data[v].append(r[i])
+    for c in fetched_data['columns']:
+        data[c] = list()
+        for v in fetched_data['data']:
+            try:
+                value = float(v[i])
+            except ValueError:
+                value = str(v[i])
+            data[c].append(value)
         i += 1
     return data
 
