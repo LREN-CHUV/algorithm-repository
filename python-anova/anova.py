@@ -85,41 +85,36 @@ def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, resu
     "data": {
       "init": %s,
       "type": {
-        "type": "array",
+        "name": "Anova",
         "doc": "Anova computation",
-        "items":
+        "namespace": "%s",
+        "type": "record",
+        "fields": [
           {
-            "type": {
-              "namespace": "%s",
-              "type": "record",
-              "fields": [
-                {
-                  "type": "string",
-                  "doc": "Shape",
-                  "name": "shape"
-                },
-                {
-                  "type": "array",
-                  "items": "string",
-                  "doc": "Categories",
-                  "name": "categories"
-                },
-                {
-                  "type": "array",
-                  "items": "string",
-                  "doc": "Header",
-                  "name": "header"
-                },
-                {
-                  "type": "array",
-                  "items": "int",
-                  "doc": "Value",
-                  "name": "value"
-                }
-              ]
-            }
+            "type": "map",
+            "values": "double",
+            "doc": "sum_sq",
+            "name": "sum_sq"
           },
-        "name": "Anova"
+          {
+            "type": "map",
+            "values": "double",
+            "doc": "df",
+            "name": "df"
+          },
+          {
+            "type": "map",
+            "values": "double",
+            "doc": "F",
+            "name": "F"
+          },
+          {
+            "type": "map",
+            "values": "double",
+            "doc": "PR(\u003eF)",
+            "name": "PR(\u003eF)"
+          }
+        ]
       }
     },
     "query": {
