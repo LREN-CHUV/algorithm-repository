@@ -1,3 +1,0 @@
-[submodule "tests/analytics-db"]
-	path = tests/analytics-db
-	url = https://github.com/LREN-CHUV/analytics-db.git
