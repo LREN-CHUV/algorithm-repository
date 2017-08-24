@@ -7,6 +7,8 @@ from statsmodels.stats.anova import anova_lm
 
 import database_connector
 
+INTERACTIONS_PARAM = 'interactions'
+
 
 def main():
     logging.basicConfig(level=logging.INFO)
@@ -26,10 +28,16 @@ def main():
     fetched_data = database_connector.fetch_data()
     data = format_data(fetched_data)
 
+    # Get params
+    try:
+        interactions = database_connector.get_params()[INTERACTIONS_PARAM]
+    except TypeError:
+        interactions = None
+
     # Compute results
     pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
                        database_connector.get_docker_image(), database_connector.get_model(), var, covs,
-                       compute_anova(var, gvars, cvars, data).to_json())
+                       compute_anova(var, gvars, cvars, data, interactions).to_json())
     error = ''
     shape = 'pfa_json'
 
@@ -40,8 +48,11 @@ def main():
 
 
 # Compute Anova
-def compute_anova(var, gvars, cvars, data):
-    formula = generate_formula(var, gvars, cvars)
+def compute_anova(var, gvars, cvars, data, interactions=None):
+    if not interactions:
+        formula = generate_formula(var, gvars, cvars)
+    else:
+        formula = generate_formula_inter(var, gvars, cvars)
     logging.info("Formula: %s" % formula)
     lm = ols(data=data, formula=formula).fit()
     logging.info(lm.summary())
@@ -55,6 +66,16 @@ def generate_formula(var, gvars, cvars):
     cvars = ' + '.join(cvars)
     cov = ' + '.join([gvars, cvars])
     cov = cov.strip(' + ')
+    return str.format("%s ~ %s" % (var, cov))
+
+
+# Generate formula with interactions for Anova
+def generate_formula_inter(var, gvars, cvars):
+    gvars = [str.format("C(%s)" % g) for g in gvars]
+    gvars = ' * '.join(gvars)
+    cvars = ' * '.join(cvars)
+    cov = ' * '.join([gvars, cvars])
+    cov = cov.strip(' * ')
     return str.format("%s ~ %s" % (var, cov))
 
 
