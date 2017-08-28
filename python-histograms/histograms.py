@@ -8,7 +8,7 @@ import database_connector
 
 
 # Settings and global variables
-bins = 50  # Number of bins
+bins = 20  # Number of bins
 
 
 def main():
