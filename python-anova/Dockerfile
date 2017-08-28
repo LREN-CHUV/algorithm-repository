@@ -1,4 +1,4 @@
-FROM hbpmip/python-mip:b856e51
+FROM hbpmip/python-mip:6fb0698
 
 COPY requirements.txt /requirements.txt
 COPY anova.py /main.py

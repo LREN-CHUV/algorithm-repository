@@ -7,7 +7,7 @@ from statsmodels.stats.anova import anova_lm
 
 import database_connector
 
-INTERACTIONS_PARAM = 'interactions'
+DESIGN_PARAM = 'design'
 
 
 def main():
@@ -30,14 +30,14 @@ def main():
 
     # Get params
     try:
-        interactions = database_connector.get_params()[INTERACTIONS_PARAM]
+        design = database_connector.get_parameter(DESIGN_PARAM)
     except TypeError:
-        interactions = None
+        design = None
 
     # Compute results
     pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
                        database_connector.get_docker_image(), database_connector.get_model(), var, covs,
-                       compute_anova(var, gvars, cvars, data, interactions).to_json())
+                       compute_anova(var, gvars, cvars, data, design).to_json())
     error = ''
     shape = 'pfa_json'
 
@@ -48,11 +48,14 @@ def main():
 
 
 # Compute Anova
-def compute_anova(var, gvars, cvars, data, interactions=None):
-    if not interactions:
-        formula = generate_formula(var, gvars, cvars)
+def compute_anova(var, gvars, cvars, data, design='factorial'):
+    if design == 'factorial':
+        formula = generate_formula_factorial(var, gvars, cvars)
+    elif design == 'additive':
+        formula = generate_formula_additive(var, gvars, cvars)
     else:
-        formula = generate_formula_inter(var, gvars, cvars)
+        logging.error("'design' parameter is wrong !")
+        return None
     logging.info("Formula: %s" % formula)
     lm = ols(data=data, formula=formula).fit()
     logging.info(lm.summary())
@@ -60,7 +63,7 @@ def compute_anova(var, gvars, cvars, data, interactions=None):
 
 
 # Generate formula for Anova
-def generate_formula(var, gvars, cvars):
+def generate_formula_additive(var, gvars, cvars):
     gvars = [str.format("C(%s)" % g) for g in gvars]
     gvars = ' + '.join(gvars)
     cvars = ' + '.join(cvars)
@@ -70,7 +73,7 @@ def generate_formula(var, gvars, cvars):
 
 
 # Generate formula with interactions for Anova
-def generate_formula_inter(var, gvars, cvars):
+def generate_formula_factorial(var, gvars, cvars):
     gvars = [str.format("C(%s)" % g) for g in gvars]
     gvars = ' * '.join(gvars)
     cvars = ' * '.join(cvars)
