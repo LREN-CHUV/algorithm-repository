@@ -1,6 +1,13 @@
-# r-linear-regression
+# java-rapidminer-knn
 
-Implementation of a linear regression in R
+Implementation of the KNN algorithm using RapidMiner
+
+## Usage
+
+```
+  docker run --rm hbpmip/java-rapidminer-knn:0.0.1 compute
+
+```
 
 ## Development process
 
