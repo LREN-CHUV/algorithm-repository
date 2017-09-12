@@ -6,4 +6,3 @@ else
 fi
 
 $CAPTAIN build
-$CAPTAIN test
