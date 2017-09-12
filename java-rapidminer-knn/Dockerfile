@@ -23,3 +23,16 @@ COPY src/ /src/
 
 RUN chown -R compute:compute /src/ \
     && chown -R root:www-data /var/www/html/
+
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="hbpmip/java-rapidminer-knn" \
+      org.label-schema.description="KNN algorithm" \
+      org.label-schema.url="https://github.com/LREN-CHUV/functions-repository" \
+      org.label-schema.vcs-type="git" \
+      org.label-schema.vcs-url="https://github.com/LREN-CHUV/functions-repository.git" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.version="$VERSION" \
+      org.label-schema.vendor="LREN CHUV" \
+      org.label-schema.license="AGPLv3" \
+      org.label-schema.docker.dockerfile="Dockerfile" \
+      org.label-schema.schema-version="1.0"
