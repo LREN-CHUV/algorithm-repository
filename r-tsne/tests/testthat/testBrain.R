@@ -24,17 +24,17 @@ test_that("We can perform tSNE on several covariables and one grouping", {
 
   # Get the results
   results <- RJDBC::dbGetQuery(out_conn, "select node, data, shape from job_result where job_id = ?", job_id);
-  
+
   node <- results$node[[1]];
   data <- results$data[[1]];
   shape <- results$shape[[1]];
 
   # Disconnect from the database
   disconnectdbs();
-  
+
   expect_equal(node, "job_test");
   expect_equal(shape, "pfa_yaml");
-  
+
   res <- yaml.load(data);
 
   reduced_data <- as.data.frame(do.call(rbind.data.frame, res$cells$reduced_data$init), stringsAsFactors = T);
@@ -51,5 +51,5 @@ test_that("We can perform tSNE on several covariables and one grouping", {
 
   # Use a wide tolerance because tSNE is non deterministic
   expect_equal(reduced_data, expected_df, tolerance = 20, scale = 1);
-  
+
 });

@@ -317,7 +317,7 @@ cells:
 
 action:
   -
-    let: 
+    let:
       in:
         "a.flatten":
           type:

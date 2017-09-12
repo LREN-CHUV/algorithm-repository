@@ -123,7 +123,7 @@ store <- list(variables = toJSON(unlist(variables)),
               summary_iter_costs = toJSON(res$itercosts)
               );
 
-template <- readLines("/src/pfa.yml");
+template <- readLines("/src/pfa.yml.whisker");
 
 # Store results in the database
 saveResults(whisker.render(template, store), shape = 'pfa_yaml');

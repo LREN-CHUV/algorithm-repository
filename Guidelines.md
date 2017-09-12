@@ -2,7 +2,7 @@
   ------------------ --------------------------------------------------------------------------------------------------------
   *Ludovic Claude, CHUV, <ludovic.claude54@gmail.com>* (8 Jan 2016)
   ---------- ----------------------------------------------------------------------------------------------------------------
-  Human Brain Project / Medical Informatics Platform (SP8) / 8.4.2 
+  Human Brain Project / Medical Informatics Platform (SP8) / 8.4.2
   -------------------- -----------------------------------------------------------------------------------------------------
 
 <span id="_Overview_of_the" class="anchor"><span id="_Toc439876557" class="anchor"></span></span>Purpose
@@ -67,8 +67,8 @@ Step-by-Step Guidelines
 
             RUN install.r /tmp/mypackage\_linux64.tar.gz
 
-    b\. All files: 
-    
+    b\. All files:
+
        **Rename** *r-summary-stats* into the name of your
        function (r-…)
 
@@ -109,9 +109,9 @@ Step-by-Step Guidelines
         - **Save the results** in the database using *saveResults* function.
           It can take as parameter a JSON string, a dataset or a matrix.
 
-   d\. *dev.sh:*    **update this to test** **your main.R script**. 
-   
-   This script is launching R (from Docker) with some libraries installed 
+   d\. *dev.sh:*    **update this to test** **your main.R script**.
+
+   This script is launching R (from Docker) with some libraries installed
    and an input and output database ready to use.
 
     You can change the SQL query here, and from R you can call *fetchData()*

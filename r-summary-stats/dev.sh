@@ -41,7 +41,7 @@ $ROOT_DIR/tests/dummy-ldsm/start-db.sh
 echo
 
 sleep 2
-  
+
 if groups $USER | grep &>/dev/null '\bdocker\b'; then
   DOCKER="docker"
 else

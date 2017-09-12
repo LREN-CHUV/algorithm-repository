@@ -1,0 +1,31 @@
+---
+
+version: 2
+jobs:
+  build:
+    working_directory: ~/src
+    docker:
+      - image: hbpmip/docker-compose-for-ci:17.06-0
+    environment:
+       - CIRCLECI: true
+    steps:
+      - setup_remote_docker:
+          version: 17.06.0-ce
+      - checkout
+      - run:
+          name: "Install requirements"
+          command: |
+            docker --version
+            pre-commit install
+      - run:
+          name: "Validate code quality"
+          command: |
+            pre-commit run --all-files
+      - run:
+          name: "Build java-rapidminer-knn"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-rapidminer-knn/build.sh
+      - run:
+          name: "Test java-rapidminer-knn"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-rapidminer-knn/tests/test.sh

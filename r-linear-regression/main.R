@@ -135,7 +135,7 @@ store <- list(input_defs = input_defs,
               summary_adj_r_squared = res$summary$adj.r.squared,
               summary_cov_unscaled = toJSON(summary_cov_unscaled, digits = 8));
 
-template <- readLines("/src/pfa.yml");
+template <- readLines("/src/pfa.yml.whisker");
 
 # Store results in the database
 saveResults(whisker.render(template, store), shape = 'pfa_yaml');

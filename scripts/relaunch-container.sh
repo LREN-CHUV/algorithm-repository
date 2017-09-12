@@ -10,4 +10,3 @@ image=$(docker inspect $container_id | jq --raw-output '[.. | .Config? | .Image?
 docker run -it --rm --env-file "$env_file" "$image"
 
 rm "$env_file"
-

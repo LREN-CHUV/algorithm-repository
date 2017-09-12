@@ -13,7 +13,8 @@ services:
     image: "waisbrot/wait"
     restart: "no"
     environment:
-      - TARGETS=db:5432
+      TARGETS: "db:5432"
+      TIMEOUT: 60
 
   create_dbs:
     image: "hbpmip/create-databases:1.0.0"
@@ -66,6 +67,7 @@ services:
     restart: "no"
     environment:
       NODE: job_test
+      JOB_ID: 1
       IN_JDBC_DRIVER: org.postgresql.Driver
       IN_JDBC_URL: jdbc:postgresql://db:5432/features
       IN_JDBC_USER: features
@@ -74,8 +76,8 @@ services:
       OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
       OUT_JDBC_USER: woken
       OUT_JDBC_PASSWORD: wokenpwd
-      PARAM_variables: "stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
-      PARAM_covariables: ""
+      PARAM_variables: "score_test1"
+      PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
       PARAM_MODEL_k: 4
     links:
