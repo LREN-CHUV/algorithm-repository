@@ -7,7 +7,7 @@ COPY src/ /project/src
 RUN cp /usr/share/maven/ref/settings-docker.xml /root/.m2/settings.xml \
     && mvn package site
 
-FROM hbpmip/java-rapidminer:0.3.4
+FROM hbpmip/java-rapidminer:0.4.0
 
 MAINTAINER arnaud@ahead-solutions.ch
 

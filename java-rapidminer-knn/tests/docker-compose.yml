@@ -74,9 +74,9 @@ services:
       OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
       OUT_JDBC_USER: woken
       OUT_JDBC_PASSWORD: wokenpwd
-      PARAM_variables:
-      PARAM_covariables:
-      PARAM_query: "SELECT "
+      PARAM_variables: "stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
+      PARAM_covariables: ""
+      PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
       PARAM_MODEL_k: 4
     links:
       - "db:db"
