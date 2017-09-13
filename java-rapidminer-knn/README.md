@@ -7,7 +7,7 @@ Implementation of the KNN algorithm using RapidMiner
 ## Usage
 
 ```
-  docker run --rm hbpmip/java-rapidminer-knn:0.0.1 compute
+  docker run --rm hbpmip/java-rapidminer-knn:0.1.0 compute
 
 ```
 

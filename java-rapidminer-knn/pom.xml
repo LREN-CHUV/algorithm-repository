@@ -6,7 +6,7 @@
   <groupId>eu.hbp.mip.container</groupId>
   <artifactId>java-rapidminer-knn</artifactId>
   <packaging>jar</packaging>
-  <version>0.0.1</version><!-- bumpversion -->
+  <version>0.1.0</version><!-- bumpversion -->
   <name>java-rapidminer-knn</name>
 
   <properties>
