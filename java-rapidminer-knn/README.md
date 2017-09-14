@@ -38,7 +38,7 @@ The goal of this project is to create a Docker image containing the full R envir
 4. Format the results into a format that can be easily shared. We are using the [PFA format](http://dmg.org/pfa/) here in its YAML form. It will get translated to JSON automatically be the workflow application which provides web services which execute this Docker container.
 5. Save the results into the result database.
 
-The Docker image should contain a R script at /src/main.R as well as all libraries and files that this script depends on.
+The Docker image should contain the binaries and resources that this algorithm depends on.
 
 The following scripts are provided to help you:
 
@@ -50,17 +50,6 @@ It requires [captain](https://github.com/harbur/captain) and [Docker engine](htt
 ```
   docker build -t hbpmip/r-linear-regression .
   ./tests/test.sh
-```
-
-### `./dev.sh`
-
-This script provides a R runtime executed inside a Docker container. It also starts an input database and a result database.
-
-To develop the main.R script, you should type the following in the R shell:
-```
-  library(devtools)
-  devtools::install_github("LREN-CHUV/hbplregress")
-  source(\"/src/main.R\")
 ```
 
 ### `./tests/test.sh`
