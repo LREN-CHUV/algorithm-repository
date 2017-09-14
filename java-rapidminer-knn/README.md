@@ -1,5 +1,3 @@
-[![DockerHub](https://img.shields.io/badge/docker-hbpmip%2Fjava--rapidminer--knn-008bb8.svg)](https://hub.docker.com/r/hbpmip/java-rapidminer-knn/) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/java-rapidminer-knn.svg)](https://hub.docker.com/r/hbpmip/java-rapidminer-knn/tags "hbpmip/java-rapidminer-knn image tags") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/java-rapidminer-knn.svg)](https://microbadger.com/#/images/hbpmip/java-rapidminer-knn "hbpmip/java-rapidminer-knn on microbadger")
-
 # java-rapidminer-knn
 
 Implementation of the KNN algorithm using RapidMiner
@@ -7,9 +5,26 @@ Implementation of the KNN algorithm using RapidMiner
 ## Usage
 
 ```
-  docker run --rm hbpmip/java-rapidminer-knn:0.1.0 compute
+  docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-knn:0.0.1 compute
 
 ```
+
+where the environment variables are:
+
+* NODE: name of the node (machine) used for execution
+* JOB_ID: ID of the job.
+* IN_JDBC_DRIVER: org.postgresql.Driver
+* IN_JDBC_URL: URL to the input database, e.g. jdbc:postgresql://db:5432/features
+* IN_JDBC_USER: User for the input database
+* IN_JDBC_PASSWORD: Password for the input database
+* OUT_JDBC_DRIVER: org.postgresql.Driver
+* OUT_JDBC_URL: URL to the output database, jdbc:postgresql://db:5432/woken
+* OUT_JDBC_USER: User for the output database
+* OUT_JDBC_PASSWORD: Password for the output database
+* PARAM_variables: Name of the target variable (only one variable is supported for KNN)
+* PARAM_covariables: List of covariables
+* PARAM_query: Query selecting the variables and covariables to feed into the algorithm for training.
+* PARAM_MODEL_k: Number of class labels to search for.
 
 ## Development process
 
@@ -17,11 +32,11 @@ The goal of this project is to create a Docker image containing the full R envir
 
 1. Read parameters from the environment and connect to a database
 2. Query the database and prepare the data
-3. Run the algorithm
+3. Run the algorithm (here, a linear regression)
 4. Format the results into a format that can be easily shared. We are using the [PFA format](http://dmg.org/pfa/) here in its YAML form. It will get translated to JSON automatically be the workflow application which provides web services which execute this Docker container.
 5. Save the results into the result database.
 
-The Docker image should contain the binaries for the algorithm as well as all libraries and files that the algorithm depends on.
+The Docker image should contain a R script at /src/main.R as well as all libraries and files that this script depends on.
 
 The following scripts are provided to help you:
 
@@ -31,8 +46,19 @@ The main build script, it packages this project into a Docker image and performs
 It requires [captain](https://github.com/harbur/captain) and [Docker engine](https://www.docker.com/) to run. If you cannot install captain on your platform, you may use the following commands to build the project:
 
 ```
-  docker build -t hbpmip/java-rapidminer-knn .
+  docker build -t hbpmip/r-linear-regression .
   ./tests/test.sh
+```
+
+### `./dev.sh`
+
+This script provides a R runtime executed inside a Docker container. It also starts an input database and a result database.
+
+To develop the main.R script, you should type the following in the R shell:
+```
+  library(devtools)
+  devtools::install_github("LREN-CHUV/hbplregress")
+  source(\"/src/main.R\")
 ```
 
 ### `./tests/test.sh`
@@ -41,15 +67,11 @@ This script performs the tests. It assumes that the image has been built before 
 
 It executes the Docker image and starts an input database and a result database.
 
-Command to launch the tests:
+You can run the tests interactively using this environment with the command
 
 ```
-  ./tests/test.sh
+  ./tests/test.sh --interactive
 ```
-
-### `./publish.sh`
-
-Publish a new version of the algorithm packaged in a Docker image to Docker hub
 
 ## Validation of the PFA output
 
