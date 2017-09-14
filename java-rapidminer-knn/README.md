@@ -1,3 +1,5 @@
+[![DockerHub](https://img.shields.io/badge/docker-hbpmip%2Fjava--rapidminer--knn-008bb8.svg)](https://hub.docker.com/r/hbpmip/java-rapidminer-knn/) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/java-rapidminer-knn.svg)](https://hub.docker.com/r/hbpmip/java-rapidminer-knn/tags "hbpmip/java-rapidminer-knn image tags") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/java-rapidminer-knn.svg)](https://microbadger.com/#/images/hbpmip/java-rapidminer-knn "hbpmip/java-rapidminer-knn on microbadger")
+
 # java-rapidminer-knn
 
 Implementation of the KNN algorithm using RapidMiner
