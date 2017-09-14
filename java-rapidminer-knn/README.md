@@ -67,12 +67,12 @@ To develop the main.R script, you should type the following in the R shell:
 
 This script performs the tests. It assumes that the image has been built before using ./build.sh
 
-It executes the Docker image and starts an input database and a result database.
+It executes the Docker image, starts an input database and a result database, then executes the algorithm using sample data for training.
 
-You can run the tests interactively using this environment with the command
+You can run the tests with the command:
 
 ```
-  ./tests/test.sh --interactive
+  ./tests/test.sh
 ```
 
 ## Validation of the PFA output
