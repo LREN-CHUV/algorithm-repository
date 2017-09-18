@@ -7,6 +7,7 @@ import os
 import sys
 import numpy as np
 import tempfile
+import scipy.stats
 
 
 def main():
@@ -31,20 +32,14 @@ def main():
     source_dimensions = 50
     num_points = 10000
     input = np.empty([source_dimensions, num_points], dtype=np.float32)
-    # TODO Populate input file from database data
-    inputFilePath = f.name
-    input.tofile(inputFilePath, delete=False)
-    f.close()
 
-    f = tempfile.NamedTemporaryFile(delete=False)
-    outputFilePath = f.name
-    f.close()
 
     # Get the parameters (optional)
     perplexity = 30
     theta = 0.5
     target_dimensions = 2
     iterations = 1000
+    do_zscore = True
     try:
         perplexity_str = os.getenv('PARAM_MODEL_perplexity', '30')
         perplexity = int(perplexity_str)
@@ -54,20 +49,39 @@ def main():
         iterations = int(iterations_str)
         target_dimensions_str = os.getenv('PARAM_MODEL_target_dimensions', '2')
         target_dimensions = int(target_dimensions_str)
+        do_zscore_str = os.getenv('PARAM_MODEL_do_zscore', 'True')
+        if do_zscore_str == 'True':
+            do_zscore = True
+        elif do_zscore_str == 'False':
+            do_zscore = False
+        else:
+            raise ValueError
     except ValueError as e:
-        print "Could not convert supplied parameter to numeric value"
+        print("Could not convert supplied parameter to numeric value, error: ", e)
         raise
     except:
-        print " Unexpected error:", sys.exec_info()[0]
+        print(" Unexpected error:", sys.exec_info()[0])
         raise
     # Compute results
+    if do_zscore:
+        #TODO Check axis is correct
+        input = scipy.stats.zscore(input)
+
+    # TODO Populate input file from database data
+    inputFilePath = f.name
+    input.tofile(inputFilePath, delete=False)
+    f.close()
+
+    f = tempfile.NamedTemporaryFile(delete=False)
+    outputFilePath = f.name
+    f.close()
     embedding = a_tsne(inputFilePath, outputFilePath, num_points,
                      source_dimensions, target_dimensions, perplexity,
                      theta, iterations)
 
     # TODO write embedding as HighChart output
     #pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
-                       database_connector.get_docker_image(), database_connector.get_model(), var, covs, results)
+    #                   database_connector.get_docker_image(), database_connector.get_model(), var, covs, results)
     #error = ''  # You should store any error message in this variable
     #shape = 'pfa_json'
 
@@ -96,7 +110,8 @@ def a_tsne(inputFilePath, outputFilePath, num_points,
     #pydevd.settrace('localhost', port=41022, stdoutToServer=True, stderrToServer=True)  # port=41022, stdoutToServer=True, stderrToServer=True)
     print("atsne: perplexity: {0}, "
           "iters: {1}, input: {2}, "
-          "output: {3}, dims: {4}x{5} ".format(str(perplexity), str(iterations), inputFilePath, outputFilePath, str(header['sizes'][0]), str(header['sizes'][1]) ))
+          "output: {3}, dims: {4}x{5} ".format(str(perplexity), str(iterations),
+                                               inputFilePath, outputFilePath, num_points, source_dimensions))
     sys.stdout.flush()
     status = subprocess.call(
         ['/atsne_cmd',
@@ -107,7 +122,7 @@ def a_tsne(inputFilePath, outputFilePath, num_points,
         env={"LD_LIBRARY_PATH": "/atsne"})
     print("end atsne")
     sys.stdout.flush()
-    data = np.fromfile(outputFile, dtype=np.float32)
+    data = np.fromfile(outputFilePath, dtype=np.float32)
     data = np.reshape(data, (-1, 2))
     return data
 
