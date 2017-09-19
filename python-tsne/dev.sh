@@ -18,4 +18,5 @@ docker run \
 -e "PARAM_MODEL_theta=0.5" \
 -e "PARAM_MODEL_iterations=1000" \
 -e "PARAM_MODEL_target_dimensions=2" \
+-e "PARAM_MODEL_do_zscore=True"
 hbpmip/python-tsne compute

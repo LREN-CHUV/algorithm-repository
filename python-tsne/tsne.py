@@ -8,6 +8,9 @@ import sys
 import numpy as np
 import tempfile
 import scipy.stats
+import pandas
+import json
+import re
 
 
 def main():
@@ -25,14 +28,14 @@ def main():
 
     # Get data
     data = database_connector.fetch_data()
-
+    df = pandas.DataFrame(data['data'], columns=data['columns'])
+    convdf = df.apply(lambda x: pandas.to_numeric(x))
     # Write the data to a temporary file
     f = tempfile.NamedTemporaryFile(delete=False)
     # TODO Get sizes from database data
-    source_dimensions = 50
-    num_points = 10000
-    input = np.empty([source_dimensions, num_points], dtype=np.float32)
-
+    source_dimensions = len(data['columns'])  # source dimensions
+    num_points = len(data['data'])   # number of samples/points
+    input = convdf.values.astype(np.float32)
 
     # Get the parameters (optional)
     perplexity = 30
@@ -69,27 +72,33 @@ def main():
 
     # TODO Populate input file from database data
     inputFilePath = f.name
-    input.tofile(inputFilePath, delete=False)
+    input.tofile(inputFilePath)
     f.close()
 
     f = tempfile.NamedTemporaryFile(delete=False)
     outputFilePath = f.name
     f.close()
-    embedding = a_tsne(inputFilePath, outputFilePath, num_points,
+    output = a_tsne(inputFilePath, outputFilePath, num_points,
                      source_dimensions, target_dimensions, perplexity,
                      theta, iterations)
 
-    # TODO write embedding as HighChart output
-    #pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
-    #                   database_connector.get_docker_image(), database_connector.get_model(), var, covs, results)
-    #error = ''  # You should store any error message in this variable
-    #shape = 'pfa_json'
+    chart = generate_scatterchart(output, perplexity, theta, iterations)
 
-    #logging.info("PFA: %s", pfa)
+    print("Chart is ", chart)
 
-    # Store results
-    #database_connector.save_results(pfa, error, shape)
 
+def testPlot(npdata):
+    """
+    Plot a numpy x,y array
+    :param npdata:
+    :return: None
+    """
+    import matplotlib.pyplot as plt
+    x = npdata[:, 0]
+    y = npdata[:, 1]
+    colors = (0, 0, 0)
+    plt.scatter(x, y, c=colors)
+    plt.show()
 
 # atsne
 def a_tsne(inputFilePath, outputFilePath, num_points,
@@ -114,7 +123,7 @@ def a_tsne(inputFilePath, outputFilePath, num_points,
                                                inputFilePath, outputFilePath, num_points, source_dimensions))
     sys.stdout.flush()
     status = subprocess.call(
-        ['/atsne_cmd',
+        ['/atsne/atsne_cmd',
             '-p', str(perplexity), '-i', str(iterations),
             '-t', str(theta), '-d', str(target_dimensions),
             inputFilePath,  outputFilePath,
@@ -126,79 +135,64 @@ def a_tsne(inputFilePath, outputFilePath, num_points,
     data = np.reshape(data, (-1, 2))
     return data
 
+def generate_scatterchart(data, perplexity, theta, iterations):
+    """
+        Generate json configuration for Highcharts to display the
+        tsne plot.
+    :param data: a numpy nd array shape (n,2)
+    :param perplexity: the perplexity value used to generate the embedding
+    :param theta: th theta value used to generate the embedding
+    :param iterations: the number of iterations used in a-tSNE
+    :return: JSON string representing a Highchart plot of the embedding
+    """
 
-def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, results):
-    str_grps = '","'.join(grps)
-    output = ('''
-{
-  "code": "%s",
-  "name": "%s",
-  "cells": {
-    "validations": [],
-    "data": {
-      "init": %s,
-      "type": {
-        "name": "example",
-        "doc": "example computation",
-        "namespace": "%s",
-        "type": "record",
-        "fields": [
-          {
-            "type": "map",
-            "values": "double",
-            "doc": "mean",
-            "name": "mean"
-          }
-        ]
-      }
-    },
-    "query": {
-      "init": {
-        "grouping": ["%s"],
-        "variable": "%s"
-      },
-      "type": {
-        "type": "record",
-        "doc": "Definition of the inputs",
-        "fields": [
-          {
-            "type": {
-              "type": "string"
+    chart_template = {
+        'chart': {
+            'type': 'scatter',
+            'zoomType': 'xy'
+        },
+        'title': {
+            'text': "a-tSNE embedding for: " + ','.join([database_connector.get_var()] +  database_connector.get_covars())
+        },
+        'subtitle': {
+            'text': 'tSNE params: perplexity {}, theta {}, iterations {}'.format(perplexity, theta, iterations)
+        },
+        'xAxis': {
+            'title': {
+                'enabled': True,
+                'text': 'tsne1'
             },
-            "doc": "Main example variable",
-            "name": "variable"
-          },
-          {
-            "type": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
+            'labels': {
+                'enabled': False
+            }
+        },
+        'yAxis': {
+            'title': {
+                'enabled': True,
+                'text': 'tsne2'
             },
-            "doc": "Categories used for specific example",
-            "name": "groups"
-          }
-        ],
-        "name": "Query"
-      }
+            'labels': {
+                'enabled': False
+            }
+        },
+        'plotOptions': {
+            'scatter': {
+                'marker': {
+                    'radius': 3,
+                },
+            }
+        },
+        'series': [{
+            'name': 'tSNE Embedding',
+            'color': 'rgba(223, 83, 83, .5)',
+            'data': data.tolist()
+        }]
     }
-  },
-  "doc": "example computation",
-  "metadata": {
-    "docker_image": "%s"
-  },
-  "output": {
-    "type": "null"
-  },
-  "action": [
-    null
-  ],
-  "input": {
-    "type": "null"
-  }
-}
-    ''' % (algo_code, algo_name, results, model, str_grps, variable, docker_image))
-    return output
+
+    json_str =  json.dumps(chart_template)
+    return re.subn(r"\"(\w+)\"(:)", r"\1\2", json_str)[0]
+
+
 
 
 if __name__ == '__main__':
