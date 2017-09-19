@@ -17,6 +17,10 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     # Get variables names
+    # Note - this implementation does not distinguish between vars and covars
+    # they are all treated as tsne dimensions. All the data retrieved
+    # is used to create the embedding.
+    # TODO Discover if these assumptions are correct. If not it's easy to change...
     var = database_connector.get_var()  # Dependent variable
     gvars = database_connector.get_gvars()  # Independent nominal variables
     cvars = database_connector.get_covars()  # Independent continuous variables
@@ -32,7 +36,7 @@ def main():
     convdf = df.apply(lambda x: pandas.to_numeric(x))
     # Write the data to a temporary file
     f = tempfile.NamedTemporaryFile(delete=False)
-    # TODO Get sizes from database data
+
     source_dimensions = len(data['columns'])  # source dimensions
     num_points = len(data['data'])   # number of samples/points
     input = convdf.values.astype(np.float32)
@@ -60,17 +64,15 @@ def main():
         else:
             raise ValueError
     except ValueError as e:
-        print("Could not convert supplied parameter to numeric value, error: ", e)
+        logging.error("Could not convert supplied parameter to numeric value, error: ", e)
         raise
     except:
-        print(" Unexpected error:", sys.exec_info()[0])
+        logging.error(" Unexpected error:", sys.exec_info()[0])
         raise
     # Compute results
     if do_zscore:
-        #TODO Check axis is correct
         input = scipy.stats.zscore(input)
 
-    # TODO Populate input file from database data
     inputFilePath = f.name
     input.tofile(inputFilePath)
     f.close()
@@ -84,12 +86,18 @@ def main():
 
     chart = generate_scatterchart(output, perplexity, theta, iterations)
 
-    print("Chart is ", chart)
+    error = ''
+    shape = 'highchart_json'
+
+    logging.info("Highchart: %s", chart)
+    database_connector.save_results(chart, error, shape)
+
+    # print("Chart is ", chart)
 
 
 def testPlot(npdata):
     """
-    Plot a numpy x,y array
+    Plot a numpy x,y array - For debug purposes only
     :param npdata:
     :return: None
     """
@@ -190,6 +198,7 @@ def generate_scatterchart(data, perplexity, theta, iterations):
     }
 
     json_str =  json.dumps(chart_template)
+    # de-quote the keys - compatible with javascript
     return re.subn(r"\"(\w+)\"(:)", r"\1\2", json_str)[0]
 
 
