@@ -1,12 +1,12 @@
-package eu.hbp.mip.container.rapidminer.models.tests;
+package eu.humanbrainproject.mip.algorithms.rapidminer.models.tests;
 
-import eu.hbp.mip.container.rapidminer.InputData;
-import eu.hbp.mip.container.rapidminer.RapidMinerExperiment;
-import eu.hbp.mip.container.rapidminer.exceptions.InvalidDataException;
-import eu.hbp.mip.container.rapidminer.exceptions.InvalidModelException;
-import eu.hbp.mip.container.rapidminer.exceptions.RapidMinerException;
-import eu.hbp.mip.container.rapidminer.models.Knn;
-import eu.hbp.mip.container.rapidminer.models.RapidMinerModel;
+import eu.humanbrainproject.mip.algorithms.rapidminer.InputData;
+import eu.humanbrainproject.mip.algorithms.rapidminer.RapidMinerExperiment;
+import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.InvalidDataException;
+import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.InvalidModelException;
+import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.RapidMinerException;
+import eu.humanbrainproject.mip.algorithms.rapidminer.models.knn.Knn;
+import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
 import com.rapidminer.example.Attribute;
 import com.rapidminer.example.table.AttributeFactory;
 import com.rapidminer.example.table.DoubleArrayDataRow;

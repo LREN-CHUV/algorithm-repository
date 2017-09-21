@@ -7,13 +7,13 @@ COPY src/ /project/src
 RUN cp /usr/share/maven/ref/settings-docker.xml /root/.m2/settings.xml \
     && mvn package site
 
-FROM hbpmip/java-rapidminer:0.4.1
+FROM hbpmip/java-rapidminer:0.6.1
 
 MAINTAINER arnaud@ahead-solutions.ch
 
 ENV DOCKER_IMAGE=hbpmip/java-rapidminer-knn:0.1.0
 ENV JAVA_CLASSPATH=${JAVA_CLASSPATH}:/usr/share/jars/java-rapidminer-knn.jar
-ENV JAVA_ARGS=eu.hbp.mip.container.rapidminer.models.Knn
+ENV JAVA_ARGS=/eu/humanbrainproject/mip/algorithms/rapidminer/models/knn/settings.properties
 ENV MODEL knn
 ENV FUNCTION java-rapidminer-knn
 
