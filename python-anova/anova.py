@@ -59,7 +59,7 @@ def compute_anova(var, gvars, cvars, data, design='factorial'):
     logging.info("Formula: %s" % formula)
     lm = ols(data=data, formula=formula).fit()
     logging.info(lm.summary())
-    return anova_lm(lm, typ=2)
+    return anova_lm(lm)
 
 
 # Generate formula for Anova
