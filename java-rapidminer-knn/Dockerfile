@@ -1,4 +1,4 @@
-FROM hbpmip/java-base-build:3.5.0-jdk-8-6 as build-java-env
+FROM hbpmip/java-base-build:3.5.0-jdk-8-7 as build-java-env
 
 COPY pom.xml /project/pom.xml
 COPY src/ /project/src
@@ -7,7 +7,7 @@ COPY src/ /project/src
 RUN cp /usr/share/maven/ref/settings-docker.xml /root/.m2/settings.xml \
     && mvn package site
 
-FROM hbpmip/java-rapidminer:0.6.1
+FROM hbpmip/java-rapidminer:0.7.0
 
 MAINTAINER arnaud@ahead-solutions.ch
 
