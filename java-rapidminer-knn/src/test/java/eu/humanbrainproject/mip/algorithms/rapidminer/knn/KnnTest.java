@@ -1,11 +1,10 @@
-package eu.humanbrainproject.mip.algorithms.rapidminer.models.tests;
+package eu.humanbrainproject.mip.algorithms.rapidminer.knn;
 
 import eu.humanbrainproject.mip.algorithms.rapidminer.InputData;
 import eu.humanbrainproject.mip.algorithms.rapidminer.RapidMinerExperiment;
 import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.InvalidDataException;
 import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.InvalidModelException;
 import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.RapidMinerException;
-import eu.humanbrainproject.mip.algorithms.rapidminer.models.knn.Knn;
 import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
 import com.rapidminer.example.Attribute;
 import com.rapidminer.example.table.AttributeFactory;

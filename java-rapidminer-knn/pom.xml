@@ -19,7 +19,7 @@
     <info.reports.plugin.version>2.9</info.reports.plugin.version>
     <surefire.report.plugin.version>2.20</surefire.report.plugin.version>
     <jxr.plugin.version>2.5</jxr.plugin.version>
-    <mip.rapidminer.version>0.6.2</mip.rapidminer.version>
+    <mip.rapidminer.version>0.7.3</mip.rapidminer.version>
   </properties>
 
   <repositories>
@@ -88,9 +88,10 @@
     <finalName>${project.artifactId}</finalName>
     <resources>
       <resource>
-        <directory>src/main/resources</directory>
+        <directory>src/main/java</directory>
         <includes>
           <include>**/*.properties</include>
+          <include>**/*.jinja</include>
         </includes>
         <filtering>false</filtering>
       </resource>

@@ -1,6 +1,10 @@
-package eu.humanbrainproject.mip.algorithms.rapidminer.models.knn;
+package eu.humanbrainproject.mip.algorithms.rapidminer.knn;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.hubspot.jinjava.Jinjava;
 import com.rapidminer.operator.learner.UpdateablePredictionModel;
 import com.rapidminer.operator.learner.lazy.KNNClassificationModel;
 import com.rapidminer.operator.learner.lazy.KNNRegressionModel;
@@ -8,10 +12,13 @@ import com.rapidminer.tools.Ontology;
 import com.rapidminer.tools.math.container.LinearList;
 import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
 import eu.humanbrainproject.mip.algorithms.rapidminer.serializers.pfa.RapidMinerModelSerializer;
+import org.apache.avro.Schema;
+import org.apache.avro.SchemaBuilder;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +33,6 @@ public class KnnSerializer extends RapidMinerModelSerializer<UpdateablePredictio
 
         //TODO Remove this dirty and dangerous trick
         LinearList linearList = accessPrivateField(trainedModel, "samples");
-        ArrayList<String> sampleAttributeNames = accessPrivateField(trainedModel, "sampleAttributeNames");
 
         ArrayList<?> storedValues = accessPrivateField(linearList, "storedValues");
         ArrayList<double[]> samples = accessPrivateField(linearList, "samples");
@@ -36,62 +42,16 @@ public class KnnSerializer extends RapidMinerModelSerializer<UpdateablePredictio
 
             jgen.writeObjectFieldStart("type");
             {
-                jgen.writeStringField("name", "knn_model");
-                jgen.writeStringField("type", "record");
-                jgen.writeArrayFieldStart("fields");
-                {
-                    jgen.writeStartObject();
-                    {
-                        jgen.writeStringField("name", "k");
-                        jgen.writeStringField("type", "int");
-                    }
-                    jgen.writeEndObject();
+                Schema schema = SchemaBuilder.record("knn_model").fields()
+                        .name("k").type().intType().noDefault()
+                        .name("samples").type().array().items()
+                          .record("sample").fields()
+                            .name("vars").type().array().items().doubleType().noDefault()
+                            .name("label").type().stringType().noDefault()
+                          .endRecord().noDefault()
+                        .endRecord();
 
-                    jgen.writeStartObject();
-                    {
-                        jgen.writeStringField("name", "samples");
-                        jgen.writeObjectFieldStart("type");
-                        {
-                            jgen.writeStringField("type", "array");
-                            jgen.writeObjectFieldStart("items");
-                            {
-                                jgen.writeStringField("type", "record");
-                                jgen.writeStringField("name", "Sample");
-                                jgen.writeArrayFieldStart("fields");
-                                {
-                                    jgen.writeStartObject();
-                                    {
-                                        jgen.writeStringField("name", "vars");
-                                        jgen.writeObjectFieldStart("type");
-                                        {
-                                            jgen.writeStringField("type", "array");
-                                            jgen.writeStringField("items", "double");
-                                        }
-                                        jgen.writeEndObject();
-                                    }
-                                    jgen.writeEndObject();
-
-                                    jgen.writeStartObject();
-                                    {
-                                        jgen.writeStringField("name", "label");
-                                        if (isRegression) {
-                                            jgen.writeStringField("type", "double");
-                                        } else {
-                                            jgen.writeStringField("type", "string");
-                                        }
-                                    }
-                                    jgen.writeEndObject();
-                                }
-                                jgen.writeEndArray();
-                            }
-                            jgen.writeEndObject();
-                        }
-
-                        jgen.writeEndObject();
-                    }
-                    jgen.writeEndObject();
-                }
-                jgen.writeEndArray();
+                jgen.writeRaw(schema.toString());
             }
 
             jgen.writeObjectFieldStart("init");
@@ -131,12 +91,32 @@ public class KnnSerializer extends RapidMinerModelSerializer<UpdateablePredictio
 
     @Override
     public void writePfaFunctionDefinitions(RapidMinerModel<UpdateablePredictionModel> model, JsonGenerator jgen) throws IOException {
-        super.writePfaFunctionDefinitions(model, jgen);
+        Jinjava jinjava = new Jinjava();
+        Map<String, Object> context = Maps.newHashMap();
+        UpdateablePredictionModel trainedModel = model.getTrainedModel();
+        ArrayList<String> sampleAttributeNames = accessPrivateField(trainedModel, "sampleAttributeNames");
+        context.put("sampleAttributeNames", sampleAttributeNames);
+
+        String template = Resources.toString(Resources.getResource("functions.jinja"), Charsets.UTF_8);
+
+        String renderedTemplate = jinjava.render(template, context);
+
+        jgen.writeRaw(renderedTemplate);
     }
 
     @Override
     public void writePfaAction(RapidMinerModel<UpdateablePredictionModel> model, JsonGenerator jgen) throws IOException {
-        super.writePfaAction(model, jgen);
+        Jinjava jinjava = new Jinjava();
+        Map<String, Object> context = Maps.newHashMap();
+        UpdateablePredictionModel trainedModel = model.getTrainedModel();
+        boolean isRegression = trainedModel.getLabel().getValueType() == Ontology.REAL;
+        context.put("regression", isRegression);
+
+        String template = Resources.toString(Resources.getResource("action.jinja"), Charsets.UTF_8);
+
+        String renderedTemplate = jinjava.render(template, context);
+
+        jgen.writeRaw(renderedTemplate);
     }
 
     @SuppressWarnings("unchecked")

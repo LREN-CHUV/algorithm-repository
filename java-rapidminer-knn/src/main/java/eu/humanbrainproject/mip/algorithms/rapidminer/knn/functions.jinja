@@ -1,0 +1,14 @@
+"toArray": {
+   "params": [
+      {
+         "m": "DependentVariables"
+      }
+   ],
+   "ret": {"type": "array", "items": "double"},
+   "do": [
+      {"type": {"type": "array", "items": "double"}, "new": [
+      {% for attr in sampleAttributeNames %}
+        {"attr": "m","path":[{"string":"{{ attr }}"}]}
+      {% endfor %}
+   ]
+}
