@@ -1,14 +1,12 @@
-package eu.hbp.mip.container.rapidminer.models;
+package eu.humanbrainproject.mip.algorithms.rapidminer.naivebayes;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 
 import com.rapidminer.operator.learner.bayes.SimpleDistributionModel;
-import com.rapidminer.tools.Ontology;
 import com.rapidminer.tools.math.distribution.DiscreteDistribution;
 import com.rapidminer.tools.math.distribution.NormalDistribution;
-import org.apache.commons.collections15.map.LinkedMap;
+import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
@@ -34,8 +32,7 @@ public class NaiveBayes extends RapidMinerModel<SimpleDistributionModel> {
 
 	@Override
 	public Map<String, String> getParameters() {
-		LinkedMap map = new LinkedMap<String, String>();
-		return map;
+		return Collections.emptyMap();
 	}
 
 	//TODO We should really use a templating technology instead of concatening strings...

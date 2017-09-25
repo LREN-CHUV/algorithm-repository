@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Knn predictive model with simple Euclidean distance
+ * KnnModel predictive model with simple Euclidean distance
  * <p>
  * Predictive Model: Regression/Classification
  * Input variables support: Only real valued
@@ -19,12 +19,12 @@ import java.util.Map;
  *
  * @author Arnaud Jutzeler
  */
-public class Knn extends RapidMinerModel<UpdateablePredictionModel> {
+public class KnnModel extends RapidMinerModel<UpdateablePredictionModel> {
 
     private static final Map<String, String> PARAMS = Collections.singletonMap("k", "2");
 
 
-    public Knn() {
+    public KnnModel() {
         super(KNNLearner.class);
     }
 

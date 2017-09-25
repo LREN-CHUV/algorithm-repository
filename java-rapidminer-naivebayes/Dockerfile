@@ -1,12 +1,38 @@
-FROM hbpmip/java-rapidminer:7eeec79
+FROM hbpmip/java-base-build:3.5.0-jdk-8-7 as build-java-env
 
-MAINTAINER arnaud@ahead.solutions.ch
+COPY pom.xml /project/pom.xml
+COPY src/ /project/src
 
-ENV DOCKER_IMAGE=hbpmip/java-rapidminer-naivebayes:latest
-ENV JAVA_CLASSPATH=${JAVA_CLASSPATH}:./dist/java-rapidminer-naivebayes.jar
-ENV JAVA_ARGS=eu.hbp.mip.container.rapidminer.models.NaiveBayes
+# Repeating the file copy works better. I dunno why.
+RUN cp /usr/share/maven/ref/settings-docker.xml /root/.m2/settings.xml \
+    && mvn package site
 
-COPY target/java-rapidminer-naivebayes.jar /dist/java-rapidminer-naivebayes.jar
+FROM hbpmip/java-rapidminer:0.7.6
 
-ENV MODEL Naive Bayes
-ENV FUNCTION java-rapidminer-naivebayes
+MAINTAINER arnaud@ahead-solutions.ch
+
+ENV DOCKER_IMAGE=hbpmip/java-rapidminer-naivebayes:0.1.0 \
+    JAVA_CLASSPATH=${JAVA_CLASSPATH}:/usr/share/jars/java-rapidminer-naivebayes.jar \
+    JAVA_ARGS=/eu/humanbrainproject/mip/algorithms/rapidminer/naivebayes/settings.properties \
+    MODEL="Naive Bayes" \
+    FUNCTION=java-rapidminer-naivebayes
+
+COPY --from=build-java-env /project/target/naivebayes.jar /usr/share/jars/java-rapidminer-naivebayes.jar
+COPY --from=build-java-env /project/target/site/ /var/www/html/
+COPY src/ /src/
+
+RUN chown -R compute:compute /src/ \
+    && chown -R root:www-data /var/www/html/
+
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="hbpmip/java-rapidminer-naivebayes" \
+      org.label-schema.description="Naive Bayes algorithm" \
+      org.label-schema.url="https://github.com/LREN-CHUV/algorithm-repository" \
+      org.label-schema.vcs-type="git" \
+      org.label-schema.vcs-url="https://github.com/LREN-CHUV/algorithm-repository.git" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.version="$VERSION" \
+      org.label-schema.vendor="LREN CHUV" \
+      org.label-schema.license="AGPLv3" \
+      org.label-schema.docker.dockerfile="Dockerfile" \
+      org.label-schema.schema-version="1.0"

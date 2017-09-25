@@ -35,7 +35,7 @@ public class KnnTest {
         RapidMinerAlgorithmSerializer<UpdateablePredictionModel> serializer = new RapidMinerAlgorithmSerializer<>(new KnnSerializer());
 
         System.setProperty("PARAM_MODEL_k", Integer.toString(k));
-        RapidMinerModel<UpdateablePredictionModel> model = new Knn();
+        RapidMinerModel<UpdateablePredictionModel> model = new KnnModel();
 
         // Run experiment
         RapidMinerAlgorithm<UpdateablePredictionModel> algorithm = new RapidMinerAlgorithm<>(input, model, serializer);
@@ -149,7 +149,7 @@ public class KnnTest {
         RapidMinerAlgorithmSerializer<UpdateablePredictionModel> serializer = new RapidMinerAlgorithmSerializer<>(new KnnSerializer());
 
         System.setProperty("PARAM_MODEL_k", Integer.toString(k));
-        RapidMinerModel<UpdateablePredictionModel> model = new Knn();
+        RapidMinerModel<UpdateablePredictionModel> model = new KnnModel();
 
         // Run experiment
         RapidMinerAlgorithm<UpdateablePredictionModel> algorithm = new RapidMinerAlgorithm<>(input, model, serializer);

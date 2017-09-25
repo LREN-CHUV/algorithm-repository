@@ -11,13 +11,13 @@ FROM hbpmip/java-rapidminer:0.7.6
 
 MAINTAINER arnaud@ahead-solutions.ch
 
-ENV DOCKER_IMAGE=hbpmip/java-rapidminer-knn:0.2.0
-ENV JAVA_CLASSPATH=${JAVA_CLASSPATH}:/usr/share/jars/java-rapidminer-knn.jar
-ENV JAVA_ARGS=/eu/humanbrainproject/mip/algorithms/rapidminer/models/knn/settings.properties
-ENV MODEL knn
-ENV FUNCTION java-rapidminer-knn
+ENV DOCKER_IMAGE=hbpmip/java-rapidminer-knn:0.2.0 \
+    JAVA_CLASSPATH=${JAVA_CLASSPATH}:/usr/share/jars/java-rapidminer-knn.jar \
+    JAVA_ARGS=/eu/humanbrainproject/mip/algorithms/rapidminer/knn/settings.properties \
+    MODEL="k-NN" \
+    FUNCTION=java-rapidminer-knn
 
-COPY --from=build-java-env /project/target/java-rapidminer-knn.jar /usr/share/jars/java-rapidminer-knn.jar
+COPY --from=build-java-env /project/target/knn.jar /usr/share/jars/java-rapidminer-knn.jar
 COPY --from=build-java-env /project/target/site/ /var/www/html/
 COPY src/ /src/
 
@@ -27,9 +27,9 @@ RUN chown -R compute:compute /src/ \
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.name="hbpmip/java-rapidminer-knn" \
       org.label-schema.description="KNN algorithm" \
-      org.label-schema.url="https://github.com/LREN-CHUV/functions-repository" \
+      org.label-schema.url="https://github.com/LREN-CHUV/algorithm-repository" \
       org.label-schema.vcs-type="git" \
-      org.label-schema.vcs-url="https://github.com/LREN-CHUV/functions-repository.git" \
+      org.label-schema.vcs-url="https://github.com/LREN-CHUV/algorithm-repository.git" \
       org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.version="$VERSION" \
       org.label-schema.vendor="LREN CHUV" \

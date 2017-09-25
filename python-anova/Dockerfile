@@ -5,9 +5,9 @@ MAINTAINER mirco.nasuti@chuv.ch
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.name="hbpmip/python-anova" \
       org.label-schema.description="Python implementation of Anova" \
-      org.label-schema.url="https://github.com/LREN-CHUV/functions-repository" \
+      org.label-schema.url="https://github.com/LREN-CHUV/algorithm-repository" \
       org.label-schema.vcs-type="git" \
-      org.label-schema.vcs-url="https://github.com/LREN-CHUV/functions-repository.git" \
+      org.label-schema.vcs-url="https://github.com/LREN-CHUV/algorithm-repository.git" \
       org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.version="$VERSION" \
       org.label-schema.vendor="LREN CHUV" \
