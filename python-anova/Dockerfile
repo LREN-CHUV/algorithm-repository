@@ -1,12 +1,25 @@
-FROM hbpmip/python-mip:6fb0698
+FROM hbpmip/python-mip:0.1.3
+
+MAINTAINER mirco.nasuti@chuv.ch
+
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="hbpmip/python-anova" \
+      org.label-schema.description="Python implementation of Anova" \
+      org.label-schema.url="https://github.com/LREN-CHUV/functions-repository" \
+      org.label-schema.vcs-type="git" \
+      org.label-schema.vcs-url="https://github.com/LREN-CHUV/functions-repository.git" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.version="$VERSION" \
+      org.label-schema.vendor="LREN CHUV" \
+      org.label-schema.license="AGPLv3" \
+      org.label-schema.docker.dockerfile="Dockerfile" \
+      org.label-schema.schema-version="1.0"
+
+ENV FUNCTION python-anova
 
 COPY requirements.txt /requirements.txt
-COPY anova.py /main.py
+COPY anova.py /anova.py
 
 RUN conda install -y --file /requirements.txt
 
-ENV DOCKER_IMAGE=hbpmip/python-anova
-ENV MODEL anova
-ENV FUNCTION python-anova
-ENV CODE anova
-ENV NAME Anova
+ENTRYPOINT ["python", "/anova.py"]
