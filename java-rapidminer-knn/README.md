@@ -2,12 +2,12 @@
 
 # java-rapidminer-knn
 
-Implementation of the KNN algorithm using RapidMiner
+Implementation of the [KNN](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) algorithm using RapidMiner
 
 ## Usage
 
 ```
-  docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-knn:0.0.1 compute
+  docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-knn:0.1.0 compute
 
 ```
 
@@ -26,7 +26,7 @@ where the environment variables are:
 * PARAM_variables: Name of the target variable (only one variable is supported for KNN)
 * PARAM_covariables: List of covariables
 * PARAM_query: Query selecting the variables and covariables to feed into the algorithm for training.
-* PARAM_MODEL_k: Number of class labels to search for.
+* MODEL_PARAM_k (or PARAM_MODEL_k for compatibility): Number of class labels to search for.
 
 ## Development process
 
@@ -34,8 +34,8 @@ The goal of this project is to create a Docker image containing the full R envir
 
 1. Read parameters from the environment and connect to a database
 2. Query the database and prepare the data
-3. Run the algorithm (here, a linear regression)
-4. Format the results into a format that can be easily shared. We are using the [PFA format](http://dmg.org/pfa/) here in its YAML form. It will get translated to JSON automatically be the workflow application which provides web services which execute this Docker container.
+3. Run the algorithm (here, KNN)
+4. Format the results into a format that can be easily shared. We are using the [PFA format](http://dmg.org/pfa/) here in its JSON form.
 5. Save the results into the result database.
 
 The Docker image should contain the binaries and resources that this algorithm depends on.
@@ -48,8 +48,9 @@ The main build script, it packages this project into a Docker image and performs
 It requires [captain](https://github.com/harbur/captain) and [Docker engine](https://www.docker.com/) to run. If you cannot install captain on your platform, you may use the following commands to build the project:
 
 ```
-  docker build -t hbpmip/r-linear-regression .
-  ./tests/test.sh
+  captain build
+  # or
+  docker build -t hbpmip/java-rapidminer-knn .
 ```
 
 ### `./tests/test.sh`
