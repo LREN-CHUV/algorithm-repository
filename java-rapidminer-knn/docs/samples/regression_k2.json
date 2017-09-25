@@ -1,0 +1,279 @@
+{
+  "name": "rapidminer",
+  "method": "map",
+  "doc": "RapidMiner Model",
+  "metadata": {
+    "docker_image": ""
+  },
+  "input": {
+    "doc": "Input is the list of covariables and groups",
+    "name": "DependentVariables",
+    "type": "record",
+    "fields": [
+      {
+        "name": "input1",
+        "type": "double"
+      },
+      {
+        "name": "input2",
+        "type": "double"
+      }
+    ]
+  },
+  "output": {
+    "doc": "Output is the estimate of the variable",
+    "type": "double"
+  },
+  "cells": {
+    "query": {
+      "type": {
+        "doc": "Definition of the query that has produced this model",
+        "name": "Query",
+        "type": "record",
+        "fields": [
+          {
+            "doc": "Dependent variable",
+            "name": "variable",
+            "type": "string"
+          },
+          {
+            "doc": "List of explanatory variables",
+            "name": "covariables",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "doc": "SQL query",
+            "name": "sql",
+            "type": "string"
+          },
+          {
+            "doc": "Number of records selected by the query",
+            "name": "count",
+            "type": "int"
+          }
+        ]
+      },
+      "init": {
+        "variable": "output",
+        "covariables": [
+          "input1",
+          "input2"
+        ],
+        "sql": "NO QUERY",
+        "count": 7
+      }
+    },
+    "model": {
+      "type": {
+        "type": "record",
+        "name": "knn_model",
+        "fields": [
+          {
+            "name": "k",
+            "type": "int"
+          },
+          {
+            "name": "samples",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "sample",
+                "fields": [
+                  {
+                    "name": "vars",
+                    "type": {
+                      "type": "array",
+                      "items": "double"
+                    }
+                  },
+                  {
+                    "name": "label",
+                    "type": "double"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "init": {
+        "k": 2,
+        "samples": [
+          {
+            "vars": [
+              1.2,
+              2.4
+            ],
+            "label": 2.4
+          },
+          {
+            "vars": [
+              6.7,
+              8.9
+            ],
+            "label": 4.5
+          },
+          {
+            "vars": [
+              4.6,
+              23.4
+            ],
+            "label": 5.7
+          },
+          {
+            "vars": [
+              7.6,
+              5.4
+            ],
+            "label": 4.8
+          },
+          {
+            "vars": [
+              1.2,
+              1.6
+            ],
+            "label": 23.7
+          },
+          {
+            "vars": [
+              3.4,
+              4.7
+            ],
+            "label": 8.7
+          },
+          {
+            "vars": [
+              3.4,
+              6.5
+            ],
+            "label": 9.2
+          }
+        ]
+      }
+    }
+  },
+  "pools": {},
+  "begin": [],
+  "action": [
+    {
+      "let": {
+        "model": {
+          "cell": "model"
+        }
+      }
+    },
+    {
+      "let": {
+        "knn": {
+          "model.neighbor.nearestK": [
+            "model.k",
+            {
+              "u.toArray": [
+                "input"
+              ]
+            },
+            "model.samples",
+            {
+              "params": [
+                {
+                  "x": {
+                    "type": "array",
+                    "items": "double"
+                  }
+                },
+                {
+                  "y": "sample"
+                }
+              ],
+              "ret": "double",
+              "do": {
+                "metric.simpleEuclidean": [
+                  "x",
+                  "y.vars"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "let": {
+        "label_list": {
+          "type": {
+            "type": "array",
+            "items": "double"
+          },
+          "value": []
+        }
+      }
+    },
+    {
+      "foreach": "neighbour",
+      "in": "knn",
+      "do": [
+        {
+          "set": {
+            "label_list": {
+              "a.append": [
+                "label_list",
+                "neighbour.label"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "a.mean": [
+        "label_list"
+      ]
+    }
+  ],
+  "end": [],
+  "fcns": {
+    "toArray": {
+      "params": [
+        {
+          "m": "DependentVariables"
+        }
+      ],
+      "ret": {
+        "type": "array",
+        "items": "double"
+      },
+      "do": [
+        {
+          "type": {
+            "type": "array",
+            "items": "double"
+          },
+          "new": [
+            {
+              "attr": "m",
+              "path": [
+                {
+                  "string": "input1"
+                }
+              ]
+            },
+            {
+              "attr": "m",
+              "path": [
+                {
+                  "string": "input2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

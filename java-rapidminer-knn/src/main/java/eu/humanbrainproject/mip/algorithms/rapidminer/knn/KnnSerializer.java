@@ -30,28 +30,25 @@ public class KnnSerializer extends RapidMinerModelSerializer<UpdateablePredictio
 
         UpdateablePredictionModel trainedModel = rapidMinerModel.getTrainedModel();
         boolean isRegression = trainedModel.getLabel().getValueType() == Ontology.REAL;
-
-        //TODO Remove this dirty and dangerous trick
         LinearList linearList = accessPrivateField(trainedModel, "samples");
-
         ArrayList<?> storedValues = accessPrivateField(linearList, "storedValues");
         ArrayList<double[]> samples = accessPrivateField(linearList, "samples");
 
         jgen.writeObjectFieldStart("model");
         {
 
-            jgen.writeObjectFieldStart("type");
+            jgen.writeFieldName("type");
             {
                 Schema schema = SchemaBuilder.record("knn_model").fields()
                         .name("k").type().intType().noDefault()
                         .name("samples").type().array().items()
                           .record("sample").fields()
                             .name("vars").type().array().items().doubleType().noDefault()
-                            .name("label").type().stringType().noDefault()
+                            .name("label").type(isRegression ? "double": "string").noDefault()
                           .endRecord().noDefault()
                         .endRecord();
 
-                jgen.writeRaw(schema.toString());
+                jgen.writeRawValue(schema.toString());
             }
 
             jgen.writeObjectFieldStart("init");
@@ -97,7 +94,7 @@ public class KnnSerializer extends RapidMinerModelSerializer<UpdateablePredictio
         ArrayList<String> sampleAttributeNames = accessPrivateField(trainedModel, "sampleAttributeNames");
         context.put("sampleAttributeNames", sampleAttributeNames);
 
-        String template = Resources.toString(Resources.getResource("functions.jinja"), Charsets.UTF_8);
+        String template = Resources.toString(this.getClass().getResource("functions.jinja"), Charsets.UTF_8);
 
         String renderedTemplate = jinjava.render(template, context);
 
@@ -112,7 +109,7 @@ public class KnnSerializer extends RapidMinerModelSerializer<UpdateablePredictio
         boolean isRegression = trainedModel.getLabel().getValueType() == Ontology.REAL;
         context.put("regression", isRegression);
 
-        String template = Resources.toString(Resources.getResource("action.jinja"), Charsets.UTF_8);
+        String template = Resources.toString(this.getClass().getResource("action.jinja"), Charsets.UTF_8);
 
         String renderedTemplate = jinjava.render(template, context);
 

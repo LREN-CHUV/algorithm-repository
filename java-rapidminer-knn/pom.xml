@@ -19,7 +19,7 @@
     <info.reports.plugin.version>2.9</info.reports.plugin.version>
     <surefire.report.plugin.version>2.20</surefire.report.plugin.version>
     <jxr.plugin.version>2.5</jxr.plugin.version>
-    <mip.rapidminer.version>0.7.3</mip.rapidminer.version>
+    <mip.rapidminer.version>0.7.5</mip.rapidminer.version>
   </properties>
 
   <repositories>
@@ -79,6 +79,27 @@
       <groupId>com.opendatagroup</groupId>
       <artifactId>hadrian</artifactId>
       <version>0.8.4</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.11.7</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scala-lang.modules</groupId>
+      <artifactId>scala-parser-combinators_2.11</artifactId>
+      <version>1.0.3</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scala-lang.modules</groupId>
+      <artifactId>scala-xml_2.11</artifactId>
+      <version>1.0.3</version>
       <scope>test</scope>
     </dependency>
 

@@ -1,353 +1,283 @@
 package eu.humanbrainproject.mip.algorithms.rapidminer.knn;
 
-import eu.humanbrainproject.mip.algorithms.rapidminer.InputData;
-import eu.humanbrainproject.mip.algorithms.rapidminer.RapidMinerExperiment;
-import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.InvalidDataException;
-import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.InvalidModelException;
-import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.RapidMinerException;
-import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
-import com.rapidminer.example.Attribute;
-import com.rapidminer.example.table.AttributeFactory;
-import com.rapidminer.example.table.DoubleArrayDataRow;
-import com.rapidminer.example.table.MemoryExampleTable;
-import com.rapidminer.tools.Ontology;
-import org.codehaus.jackson.JsonNode;
-import org.junit.Assert;
-import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-
-import scala.Option;
+import com.google.common.collect.Maps;
 import com.opendatagroup.hadrian.jvmcompiler.PFAEngine;
 import com.opendatagroup.hadrian.jvmcompiler.PFAEngine$;
+import com.rapidminer.operator.learner.UpdateablePredictionModel;
+import eu.humanbrainproject.mip.algorithms.rapidminer.ClassificationInputData;
+import eu.humanbrainproject.mip.algorithms.rapidminer.RapidMinerAlgorithm;
+import eu.humanbrainproject.mip.algorithms.rapidminer.RegressionInputData;
+import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
+import eu.humanbrainproject.mip.algorithms.rapidminer.serializers.pfa.RapidMinerAlgorithmSerializer;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Assert;
+import org.junit.Test;
+import scala.Option;
 import scala.collection.immutable.HashMap;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 
 /**
- *
- *
  * @author Arnaud Jutzeler
- *
  */
 public class KnnTest {
 
-	// TODO This was duplicated from java-rapidminer main image tests. To be retrieved some way!
-	protected class ClassificationInputTest extends InputData {
+    private double performRegression(String[] featureNames, double[][] data, double[] labels, int k, double[] test) throws Exception {
 
-		public ClassificationInputTest(String[] featuresNames, String variableName, double[][] data, String[] labels) {
-			super();
-			this.featuresNames = featuresNames;
-			this.variableName = variableName;
-			this.query = "NO QUERY";
+        String variableName = "output";
 
-			List<Attribute> attributes = new LinkedList<>();
-			for (int a = 0; a < featuresNames.length; a++) {
-				attributes.add(AttributeFactory.createAttribute(featuresNames[a], Ontology.REAL));
-			}
+        // Get experiment input
+        RegressionInputData input = new RegressionInputData(featureNames, variableName, data, labels);
+        RapidMinerAlgorithmSerializer<UpdateablePredictionModel> serializer = new RapidMinerAlgorithmSerializer<>(new KnnSerializer());
 
-			// Create label
-			Attribute label = AttributeFactory.createAttribute(variableName, Ontology.NOMINAL);
-			attributes.add(label);
+        System.setProperty("PARAM_MODEL_k", Integer.toString(k));
+        RapidMinerModel<UpdateablePredictionModel> model = new Knn();
 
-			// Create table
-			MemoryExampleTable table = new MemoryExampleTable(attributes);
+        // Run experiment
+        RapidMinerAlgorithm<UpdateablePredictionModel> algorithm = new RapidMinerAlgorithm<>(input, model, serializer);
+        algorithm.run();
 
-			// Fill the table
-			for (int d = 0; d < data.length; d++) {
-				double[] tableData = new double[attributes.size()];
-				for (int a = 0; a < data[d].length; a++) {
-					tableData[a] = data[d][a];
-				}
+        String results = algorithm.toPFA();
+        assertTrue(results != null);
+        assertTrue(!results.contains("error"));
 
-				// Maps the nominal classification to a double value
-				tableData[data[d].length] = label.getMapping().mapString(labels[d]);
+        System.out.println(results);
 
-				// Add data row
-				table.addDataRow(new DoubleArrayDataRow(tableData));
-			}
+        PFAEngine<Object, Object> engine = getPFAEngine(results);
+        Map<String, Double> inputs = Maps.newHashMap();
+        for (int i = 0; i < featureNames.length; i++) {
+            inputs.put(featureNames[i], test[i]);
+        }
+        final Object jsonInput = engine.jsonInput(new ObjectMapper().writeValueAsString(inputs));
+        return Double.parseDouble(engine.jsonOutput(engine.action(jsonInput)));
+    }
 
-			// Create example set
-			this.data = table.createExampleSet(label);
-		}
-	}
+    @Test
+    public void testRegressionTwoFeaturesK1() throws Exception {
 
-	// TODO This was duplicated from java-rapidminer main image tests. To be retrieved some way!
-	protected class RegressionInputTest extends InputData {
+        System.out.println("We can perform regression on two features with k = 1");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        double[] labels = new double[]{2.4, 4.5, 5.7, 4.8, 23.7, 8.7, 9.2};
+        int k = 1;
+        double[] test = new double[]{7.6, 5.4};
+        double result = performRegression(featureNames, data, labels, k, test);
+        Assert.assertEquals(4.8, result, 10e-10);
+    }
 
-		public RegressionInputTest(String[] featuresNames, String variableName, double[][] data, double[] labels) {
-			super();
-			this.featuresNames = featuresNames;
-			this.variableName = variableName;
-			this.query = "NO QUERY";
 
-			List<Attribute> attributes = new LinkedList<>();
-			for (int a = 0; a < featuresNames.length; a++) {
-				attributes.add(AttributeFactory.createAttribute(featuresNames[a], Ontology.REAL));
-			}
+    @Test
+    public void testRegressionTwoFeaturesK2() throws Exception {
 
-			// Create label
-			Attribute label = AttributeFactory.createAttribute(variableName, Ontology.REAL);
-			attributes.add(label);
+        System.out.println("We can perform regression on two features with k = 2");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        double[] labels = new double[]{2.4, 4.5, 5.7, 4.8, 23.7, 8.7, 9.2};
+        int k = 2;
+        double[] test = new double[]{5.6, 23.4};
+        double result = performRegression(featureNames, data, labels, k, test);
+        Assert.assertEquals(5.1, result, 10e-10);
+    }
 
-			// Create table
-			MemoryExampleTable table = new MemoryExampleTable(attributes);
+    @Test
+    public void testRegressionTwoFeaturesK7() throws Exception {
 
-			// Fill the table
-			for (int d = 0; d < data.length; d++) {
-				double[] tableData = new double[attributes.size()];
-				for (int a = 0; a < data[d].length; a++) {
-					tableData[a] = data[d][a];
-				}
+        System.out.println("We can perform regression on two features with k = 7");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        double[] labels = new double[]{2.4, 4.5, 5.7, 4.8, 23.7, 8.7, 9.2};
+        int k = 7;
+        double[] test = new double[]{5.6, 23.4};
+        double result = performRegression(featureNames, data, labels, k, test);
+        Assert.assertEquals(8.42857142857142857143, result, 10e-10);
+    }
 
-				tableData[data[d].length] = labels[d];
+    @Test
+    public void testRegressionTwoFeaturesKBiggerThanData() throws Exception {
+        System.out.println("We can perform regression on two features with k bigger than the number of data points");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        double[] labels = new double[]{2.4, 4.5, 5.7, 4.8, 23.7, 8.7, 9.2};
+        int k = 8;
+        double[] test = new double[]{5.6, 23.4};
+        double result = performRegression(featureNames, data, labels, k, test);
+        Assert.assertEquals(8.42857142857142857143, result, 10e-10);
+    }
 
-				// Add data row
-				table.addDataRow(new DoubleArrayDataRow(tableData));
-			}
+    private String performClassification(String[] featureNames, double[][] data, String[] labels, int k, double[] test) throws Exception {
 
-			// Create example set
-			this.data = table.createExampleSet(label);
-		}
-	}
+        String variableName = "output";
 
-	public double perform_regression(String[] featureNames, double[][] data, double[] labels, int k, double[] test) throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
+        // Get experiment input
+        ClassificationInputData input = new ClassificationInputData(featureNames, variableName, data, labels);
+        RapidMinerAlgorithmSerializer<UpdateablePredictionModel> serializer = new RapidMinerAlgorithmSerializer<>(new KnnSerializer());
 
-		String variableName = "output";
+        System.setProperty("PARAM_MODEL_k", Integer.toString(k));
+        RapidMinerModel<UpdateablePredictionModel> model = new Knn();
 
-		// Get experiment input
-		RegressionInputTest input = new RegressionInputTest(featureNames, variableName, data, labels);
+        // Run experiment
+        RapidMinerAlgorithm<UpdateablePredictionModel> algorithm = new RapidMinerAlgorithm<>(input, model, serializer);
+        algorithm.run();
 
-		System.setProperty("PARAM_MODEL_k", Integer.toString(k));
-		RapidMinerModel model = new Knn();
+        String results = algorithm.toPFA();
+        assertTrue(results != null);
+        assertTrue(!results.contains("error"));
+        System.out.println(results);
 
-		// Run experiment
-		RapidMinerExperiment experiment = new RapidMinerExperiment(input, model);
-		experiment.run();
+        PFAEngine<Object, Object> engine = getPFAEngine(results);
+        Map<String, Double> inputs = Maps.newHashMap();
+        for (int i = 0; i < featureNames.length; i++) {
+            inputs.put(featureNames[i], test[i]);
+        }
+        final Object jsonInput = engine.jsonInput(new ObjectMapper().writeValueAsString(inputs));
+        String jsonOutput = engine.jsonOutput(engine.action(jsonInput));
 
-		String results = experiment.toPFA();
-		assertTrue(results != null);
-		assertTrue(!results.contains("error"));
+        // Remove the quotes
+        return jsonOutput.substring(1, jsonOutput.length() - 1);
+    }
 
-		String version = "0.8.3";
-		PFAEngine<Object, Object> engine = (PFAEngine<Object, Object>) PFAEngine$.MODULE$.fromJson(results, new HashMap<String, JsonNode>(), version, Option.empty(), 1, Option.empty(), false).head();
-		StringJoiner joiner = new StringJoiner(",");
-		for(int i = 0; i < featureNames.length; i++){
-			joiner.add("\"" + featureNames[i] + "\":" + test[i]);
-		}
-		return Double.parseDouble(engine.jsonOutput(engine.action(engine.jsonInput("{" + joiner.toString() + "}"))));
-	}
+    @Test
+    public void testClassificationTwoFeaturesK1YesResult() throws Exception {
 
-	@Test
-	public void test_regression1() throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
+        System.out.println("We can perform binary classification on two features with k = 1");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        String[] labels = new String[]{"YES", "NO", "NO", "YES", "YES", "YES", "NO"};
+        int k = 1;
+        double[] test = new double[]{7.6, 5.4};
+        String result = performClassification(featureNames, data, labels, k, test);
+        Assert.assertEquals("YES", result);
+    }
 
-		{
-			System.out.println("We can perform regression on two features with k = 1");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			double[] labels = new double[]{2.4, 4.5, 5.7, 4.8, 23.7, 8.7, 9.2};
-			int k = 1;
-			double[] test = new double[]{7.6, 5.4};
-			double result = perform_regression(featureNames, data, labels, k, test);
-			Assert.assertEquals(result, 4.8, 10e-10);
-		}
+    @Test
+    public void testClassificationTwoFeaturesK1MaybeResult() throws Exception {
+        System.out.println("We can perform classification on two features with k = 1");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        String[] labels = new String[]{"YES", "NO", "NO", "YES", "MAYBE", "YES", "NO"};
+        int k = 1;
+        double[] test = new double[]{0.9, 0.9};
+        String result = performClassification(featureNames, data, labels, k, test);
+        Assert.assertEquals("MAYBE", result);
+    }
 
-		{
-			System.out.println("We can perform regression on two features with k = 2");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			double[] labels = new double[]{2.4, 4.5, 5.7, 4.8, 23.7, 8.7, 9.2};
-			int k = 2;
-			double[] test = new double[]{5.6, 23.4};
-			double result = perform_regression(featureNames, data, labels, k, test);
-			Assert.assertEquals(result, 5.1, 10e-10);
-		}
+    @Test
+    public void testClassificationTwoFeaturesK2() throws Exception {
 
-		{
-			System.out.println("We can perform regression on two features with k = 7");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			double[] labels = new double[]{2.4, 4.5, 5.7, 4.8, 23.7, 8.7, 9.2};
-			int k = 7;
-			double[] test = new double[]{5.6, 23.4};
-			double result = perform_regression(featureNames, data, labels, k, test);
-			Assert.assertEquals(result, 8.42857142857142857143, 10e-10);
-		}
+        System.out.println("We can perform binary classification on two features with k = 2");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        String[] labels = new String[]{"YES", "NO", "NO", "YES", "YES", "YES", "NO"};
+        int k = 2;
+        double[] test = new double[]{5.6, 23.4};
+        String result = performClassification(featureNames, data, labels, k, test);
+        Assert.assertEquals("NO", result);
+    }
 
-		{
-			System.out.println("We can perform regression on two features with k bigger than the number of data points");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			double[] labels = new double[]{2.4, 4.5, 5.7, 4.8, 23.7, 8.7, 9.2};
-			int k = 8;
-			double[] test = new double[]{5.6, 23.4};
-			double result = perform_regression(featureNames, data, labels, k, test);
-			Assert.assertEquals(result, 8.42857142857142857143, 10e-10);
-		}
-	}
+    @Test
+    public void testClassificationTwoFeaturesK7() throws Exception {
 
-	public String perform_classification(String[] featureNames, double[][] data, String[] labels, int k, double[] test) throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
+        System.out.println("We can perform binary classification on two features with k = 7");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        String[] labels = new String[]{"YES", "NO", "NO", "YES", "YES", "YES", "NO"};
+        int k = 7;
+        double[] test = new double[]{5.6, 23.4};
+        String result = performClassification(featureNames, data, labels, k, test);
+        Assert.assertEquals("YES", result);
+    }
 
-		String variableName = "output";
+    @Test
+    public void testClassificationTwoFeaturesKBiggerThanData() throws Exception {
 
-		// Get experiment input
-		ClassificationInputTest input = new ClassificationInputTest(featureNames, variableName, data, labels);
+        System.out.println("We can perform binary classification on two features with k bigger than the number of data points");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        String[] labels = new String[]{"YES", "NO", "NO", "YES", "YES", "YES", "NO"};
+        int k = 8;
+        double[] test = new double[]{5.6, 23.4};
+        String result = performClassification(featureNames, data, labels, k, test);
+        Assert.assertEquals("YES", result);
+    }
 
-		System.setProperty("PARAM_MODEL_k", Integer.toString(k));
-		RapidMinerModel model = new Knn();
+    private PFAEngine<Object, Object> getPFAEngine(String pfa) {
+        return PFAEngine$.MODULE$.fromJson(pfa, new HashMap<>(), "0.8.1", Option.empty(),
+                1, Option.empty(), false).head();
+    }
 
-		// Run experiment
-		RapidMinerExperiment experiment = new RapidMinerExperiment(input, model);
-		experiment.run();
-
-		String results = experiment.toPFA();
-		assertTrue(results != null);
-		assertTrue(!results.contains("error"));
-
-		String version = "0.8.3";
-		PFAEngine<Object, Object> engine = (PFAEngine<Object, Object>) PFAEngine$.MODULE$.fromJson(results, new HashMap<String, JsonNode>(), version, Option.empty(), 1, Option.empty(), false).head();
-		StringJoiner joiner = new StringJoiner(",");
-		for(int i = 0; i < featureNames.length; i++){
-			joiner.add("\"" + featureNames[i] + "\":" + test[i]);
-		}
-
-		String json_output = engine.jsonOutput(engine.action(engine.jsonInput("{" + joiner.toString() + "}")));
-
-		// Remove the quotes
-		return json_output.substring(1, json_output.toString().length() - 1);
-	}
-
-	@Test
-	public void test_classification1() throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
-
-		{
-			System.out.println("We can perform binary classification on two features with k = 1");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			String[] labels = new String[]{"YES", "NO", "NO", "YES", "YES", "YES", "NO"};
-			int k = 1;
-			double[] test = new double[]{7.6, 5.4};
-			String result = perform_classification(featureNames, data, labels, k, test);
-			Assert.assertEquals(result, "YES");
-		}
-
-		{
-			System.out.println("We can perform classification on two features with k = 1");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			String[] labels = new String[]{"YES", "NO", "NO", "YES", "MAYBE", "YES", "NO"};
-			int k = 1;
-			double[] test = new double[]{0.9, 0.9};
-			String result = perform_classification(featureNames, data, labels, k, test);
-			Assert.assertEquals(result, "MAYBE");
-		}
-
-		{
-			System.out.println("We can perform binary classification on two features with k = 2");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			String[] labels = new String[]{"YES", "NO", "NO", "YES", "YES", "YES", "NO"};
-			int k = 2;
-			double[] test = new double[]{5.6, 23.4};
-			String result = perform_classification(featureNames, data, labels, k, test);
-			Assert.assertEquals(result, "NO");
-		}
-
-		{
-			System.out.println("We can perform binary classification on two features with k = 7");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			String[] labels = new String[]{"YES", "NO", "NO", "YES", "YES", "YES", "NO"};
-			int k = 7;
-			double[] test = new double[]{5.6, 23.4};
-			String result = perform_classification(featureNames, data, labels, k, test);
-			Assert.assertEquals(result, "YES");
-		}
-
-		{
-			System.out.println("We can perform binary classification on two features with k bigger than the number of data points");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			String[] labels = new String[]{"YES", "NO", "NO", "YES", "YES", "YES", "NO"};
-			int k = 8;
-			double[] test = new double[]{5.6, 23.4};
-			String result = perform_classification(featureNames, data, labels, k, test);
-			Assert.assertEquals(result, "YES");
-		}
-	}
 }

@@ -8,7 +8,8 @@
    "do": [
       {"type": {"type": "array", "items": "double"}, "new": [
       {% for attr in sampleAttributeNames %}
-        {"attr": "m","path":[{"string":"{{ attr }}"}]}
+        {"attr": "m","path":[{"string":"{{ attr }}"}]}{{ "," if not loop.last }}
       {% endfor %}
+      ]}
    ]
 }
