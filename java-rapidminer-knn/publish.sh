@@ -25,13 +25,10 @@ fi
 
 if [ $NO_SUDO ]; then
   CAPTAIN="captain"
-  DOCKER="docker"
 elif groups $USER | grep &>/dev/null '\bdocker\b'; then
   CAPTAIN="captain"
-  DOCKER="docker"
 else
   CAPTAIN="sudo captain"
-  DOCKER="sudo docker"
 fi
 
 # Build
