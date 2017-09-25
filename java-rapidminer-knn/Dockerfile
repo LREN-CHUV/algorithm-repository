@@ -11,7 +11,7 @@ FROM hbpmip/java-rapidminer:0.7.6
 
 MAINTAINER arnaud@ahead-solutions.ch
 
-ENV DOCKER_IMAGE=hbpmip/java-rapidminer-knn:0.1.0
+ENV DOCKER_IMAGE=hbpmip/java-rapidminer-knn:0.2.0
 ENV JAVA_CLASSPATH=${JAVA_CLASSPATH}:/usr/share/jars/java-rapidminer-knn.jar
 ENV JAVA_ARGS=/eu/humanbrainproject/mip/algorithms/rapidminer/models/knn/settings.properties
 ENV MODEL knn
