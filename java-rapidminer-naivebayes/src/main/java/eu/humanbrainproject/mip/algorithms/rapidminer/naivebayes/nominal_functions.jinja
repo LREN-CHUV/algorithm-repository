@@ -1,0 +1,41 @@
+"apply": {
+    "params": [
+        {
+            "elem": "string"
+        },
+        {
+            "ds": "DiscreteDistribution"
+        }
+   ],
+   "ret": "double",
+   "do": [{"attr": "ds", "path": ["elem"]}]
+},
+
+"multiply": {
+    "params": [
+        {
+            "a": "double"
+        },
+        {
+            "b": "double"
+        }
+    ],
+    "ret": "double",
+    "do": [{"*": ["a", "b"]}]
+},
+
+"toArray": {
+   "params": [
+      {
+         "m": "DependentVariables"
+      }
+   ],
+   "ret": {"type": "array", "items": "string"},
+   "do": [
+      {"type": {"type": "array", "items": "string"}, "new": [
+      {% for attr in sampleAttributeNames %}
+        {"attr": "m","path":[{"string":"{{ attr }}"}]}{{ "," if not loop.last }}
+      {% endfor %}
+      ]}
+   ]
+}

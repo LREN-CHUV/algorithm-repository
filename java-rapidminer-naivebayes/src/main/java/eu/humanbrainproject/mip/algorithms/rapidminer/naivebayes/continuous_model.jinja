@@ -1,0 +1,39 @@
+
+{
+    "type": {
+        "type":"map",
+        "values": {
+            "name": "ClassModel",
+                "type": "array",
+                "items": {
+                    "name": "GaussianDistribution",
+                    "type": "record",
+                    "fields": [
+                        {
+                            "name": "mean",
+                            "type": "double"
+                        },
+                        {
+                            "name": "variance",
+                            "type": "double"
+                        }
+                    ]
+            }
+        }
+    },
+    "init": {
+{% for className in classNames -%}
+{%   set outer_loop = loop -%}
+{%   set i = outer_loop.index %}
+        "{{ className }}": [
+{%   for attr in attributeNames -%}
+{%     set inner_loop = loop -%}
+{%     set j = inner_loop.index -%}
+{%     set distribution = trainedModel.getDistribution(i, j) %}
+            {"mean": {{ distribution.mean }}, "variance": {{ distribution.variance }} }{{ "," if not outer_loop.last }}
+{%   endfor %}
+        ]
+{% endfor %}
+		}
+    }
+}

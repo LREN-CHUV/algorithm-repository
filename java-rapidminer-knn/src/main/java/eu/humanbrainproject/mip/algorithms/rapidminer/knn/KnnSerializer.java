@@ -95,7 +95,6 @@ public class KnnSerializer extends RapidMinerModelSerializer<UpdateablePredictio
         context.put("sampleAttributeNames", sampleAttributeNames);
 
         String template = Resources.toString(this.getClass().getResource("functions.jinja"), Charsets.UTF_8);
-
         String renderedTemplate = jinjava.render(template, context);
 
         jgen.writeRaw(renderedTemplate);
@@ -110,7 +109,6 @@ public class KnnSerializer extends RapidMinerModelSerializer<UpdateablePredictio
         context.put("regression", isRegression);
 
         String template = Resources.toString(this.getClass().getResource("action.jinja"), Charsets.UTF_8);
-
         String renderedTemplate = jinjava.render(template, context);
 
         jgen.writeRaw(renderedTemplate);
