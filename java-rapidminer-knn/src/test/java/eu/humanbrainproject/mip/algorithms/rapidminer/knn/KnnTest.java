@@ -42,7 +42,7 @@ public class KnnTest {
 
         String results = algorithm.toPFA();
         assertTrue(results != null);
-        assertTrue(!results.contains("error"));
+        assertFalse(results.contains("error"));
 
         System.out.println(results);
 
