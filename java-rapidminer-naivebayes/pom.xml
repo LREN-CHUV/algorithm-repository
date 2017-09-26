@@ -21,7 +21,7 @@
         <jxr.plugin.version>2.5</jxr.plugin.version>
         <hadrian.version>0.8.5</hadrian.version>
         <junit.version>4.9</junit.version>
-        <mip.rapidminer.version>0.7.8</mip.rapidminer.version>
+        <mip.rapidminer.version>0.8.0</mip.rapidminer.version>
     </properties>
 
     <repositories>
