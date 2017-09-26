@@ -9,8 +9,11 @@ import com.hubspot.jinjava.lib.fn.ELFunctionDefinition;
 import com.rapidminer.operator.learner.bayes.SimpleDistributionModel;
 import com.rapidminer.tools.Ontology;
 import com.rapidminer.tools.math.distribution.DiscreteDistribution;
+import com.rapidminer.tools.math.distribution.NormalDistribution;
 import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
 import eu.humanbrainproject.mip.algorithms.rapidminer.serializers.pfa.RapidMinerModelSerializer;
+import org.apache.avro.Schema;
+import org.apache.avro.SchemaBuilder;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -54,21 +57,64 @@ public class NaiveBayesSerializer extends RapidMinerModelSerializer<SimpleDistri
         context.put("attributeNames", Arrays.asList(attributeNames));
         // define a custom public static function (this one will bind to naive_bayes:map_distribution_values(distribution))
         jinjava.getGlobalContext().registerFunction(new ELFunctionDefinition("naive_bayes", "map_distribution_values",
-                NaiveBayesSerializer.class, "myFunc", DiscreteDistribution.class));
+                NaiveBayesSerializer.class, "mapDistributionValues", DiscreteDistribution.class));
 
-        String modelTemplate = continuousFeatures ? "continuous_model.jinja" : "nominal_model.jinja";
-        String template = Resources.toString(this.getClass().getResource(modelTemplate), Charsets.UTF_8);
-        String renderedTemplate = jinjava.render(template, context);
+        jgen.writeObjectFieldStart("model");
+        {
 
-        jgen.writeFieldName("model");
-        jgen.writeRawValue(renderedTemplate);
+            jgen.writeFieldName("type");
+            {
+                Schema schema;
 
+                if (continuousFeatures) {
+                    schema = SchemaBuilder.map().values().array().items().record("GaussianDistribution").fields()
+                            /* */.name("mean").type().doubleType().noDefault()
+                            /* */.name("variance").type().doubleType().noDefault()
+                            .endRecord();
+                } else {
+                    schema = SchemaBuilder.map().values().array().items()
+                            .map().values()
+                            /* */.map().values(SchemaBuilder.builder().doubleType());
+                }
+
+                jgen.writeRawValue(schema.toString());
+            }
+
+            jgen.writeObjectFieldStart("init");
+            {
+                for (int i = 0; i < classNumber; i++) {
+                    jgen.writeArrayFieldStart(classNames[i]);
+                    {
+                        for (int j = 0; j < attributeNames.length; j++) {
+                            jgen.writeStartObject();
+                            {
+                                if (continuousFeatures) {
+                                    NormalDistribution d = (NormalDistribution) trainedModel.getDistribution(i, j);
+                                    jgen.writeNumberField("mean", d.getMean());
+                                    jgen.writeNumberField("variance", d.getVariance());
+                                } else {
+                                    DiscreteDistribution d = (DiscreteDistribution) trainedModel.getDistribution(i, j);
+                                    for (int k = 0; k < d.getNumberOfParameters(); k++) {
+                                        jgen.writeNumberField(d.mapValue((double) k), d.getProbability((double) k));
+                                    }
+                                }
+                            }
+                            jgen.writeEndObject();
+                        }
+                    }
+                    jgen.writeEndArray();
+                }
+            }
+            jgen.writeEndObject();
+        }
+
+        jgen.writeEndObject();
     }
 
     @SuppressWarnings("unused")
     public static String mapDistributionValues(DiscreteDistribution distribution) {
         StringJoiner joiner = new StringJoiner(",");
-        for (int k = 0; k < distribution.getNumberOfParameters(); k++){
+        for (int k = 0; k < distribution.getNumberOfParameters(); k++) {
             joiner.add("\"" + distribution.mapValue((double) k) + "\": " + distribution.getProbability((double) k));
         }
         return "{" + joiner.toString() + "}";

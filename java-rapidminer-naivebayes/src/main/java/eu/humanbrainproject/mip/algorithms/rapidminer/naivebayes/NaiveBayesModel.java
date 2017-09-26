@@ -1,5 +1,6 @@
 package eu.humanbrainproject.mip.algorithms.rapidminer.naivebayes;
 
+import com.rapidminer.operator.learner.bayes.NaiveBayes;
 import com.rapidminer.operator.learner.bayes.SimpleDistributionModel;
 import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
 
@@ -8,7 +9,7 @@ import java.util.Map;
 
 /**
  *
- * Naive Bayes predictive model
+ * Naive Bayes predictive model.
  *
  * Predictive Model: Classification
  * Input variables support: Only real valued (using Normal distribution)
@@ -23,7 +24,7 @@ import java.util.Map;
 public class NaiveBayesModel extends RapidMinerModel<SimpleDistributionModel> {
 
 	public NaiveBayesModel() {
-		super(com.rapidminer.operator.learner.bayes.NaiveBayes.class);
+		super(NaiveBayes.class);
 	}
 
 	@Override

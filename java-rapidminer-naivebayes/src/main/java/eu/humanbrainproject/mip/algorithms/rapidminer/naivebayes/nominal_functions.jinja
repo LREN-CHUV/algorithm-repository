@@ -4,7 +4,7 @@
             "elem": "string"
         },
         {
-            "ds": "DiscreteDistribution"
+            "ds": {"type": "map", "values": "double"}
         }
    ],
    "ret": "double",
@@ -33,8 +33,8 @@
    "ret": {"type": "array", "items": "string"},
    "do": [
       {"type": {"type": "array", "items": "string"}, "new": [
-      {% for attr in sampleAttributeNames %}
-        {"attr": "m","path":[{"string":"{{ attr }}"}]}{{ "," if not loop.last }}
+{% for attr in attributeNames %}
+        {"enum.toString": {"attr": "m","path":[{"string":"{{ attr }}"}]}}{{ "," if not loop.last }}
       {% endfor %}
       ]}
    ]

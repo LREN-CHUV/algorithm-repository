@@ -3,7 +3,9 @@
         "class_scores": {
             "map.map": [
                 {"cell": "model"},
-                {"params": [{"c": {"type":"map", "items": "DiscreteDistribution"}}],
+                {"params": [
+                  {"c": {"type":"map", "values": {"type": "map", "values": {"type": "map", "values": "double"}}}}
+                 ],
                  "ret": "double",
                  "do": {
                      "a.reduce": [{"a.zipmap": ["a", "c", "u.apply"]}, "u.multiply"]

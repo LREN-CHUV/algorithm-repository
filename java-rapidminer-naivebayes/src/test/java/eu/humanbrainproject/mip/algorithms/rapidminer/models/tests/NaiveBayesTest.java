@@ -1,287 +1,262 @@
 package eu.humanbrainproject.mip.algorithms.rapidminer.models.tests;
 
-import eu.humanbrainproject.mip.algorithms.rapidminer.InputData;
-import eu.humanbrainproject.mip.algorithms.rapidminer.RapidMinerExperiment;
-import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.InvalidDataException;
-import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.InvalidModelException;
-import eu.humanbrainproject.mip.algorithms.rapidminer.exceptions.RapidMinerException;
-import eu.humanbrainproject.mip.algorithms.rapidminer.naivebayes.NaiveBayesModel;
-import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
+import com.google.common.collect.Maps;
 import com.opendatagroup.hadrian.jvmcompiler.PFAEngine;
 import com.opendatagroup.hadrian.jvmcompiler.PFAEngine$;
 import com.rapidminer.example.Attribute;
+import com.rapidminer.example.ExampleSet;
 import com.rapidminer.example.table.AttributeFactory;
 import com.rapidminer.example.table.DoubleArrayDataRow;
 import com.rapidminer.example.table.MemoryExampleTable;
+import com.rapidminer.operator.learner.bayes.SimpleDistributionModel;
 import com.rapidminer.tools.Ontology;
-import org.codehaus.jackson.JsonNode;
+import eu.humanbrainproject.mip.algorithms.db.DBException;
+import eu.humanbrainproject.mip.algorithms.rapidminer.ClassificationInputData;
+import eu.humanbrainproject.mip.algorithms.rapidminer.InputData;
+import eu.humanbrainproject.mip.algorithms.rapidminer.RapidMinerAlgorithm;
+import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
+import eu.humanbrainproject.mip.algorithms.rapidminer.naivebayes.NaiveBayesModel;
+import eu.humanbrainproject.mip.algorithms.rapidminer.naivebayes.NaiveBayesSerializer;
+import eu.humanbrainproject.mip.algorithms.rapidminer.serializers.pfa.RapidMinerAlgorithmSerializer;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import eu.humanbrainproject.mip.algorithms.rapidminer.db.DBConnector;
-import eu.humanbrainproject.mip.algorithms.rapidminer.db.DBException;
 import scala.Option;
 import scala.collection.immutable.HashMap;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringJoiner;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 
 /**
- *
- *
  * @author Arnaud Jutzeler
- *
  */
 public class NaiveBayesTest {
 
-	// TODO This was duplicated from java-rapidminer main image tests. To be retrieved some way!
-	protected class ContinuousInputClassificationTest extends InputData {
+    private String performClassificationContinuousInput(String[] featureNames, double[][] data, String[] labels, double[] test) throws Exception {
 
-		public ContinuousInputClassificationTest(String[] featuresNames, String variableName, double[][] data, String[] labels) {
-			super();
-			this.featuresNames = featuresNames;
-			this.variableName = variableName;
-			this.query = "NO QUERY";
+        String variableName = "output";
 
-			List<Attribute> attributes = new LinkedList<>();
-			for (int a = 0; a < featuresNames.length; a++) {
-				attributes.add(AttributeFactory.createAttribute(featuresNames[a], Ontology.REAL));
-			}
+        // Get experiment input
+        ClassificationInputData input = new ClassificationInputData(featureNames, variableName, data, labels);
+        RapidMinerAlgorithmSerializer<SimpleDistributionModel> serializer = new RapidMinerAlgorithmSerializer<>(new NaiveBayesSerializer());
+        RapidMinerModel<SimpleDistributionModel> model = new NaiveBayesModel();
 
-			// Create label
-			Attribute label = AttributeFactory.createAttribute(variableName, Ontology.NOMINAL);
-			attributes.add(label);
+        // Run experiment
+        RapidMinerAlgorithm<SimpleDistributionModel> algorithm = new RapidMinerAlgorithm<>(input, model, serializer);
+        algorithm.run();
 
-			// Create table
-			MemoryExampleTable table = new MemoryExampleTable(attributes);
+        String results = algorithm.toPFA();
+        assertTrue(results != null);
+        assertTrue(!results.contains("error"));
 
-			// Fill the table
-			for (int d = 0; d < data.length; d++) {
-				double[] tableData = new double[attributes.size()];
-				for (int a = 0; a < data[d].length; a++) {
-					tableData[a] = data[d][a];
-				}
+        System.out.println(results);
 
-				// Maps the nominal classification to a double value
-				tableData[data[d].length] = label.getMapping().mapString(labels[d]);
+        PFAEngine<Object, Object> engine = getPFAEngine(results);
+        Map<String, Double> inputs = Maps.newHashMap();
+        for (int i = 0; i < featureNames.length; i++) {
+            inputs.put(featureNames[i], test[i]);
+        }
+        final Object jsonInput = engine.jsonInput(new ObjectMapper().writeValueAsString(inputs));
 
-				// Add data row
-				table.addDataRow(new DoubleArrayDataRow(tableData));
-			}
+        String jsonOutput = engine.jsonOutput(engine.action(jsonInput));
 
-			// Create example set
-			this.data = table.createExampleSet(label);
-		}
-	}
+        // Remove the quotes
+        return jsonOutput.substring(1, jsonOutput.length() - 1);
+    }
 
-	public String perform_classification_continuous_input(String[] featureNames, double[][] data, String[] labels, double[] test) throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
+    @Test
+    public void testBinaryClassificationWithContinuousInput2Features() throws Exception {
 
-		String variableName = "output";
+        System.out.println("We can perform binary Naive Bayes classification on two features");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        String[] labels = new String[]{"YES", "NO", "NO", "YES", "YES", "YES", "NO"};
 
-		// Get experiment input
-		ContinuousInputClassificationTest input = new ContinuousInputClassificationTest(featureNames, variableName, data, labels);
-
-		RapidMinerModel model = new NaiveBayesModel();
-
-		// Run experiment
-		RapidMinerExperiment experiment = new RapidMinerExperiment(input, model);
-		experiment.run();
-
-		String results = experiment.toPFA();
-		assertTrue(results != null);
-		assertTrue(!results.contains("error"));
-
-		String version = "0.8.3";
-		PFAEngine<Object, Object> engine = (PFAEngine<Object, Object>) PFAEngine$.MODULE$.fromJson(results, new HashMap<String, JsonNode>(), version, Option.empty(), 1, Option.empty(), false).head();
-		StringJoiner joiner = new StringJoiner(",");
-		for(int i = 0; i < featureNames.length; i++){
-			joiner.add("\"" + featureNames[i] + "\":" + test[i]);
-		}
-
-		String json_output = engine.jsonOutput(engine.action(engine.jsonInput("{" + joiner.toString() + "}")));
-
-		// Remove the quotes
-		return json_output.substring(1, json_output.toString().length() - 1);
-	}
-
-	@Test
-	public void test_classification_with_continuous_input() throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
-
-		{
-			System.out.println("We can perform binary Naive Bayes classification on two features");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			String[] labels = new String[]{"YES", "NO", "NO", "YES", "YES", "YES", "NO"};
-
-			// Distributions
-			//       input 1           input 2
-			// YES   (3.35, 9.103333)    (3.525, 3.289167)
-			// NO    (4.9, 2.79)       (12.93333, 83.60333)
+        // Distributions
+        //       input 1           input 2
+        // YES   (3.35, 9.103333)    (3.525, 3.289167)
+        // NO    (4.9, 2.79)       (12.93333, 83.60333)
 
 
-			// Posterior:
-			// YES 0.10167659428571428571   <--- MAP
-			// NO 0.04103443714285714286
+        // Posterior:
+        // YES 0.10167659428571428571   <--- MAP
+        // NO 0.04103443714285714286
 
-			double[] test = new double[]{7.6, 5.4};
+        double[] test = new double[]{7.6, 5.4};
 
-			String result = perform_classification_continuous_input(featureNames, data, labels, test);
-			Assert.assertEquals(result, "YES");
-		}
+        String result = performClassificationContinuousInput(featureNames, data, labels, test);
+        Assert.assertEquals(result, "YES");
+    }
 
-		{
-			System.out.println("We can perform multinominal Naive Bayes classification on two features");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			String[] labels = new String[]{"YES", "NO", "MAYBE", "YES", "YES", "YES", "NO"};
+    @Test
+    public void testMultinominalClassificationWithContinuousInput2Features() throws Exception {
 
-			// Posterior:
-			// YES 1.282358e-39
-			// NO 2.904387e-21 <--- MAP
-			// MAYBE 1.619874e-216
+        System.out.println("We can perform multinominal Naive Bayes classification on two features");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        String[] labels = new String[]{"YES", "NO", "MAYBE", "YES", "YES", "YES", "NO"};
 
-			double[] test = new double[]{5.6, 23.4};
-			String result = perform_classification_continuous_input(featureNames, data, labels, test);
-			Assert.assertEquals(result, "NO");
-		}
+        // Posterior:
+        // YES 1.282358e-39
+        // NO 2.904387e-21 <--- MAP
+        // MAYBE 1.619874e-216
 
-		{
-			System.out.println("We can perform multinominal Naive Bayes classification on two features");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			double[][] data = new double[][]{
-					{1.2, 2.4},
-					{6.7, 8.9},
-					{4.6, 23.4},
-					{7.6, 5.4},
-					{1.2, 1.6},
-					{3.4, 4.7},
-					{3.4, 6.5}
-			};
-			String[] labels = new String[]{"YES", "NO", "MAYBE", "YES", "YES", "YES", "NO"};
+        double[] test = new double[]{5.6, 23.4};
+        String result = performClassificationContinuousInput(featureNames, data, labels, test);
+        Assert.assertEquals(result, "NO");
+    }
 
-			// Posterior:
-			// YES 1.554164e-39
-			// NO 2.93118e-21
-			// MAYBE 22.73642 <--- MAP
+    @Test
+    public void testMultinominalClassificationWithContinuousInput2FeaturesV2() throws Exception {
 
-			double[] test = new double[]{4.6, 23.4};
-			String result = perform_classification_continuous_input(featureNames, data, labels, test);
-			Assert.assertEquals(result, "MAYBE");
-		}
-	}
+        System.out.println("We can perform multinominal Naive Bayes classification on two features");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        String[] labels = new String[]{"YES", "NO", "MAYBE", "YES", "YES", "YES", "NO"};
 
-	protected class NominalInputClassificationTest extends InputData {
-		public NominalInputClassificationTest(String[] featuresNames, String variableName, String[][] data, String[] labels) {
-			super();
-			this.featuresNames = featuresNames;
-			this.variableName = variableName;
-			this.query = "NO QUERY";
+        // Posterior:
+        // YES 1.554164e-39
+        // NO 2.93118e-21
+        // MAYBE 22.73642 <--- MAP
 
-			List<Attribute> attributes = new LinkedList<>();
-			for (int a = 0; a < featuresNames.length; a++) {
-				attributes.add(AttributeFactory.createAttribute(featuresNames[a], Ontology.NOMINAL));
-			}
+        double[] test = new double[]{4.6, 23.4};
+        String result = performClassificationContinuousInput(featureNames, data, labels, test);
+        Assert.assertEquals(result, "MAYBE");
+    }
 
-			// Create label
-			Attribute label = AttributeFactory.createAttribute(variableName, Ontology.NOMINAL);
-			attributes.add(label);
+    class NominalClassificationInputData extends InputData {
 
-			// Create table
-			MemoryExampleTable table = new MemoryExampleTable(attributes);
+        private final String[][] sampleData;
+        private final String[] labels;
 
-			// Fill the table
-			for (int d = 0; d < data.length; d++) {
-				double[] tableData = new double[attributes.size()];
-				for (int a = 0; a < data[d].length; a++) {
-					tableData[a] =  attributes.get(a).getMapping().mapString(data[d][a]);
-				}
+        public NominalClassificationInputData(String[] featuresNames, String variableName, String[][] sampleData, String[] labels) {
+            super(featuresNames, variableName, null);
 
-				// Maps the nominal classification to a double value
-				tableData[data[d].length] = label.getMapping().mapString(labels[d]);
+            this.sampleData = sampleData;
+            this.labels = labels;
+        }
 
-				// Add data row
-				table.addDataRow(new DoubleArrayDataRow(tableData));
-			}
+        protected ExampleSet createExampleSet() throws DBException {
 
-			// Create example set
-			this.data = table.createExampleSet(label);
-		}
-	}
+            List<Attribute> attributes = new LinkedList<>();
+            for (String featuresName : getFeaturesNames()) {
+                attributes.add(AttributeFactory.createAttribute(featuresName, Ontology.NOMINAL));
+            }
 
-	public String perform_classification_nominal_input(String[] featureNames, String[][] data, String[] labels, String[] test) throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
+            // Create label
+            Attribute label = AttributeFactory.createAttribute(getVariableName(), Ontology.NOMINAL);
+            attributes.add(label);
 
-		String variableName = "output";
+            // Create table
+            MemoryExampleTable table = new MemoryExampleTable(attributes);
 
-		// Get experiment input
-		NominalInputClassificationTest input = new NominalInputClassificationTest(featureNames, variableName, data, labels);
+            // Fill the table
+            for (int d = 0; d < sampleData.length; d++) {
+                double[] tableData = new double[attributes.size()];
+                for (int a = 0; a < sampleData[d].length; a++) {
+                    tableData[a] = attributes.get(a).getMapping().mapString(sampleData[d][a]);
+                }
 
-		RapidMinerModel model = new NaiveBayesModel();
+                // Maps the nominal classification to a double value
+                tableData[sampleData[d].length] = label.getMapping().mapString(labels[d]);
 
-		// Run experiment
-		RapidMinerExperiment experiment = new RapidMinerExperiment(input, model);
-		experiment.run();
+                // Add data row
+                table.addDataRow(new DoubleArrayDataRow(tableData));
+            }
 
-		String results = experiment.toPFA();
-		System.out.println(results);
-		assertTrue(results != null);
-		assertTrue(!results.contains("error"));
+            // Create example set
+            return table.createExampleSet(label);
+        }
+    }
 
-		String version = "0.8.3";
-		PFAEngine<Object, Object> engine = (PFAEngine<Object, Object>) PFAEngine$.MODULE$.fromJson(results, new HashMap<String, JsonNode>(), version, Option.empty(), 1, Option.empty(), false).head();
-		StringJoiner joiner = new StringJoiner(",");
-		for(int i = 0; i < featureNames.length; i++){
-			joiner.add("\"" + featureNames[i] + "\":" + test[i]);
-		}
+    private String performClassificationNominalInput(String[] featureNames, String[][] data, String[] labels, String[] test) throws Exception {
 
-		String json_output = engine.jsonOutput(engine.action(engine.jsonInput("{" + joiner.toString() + "}")));
+        String variableName = "output";
 
-		// Remove the quotes
-		return json_output.substring(1, json_output.toString().length() - 1);
-	}
+        // Get experiment input
+        NominalClassificationInputData input = new NominalClassificationInputData(featureNames, variableName, data, labels);
+        RapidMinerAlgorithmSerializer<SimpleDistributionModel> serializer = new RapidMinerAlgorithmSerializer<>(new NaiveBayesSerializer());
+        RapidMinerModel<SimpleDistributionModel> model = new NaiveBayesModel();
 
-	//@Test
-	public void test_classification_with_nominal_input() throws IOException, InvalidDataException, InvalidModelException, RapidMinerException {
+        // Run experiment
+        RapidMinerAlgorithm<SimpleDistributionModel> algorithm = new RapidMinerAlgorithm<>(input, model, serializer);
+        algorithm.run();
 
-		{
-			System.out.println("We can perform binary Naive Bayes classification on two features");
-			final String[] featureNames = new String[]{"input1", "input2"};
-			String[][] data = new String[][]{
-					{"0", "1"},
-					{"1", "1"},
-					{"0", "1"},
-					{"2", "1"},
-					{"2", "0"},
-					{"0", "1"},
-					{"1", "1"}
-			};
-			String[] labels = new String[]{"YES", "NO", "YES", "NO", "NO", "YES", "NO"};
+        String results = algorithm.toPFA();
+        assertTrue(results != null);
+        assertTrue(!results.contains("error"));
 
-			String[] test = new String[]{"0", "1"};
+        System.out.println(results);
 
-			String result = perform_classification_nominal_input(featureNames, data, labels, test);
-			Assert.assertEquals(result, "YES");
-		}
+        PFAEngine<Object, Object> engine = getPFAEngine(results);
+        Map<String, String> inputs = Maps.newHashMap();
+        for (int i = 0; i < featureNames.length; i++) {
+            inputs.put(featureNames[i], test[i]);
+        }
+        final Object jsonInput = engine.jsonInput(new ObjectMapper().writeValueAsString(inputs));
 
-	}
+        String jsonOutput = engine.jsonOutput(engine.action(jsonInput));
+
+        // Remove the quotes
+        return jsonOutput.substring(1, jsonOutput.length() - 1);
+    }
+
+    @Test
+    @Ignore("Not working currently")
+    public void testClassificationWithNominalInput() throws Exception {
+
+        System.out.println("We can perform binary Naive Bayes classification on two features");
+        final String[] featureNames = new String[]{"input1", "input2"};
+        String[][] data = new String[][]{
+                {"_0", "_1"},
+                {"_1", "_1"},
+                {"_0", "_1"},
+                {"_2", "_1"},
+                {"_2", "_0"},
+                {"_0", "_1"},
+                {"_1", "_1"}
+        };
+        String[] labels = new String[]{"YES", "NO", "YES", "NO", "NO", "YES", "NO"};
+
+        String[] test = new String[]{"_0", "_1"};
+
+        String result = performClassificationNominalInput(featureNames, data, labels, test);
+        Assert.assertEquals(result, "YES");
+
+    }
+
+    private PFAEngine<Object, Object> getPFAEngine(String pfa) {
+        return PFAEngine$.MODULE$.fromJson(pfa, new HashMap<>(), "0.8.1", Option.empty(),
+                1, Option.empty(), false).head();
+    }
+
 }
