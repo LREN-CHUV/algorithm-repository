@@ -34,7 +34,7 @@ services:
       - db
 
   sample_data_db_setup:
-    image: "hbpmip/sample-data-db-setup:0.2.0"
+    image: "hbpmip/sample-data-db-setup:0.3.1"
     container_name: "data-db-setup"
     restart: "no"
     environment:
@@ -79,6 +79,6 @@ services:
       PARAM_variables: "score_test1"
       PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
-      PARAM_MODEL_k: 4
+      MODEL_PARAM_k: 4
     links:
       - "db:db"

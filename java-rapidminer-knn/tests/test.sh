@@ -29,15 +29,15 @@ fi
 function _cleanup() {
   local error_code="$?"
   echo "Stopping the containers..."
-  $DOCKER_COMPOSE stop
-  $DOCKER_COMPOSE down
-  $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null
+  $DOCKER_COMPOSE stop | true
+  $DOCKER_COMPOSE down | true
+  $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null | true
   exit $error_code
 }
-# trap _cleanup EXIT INT TERM
+trap _cleanup EXIT INT TERM
 
 echo "Starting the databases..."
-$DOCKER_COMPOSE up -d db
+$DOCKER_COMPOSE up -d --remove-orphans db
 $DOCKER_COMPOSE run wait_dbs
 $DOCKER_COMPOSE run create_dbs
 
@@ -52,4 +52,4 @@ $DOCKER_COMPOSE run knn compute
 
 echo
 # Cleanup
-# _cleanup
+_cleanup

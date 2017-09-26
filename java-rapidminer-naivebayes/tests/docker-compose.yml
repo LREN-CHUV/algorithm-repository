@@ -34,7 +34,7 @@ services:
       - db
 
   sample_data_db_setup:
-    image: "hbpmip/sample-data-db-setup:0.2.0"
+    image: "hbpmip/sample-data-db-setup:0.3.1"
     container_name: "data-db-setup"
     restart: "no"
     environment:
@@ -61,9 +61,9 @@ services:
     depends_on:
       - db
 
-  knn:
-    image: "hbpmip/java-rapidminer-knn:latest"
-    container_name: "knn"
+  naive_bayes:
+    image: "hbpmip/java-rapidminer-naivebayes:latest"
+    container_name: "naive-bayes"
     restart: "no"
     environment:
       NODE: job_test
@@ -76,9 +76,8 @@ services:
       OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
       OUT_JDBC_USER: woken
       OUT_JDBC_PASSWORD: wokenpwd
-      PARAM_variables: "score_test1"
-      PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
-      PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
-      PARAM_MODEL_k: 4
+      PARAM_variables: "churn"
+      PARAM_covariables: "account_length,day_mins,day_calls,day_charge,eve_mins,eve_calls,eve_charge,night_mins,night_calls,night_charge,intl_mins,intl_calls,intl_charge,custserv_calls"
+      PARAM_query: "SELECT churn,account_length,day_mins,day_calls,day_charge,eve_mins,eve_calls,eve_charge,night_mins,night_calls,night_charge,intl_mins,intl_calls,intl_charge,custserv_calls FROM CHURN"
     links:
       - "db:db"
