@@ -1,4 +1,4 @@
-FROM hbpmip/python-mip:6fb0698
+FROM hbpmip/python-mip:0.1.3
 
 COPY requirements.txt /requirements.txt
 COPY algo.py /main.py

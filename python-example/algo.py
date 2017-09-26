@@ -16,24 +16,28 @@ def main():
     cvars = database_connector.get_covars()  # Independent continuous variables
     covs = [x for x in (gvars + cvars) if len(x) > 0]  # All independent variables
 
-    # Check dependent variable type
-    if database_connector.var_type(var)['type'] not in ["integer", "real"]:
-        sys.exit("Dependent variable should be continuous !")
-
-    # Get data
-    data = database_connector.fetch_data()
-
-    # Compute results
-    results = compute_example(var, data)
-    pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
-                       database_connector.get_docker_image(), database_connector.get_model(), var, covs, results)
     error = ''  # You should store any error message in this variable
     shape = 'pfa_json'
 
-    logging.info("PFA: %s", pfa)
+    # Check dependent variable type
+    if database_connector.var_type(var)['type'] not in ["integer", "real"]:
+        error = 'Dependent variable should be continuous !'
+        database_connector.save_results('', error, shape)
+        sys.exit(error)
+    else:
 
-    # Store results
-    database_connector.save_results(pfa, error, shape)
+        # Get data
+        data = database_connector.fetch_data()
+
+        # Compute results
+        results = compute_example(var, data)
+        pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
+                           database_connector.get_docker_image(), database_connector.get_model(), var, covs, results)
+
+        logging.info("PFA: %s", pfa)
+
+        # Store results
+        database_connector.save_results(pfa, error, shape)
 
 
 # Compute example
