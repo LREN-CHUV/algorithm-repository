@@ -4,7 +4,7 @@ version: '2'
 services:
 
   db:
-    image: postgres:9.6.3-alpine
+    image: postgres:9.6.5-alpine
     hostname: db
     environment:
       POSTGRES_PASSWORD: test
@@ -34,7 +34,7 @@ services:
       - db
 
   sample_data_db_setup:
-    image: "hbpmip/sample-data-db-setup:0.3.1"
+    image: "hbpmip/sample-data-db-setup:0.3.2"
     container_name: "data-db-setup"
     restart: "no"
     environment:
