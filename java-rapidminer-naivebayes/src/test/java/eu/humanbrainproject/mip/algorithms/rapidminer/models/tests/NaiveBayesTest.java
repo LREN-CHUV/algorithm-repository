@@ -19,9 +19,9 @@ import eu.humanbrainproject.mip.algorithms.rapidminer.naivebayes.NaiveBayesModel
 import eu.humanbrainproject.mip.algorithms.rapidminer.naivebayes.NaiveBayesSerializer;
 import eu.humanbrainproject.mip.algorithms.rapidminer.serializers.pfa.RapidMinerAlgorithmSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import scala.Option;
 import scala.collection.immutable.HashMap;
 
@@ -29,12 +29,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
  * @author Arnaud Jutzeler
  */
+@DisplayName("With a RapidMiner Naive Bayes algorithm,")
 public class NaiveBayesTest {
 
     private String performClassificationContinuousInput(String[] featureNames, double[][] data, String[] labels, double[] test) throws Exception {
@@ -70,9 +72,9 @@ public class NaiveBayesTest {
     }
 
     @Test
+    @DisplayName("We can perform binary Naive Bayes classification on two features")
     public void testBinaryClassificationWithContinuousInput2Features() throws Exception {
 
-        System.out.println("We can perform binary Naive Bayes classification on two features");
         final String[] featureNames = new String[]{"input1", "input2"};
         double[][] data = new double[][]{
                 {1.2, 2.4},
@@ -98,13 +100,13 @@ public class NaiveBayesTest {
         double[] test = new double[]{7.6, 5.4};
 
         String result = performClassificationContinuousInput(featureNames, data, labels, test);
-        Assert.assertEquals(result, "YES");
+        assertEquals(result, "YES");
     }
 
     @Test
+    @DisplayName("We can perform multinominal Naive Bayes classification on two features")
     public void testMultinominalClassificationWithContinuousInput2Features() throws Exception {
 
-        System.out.println("We can perform multinominal Naive Bayes classification on two features");
         final String[] featureNames = new String[]{"input1", "input2"};
         double[][] data = new double[][]{
                 {1.2, 2.4},
@@ -124,13 +126,13 @@ public class NaiveBayesTest {
 
         double[] test = new double[]{5.6, 23.4};
         String result = performClassificationContinuousInput(featureNames, data, labels, test);
-        Assert.assertEquals(result, "NO");
+        assertEquals(result, "NO");
     }
 
     @Test
+    @DisplayName("We can perform multinominal Naive Bayes classification on two features")
     public void testMultinominalClassificationWithContinuousInput2FeaturesV2() throws Exception {
 
-        System.out.println("We can perform multinominal Naive Bayes classification on two features");
         final String[] featureNames = new String[]{"input1", "input2"};
         double[][] data = new double[][]{
                 {1.2, 2.4},
@@ -150,7 +152,7 @@ public class NaiveBayesTest {
 
         double[] test = new double[]{4.6, 23.4};
         String result = performClassificationContinuousInput(featureNames, data, labels, test);
-        Assert.assertEquals(result, "MAYBE");
+        assertEquals(result, "MAYBE");
     }
 
     class NominalClassificationInputData extends InputData {
@@ -231,10 +233,10 @@ public class NaiveBayesTest {
     }
 
     @Test
-    @Ignore("Not working currently")
+    //@Disabled("Not working currently")
+    @DisplayName("We can perform binary Naive Bayes classification on two features")
     public void testClassificationWithNominalInput() throws Exception {
 
-        System.out.println("We can perform binary Naive Bayes classification on two features");
         final String[] featureNames = new String[]{"input1", "input2"};
         String[][] data = new String[][]{
                 {"_0", "_1"},
@@ -250,7 +252,7 @@ public class NaiveBayesTest {
         String[] test = new String[]{"_0", "_1"};
 
         String result = performClassificationNominalInput(featureNames, data, labels, test);
-        Assert.assertEquals(result, "YES");
+        assertEquals(result, "YES");
 
     }
 
