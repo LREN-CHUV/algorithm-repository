@@ -89,7 +89,7 @@ public class NaiveBayesTest {
 
         // Distributions
         //       input 1           input 2
-        // YES   (3.35, 9.103333)    (3.525, 3.289167)
+        // YES   (3.35, 9.103333)  (3.525, 3.289167)
         // NO    (4.9, 2.79)       (12.93333, 83.60333)
 
 
@@ -233,7 +233,7 @@ public class NaiveBayesTest {
     }
 
     @Test
-    //@Disabled("Not working currently")
+    @Disabled("Not working currently")
     @DisplayName("We can perform binary Naive Bayes classification on two features")
     public void testClassificationWithNominalInput() throws Exception {
 

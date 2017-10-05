@@ -47,7 +47,9 @@ public class NaiveBayesSerializer extends RapidMinerModelSerializer<SimpleDistri
 
         for (int i = 1; i < attributeNames.length; i++) {
             if (trainedModel.isDiscrete(i) == continuousFeatures) {
-                throw new RuntimeException("Problem with features domains! Features should either be all continuous either all nominal!");
+                throw new RuntimeException("Problem with features domains! Features should either be all continuous either all nominal!\n"
+                        + "Expected a " + (continuousFeatures ? "continuous" : "nominal") + " feature, found a "
+                        + (trainedModel.isDiscrete(i) ? "continuous" : "nominal") + " feature on attribute " + attributeNames[i]);
             }
         }
 
