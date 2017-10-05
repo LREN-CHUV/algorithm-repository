@@ -1,7 +1,7 @@
-python-example:
+target_image:
   build: Dockerfile
-  image: hbpmip/python-example
+  image: hbpmip/python-tsne
   pre:
-    - echo "Preparing python-example"
+    - echo "Preparing python-tsne"
   post:
-    - echo "Finished python-example"
+    - echo "Finished python-tsne"

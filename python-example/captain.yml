@@ -1,7 +1,0 @@
-python-example:
-  build: Dockerfile
-  image: hbpmip/python-example
-  pre:
-    - echo "Preparing python-example"
-  post:
-    - echo "Finished python-example"

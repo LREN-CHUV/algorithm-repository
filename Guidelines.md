@@ -33,8 +33,8 @@ Step-by-Step Guidelines
 
 1.  **Go to** GitHub
 
-2.  **Clone** the *functions-repository* folder -
-    <https://github.com/LREN-CHUV/functions-repository>
+2.  **Clone** the *algorithm-repository* folder -
+    <https://github.com/LREN-CHUV/algorithm-repository>
 
 3.  **Go to** the root folder of your cloned project
 

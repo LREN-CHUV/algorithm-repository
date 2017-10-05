@@ -1,0 +1,21 @@
+{
+    "let": {
+        "class_scores": {
+            "map.map": [
+                {"cell": "model"},
+                {"params": [{"c": {"type":"array", "items": "GaussianDistribution"}}],
+                 "ret": "double",
+                 "do": {
+                     "model.naive.gaussian": [{"u.toArray": ["input"]}, "c"]
+                 }
+                }
+            ]
+        }
+    }
+},
+{
+	"map.argmax": [
+        "class_scores"
+	]
+}
+

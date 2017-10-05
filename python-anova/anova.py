@@ -1,109 +1,100 @@
 #!/usr/bin/env python3
 
+import io_helper
+
 import logging
+import json
 
 from statsmodels.formula.api import ols
 from statsmodels.stats.anova import anova_lm
 
-import database_connector
+DESIGN_PARAM = "design"
+DEFAULT_DESIGN = "factorial"
 
-DESIGN_PARAM = 'design'
+DEFAULT_DOCKER_IMAGE = "python-anova"
 
 
 def main():
+    # Configure logging
     logging.basicConfig(level=logging.INFO)
 
-    # Get variables names
-    var = database_connector.get_var()  # Dependent variable
-    gvars = database_connector.get_gvars()  # Independent nominal variables
-    cvars = database_connector.get_covars()  # Independent continuous variables
-    covs = [x for x in (gvars + cvars) if len(x) > 0]  # All independent variables
+    # Read inputs
+    inputs = io_helper.fetch_data()
+    dep_var = inputs["data"]["dependent"][0]
+    inped_vars = inputs["data"]["independent"]
+    design = get_parameter(inputs["parameters"], DESIGN_PARAM)
 
-    # Check dependent variable type
-    if database_connector.var_type(var)['type'] not in ["integer", "real"]:
+    # Check dependent variable type (should be continuous)
+    if dep_var["type"]["name"] not in ["integer", "real"]:
         logging.warning("Dependent variable should be continuous !")
         return None
 
-    # Get data
-    fetched_data = database_connector.fetch_data()
-    data = format_data(fetched_data)
+    # Extract data and parameters from inputs
+    data = format_data(inputs["data"])
 
-    # Get params
-    try:
-        design = database_connector.get_parameter(DESIGN_PARAM)
-    except TypeError:
-        design = None
-
-    # Compute results
-    pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
-                       database_connector.get_docker_image(), database_connector.get_model(), var, covs,
-                       compute_anova(var, gvars, cvars, data, design).to_json())
-    error = ''
-    shape = 'pfa_json'
+    # Compute anova and generate PFA output
+    anova_results = compute_anova(dep_var, inped_vars, data, design).to_json()
+    pfa = generate_pfa(dep_var["name"], [v["name"] for v in inped_vars], anova_results)
 
     logging.info("PFA: %s", pfa)
 
     # Store results
-    database_connector.save_results(pfa, error, shape)
+    io_helper.save_results(pfa, '', 'pfa_json')
 
 
-# Compute Anova
-def compute_anova(var, gvars, cvars, data, design='factorial'):
-    if design == 'factorial':
-        formula = generate_formula_factorial(var, gvars, cvars)
-    elif design == 'additive':
-        formula = generate_formula_additive(var, gvars, cvars)
-    else:
-        logging.error("'design' parameter is wrong !")
-        return None
-    logging.info("Formula: %s" % formula)
-    lm = ols(data=data, formula=formula).fit()
-    logging.info(lm.summary())
-    return anova_lm(lm, typ=2)
-
-
-# Generate formula for Anova
-def generate_formula_additive(var, gvars, cvars):
-    gvars = [str.format("C(%s)" % g) for g in gvars]
-    gvars = ' + '.join(gvars)
-    cvars = ' + '.join(cvars)
-    cov = ' + '.join([gvars, cvars])
-    cov = cov.strip(' + ')
-    return str.format("%s ~ %s" % (var, cov))
-
-
-# Generate formula with interactions for Anova
-def generate_formula_factorial(var, gvars, cvars):
-    gvars = [str.format("C(%s)" % g) for g in gvars]
-    gvars = ' * '.join(gvars)
-    cvars = ' * '.join(cvars)
-    cov = ' * '.join([gvars, cvars])
-    cov = cov.strip(' * ')
-    return str.format("%s ~ %s" % (var, cov))
-
-
-# Format data for Anova
-def format_data(fetched_data):
-    data = dict()
-    i = 0
-    for c in fetched_data['columns']:
-        data[c] = list()
-        for v in fetched_data['data']:
-            try:
-                value = float(v[i])
-            except ValueError:
-                value = str(v[i])
-            data[c].append(value)
-        i += 1
+def format_data(input_data):
+    all_vars = input_data["dependent"] + input_data["independent"]
+    data = {v["name"]: v["series"] for v in all_vars}
     return data
 
 
-def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, results):
-    str_grps = '","'.join(grps)
+def get_parameter(params_list, param_name):
+    for p in params_list:
+        if p["name"] == param_name:
+            return p["value"]
+    return DEFAULT_DESIGN
+
+
+def read_inputs(input_path):
+    with open(input_path, 'r') as input_file:
+        return json.load(input_file)
+
+
+def save_results(results, output_path):
+    with open(output_path, 'w') as output_file:
+        output_file.write(results)
+        # json.dump(results, output_file)
+
+
+def compute_anova(dep_var, indep_vars, data, design='factorial'):
+    formula = generate_formula(dep_var, indep_vars, design)
+    logging.info("Formula: %s" % formula)
+    lm = ols(data=data, formula=formula).fit()
+    logging.info(lm.summary())
+    return anova_lm(lm)
+
+
+def generate_formula(dep_var, indep_vars, design):
+    if design == 'additive':
+        op = " + "
+    elif design == 'factorial':
+        op = " * "
+    else:
+        logging.error("Invalid design parameter : %s" % design)
+        return None
+    dep_var = dep_var["name"]
+    indep_vars = [v["name"] if v["type"]["name"] in ["integer", "real"]
+                  else str.format("C(%s)" % v["name"]) for v in indep_vars]
+    indep_vars = op.join(indep_vars)
+    indep_vars = indep_vars.strip(op)
+    return str.format("%s ~ %s" % (dep_var, indep_vars))
+
+
+def generate_pfa(dep_var, indep_vars, results):
     output = ('''
 {
-  "code": "%s",
-  "name": "%s",
+  "code": "anova",
+  "name": "anova",
   "cells": {
     "validations": [],
     "data": {
@@ -111,7 +102,6 @@ def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, resu
       "type": {
         "name": "Anova",
         "doc": "Anova computation",
-        "namespace": "%s",
         "type": "record",
         "fields": [
           {
@@ -143,8 +133,8 @@ def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, resu
     },
     "query": {
       "init": {
-        "grouping": ["%s"],
-        "variable": "%s"
+        "variable": "%s",
+        "grouping": ["%s"]
       },
       "type": {
         "type": "record",
@@ -173,9 +163,6 @@ def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, resu
     }
   },
   "doc": "Anova computation",
-  "metadata": {
-    "docker_image": "%s"
-  },
   "output": {
     "type": "null"
   },
@@ -186,7 +173,7 @@ def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, resu
     "type": "null"
   }
 }
-    ''' % (algo_code, algo_name, results, model, str_grps, variable, docker_image))
+    ''' % (results, dep_var, '","'.join(indep_vars)))
     return output
 
 

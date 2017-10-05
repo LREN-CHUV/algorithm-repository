@@ -1,24 +1,22 @@
+[![CHUV](https://img.shields.io/badge/CHUV-LREN-AF4C64.svg)](https://www.unil.ch/lren/en/home.html) [![DockerHub](https://img.shields.io/badge/docker-hbpmip%2Fpython--anova-008bb8.svg)](https://hub.docker.com/r/hbpmip/python-anova/)
+[![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/python-anova.svg)](https://hub.docker.com/r/hbpmip/python-anova/tags "hbpmip/python-anova image tags")
+[![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/python-anova.svg)](https://microbadger.com/#/images/hbpmip/python-anova "hbpmip/python-anova on microbadger")
+
 # Python Anova
 
-
-## What is it ?
-
-This is a Python script that generates anova.
+This is a Python implementation of Anova.
 
 
-## How to build a Docker image
+## Build (for contributors)
 
 Run: `./build.sh`
 
 
-## How to try it when developing
+## Test (for contributors)
 
-Run: `./dev.sh`
+Run: `./tests/test.sh`
 
 
-## Method specific parameters
+## Publish (for contributors)
 
-Use the `PARAM_MODEL_design` environment variable to choose an Anova multi-factors design.
-The possible values are:
-* factorial: a factorial design (all interactions are taken)
-* additive: an additive design (no interaction is taken)
+Run: `./publish.sh`

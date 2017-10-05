@@ -1,0 +1,197 @@
+{
+  "name": "rapidminer",
+  "method": "map",
+  "doc": "RapidMiner Model",
+  "metadata": {
+    "docker_image": ""
+  },
+  "input": {
+    "doc": "Input is the list of covariables and groups",
+    "name": "DependentVariables",
+    "type": "record",
+    "fields": [
+      {
+        "name": "input1",
+        "type": "double"
+      },
+      {
+        "name": "input2",
+        "type": "double"
+      }
+    ]
+  },
+  "output": {
+    "doc": "Output is the estimate of the variable",
+    "type": "string"
+  },
+  "cells": {
+    "query": {
+      "type": {
+        "doc": "Definition of the query that has produced this model",
+        "name": "Query",
+        "type": "record",
+        "fields": [
+          {
+            "doc": "Dependent variable",
+            "name": "variable",
+            "type": "string"
+          },
+          {
+            "doc": "List of explanatory variables",
+            "name": "covariables",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "doc": "SQL query",
+            "name": "sql",
+            "type": "string"
+          },
+          {
+            "doc": "Number of records selected by the query",
+            "name": "count",
+            "type": "int"
+          }
+        ]
+      },
+      "init": {
+        "variable": "output",
+        "covariables": [
+          "input1",
+          "input2"
+        ],
+        "sql": "NO QUERY",
+        "count": 7
+      }
+    },
+    "model": {
+      "type": {
+        "type": "map",
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "record",
+            "name": "GaussianDistribution",
+            "fields": [
+              {
+                "name": "mean",
+                "type": "double"
+              },
+              {
+                "name": "variance",
+                "type": "double"
+              }
+            ]
+          }
+        }
+      },
+      "init": {
+        "YES": [
+          {
+            "mean": 3.3499999999999996,
+            "variance": 9.103333333333332
+          },
+          {
+            "mean": 3.5250000000000004,
+            "variance": 3.2891666666666666
+          }
+        ],
+        "NO": [
+          {
+            "mean": 4.9,
+            "variance": 2.7899999999999916
+          },
+          {
+            "mean": 12.933333333333332,
+            "variance": 83.60333333333334
+          }
+        ]
+      }
+    }
+  },
+  "pools": {},
+  "begin": [],
+  "action": [
+    {
+      "let": {
+        "class_scores": {
+          "map.map": [
+            {
+              "cell": "model"
+            },
+            {
+              "params": [
+                {
+                  "c": {
+                    "type": "array",
+                    "items": "GaussianDistribution"
+                  }
+                }
+              ],
+              "ret": "double",
+              "do": {
+                "model.naive.gaussian": [
+                  {
+                    "u.toArray": [
+                      "input"
+                    ]
+                  },
+                  "c"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "map.argmax": [
+        "class_scores"
+      ]
+    }
+  ],
+  "end": [],
+  "fcns": {
+    "toArray": {
+      "params": [
+        {
+          "m": "DependentVariables"
+        }
+      ],
+      "ret": {
+        "type": "array",
+        "items": "double"
+      },
+      "do": [
+        {
+          "type": {
+            "type": "array",
+            "items": "double"
+          },
+          "new": [
+            {
+              "attr": "m",
+              "path": [
+                {
+                  "string": "input1"
+                }
+              ]
+            },
+            {
+              "attr": "m",
+              "path": [
+                {
+                  "string": "input2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

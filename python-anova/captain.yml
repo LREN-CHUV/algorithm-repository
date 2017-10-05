@@ -1,4 +1,4 @@
-python-anova:
+target_image:
   build: Dockerfile
   image: hbpmip/python-anova
   pre:

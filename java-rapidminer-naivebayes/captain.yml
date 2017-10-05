@@ -1,20 +1,4 @@
-java-rapidminer-naivebayes-build:
-  build: Dockerfile.BUILD
-  image: hbpmip/java-rapidminer-naivebayes-build
-  pre:
-    - echo "Preparing java-rapidminer-naivebayes-build"
-  post:
-    - echo "Finished java-rapidminer-naivebayes-build"
-    - echo "Building project..."
-    - docker run -ti --rm -v ~/.m2:/root/.m2 hbpmip/java-rapidminer-naivebayes-build mvn -f /dist install -Dmaven.test.skip=true
-    - docker run -ti --name build-cont -v ~/.m2:/root/.m2 hbpmip/java-rapidminer-naivebayes-build mvn -f /dist install package -Dmaven.test.skip=true
-    - mkdir -p target
-    - docker cp build-cont:/dist/target/java-rapidminer-naivebayes-0.0.1.jar target/java-rapidminer-naivebayes.jar
-    - docker rm build-cont
-  test:
-    - tests/test.sh
-
-java-rapidminer-naivebayes:
+target_image:
   build: Dockerfile
   image: hbpmip/java-rapidminer-naivebayes
   pre:

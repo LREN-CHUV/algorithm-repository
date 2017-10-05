@@ -25,13 +25,10 @@ fi
 
 if [ $NO_SUDO ]; then
   CAPTAIN="captain"
-  DOCKER="docker"
 elif groups $USER | grep &>/dev/null '\bdocker\b'; then
   CAPTAIN="captain"
-  DOCKER="docker"
 else
   CAPTAIN="sudo captain"
-  DOCKER="sudo docker"
 fi
 
 # Build
@@ -107,6 +104,9 @@ BUILD_DATE=$(date -Iseconds) \
   VERSION=$updated_version \
   WORKSPACE=$WORKSPACE \
   $CAPTAIN push target_image --branch-tags=false --commit-tags=false --tag $updated_version
+
+# Notify Microbadger
+curl -XPOST https://hooks.microbadger.com/images/hbpmip/java-rapidminer-knn/xQUpXpquEaq82mVPCe9_psvJNfY=
 
 # Notify on slack
 sed "s/USER/${USER^}/" $WORKSPACE/slack.json > $WORKSPACE/.slack.json

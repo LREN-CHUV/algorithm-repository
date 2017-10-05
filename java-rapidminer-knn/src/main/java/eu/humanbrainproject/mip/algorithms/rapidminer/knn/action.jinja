@@ -1,0 +1,53 @@
+{
+   "let": {"model": {"cell": "model"}}
+},
+{
+   "let": {
+      "knn":
+      {
+         "model.neighbor.nearestK": [
+            "model.k",
+            {"u.toArray": ["input"]},
+            "model.samples",
+	        {
+			   "params": [
+                  {
+                     "x": {
+                         "type": "array",
+                         "items": "double"
+                      }
+                   },
+                   {
+                      "y": "sample"
+                   }
+                ],
+                "ret": "double",
+                "do": {
+                   "metric.simpleEuclidean": [
+                      "x",
+                      "y.vars"
+                   ]
+                }
+            }
+         ]
+      }
+   }
+},
+{
+   "let": {"label_list": {"type": {"type": "array", "items": "{% if regression %}double{% else %}string{% endif %}" },
+   "value": []}}
+},
+{
+   "foreach": "neighbour",
+   "in": "knn",
+   "do": [
+      {"set": {"label_list": {"a.append": ["label_list", "neighbour.label"]}}}
+   ]
+},
+{
+{% if regression %}
+   "a.mean": ["label_list"]
+{% else %}
+   "a.mode": ["label_list"]
+{% endif %}
+}

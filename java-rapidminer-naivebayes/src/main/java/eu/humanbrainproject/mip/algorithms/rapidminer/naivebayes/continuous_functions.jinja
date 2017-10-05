@@ -1,0 +1,15 @@
+"toArray": {
+   "params": [
+      {
+         "m": "DependentVariables"
+      }
+   ],
+   "ret": {"type": "array", "items": "double"},
+   "do": [
+      {"type": {"type": "array", "items": "double"}, "new": [
+{% for attr in attributeNames -%}
+        {"attr": "m","path":[{"string":"{{ attr }}"}]}{{ "," if not loop.last }}
+{%- endfor %}
+      ]}
+   ]
+}

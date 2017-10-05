@@ -3,18 +3,34 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>eu.hbp.mip.container</groupId>
-    <artifactId>java-rapidminer-naivebayes</artifactId>
+    <groupId>eu.humanbrainproject.mip.algorithms.rapidminer</groupId>
+    <artifactId>naivebayes</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1</version>
+    <version>0.2.0</version><!-- bumpversion -->
     <name>java-rapidminer-naivebayes</name>
 
     <properties>
-        <version.jdk>1.8</version.jdk>
-        <version.rapidminer>7.0.1</version.rapidminer>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jdk.version>1.8</jdk.version>
+        <compiler.plugin.version>3.6.2</compiler.plugin.version>
+        <jar.plugin.version>3.0.2</jar.plugin.version>
+        <surefire.plugin.version>2.20</surefire.plugin.version>
+        <site.plugin.version>3.6</site.plugin.version>
+        <info.reports.plugin.version>2.9</info.reports.plugin.version>
+        <surefire.report.plugin.version>2.20</surefire.report.plugin.version>
+        <jxr.plugin.version>2.5</jxr.plugin.version>
+        <hadrian.version>0.8.5</hadrian.version>
+        <junit.version>4.9</junit.version>
+        <mip.rapidminer.version>0.9.0</mip.rapidminer.version>
     </properties>
 
     <repositories>
+
+        <repository>
+            <id>maven</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <name>Central Maven repository</name>
+        </repository>
 
         <repository>
             <id>opendatagroup</id>
@@ -28,58 +44,108 @@
             <layout>default</layout>
             <name>Repository for RapidMiner</name>
         </repository>
+
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-hbpmedical-mip</id>
+            <name>bintray</name>
+            <url>https://dl.bintray.com/hbpmedical/maven</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
 
         <dependency>
-            <groupId>eu.hbp.mip.container.rapidminer</groupId>
-            <artifactId>java-rapidminer</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.sourceforge.collections</groupId>
-            <artifactId>collections-generic</artifactId>
-            <version>4.01</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.rapidminer.studio</groupId>
-            <artifactId>rapidminer-studio-core</artifactId>
-            <version>${version.rapidminer}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.9</version>
-            <scope>test</scope>
+            <groupId>eu.humanbrainproject.mip.algorithms</groupId>
+            <artifactId>rapidminer</artifactId>
+            <version>${mip.rapidminer.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.opendatagroup</groupId>
             <artifactId>hadrian</artifactId>
-            <version>0.8.3</version>
+            <version>${hadrian.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
     </dependencies>
 
     <build>
-        <sourceDirectory>${basedir}/src/</sourceDirectory>
-        <testSourceDirectory>${basedir}/tests</testSourceDirectory>
+        <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.jinja</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
-                <inherited>true</inherited>
+                <version>${compiler.plugin.version}</version>
                 <configuration>
-                    <source>${version.jdk}</source>
-                    <target>${version.jdk}</target>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${jar.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.plugin.version}</version>
+                <!-- lock down our surefire provider -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit4</artifactId>
+                        <version>${surefire.plugin.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>${site.plugin.version}</version>
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>${info.reports.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${surefire.report.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>${jxr.plugin.version}</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
 </project>
