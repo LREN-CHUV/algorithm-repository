@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import io_helper
+from io_helper import io_helper
 
 import logging
 import json
