@@ -1,4 +1,4 @@
-FROM hbpmip/python-mip:703a7ed
+FROM hbpmip/python-mip:0.2.0
 
 MAINTAINER mirco.nasuti@chuv.ch
 
