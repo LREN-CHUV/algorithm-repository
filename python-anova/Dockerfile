@@ -1,4 +1,4 @@
-FROM hbpmip/python-mip:0.1.3
+FROM hbpmip/python-mip:703a7ed
 
 MAINTAINER mirco.nasuti@chuv.ch
 
@@ -20,6 +20,6 @@ ENV FUNCTION python-anova
 COPY requirements.txt /requirements.txt
 COPY anova.py /anova.py
 
-RUN conda install -y --file /requirements.txt
+RUN pip install -r /requirements.txt
 
 ENTRYPOINT ["python", "/anova.py"]
