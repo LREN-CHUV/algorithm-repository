@@ -34,12 +34,9 @@ def main():
 
     # Compute anova and generate PFA output
     anova_results = compute_anova(dep_var, inped_vars, data, design).to_json()
-    pfa = generate_pfa(dep_var["name"], [v["name"] for v in inped_vars], anova_results)
-
-    logging.info("PFA: %s", pfa)
 
     # Store results
-    io_helper.save_results(pfa, '', 'pfa_json')
+    io_helper.save_results(anova_results, '', 'application/highcharts+json')
 
 
 def format_data(input_data):
@@ -88,93 +85,6 @@ def generate_formula(dep_var, indep_vars, design):
     indep_vars = op.join(indep_vars)
     indep_vars = indep_vars.strip(op)
     return str.format("%s ~ %s" % (dep_var, indep_vars))
-
-
-def generate_pfa(dep_var, indep_vars, results):
-    output = ('''
-{
-  "code": "anova",
-  "name": "anova",
-  "cells": {
-    "validations": [],
-    "data": {
-      "init": %s,
-      "type": {
-        "name": "Anova",
-        "doc": "Anova computation",
-        "type": "record",
-        "fields": [
-          {
-            "type": "map",
-            "values": "double",
-            "doc": "sum_sq",
-            "name": "sum_sq"
-          },
-          {
-            "type": "map",
-            "values": "double",
-            "doc": "df",
-            "name": "df"
-          },
-          {
-            "type": "map",
-            "values": "double",
-            "doc": "F",
-            "name": "F"
-          },
-          {
-            "type": "map",
-            "values": "double",
-            "doc": "PR(\u003eF)",
-            "name": "PR(\u003eF)"
-          }
-        ]
-      }
-    },
-    "query": {
-      "init": {
-        "variable": "%s",
-        "grouping": ["%s"]
-      },
-      "type": {
-        "type": "record",
-        "doc": "Definition of the inputs",
-        "fields": [
-          {
-            "type": {
-              "type": "string"
-            },
-            "doc": "Main anova variable",
-            "name": "variable"
-          },
-          {
-            "type": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            "doc": "Categories used for specific anova",
-            "name": "groups"
-          }
-        ],
-        "name": "Query"
-      }
-    }
-  },
-  "doc": "Anova computation",
-  "output": {
-    "type": "null"
-  },
-  "action": [
-    null
-  ],
-  "input": {
-    "type": "null"
-  }
-}
-    ''' % (results, dep_var, '","'.join(indep_vars)))
-    return output
 
 
 if __name__ == '__main__':
