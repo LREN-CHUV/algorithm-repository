@@ -2,6 +2,16 @@ FROM hbpmip/python-mip:0.2.2
 
 MAINTAINER mirco.nasuti@chuv.ch
 
+ENV DOCKER_IMAGE=hbpmip/python-anova:0.2.0 \
+    FUNCTION python-anova
+
+COPY requirements.txt /requirements.txt
+COPY anova.py /anova.py
+
+RUN pip install -r /requirements.txt
+
+ENTRYPOINT ["python", "/anova.py"]
+
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.name="hbpmip/python-anova" \
       org.label-schema.description="Python implementation of Anova" \
@@ -14,12 +24,3 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.license="AGPLv3" \
       org.label-schema.docker.dockerfile="Dockerfile" \
       org.label-schema.schema-version="1.0"
-
-ENV FUNCTION python-anova
-
-COPY requirements.txt /requirements.txt
-COPY anova.py /anova.py
-
-RUN pip install -r /requirements.txt
-
-ENTRYPOINT ["python", "/anova.py"]
