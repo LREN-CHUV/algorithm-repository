@@ -95,6 +95,7 @@ def generate_histogram(data, data_columns, variable, group=None):
 
 def histo_nominal(category, data, group, group_categories, group_data, group_type, variable_categories):
     data = [str(d) for d in data]
+    variable_categories = [str(c) for c in variable_categories]
     header = []
     # Nominal variable
     sums = {}
