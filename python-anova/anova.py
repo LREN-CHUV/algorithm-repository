@@ -3,7 +3,6 @@
 from io_helper import io_helper
 
 import logging
-import json
 
 from statsmodels.formula.api import ols
 from statsmodels.stats.anova import anova_lm
@@ -50,17 +49,6 @@ def get_parameter(params_list, param_name):
         if p["name"] == param_name:
             return p["value"]
     return DEFAULT_DESIGN
-
-
-def read_inputs(input_path):
-    with open(input_path, 'r') as input_file:
-        return json.load(input_file)
-
-
-def save_results(results, output_path):
-    with open(output_path, 'w') as output_file:
-        output_file.write(results)
-        # json.dump(results, output_file)
 
 
 def compute_anova(dep_var, indep_vars, data, design='factorial'):
