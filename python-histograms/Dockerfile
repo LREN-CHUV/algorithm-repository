@@ -3,7 +3,7 @@ FROM hbpmip/python-mip:d2c0f87
 COPY requirements.txt /requirements.txt
 COPY histograms.py /main.py
 
-RUN conda install -y --file /requirements.txt
+RUN pip install -r /requirements.txt
 
 ENV DOCKER_IMAGE=hbpmip/python-histograms
 ENV MODEL histograms
