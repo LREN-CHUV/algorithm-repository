@@ -160,7 +160,7 @@ public class KnnTest {
         String results = algorithm.toPFA();
         assertTrue(results != null);
         assertTrue(!results.contains("error"));
-        System.out.println(results);
+        System.out.println(algorithm.toPrettyPFA());
 
         PFAEngine<Object, Object> engine = getPFAEngine(results);
         Map<String, Double> inputs = Maps.newHashMap();
@@ -276,6 +276,27 @@ public class KnnTest {
         double[] test = new double[]{5.6, 23.4};
         String result = performClassification(featureNames, data, labels, k, test);
         assertEquals("YES", result);
+    }
+
+    @Test
+    @DisplayName("We can perform binary classification on two features with k = 2, where features are 0 and 1")
+    public void testClassificationBinaryFeaturesK2() throws Exception {
+
+        final String[] featureNames = new String[]{"input1", "input2"};
+        double[][] data = new double[][]{
+                {1.2, 2.4},
+                {6.7, 8.9},
+                {4.6, 23.4},
+                {7.6, 5.4},
+                {1.2, 1.6},
+                {3.4, 4.7},
+                {3.4, 6.5}
+        };
+        String[] labels = new String[]{"1", "0", "0", "1", "1", "1", "0"};
+        int k = 2;
+        double[] test = new double[]{5.6, 23.4};
+        String result = performClassification(featureNames, data, labels, k, test);
+        assertEquals("0", result);
     }
 
     private PFAEngine<Object, Object> getPFAEngine(String pfa) {
