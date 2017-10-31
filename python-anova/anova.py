@@ -3,7 +3,9 @@
 from io_helper import io_helper
 
 import logging
+import json
 
+from pandas import DataFrame
 from statsmodels.formula.api import ols
 from statsmodels.stats.anova import anova_lm
 
@@ -32,7 +34,7 @@ def main():
     data = format_data(inputs["data"])
 
     # Compute anova and generate PFA output
-    anova_results = compute_anova(dep_var, inped_vars, data, design).to_json()
+    anova_results = format_output(compute_anova(dep_var, inped_vars, data, design).to_dict())
 
     # Store results
     io_helper.save_results(anova_results, '', 'application/highcharts+json')
@@ -42,6 +44,10 @@ def format_data(input_data):
     all_vars = input_data["dependent"] + input_data["independent"]
     data = {v["name"]: v["series"] for v in all_vars}
     return data
+
+
+def format_output(statsmodels_dict):
+    return json.dumps(DataFrame.from_dict(statsmodels_dict).transpose().to_dict())
 
 
 def get_parameter(params_list, param_name):
