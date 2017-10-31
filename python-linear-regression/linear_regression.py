@@ -42,7 +42,7 @@ def format_data(input_data):
 
 
 def format_output(statsmodels_dict):
-    return json.dumps(DataFrame.from_dict(statsmodels_dict).transpose().to_dict())
+    return json.dumps(DataFrame.from_dict(statsmodels_dict).transpose().fillna("NaN").to_dict())
 
 
 def compute_linear_regression(dep_var, indep_vars, data):

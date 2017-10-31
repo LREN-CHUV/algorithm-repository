@@ -47,7 +47,7 @@ def format_data(input_data):
 
 
 def format_output(statsmodels_dict):
-    return json.dumps(DataFrame.from_dict(statsmodels_dict).transpose().to_dict())
+    return json.dumps(DataFrame.from_dict(statsmodels_dict).transpose().fillna("NaN").to_dict())
 
 
 def get_parameter(params_list, param_name):
