@@ -5,6 +5,7 @@ from io_helper import io_helper
 import logging
 import json
 
+from pandas import DataFrame
 from statsmodels.formula.api import ols
 
 DEFAULT_DOCKER_IMAGE = "python-linear-regression"
@@ -28,7 +29,7 @@ def main():
     data = format_data(inputs["data"])
 
     # Compute linear-regression and generate PFA output
-    linear_regression_results = json.dumps(compute_linear_regression(dep_var, inped_vars, data))
+    linear_regression_results = format_output(compute_linear_regression(dep_var, inped_vars, data))
 
     # Store results
     io_helper.save_results(linear_regression_results, '', 'application/highcharts+json')
@@ -38,6 +39,10 @@ def format_data(input_data):
     all_vars = input_data["dependent"] + input_data["independent"]
     data = {v["name"]: v["series"] for v in all_vars}
     return data
+
+
+def format_output(statsmodels_dict):
+    return json.dumps(DataFrame.from_dict(statsmodels_dict).transpose().to_dict())
 
 
 def compute_linear_regression(dep_var, indep_vars, data):
