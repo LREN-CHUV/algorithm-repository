@@ -1,0 +1,157 @@
+{
+  "name" : "rapidminer",
+  "method" : "map",
+  "doc" : "RapidMiner Model",
+  "metadata" : {
+    "docker_image" : "",
+    "accepts_missing_values" : "false"
+  },
+  "input" : {
+    "doc" : "Input is the list of covariables and groups",
+    "name" : "DependentVariables",
+    "type" : "record",
+    "fields" : [ {
+      "name" : "input1",
+      "type" : [{"type":"enum","name":"Enum_input1","symbols":["_0","_1","_2"]},"int"]
+    }, {
+      "name" : "input2",
+      "type" : [{"type":"enum","name":"Enum_input2","symbols":["_1","_0"]},"int"]
+    } ]
+  },
+  "output" : {
+    "doc" : "Output is the estimate of the variable",
+    "type" : "string"
+  },
+  "cells" : {
+    "query" : {
+      "type" : {
+        "doc" : "Definition of the query that has produced this model",
+        "name" : "Query",
+        "type" : "record",
+        "fields" : [ {
+          "doc" : "Dependent variable",
+          "name" : "variable",
+          "type" : "string"
+        }, {
+          "doc" : "List of explanatory variables",
+          "name" : "covariables",
+          "type" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "doc" : "SQL query",
+          "name" : "sql",
+          "type" : "string"
+        }, {
+          "doc" : "Number of records selected by the query",
+          "name" : "count",
+          "type" : "int"
+        } ]
+      },
+      "init" : {
+        "variable" : "output",
+        "covariables" : [ "input1", "input2" ],
+        "sql" : "NO QUERY",
+        "count" : 7
+      }
+    },
+    "model" : {
+      "type" : {"type":"map","values":{"type":"array","items":{"type":"map","values":{"type":"map","values":"double"}}}},
+      "init" : {
+        "YES" : [ {
+          "0" : 0.88,
+          "1" : 0.04000000000000001,
+          "2" : 0.04000000000000001,
+          "unknown" : 0.04000000000000001
+        }, {
+          "1" : 0.9166666666666667,
+          "0" : 0.041666666666666664,
+          "unknown" : 0.041666666666666664
+        } ],
+        "NO" : [ {
+          "0" : 0.03125,
+          "1" : 0.46875,
+          "2" : 0.46875,
+          "unknown" : 0.03125
+        }, {
+          "1" : 0.7096774193548386,
+          "0" : 0.25806451612903225,
+          "unknown" : 0.03225806451612903
+        } ]
+      }
+    }
+  },
+  "pools" : { },
+  "begin" : [ ],
+  "action" : [{
+    "let": {
+      "class_scores": {
+        "map.map": [
+          {"cell": "model"},
+          {"params": [
+            {"c": {"type":"map", "values": {"type": "map", "values": {"type": "map", "values": "double"}}}}
+          ],
+            "ret": "double",
+            "do": {
+              "a.reduce": [{"a.zipmap": ["a", "c", "u.apply"]}, "u.multiply"]
+            }
+          }
+        ]
+      }
+    }
+  },
+    {
+      "map.argmax": [
+        "class_scores"
+      ]
+    }
+  ],
+  "end" : [ ],
+  "fcns" : {"apply": {
+    "params": [
+      {
+        "elem": "string"
+      },
+      {
+        "ds": {"type": "map", "values": "double"}
+      }
+    ],
+    "ret": "double",
+    "do": [{"attr": "ds", "path": ["elem"]}]
+  },
+
+    "multiply": {
+      "params": [
+        {
+          "a": "double"
+        },
+        {
+          "b": "double"
+        }
+      ],
+      "ret": "double",
+      "do": [{"*": ["a", "b"]}]
+    },
+
+    "toArray": {
+      "params": [
+        {
+          "m": "DependentVariables"
+        }
+      ],
+      "ret": {"type": "array", "items": "string"},
+      "do": [
+        {"type": {"type": "array", "items": "string"}, "new": [
+
+          {"enum.toString": {"attr": "m","path":[{"string":"input1"}]}},
+
+          {"enum.toString": {"attr": "m","path":[{"string":"input2"}]}}
+
+        ]}
+      ]
+    }
+  }
+}

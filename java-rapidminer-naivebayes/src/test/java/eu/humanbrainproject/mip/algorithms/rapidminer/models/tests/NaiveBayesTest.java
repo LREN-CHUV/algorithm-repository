@@ -56,7 +56,7 @@ public class NaiveBayesTest {
         assertTrue(results != null);
         assertTrue(!results.contains("error"));
 
-        System.out.println(results);
+        System.out.println(algorithm.toPrettyPFA());
 
         PFAEngine<Object, Object> engine = getPFAEngine(results);
         Map<String, Double> inputs = Maps.newHashMap();
@@ -217,7 +217,7 @@ public class NaiveBayesTest {
         assertTrue(results != null);
         assertTrue(!results.contains("error"));
 
-        System.out.println(results);
+        System.out.println(algorithm.toPrettyPFA());
 
         PFAEngine<Object, Object> engine = getPFAEngine(results);
         Map<String, String> inputs = Maps.newHashMap();
@@ -233,23 +233,23 @@ public class NaiveBayesTest {
     }
 
     @Test
-    @Disabled("Not working currently")
+    //@Disabled("Not working currently")
     @DisplayName("We can perform binary Naive Bayes classification on two features")
     public void testClassificationWithNominalInput() throws Exception {
 
         final String[] featureNames = new String[]{"input1", "input2"};
         String[][] data = new String[][]{
-                {"_0", "_1"},
-                {"_1", "_1"},
-                {"_0", "_1"},
-                {"_2", "_1"},
-                {"_2", "_0"},
-                {"_0", "_1"},
-                {"_1", "_1"}
+                {"0", "1"},
+                {"1", "1"},
+                {"0", "1"},
+                {"2", "1"},
+                {"2", "0"},
+                {"0", "1"},
+                {"1", "1"}
         };
         String[] labels = new String[]{"YES", "NO", "YES", "NO", "NO", "YES", "NO"};
 
-        String[] test = new String[]{"_0", "_1"};
+        String[] test = new String[]{"0", "1"};
 
         String result = performClassificationNominalInput(featureNames, data, labels, test);
         assertEquals(result, "YES");
