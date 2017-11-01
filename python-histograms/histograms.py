@@ -1,273 +1,138 @@
 #!/usr/bin/env python3
 
+from io_helper import io_helper
+
 import logging
 import json
-import numpy
+import math
 
-import database_connector
+from collections import OrderedDict
+from numpy import arange
+from numpy import histogram
 
 
-# Settings and global variables
-bins = 20  # Number of bins
+BINS_PARAM = "bins"
+DEFAULT_BINS = 20
 
 
 def main():
+    # Configure logging
     logging.basicConfig(level=logging.INFO)
 
-    # Get inputs
-    var = database_connector.get_var()
-    groups = [x for x in (database_connector.get_covars() + database_connector.get_gvars()) if len(x) > 0]
-    fetched_data = database_connector.fetch_data()
-    data = fetched_data['data']
-    data_columns = fetched_data['columns']
+    # Read inputs
+    inputs = io_helper.fetch_data()
+    dep_var = inputs["data"]["dependent"][0]
+    inped_vars = inputs["data"]["independent"]
+    nb_bins = get_bins_param(inputs["parameters"], BINS_PARAM)
 
-    logging.info("variable: %s", str(var))
-    logging.info("groups: %s", str(groups))
-    logging.info("columns: %s", str(data_columns))
-
-    # Compute results
-    pfa = generate_pfa(database_connector.get_code(), database_connector.get_name(),
-                       database_connector.get_docker_image(), database_connector.get_model(), var, groups,
-                       json.dumps(generate_descriptive_stats(var, groups, data, data_columns),
-                                  sort_keys=True, indent=4, separators=(',', ': ')))
-    error = ''
-    shape = 'pfa_json'
-
-    logging.info("PFA: %s", pfa)
+    # Compute histograms (JSON formatted for HighCharts)
+    histograms_results = compute_histograms(dep_var, inped_vars, nb_bins)
 
     # Store results
-    database_connector.save_results(pfa, error, shape)
+    io_helper.save_results(histograms_results, '', 'application/highcharts+json')
 
 
-# Generate an object containing the descriptive statistics for the given variable
-def generate_descriptive_stats(var, groups, data, data_columns):
-    output = list()
-    output.append(generate_histogram(data, data_columns, var))
-    for group in groups:
-        output.append(generate_histogram(data, data_columns, var, group))
-
-    return output
+def compute_histograms(dep_var, indep_vars, nb_bins=DEFAULT_BINS):
+    histograms = list()
+    histograms.append(compute_histogram(dep_var, nb_bins=nb_bins))
+    for indep_var in indep_vars:
+        histograms.append(compute_histogram(dep_var, indep_var, nb_bins))
+    return json.dumps(histograms)
 
 
-def generate_histogram(data, data_columns, variable, group=None):
-    var_data = [row[0] for row in data]
-    group_data = [row[data_columns.index(group.lower())] for row in data] if group else []
-    variable_type = database_connector.var_type(variable)['type']
-    group_type = database_connector.var_type(group)['type'] if group else None
-    group_categories = database_connector.var_type(group)['values'] if group else None
-
-    category = []
+def compute_histogram(dep_var, indep_var=None, nb_bins=DEFAULT_BINS):
     label = "Histogram"
-    if group:
-        label += " - " + group
-
-    if not var_data or len(var_data) < 1:
-        category = []
-        header = []
-        value = []
-    elif variable_type == "real":
-        var_data = [float(d) for d in var_data]
-        category, header, value = histo_real(category, var_data, group, group_categories, group_data, group_type)
-    elif variable_type == "integer":
-        var_data = [int(d) for d in var_data]
-        category, header, value = histo_integer(category, var_data, group, group_categories, group_data, group_type)
-    else:
-        var_data = [str(d) for d in var_data]
-        var_categories = database_connector.var_type(variable)['values']
-        category, header, value = histo_nominal(category, var_data, group, group_categories, group_data, group_type,
-                                                var_categories)
-
-    return {
-        "code": variable,
-        "dataType": "DatasetStatistic",
+    title = '%s histogram' % dep_var['name']
+    if indep_var:
+        label += " - %s" % indep_var["name"]
+        title += " by %s" % indep_var["name"]
+    categories, categories_labels = compute_categories(dep_var, nb_bins)
+    series = compute_series(dep_var, categories, indep_var)
+    histo = {
+        "chart": {"type": 'column'},
         "label": label,
-        "dataset": {
-            "data": {
-                "header": header,
-                "shape": "vector",
-                "value": value,
-                "categories": category
-            },
-            "name": "Count"
-        }
-    }
-
-
-def histo_nominal(category, data, group, group_categories, group_data, group_type, variable_categories):
-    data = [str(d) for d in data]
-    variable_categories = [str(c) for c in variable_categories]
-    header = []
-    # Nominal variable
-    sums = {}
-    for code in variable_categories:
-        header.append(code)
-        sums[code] = 0
-    for v in data:
-        sums[v.rstrip()] += 1
-    value = list(map(lambda h: sums[h], header))
-    if group and group_type != "real":
-        # Histogram using grouping variable
-        cat_header = []
-        value = []
-        n = len(header)  # number of possible values for this variable
-        for gc in group_categories:
-            cat_header += header
-            category += [gc] * n
-            cat_data = []  # Store only data for the current gc
-            for v, g in zip(data, group_data):
-                if str(gc).rstrip() == str(g).rstrip():
-                    cat_data.append(v)
-            hist = [0] * n
-            for d in cat_data:
-                hist[header.index(str(d).rstrip())] += 1
-            value += hist
-        header = cat_header
-    return category, header, value
-
-
-def histo_integer(category, data, group, group_categories, group_data, group_type):
-    data = [int(d) for d in data]
-    h_min = min(data)
-    h_max = max(data)
-    h_step = ((h_max - h_min) // bins) + 1
-    histogram = numpy.histogram(data, bins=numpy.arange(h_min, h_max + (2 * h_step), h_step))
-    header = histogram[1].tolist()
-    value = histogram[0].tolist()
-    header = [int(h) for h in header]
-    if group and group_type != "real":
-        # Histogram using grouping variable
-        cat_header = []
-        value = []
-        for gc in group_categories:
-            category += [gc] * len(header)
-            cat_data = []  # Store only data for the current gc
-            for v, g in zip(data, group_data):
-                if str(gc).rstrip() == str(g).rstrip():
-                    cat_data.append(int(v))
-            histogram = numpy.histogram(cat_data, bins=header)
-            cat_header += histogram[1].tolist()
-            value += histogram[0].tolist()
-        header = cat_header
-    return category, header, value
-
-
-def histo_real(category, data, group, group_categories, group_data, group_type):
-    data = [float(d) for d in data]
-    histogram = numpy.histogram(data, bins=bins)
-    header = histogram[1].tolist()
-    value = histogram[0].tolist()
-    if group and group_type != "real":
-        # Histogram using grouping variable
-        cat_header = []
-        value = []
-        for gc in group_categories:
-            category += [gc] * bins
-            cat_data = []
-            for v, g in zip(data, group_data):
-                if str(gc).rstrip() == str(g).rstrip():
-                    cat_data.append(float(v))
-            histogram = numpy.histogram(cat_data, bins=header)
-            cat_header += histogram[1].tolist()
-            value += histogram[0].tolist()
-        header = cat_header
-    return category, header, value
-
-
-def generate_pfa(algo_code, algo_name, docker_image, model, variable, grps, results):
-    str_grps = '","'.join(grps)
-    output = ('''
-{
-  "code": "%s",
-  "name": "%s",
-  "cells": {
-    "validations": [],
-    "data": {
-      "init": %s,
-      "type": {
-        "type": "array",
-        "doc": "Histograms computation",
-        "items":
-          {
-            "type": {
-              "namespace": "%s",
-              "type": "record",
-              "fields": [
-                {
-                  "type": "string",
-                  "doc": "Shape",
-                  "name": "shape"
-                },
-                {
-                  "type": "array",
-                  "items": "string",
-                  "doc": "Categories",
-                  "name": "categories"
-                },
-                {
-                  "type": "array",
-                  "items": "string",
-                  "doc": "Header",
-                  "name": "header"
-                },
-                {
-                  "type": "array",
-                  "items": "int",
-                  "doc": "Value",
-                  "name": "value"
-                }
-              ]
+        "title": {"text": title},
+        "xAxis": {"categories": categories_labels},
+        "yAxis": {
+            "allowDecimals": False,
+            "min": 0,
+            "title": {
+                "text": 'Number of participants'
             }
-          },
-        "name": "Histograms"
-      }
-    },
-    "query": {
-      "init": {
-        "grouping": ["%s"],
-        "variable": "%s"
-      },
-      "type": {
-        "type": "record",
-        "doc": "Definition of the inputs",
-        "fields": [
-          {
-            "type": {
-              "type": "string"
-            },
-            "doc": "Main histogram variable",
-            "name": "variable"
-          },
-          {
-            "type": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            "doc": "Categories used for specific histograms",
-            "name": "groups"
-          }
-        ],
-        "name": "Query"
-      }
+        },
+        "series": series
     }
-  },
-  "doc": "Histograms computation",
-  "metadata": {
-    "docker_image": "%s"
-  },
-  "output": {
-    "type": "null"
-  },
-  "action": [
-    null
-  ],
-  "input": {
-    "type": "null"
-  }
-}
-    ''' % (algo_code, algo_name, results, model, str_grps, variable, docker_image))
-    return output
+    return histo
+
+
+def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
+    if is_nominal(dep_var):
+        categories = [str(c) for c in dep_var['type']['enumeration']]
+        categories_labels = categories
+    elif is_integer(dep_var):
+        values = dep_var['series']
+        minimum = min(values)
+        maximum = max(values)
+        step = math.ceil((maximum - minimum) / nb_bins)
+        categories = list(arange(minimum, maximum, step).tolist())
+        categories_labels = ["%d - %d" % (v, v + step) for v in categories]
+    else:
+        values = dep_var['series']
+        minimum = min(values)
+        maximum = max(values)
+        step = (maximum - minimum) / nb_bins
+        categories = list(arange(minimum, maximum, step).tolist())
+        categories_labels = ["%s - %s" % ("{:.2f}".format(v), "{:.2f}".format(v + step)) for v in categories]
+        categories.append(categories[-1] + step)
+    return categories, categories_labels
+
+
+def compute_series(dep_var, categories, indep_var=None):
+    series = list()
+    if is_nominal(dep_var):
+        if not indep_var:
+            series.append({"name": "all", "data": count(dep_var['series'], categories)})
+        else:
+            for series_name in indep_var['type']['enumeration']:
+                filtered_data = [v for v, d in zip(dep_var['series'], indep_var['series']) if d == series_name]
+                series.append({"name": series_name, "data": count(filtered_data, categories)})
+    else:
+        if not indep_var:
+            series.append({"name": 'all', "data": [int(i) for i in histogram(dep_var['series'], categories)[0]]})
+        else:
+            for series_name in indep_var['type']['enumeration']:
+                filtered_data = [v for v, d in zip(dep_var['series'], indep_var['series']) if d == series_name]
+                series.append({"name": series_name, "data": [int(i) for i in histogram(filtered_data, categories)[0]]})
+    return series
+
+
+def count(data, categories):
+    items_count = OrderedDict([(c, 0) for c in categories])
+    for v in data:
+        try:
+            items_count[str(v)] += 1
+        except KeyError:
+            logging.warning("Unknown category %s" % str(v))
+    return list(items_count.values())
+
+
+def get_bins_param(params_list, param_name):
+    for p in params_list:
+        if p["name"] == param_name:
+            try:
+                return int(p["value"])
+            except ValueError:
+                logging.warning("%s cannot be cast to integer !")
+    logging.info("Using default number of bins: %s" % DEFAULT_BINS)
+    return DEFAULT_BINS
+
+
+def is_nominal(var):
+    return var['type']['name'] in ['binominal', 'polynominal']
+
+
+def is_integer(var):
+    return var['type']['name'] in ['integer']
 
 
 if __name__ == '__main__':

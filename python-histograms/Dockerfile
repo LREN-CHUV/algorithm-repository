@@ -1,12 +1,26 @@
-FROM hbpmip/python-mip:d2c0f87
+FROM hbpmip/python-mip:0.2.2
+
+MAINTAINER mirco.nasuti@chuv.ch
+
+ENV DOCKER_IMAGE=hbpmip/python-histograms:0.2.0 \
+    FUNCTION=python-histograms
 
 COPY requirements.txt /requirements.txt
-COPY histograms.py /main.py
+COPY histograms.py /histograms.py
 
 RUN pip install -r /requirements.txt
 
-ENV DOCKER_IMAGE=hbpmip/python-histograms
-ENV MODEL histograms
-ENV FUNCTION python-histograms
-ENV CODE histo
-ENV NAME Histograms
+ENTRYPOINT ["python", "/histograms.py"]
+
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="hbpmip/python-histograms" \
+      org.label-schema.description="Python implementation of Histograms" \
+      org.label-schema.url="https://github.com/LREN-CHUV/algorithm-repository" \
+      org.label-schema.vcs-type="git" \
+      org.label-schema.vcs-url="https://github.com/LREN-CHUV/algorithm-repository.git" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.version="$VERSION" \
+      org.label-schema.vendor="LREN CHUV" \
+      org.label-schema.license="AGPLv3" \
+      org.label-schema.docker.dockerfile="Dockerfile" \
+      org.label-schema.schema-version="1.0"
