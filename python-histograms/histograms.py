@@ -35,19 +35,20 @@ def main():
 def compute_histograms(dep_var, indep_vars, nb_bins=DEFAULT_BINS):
     histograms = list()
     histograms.append(compute_histogram(dep_var, nb_bins=nb_bins))
-    for indep_var in indep_vars:
-        histograms.append(compute_histogram(dep_var, indep_var, nb_bins))
+    grouping_vars = [indep_var for indep_var in indep_vars if is_nominal(indep_var)]
+    for grouping_var in grouping_vars:
+        histograms.append(compute_histogram(dep_var, grouping_var, nb_bins))
     return json.dumps(histograms)
 
 
-def compute_histogram(dep_var, indep_var=None, nb_bins=DEFAULT_BINS):
+def compute_histogram(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
     label = "Histogram"
     title = '%s histogram' % dep_var['name']
-    if indep_var:
-        label += " - %s" % indep_var["name"]
-        title += " by %s" % indep_var["name"]
+    if grouping_var:
+        label += " - %s" % grouping_var["name"]
+        title += " by %s" % grouping_var["name"]
     categories, categories_labels = compute_categories(dep_var, nb_bins)
-    series = compute_series(dep_var, categories, indep_var)
+    series = compute_series(dep_var, categories, grouping_var)
     histo = {
         "chart": {"type": 'column'},
         "label": label,
@@ -87,21 +88,21 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
     return categories, categories_labels
 
 
-def compute_series(dep_var, categories, indep_var=None):
+def compute_series(dep_var, categories, grouping_var=None):
     series = list()
     if is_nominal(dep_var):
-        if not indep_var:
+        if not grouping_var:
             series.append({"name": "all", "data": count(dep_var['series'], categories)})
         else:
-            for series_name in indep_var['type']['enumeration']:
-                filtered_data = [v for v, d in zip(dep_var['series'], indep_var['series']) if d == series_name]
+            for series_name in grouping_var['type']['enumeration']:
+                filtered_data = [v for v, d in zip(dep_var['series'], grouping_var['series']) if d == series_name]
                 series.append({"name": series_name, "data": count(filtered_data, categories)})
     else:
-        if not indep_var:
+        if not grouping_var:
             series.append({"name": 'all', "data": [int(i) for i in histogram(dep_var['series'], categories)[0]]})
         else:
-            for series_name in indep_var['type']['enumeration']:
-                filtered_data = [v for v, d in zip(dep_var['series'], indep_var['series']) if d == series_name]
+            for series_name in grouping_var['type']['enumeration']:
+                filtered_data = [v for v, d in zip(dep_var['series'], grouping_var['series']) if d == series_name]
                 series.append({"name": series_name, "data": [int(i) for i in histogram(filtered_data, categories)[0]]})
     return series
 
