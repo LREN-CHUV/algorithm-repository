@@ -1,44 +1,46 @@
 #!/usr/bin/env python3
 
 import logging
-import database_connector  # Library coming from the parent Docker image and used to manage input/output data
+from io_helper import io_helper # Library coming from the parent Docker image and used to manage input/output data
 import subprocess
 import os
 import sys
 import numpy as np
 import tempfile
 import scipy.stats
-import pandas
+import pandas as pd
 import json
 import re
+import colorsys
 
 
 def main():
     logging.basicConfig(level=logging.INFO)
 
-    # Get variables names
-    # Note - this implementation does not distinguish between vars and covars
-    # they are all treated as tsne dimensions. All the data retrieved
-    # is used to create the embedding.
-    # TODO Discover if these assumptions are correct. If not it's easy to change...
-    var = database_connector.get_var()  # Dependent variable
-    gvars = database_connector.get_gvars()  # Independent nominal variables
-    cvars = database_connector.get_covars()  # Independent continuous variables
-    covs = [x for x in (gvars + cvars) if len(x) > 0]  # All independent variables
+    inputs = io_helper.fetch_data()
 
-    # Check dependent variable type
-    if database_connector.var_type(var)['type'] not in ["integer", "real"]:
-        sys.exit("Dependent variable should be continuous !")
+    # Dependent variable for tsne this might be the labels - this is optional
+    labels = None
+    dependent = inputs["data"].get("dependent", [])
+    if len(dependent) > 0:
+        dep_var = dependent[0]
+        labels = dep_var["series"]
+    inped_vars = inputs["data"]["independent"]  # For tsne the data dimensions
 
-    # Get data
-    data = database_connector.fetch_data()
-    df = pandas.DataFrame(data['data'], columns=data['columns'])
-    convdf = df.apply(lambda x: pandas.to_numeric(x))
+
+
+    if not data_types_in_allowed(inped_vars, ["integer", "real"]):
+        logging.warning("Independent variables should be continuous !")
+        return None
+    #
+    data = format_independent_data(inputs["data"])
+    df = pd.DataFrame.from_dict(data)
+    source_dimensions = df.shape[1] # number of columns
+    num_points = df.shape[0]   # number of samples/points
+
+    convdf = df.apply(lambda x: pd.to_numeric(x))
     # Write the data to a temporary file
     f = tempfile.NamedTemporaryFile(delete=False)
-
-    source_dimensions = len(data['columns'])  # source dimensions
-    num_points = len(data['data'])   # number of samples/points
     input = convdf.values.astype(np.float32)
 
     # Get the parameters (optional)
@@ -47,24 +49,22 @@ def main():
     target_dimensions = 2
     iterations = 1000
     do_zscore = True
+
     try:
-        perplexity_str = os.getenv('PARAM_MODEL_perplexity', '30')
-        perplexity = int(perplexity_str)
-        theta_str = os.getenv('PARAM_MODEL_theta', '0.5')
-        theta = float(theta_str)
-        iterations_str = os.getenv('PARAM_MODEL_iterations', '1000')
-        iterations = int(iterations_str)
-        target_dimensions_str = os.getenv('PARAM_MODEL_target_dimensions', '2')
-        target_dimensions = int(target_dimensions_str)
-        do_zscore_str = os.getenv('PARAM_MODEL_do_zscore', 'True')
+        perplexity = get_parameter(inputs['parameters'], 'perplexity', perplexity)
+        theta = get_parameter(inputs['parameters'], 'theta', theta)
+        target_dimensions = get_parameter(inputs['parameters'], 'target_dimensions', target_dimensions)
+        iterations = get_parameter(inputs['parameters'], 'iterations', iterations)
+        do_zscore_str = get_parameter(inputs['parameters'], 'do_zscore', str(do_zscore))
         if do_zscore_str == 'True':
             do_zscore = True
         elif do_zscore_str == 'False':
             do_zscore = False
         else:
             raise ValueError
+
     except ValueError as e:
-        logging.error("Could not convert supplied parameter to numeric value, error: ", e)
+        logging.error("Could not convert supplied parameter to value, error: ", e)
         raise
     except:
         logging.error(" Unexpected error:", sys.exec_info()[0])
@@ -87,12 +87,43 @@ def main():
     chart = generate_scatterchart(output, perplexity, theta, iterations)
 
     error = ''
-    shape = 'highchart_json'
+    shape = 'application/highcharts+json'
 
     logging.info("Highchart: %s", chart)
-    database_connector.save_results(chart, error, shape)
+    io_helper.save_results(chart, error, shape)
 
     # print("Chart is ", chart)
+
+def format_data(input_data):
+    all_vars = input_data["dependent"] + input_data["independent"]
+    data = {v["name"]: v["series"] for v in all_vars}
+    return data
+
+def format_independent_data(input_data):
+    data = {v["name"]: v["series"] for v in input_data["independent"]}
+    return data
+
+def data_types_in_allowed(data, allowed_types):
+    for var_info in data:
+        if var_info["type"]["name"] not in allowed_types:
+            logging.warning("Variable should be one of  !")
+            return False
+    return True
+
+def get_parameter(params_list, param_name, default_value):
+    """
+    Params are a list where each list item is a dict containing
+    the keys 'name' and 'value'
+    :param params_list: the params list
+    :param param_name: the 'name' to extract
+    :param default_value: a default value if 'name' is not present
+    :return:
+    """
+    for p in params_list:
+        if p["name"] == param_name:
+            return p["value"]
+    return default_value
+
 
 
 def testPlot(npdata):
@@ -107,6 +138,7 @@ def testPlot(npdata):
     colors = (0, 0, 0)
     plt.scatter(x, y, c=colors)
     plt.show()
+
 
 # atsne
 def a_tsne(inputFilePath, outputFilePath, num_points,
@@ -143,7 +175,7 @@ def a_tsne(inputFilePath, outputFilePath, num_points,
     data = np.reshape(data, (-1, 2))
     return data
 
-def generate_scatterchart(data, perplexity, theta, iterations):
+def generate_scatterchart(data, labels, perplexity, theta, iterations):
     """
         Generate json configuration for Highcharts to display the
         tsne plot.
@@ -160,7 +192,9 @@ def generate_scatterchart(data, perplexity, theta, iterations):
             'zoomType': 'xy'
         },
         'title': {
-            'text': "a-tSNE embedding for: " + ','.join([database_connector.get_var()] +  database_connector.get_covars())
+            'text': "a-tSNE embedding for: " + ','.join(
+                [io_helper.fetch_data()["data"]["dependent"][0]] +
+                io_helper.fetch_data()["data"]["independent"])
         },
         'subtitle': {
             'text': 'tSNE params: perplexity {}, theta {}, iterations {}'.format(perplexity, theta, iterations)
@@ -180,7 +214,7 @@ def generate_scatterchart(data, perplexity, theta, iterations):
                 'text': 'tsne2'
             },
             'labels': {
-                'enabled': False
+                'enabled': labels is not None
             }
         },
         'plotOptions': {
@@ -201,6 +235,29 @@ def generate_scatterchart(data, perplexity, theta, iterations):
     # de-quote the keys - compatible with javascript
     return re.subn(r"\"(\w+)\"(:)", r"\1\2", json_str)[0]
 
+
+def get_chart_seriex(data, labels):
+    # no labels to differentiate the data everything in one big group
+    if labels in None :
+        return [{
+            'name': 'tSNE Embedding',
+            'color': 'rgba(223, 83, 83, .5)',
+            'data': data.tolist()
+        }]
+    # otherwise group the data per label
+    series_list = []
+    unique_labels = list(set(labels))
+    n_labels = len(unique_labels)
+    hsv_colors = [(x*1.0/n_labels, 0.5, 0.5) for x in range(n_labels)]
+    rgb_colors = [colorsys.hsv_to_rgb(*x) for x in hsv_colors]
+    label_array = np.array(labels).reshape(-1,1)
+    for idx, label in enumerate(unique_labels):
+        mask = label_array == label
+        sub_data = data[mask,:]
+        series = {
+            'name': label,
+            'color': 'rgba({}, {}, {}, .5'.format()
+        }
 
 
 
