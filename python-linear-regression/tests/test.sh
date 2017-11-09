@@ -47,8 +47,8 @@ $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
 echo
-echo "Run the Anova algorithm..."
-$DOCKER_COMPOSE run anova compute
+echo "Run the linear-regression algorithm..."
+$DOCKER_COMPOSE run linear-regression compute
 
 echo
 # Cleanup

@@ -2,19 +2,19 @@ FROM hbpmip/python-mip:0.2.2
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-anova:0.3.1 \
-    FUNCTION=python-anova
+ENV DOCKER_IMAGE=hbpmip/python-linear-regression:0.0.2 \
+    FUNCTION=python-linear-regression
 
 COPY requirements.txt /requirements.txt
-COPY anova.py /anova.py
+COPY linear_regression.py /linear_regression.py
 
 RUN pip install -r /requirements.txt
 
-ENTRYPOINT ["python", "/anova.py"]
+ENTRYPOINT ["python", "/linear_regression.py"]
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
-      org.label-schema.name="hbpmip/python-anova" \
-      org.label-schema.description="Python implementation of Anova" \
+      org.label-schema.name="hbpmip/python-linear-regression" \
+      org.label-schema.description="Python implementation of linear-regression" \
       org.label-schema.url="https://github.com/LREN-CHUV/algorithm-repository" \
       org.label-schema.vcs-type="git" \
       org.label-schema.vcs-url="https://github.com/LREN-CHUV/algorithm-repository.git" \

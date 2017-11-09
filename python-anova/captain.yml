@@ -5,3 +5,5 @@ target_image:
     - echo "Preparing python-anova"
   post:
     - echo "Finished python-anova"
+  test:
+    - ./tests/test.sh

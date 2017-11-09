@@ -1,13 +1,22 @@
-# Python Histograms
+[![CHUV](https://img.shields.io/badge/CHUV-LREN-AF4C64.svg)](https://www.unil.ch/lren/en/home.html) [![DockerHub](https://img.shields.io/badge/docker-hbpmip%2Fpython--histograms-008bb8.svg)](https://hub.docker.com/r/hbpmip/python-anova/)
+[![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/python-histograms.svg)](https://hub.docker.com/r/hbpmip/python-anova/tags "hbpmip/python-anova image tags")
+[![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/python-histograms.svg)](https://microbadger.com/#/images/hbpmip/python-anova "hbpmip/python-anova on microbadger")
 
-## What is it ?
+# Python Anova
 
-This is a Python script that generates histograms.
+This is a Python implementation of Anova.
 
-## How to build a Docker image
+
+## Build (for contributors)
 
 Run: `./build.sh`
 
-## How to try it when developing
 
-Run: `./dev.sh`
+## Test (for contributors)
+
+Run: `./tests/test.sh`
+
+
+## Publish (for contributors)
+
+Run: `./publish.sh`

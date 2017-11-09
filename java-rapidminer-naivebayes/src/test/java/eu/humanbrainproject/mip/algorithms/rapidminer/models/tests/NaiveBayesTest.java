@@ -19,9 +19,9 @@ import eu.humanbrainproject.mip.algorithms.rapidminer.naivebayes.NaiveBayesModel
 import eu.humanbrainproject.mip.algorithms.rapidminer.naivebayes.NaiveBayesSerializer;
 import eu.humanbrainproject.mip.algorithms.rapidminer.serializers.pfa.RapidMinerAlgorithmSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import scala.Option;
 import scala.collection.immutable.HashMap;
 
@@ -29,12 +29,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
  * @author Arnaud Jutzeler
  */
+@DisplayName("With a RapidMiner Naive Bayes algorithm,")
 public class NaiveBayesTest {
 
     private String performClassificationContinuousInput(String[] featureNames, double[][] data, String[] labels, double[] test) throws Exception {
@@ -54,7 +56,7 @@ public class NaiveBayesTest {
         assertTrue(results != null);
         assertTrue(!results.contains("error"));
 
-        System.out.println(results);
+        System.out.println(algorithm.toPrettyPFA());
 
         PFAEngine<Object, Object> engine = getPFAEngine(results);
         Map<String, Double> inputs = Maps.newHashMap();
@@ -70,9 +72,9 @@ public class NaiveBayesTest {
     }
 
     @Test
+    @DisplayName("We can perform binary Naive Bayes classification on two features")
     public void testBinaryClassificationWithContinuousInput2Features() throws Exception {
 
-        System.out.println("We can perform binary Naive Bayes classification on two features");
         final String[] featureNames = new String[]{"input1", "input2"};
         double[][] data = new double[][]{
                 {1.2, 2.4},
@@ -87,7 +89,7 @@ public class NaiveBayesTest {
 
         // Distributions
         //       input 1           input 2
-        // YES   (3.35, 9.103333)    (3.525, 3.289167)
+        // YES   (3.35, 9.103333)  (3.525, 3.289167)
         // NO    (4.9, 2.79)       (12.93333, 83.60333)
 
 
@@ -98,13 +100,13 @@ public class NaiveBayesTest {
         double[] test = new double[]{7.6, 5.4};
 
         String result = performClassificationContinuousInput(featureNames, data, labels, test);
-        Assert.assertEquals(result, "YES");
+        assertEquals(result, "YES");
     }
 
     @Test
+    @DisplayName("We can perform multinominal Naive Bayes classification on two features")
     public void testMultinominalClassificationWithContinuousInput2Features() throws Exception {
 
-        System.out.println("We can perform multinominal Naive Bayes classification on two features");
         final String[] featureNames = new String[]{"input1", "input2"};
         double[][] data = new double[][]{
                 {1.2, 2.4},
@@ -124,13 +126,13 @@ public class NaiveBayesTest {
 
         double[] test = new double[]{5.6, 23.4};
         String result = performClassificationContinuousInput(featureNames, data, labels, test);
-        Assert.assertEquals(result, "NO");
+        assertEquals(result, "NO");
     }
 
     @Test
+    @DisplayName("We can perform multinominal Naive Bayes classification on two features")
     public void testMultinominalClassificationWithContinuousInput2FeaturesV2() throws Exception {
 
-        System.out.println("We can perform multinominal Naive Bayes classification on two features");
         final String[] featureNames = new String[]{"input1", "input2"};
         double[][] data = new double[][]{
                 {1.2, 2.4},
@@ -150,7 +152,7 @@ public class NaiveBayesTest {
 
         double[] test = new double[]{4.6, 23.4};
         String result = performClassificationContinuousInput(featureNames, data, labels, test);
-        Assert.assertEquals(result, "MAYBE");
+        assertEquals(result, "MAYBE");
     }
 
     class NominalClassificationInputData extends InputData {
@@ -215,7 +217,7 @@ public class NaiveBayesTest {
         assertTrue(results != null);
         assertTrue(!results.contains("error"));
 
-        System.out.println(results);
+        System.out.println(algorithm.toPrettyPFA());
 
         PFAEngine<Object, Object> engine = getPFAEngine(results);
         Map<String, String> inputs = Maps.newHashMap();
@@ -231,26 +233,26 @@ public class NaiveBayesTest {
     }
 
     @Test
-    @Ignore("Not working currently")
+    //@Disabled("Not working currently")
+    @DisplayName("We can perform binary Naive Bayes classification on two features")
     public void testClassificationWithNominalInput() throws Exception {
 
-        System.out.println("We can perform binary Naive Bayes classification on two features");
         final String[] featureNames = new String[]{"input1", "input2"};
         String[][] data = new String[][]{
-                {"_0", "_1"},
-                {"_1", "_1"},
-                {"_0", "_1"},
-                {"_2", "_1"},
-                {"_2", "_0"},
-                {"_0", "_1"},
-                {"_1", "_1"}
+                {"0", "1"},
+                {"1", "1"},
+                {"0", "1"},
+                {"2", "1"},
+                {"2", "0"},
+                {"0", "1"},
+                {"1", "1"}
         };
         String[] labels = new String[]{"YES", "NO", "YES", "NO", "NO", "YES", "NO"};
 
-        String[] test = new String[]{"_0", "_1"};
+        String[] test = new String[]{"0", "1"};
 
         String result = performClassificationNominalInput(featureNames, data, labels, test);
-        Assert.assertEquals(result, "YES");
+        assertEquals(result, "YES");
 
     }
 

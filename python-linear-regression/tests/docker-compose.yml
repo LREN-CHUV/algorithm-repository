@@ -61,9 +61,9 @@ services:
     depends_on:
       - db
 
-  knn:
-    image: "hbpmip/java-rapidminer-knn:latest"
-    container_name: "knn"
+  linear-regression:
+    image: "hbpmip/python-linear-regression:latest"
+    container_name: "linear-regression"
     restart: "no"
     environment:
       NODE: job_test
@@ -77,8 +77,10 @@ services:
       OUT_JDBC_USER: woken
       OUT_JDBC_PASSWORD: wokenpwd
       PARAM_variables: "score_test1"
-      PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
+      PARAM_covariables: "stress_before_test1,iq"
+      PARAM_grouping: ""
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
-      MODEL_PARAM_k: 4
+      PARAM_meta: "{\"score_test1\":{\"code\":\"score_test1\",\"type\":\"real\"},\"stress_before_test1\":{\"code\":\"stress_before_test1\",\"type\":\"real\"},\"iq\":{\"code\":\"iq\",\"type\":\"real\"},\"cognitive_task2\":{\"code\":\"cognitive_task2\",\"type\":\"real\"},\"practice_task2\":{\"code\":\"practice_task2\",\"type\":\"real\"},\"response_time_task2\":{\"code\":\"response_time_task2\",\"type\":\"real\"},\"college_math\":{\"code\":\"college_math\",\"type\":\"real\"},\"score_math_course1\":{\"code\":\"score_math_course1\",\"type\":\"real\"},\"score_math_course2\":{\"code\":\"score_math_course2\",\"type\":\"real\"}}"
+      MODEL_PARAM_design: "factorial"
     links:
       - "db:db"

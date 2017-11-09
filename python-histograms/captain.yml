@@ -1,7 +1,9 @@
-python-histograms:
+target_image:
   build: Dockerfile
   image: hbpmip/python-histograms
   pre:
     - echo "Preparing python-histograms"
   post:
     - echo "Finished python-histograms"
+  test:
+    - ./tests/test.sh

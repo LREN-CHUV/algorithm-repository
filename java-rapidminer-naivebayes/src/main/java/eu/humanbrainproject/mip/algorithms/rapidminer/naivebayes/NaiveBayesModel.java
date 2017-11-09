@@ -2,10 +2,13 @@ package eu.humanbrainproject.mip.algorithms.rapidminer.naivebayes;
 
 import com.rapidminer.operator.learner.bayes.NaiveBayes;
 import com.rapidminer.operator.learner.bayes.SimpleDistributionModel;
+import eu.humanbrainproject.mip.algorithms.Algorithm.AlgorithmCapability;
 import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -23,6 +26,13 @@ import java.util.Map;
  */
 public class NaiveBayesModel extends RapidMinerModel<SimpleDistributionModel> {
 
+	private static final Set<AlgorithmCapability> CAPABILITIES = new HashSet<>();
+
+	static {
+		CAPABILITIES.add(AlgorithmCapability.PREDICTIVE_MODEL);
+		CAPABILITIES.add(AlgorithmCapability.CLASSIFICATION);
+	}
+
 	public NaiveBayesModel() {
 		super(NaiveBayes.class);
 	}
@@ -30,6 +40,11 @@ public class NaiveBayesModel extends RapidMinerModel<SimpleDistributionModel> {
 	@Override
 	public Map<String, String> getParameters() {
 		return Collections.emptyMap();
+	}
+
+	@Override
+	public Set<AlgorithmCapability> getCapabilities() {
+		return CAPABILITIES;
 	}
 
 }

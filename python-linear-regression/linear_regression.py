@@ -7,12 +7,8 @@ import json
 
 from pandas import DataFrame
 from statsmodels.formula.api import ols
-from statsmodels.stats.anova import anova_lm
 
-DESIGN_PARAM = "design"
-DEFAULT_DESIGN = "factorial"
-
-DEFAULT_DOCKER_IMAGE = "python-anova"
+DEFAULT_DOCKER_IMAGE = "python-linear-regression"
 
 
 def main():
@@ -23,7 +19,6 @@ def main():
     inputs = io_helper.fetch_data()
     dep_var = inputs["data"]["dependent"][0]
     inped_vars = inputs["data"]["independent"]
-    design = get_parameter(inputs["parameters"], DESIGN_PARAM)
 
     # Check dependent variable type (should be continuous)
     if dep_var["type"]["name"] not in ["integer", "real"]:
@@ -33,11 +28,11 @@ def main():
     # Extract data and parameters from inputs
     data = format_data(inputs["data"])
 
-    # Compute anova and generate PFA output
-    anova_results = format_output(compute_anova(dep_var, inped_vars, data, design).to_dict())
+    # Compute linear-regression and generate PFA output
+    linear_regression_results = format_output(compute_linear_regression(dep_var, inped_vars, data))
 
     # Store results
-    io_helper.save_results(anova_results, '', 'application/highcharts+json')
+    io_helper.save_results(linear_regression_results, '', 'application/highcharts+json')
 
 
 def format_data(input_data):
@@ -50,29 +45,21 @@ def format_output(statsmodels_dict):
     return json.dumps(DataFrame.from_dict(statsmodels_dict).transpose().fillna("NaN").to_dict())
 
 
-def get_parameter(params_list, param_name):
-    for p in params_list:
-        if p["name"] == param_name:
-            return p["value"]
-    return DEFAULT_DESIGN
-
-
-def compute_anova(dep_var, indep_vars, data, design='factorial'):
-    formula = generate_formula(dep_var, indep_vars, design)
+def compute_linear_regression(dep_var, indep_vars, data):
+    formula = generate_formula(dep_var, indep_vars)
     logging.info("Formula: %s" % formula)
     lm = ols(data=data, formula=formula).fit()
     logging.info(lm.summary())
-    return anova_lm(lm)
+    return {
+        "coef": dict(lm.params),
+        "std_err": dict(lm.bse),
+        "t_values": dict(lm.tvalues),
+        "p_values": dict(lm.pvalues)
+    }
 
 
-def generate_formula(dep_var, indep_vars, design):
-    if design == 'additive':
-        op = " + "
-    elif design == 'factorial':
-        op = " * "
-    else:
-        logging.error("Invalid design parameter : %s" % design)
-        return None
+def generate_formula(dep_var, indep_vars):
+    op = " + "
     dep_var = dep_var["name"]
     indep_vars = [v["name"] if v["type"]["name"] in ["integer", "real"]
                   else str.format("C(%s)" % v["name"]) for v in indep_vars]

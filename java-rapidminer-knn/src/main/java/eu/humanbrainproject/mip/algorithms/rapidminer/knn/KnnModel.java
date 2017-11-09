@@ -2,11 +2,14 @@ package eu.humanbrainproject.mip.algorithms.rapidminer.knn;
 
 import com.rapidminer.operator.learner.UpdateablePredictionModel;
 import com.rapidminer.operator.learner.lazy.KNNLearner;
+import eu.humanbrainproject.mip.algorithms.Algorithm.AlgorithmCapability;
 import eu.humanbrainproject.mip.algorithms.Configuration;
 import eu.humanbrainproject.mip.algorithms.rapidminer.models.RapidMinerModel;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * KnnModel predictive model with simple Euclidean distance
@@ -23,6 +26,12 @@ public class KnnModel extends RapidMinerModel<UpdateablePredictionModel> {
 
     private static final Map<String, String> PARAMS = Collections.singletonMap("k", "2");
 
+    private static final Set<AlgorithmCapability> CAPABILITIES = new HashSet<>();
+
+    static {
+        CAPABILITIES.add(AlgorithmCapability.PREDICTIVE_MODEL);
+        CAPABILITIES.add(AlgorithmCapability.CLASSIFICATION);
+    }
 
     public KnnModel() {
         super(KNNLearner.class);
@@ -31,6 +40,11 @@ public class KnnModel extends RapidMinerModel<UpdateablePredictionModel> {
     @Override
     public Map<String, String> getParameters() {
         return Configuration.INSTANCE.algorithmParameterValues(PARAMS);
+    }
+
+    @Override
+    public Set<AlgorithmCapability> getCapabilities() {
+        return CAPABILITIES;
     }
 
 }

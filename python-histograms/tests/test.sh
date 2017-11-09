@@ -47,8 +47,8 @@ $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
 echo
-echo "Run the Anova algorithm..."
-$DOCKER_COMPOSE run anova compute
+echo "Run the Histograms algorithm..."
+$DOCKER_COMPOSE run histograms compute
 
 echo
 # Cleanup
