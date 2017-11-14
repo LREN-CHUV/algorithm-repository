@@ -3,7 +3,6 @@
 import logging
 from io_helper import io_helper # Library coming from the parent Docker image and used to manage input/output data
 import subprocess
-import os
 import sys
 import numpy as np
 import tempfile
@@ -22,14 +21,11 @@ def main():
     # Dependent variable for tsne this might be the labels - this is optional
     labels = None
     dependent = inputs["data"].get("dependent", [])
-    if len(dependent) > 0:
-        dep_var = dependent[0]
-        labels = dep_var["series"]
-    inped_vars = inputs["data"]["independent"]  # For tsne the data dimensions
+    indep_vars = inputs["data"]["independent"]  # For tsne the data dimensions
 
 
 
-    if not data_types_in_allowed(inped_vars, ["integer", "real"]):
+    if not data_types_in_allowed(indep_vars, ["integer", "real"]):
         logging.warning("Independent variables should be continuous !")
         return None
     #
@@ -42,6 +38,7 @@ def main():
     # Write the data to a temporary file
     f = tempfile.NamedTemporaryFile(delete=False)
     input = convdf.values.astype(np.float32)
+    logging.debug('input {}'.format(input))
 
     # Get the parameters (optional)
     perplexity = 30
@@ -49,6 +46,7 @@ def main():
     target_dimensions = 2
     iterations = 1000
     do_zscore = True
+    dependent_is_label = True
 
     try:
         perplexity = get_parameter(inputs['parameters'], 'perplexity', perplexity)
@@ -62,6 +60,13 @@ def main():
             do_zscore = False
         else:
             raise ValueError
+        dependent_is_label_str = get_parameter(inputs['parameters'], 'dependent_is_label', str(dependent_is_label))
+        if dependent_is_label_str == 'True':
+            dependent_is_label = True
+        elif dependent_is_label_str == 'False':
+            dependent_is_label = False
+        else:
+            raise ValueError
 
     except ValueError as e:
         logging.error("Could not convert supplied parameter to value, error: ", e)
@@ -70,8 +75,13 @@ def main():
         logging.error(" Unexpected error:", sys.exec_info()[0])
         raise
     # Compute results
+
     if do_zscore:
         input = scipy.stats.zscore(input)
+
+    if len(dependent) > 0 and dependent_is_label:
+        dep_var = dependent[0]
+        labels = dep_var["series"]
 
     inputFilePath = f.name
     input.tofile(inputFilePath)
@@ -84,13 +94,16 @@ def main():
                      source_dimensions, target_dimensions, perplexity,
                      theta, iterations)
 
-    chart = generate_scatterchart(output, perplexity, theta, iterations)
+    logging.debug('output shape {}'.format(output.shape))
+    logging.debug('output {}'.format(output))
+    chart = generate_scatterchart(output, indep_vars, labels, perplexity, theta, iterations)
 
     error = ''
     shape = 'application/highcharts+json'
 
-    logging.info("Highchart: %s", chart)
+    logging.debug("Highchart: %s", chart)
     io_helper.save_results(chart, error, shape)
+    logging.info("Highchart output saved to database.")
 
     # print("Chart is ", chart)
 
@@ -167,15 +180,14 @@ def a_tsne(inputFilePath, outputFilePath, num_points,
             '-p', str(perplexity), '-i', str(iterations),
             '-t', str(theta), '-d', str(target_dimensions),
             inputFilePath,  outputFilePath,
-            str(num_points), str(source_dimensions)],
-        env={"LD_LIBRARY_PATH": "/atsne"})
+            str(num_points), str(source_dimensions)])
     print("end atsne")
     sys.stdout.flush()
     data = np.fromfile(outputFilePath, dtype=np.float32)
     data = np.reshape(data, (-1, 2))
     return data
 
-def generate_scatterchart(data, labels, perplexity, theta, iterations):
+def generate_scatterchart(data, indep_vars, labels, perplexity, theta, iterations):
     """
         Generate json configuration for Highcharts to display the
         tsne plot.
@@ -192,9 +204,8 @@ def generate_scatterchart(data, labels, perplexity, theta, iterations):
             'zoomType': 'xy'
         },
         'title': {
-            'text': "a-tSNE embedding for: " + ','.join(
-                [io_helper.fetch_data()["data"]["dependent"][0]] +
-                io_helper.fetch_data()["data"]["independent"])
+            'text': "a-tSNE embedding for: " + ', '.join([x['name'] for x in indep_vars])
+
         },
         'subtitle': {
             'text': 'tSNE params: perplexity {}, theta {}, iterations {}'.format(perplexity, theta, iterations)
@@ -224,21 +235,20 @@ def generate_scatterchart(data, labels, perplexity, theta, iterations):
                 },
             }
         },
-        'series': [{
-            'name': 'tSNE Embedding',
-            'color': 'rgba(223, 83, 83, .5)',
-            'data': data.tolist()
-        }]
+        'series': get_chart_series(data, labels)
     }
 
-    json_str =  json.dumps(chart_template)
+    json_str = json.dumps(chart_template)
     # de-quote the keys - compatible with javascript
     return re.subn(r"\"(\w+)\"(:)", r"\1\2", json_str)[0]
 
 
-def get_chart_seriex(data, labels):
+def get_chart_series(data, labels):
+    logging.debug('data shape {}'.format(data.shape))
+    logging.debug('data {}'.format(data))
+    # pydevd.settrace('localhost', port=41022, stdoutToServer=True, stderrToServer=True)  # port=41022, stdoutToServer=True, stderrToServer=True)
     # no labels to differentiate the data everything in one big group
-    if labels in None :
+    if labels is None :
         return [{
             'name': 'tSNE Embedding',
             'color': 'rgba(223, 83, 83, .5)',
@@ -253,11 +263,14 @@ def get_chart_seriex(data, labels):
     label_array = np.array(labels).reshape(-1,1)
     for idx, label in enumerate(unique_labels):
         mask = label_array == label
-        sub_data = data[mask,:]
+        sub_data = data[mask[:, 0], :]
         series = {
             'name': label,
-            'color': 'rgba({}, {}, {}, .5'.format()
+            'color': 'rgba({}, {}, {}, .5)'.format(int(rgb_colors[idx][0]*255), int(rgb_colors[idx][1]*255), int(rgb_colors[idx][2]*255)),
+            'data': sub_data.tolist()
         }
+        series_list.append(series)
+    return series_list
 
 
 

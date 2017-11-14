@@ -5,3 +5,5 @@ target_image:
     - echo "Preparing python-tsne"
   post:
     - echo "Finished python-tsne"
+  test:
+    - ./tests/test.sh
