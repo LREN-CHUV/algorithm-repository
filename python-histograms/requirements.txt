@@ -1,2 +1,2 @@
-io_helper==0.2.3
+io_helper==0.2.4
 numpy==1.13.3
