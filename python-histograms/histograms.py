@@ -21,12 +21,20 @@ def main():
 
     # Read inputs
     inputs = io_helper.fetch_data()
-    dep_var = inputs["data"]["dependent"][0]
-    inped_vars = inputs["data"]["independent"]
+    try:
+        dep_var = inputs["data"]["dependent"][0]
+    except KeyError:
+        logging.warning("Cannot find dependent variables data")
+        dep_var = []
+    try:
+        indep_vars = inputs["data"]["independent"]
+    except KeyError:
+        logging.warning("Cannot find independent variables data")
+        indep_vars = []
     nb_bins = get_bins_param(inputs["parameters"], BINS_PARAM)
 
     # Compute histograms (JSON formatted for HighCharts)
-    histograms_results = compute_histograms(dep_var, inped_vars, nb_bins)
+    histograms_results = compute_histograms(dep_var, indep_vars, nb_bins)
 
     # Store results
     io_helper.save_results(histograms_results, '', 'application/highcharts+json')
@@ -34,10 +42,11 @@ def main():
 
 def compute_histograms(dep_var, indep_vars, nb_bins=DEFAULT_BINS):
     histograms = list()
-    histograms.append(compute_histogram(dep_var, nb_bins=nb_bins))
-    grouping_vars = [indep_var for indep_var in indep_vars if is_nominal(indep_var)]
-    for grouping_var in grouping_vars:
-        histograms.append(compute_histogram(dep_var, grouping_var, nb_bins))
+    if len(dep_var) > 0:
+        histograms.append(compute_histogram(dep_var, nb_bins=nb_bins))
+        grouping_vars = [indep_var for indep_var in indep_vars if is_nominal(indep_var)]
+        for grouping_var in grouping_vars:
+            histograms.append(compute_histogram(dep_var, grouping_var, nb_bins))
     return json.dumps(histograms)
 
 
