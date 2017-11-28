@@ -51,5 +51,9 @@ echo "Run the Naive Bayes algorithm..."
 $DOCKER_COMPOSE run naive_bayes compute
 
 echo
+echo "Run PFA validator..."
+$DOCKER_COMPOSE run pfa_validator
+
+echo
 # Cleanup
 _cleanup
