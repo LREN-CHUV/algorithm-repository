@@ -6,7 +6,8 @@ Implementation of the [KNN](https://en.wikipedia.org/wiki/K-nearest_neighbors_al
 
 ## Usage
 
-```
+```sh
+
   docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-knn:0.2.1 compute
 
 ```

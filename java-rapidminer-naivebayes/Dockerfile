@@ -13,7 +13,11 @@ RUN cp /usr/share/maven/ref/settings-docker.xml /root/.m2/settings.xml \
 
 FROM hbpmip/java-rapidminer:0.9.3
 
-MAINTAINER arnaud@ahead-solutions.ch
+MAINTAINER Arnaud Jutzeler <arnaud.jutzeler@chuv.ch>
+
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
 
 ENV DOCKER_IMAGE=hbpmip/java-rapidminer-naivebayes:0.2.0 \
     JAVA_CLASSPATH=${JAVA_CLASSPATH}:/usr/share/jars/java-rapidminer-naivebayes.jar \
