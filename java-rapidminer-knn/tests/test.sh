@@ -51,5 +51,9 @@ echo "Run the KNN algorithm..."
 $DOCKER_COMPOSE run knn compute
 
 echo
+echo "Run PFA validator..."
+$DOCKER_COMPOSE run pfa_validator
+
+echo
 # Cleanup
 _cleanup
