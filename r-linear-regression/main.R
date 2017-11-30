@@ -25,7 +25,7 @@
 #'      OUT_JDBC_PASSWORD : Password for the database connection for output results
 #'
 
-suppressMessages(library(hbpjdbcconnect));
+suppressMessages(library(rmipadaptor));
 library(jsonlite);
 library(whisker);
 library(hbplregress);

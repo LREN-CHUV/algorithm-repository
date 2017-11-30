@@ -1,4 +1,4 @@
-r-linear-regression:
+target_image:
   build: Dockerfile
   image: hbpmip/r-linear-regression
   pre:

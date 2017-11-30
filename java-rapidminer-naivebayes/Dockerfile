@@ -19,7 +19,7 @@ ARG BUILD_DATE
 ARG VCS_REF
 ARG VERSION
 
-ENV DOCKER_IMAGE=hbpmip/java-rapidminer-naivebayes:0.2.0 \
+ENV DOCKER_IMAGE=hbpmip/java-rapidminer-naivebayes:$VERSION \
     JAVA_CLASSPATH=${JAVA_CLASSPATH}:/usr/share/jars/java-rapidminer-naivebayes.jar \
     JAVA_ARGS=/eu/humanbrainproject/mip/algorithms/rapidminer/naivebayes/settings.properties \
     MODEL="Naive Bayes" \

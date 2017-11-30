@@ -19,7 +19,7 @@ ARG BUILD_DATE
 ARG VCS_REF
 ARG VERSION
 
-ENV DOCKER_IMAGE=hbpmip/java-rapidminer-knn:0.2.1 \
+ENV DOCKER_IMAGE=hbpmip/java-rapidminer-knn:$VERSION \
     JAVA_CLASSPATH=${JAVA_CLASSPATH}:/usr/share/jars/java-rapidminer-knn.jar \
     JAVA_ARGS=/eu/humanbrainproject/mip/algorithms/rapidminer/knn/settings.properties \
     MODEL="k-NN" \

@@ -16,53 +16,42 @@ get_script_dir () {
      pwd
 }
 
-ROOT_DIR="$(get_script_dir)/../.."
+cd "$(get_script_dir)"
 
-OPTS=""
-OPERATION="test"
-
-if [ "$1" = "--interactive" ]; then
-  OPTS="-i -t"
-  OPERATION="R"
+if [[ $NO_SUDO || -n "$CIRCLECI" ]]; then
+  DOCKER_COMPOSE="docker-compose"
+elif groups $USER | grep &>/dev/null '\bdocker\b'; then
+  DOCKER_COMPOSE="docker-compose"
+else
+  DOCKER_COMPOSE="sudo docker-compose"
 fi
-
-echo "Starting the results database..."
-$ROOT_DIR/tests/analytics-db/start-db.sh
-echo
-echo "Starting the local database..."
-$ROOT_DIR/tests/dummy-ldsm/start-db.sh
-echo
 
 function _cleanup() {
   local error_code="$?"
-  echo "Stopping the databases..."
-  $ROOT_DIR/tests/analytics-db/stop-db.sh
-  $ROOT_DIR/tests/dummy-ldsm/stop-db.sh
+  echo "Stopping the containers..."
+  $DOCKER_COMPOSE stop | true
+  $DOCKER_COMPOSE down | true
+  $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null | true
   exit $error_code
 }
 trap _cleanup EXIT INT TERM
 
-sleep 2
+echo "Starting the databases..."
+$DOCKER_COMPOSE up -d --remove-orphans db
+$DOCKER_COMPOSE run wait_dbs
+$DOCKER_COMPOSE run create_dbs
 
-if groups $USER | grep &>/dev/null '\bdocker\b'; then
-  DOCKER="docker"
-else
-  DOCKER="sudo docker"
-fi
+echo
+echo "Initialise the databases..."
+$DOCKER_COMPOSE run sample_data_db_setup
+$DOCKER_COMPOSE run woken_db_setup
 
-$DOCKER run --rm $OPTS \
-  --link dummyldsm:indb \
-  --link analyticsdb:outdb \
-  -e NODE=job_test \
-  -e IN_JDBC_DRIVER=org.postgresql.Driver \
-  -e IN_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
-  -e IN_JDBC_URL=jdbc:postgresql://indb:5432/postgres \
-  -e IN_JDBC_USER=postgres \
-  -e IN_JDBC_PASSWORD=test \
-  -e OUT_JDBC_DRIVER=org.postgresql.Driver \
-  -e OUT_JDBC_JAR_PATH=/usr/lib/R/libraries/postgresql-9.4-1201.jdbc41.jar \
-  -e OUT_JDBC_URL=jdbc:postgresql://outdb:5432/postgres \
-  -e OUT_JDBC_USER=postgres \
-  -e OUT_JDBC_PASSWORD=test \
-  -e OUT_FORMAT=INTERMEDIATE_RESULTS \
-  hbpmip/r-linear-regression $OPERATION
+echo
+echo "Run the Linear regression algorithm..."
+$DOCKER_COMPOSE run linreg compute
+
+# TODO: run the unit tests in R
+
+echo
+# Cleanup
+_cleanup

@@ -1,6 +1,32 @@
+[![CHUV](https://img.shields.io/badge/CHUV-LREN-AF4C64.svg)](https://www.unil.ch/lren/en/home.html) [![DockerHub](https://img.shields.io/badge/docker-hbpmip%r--linear--regression-008bb8.svg)](https://hub.docker.com/r/hbpmip/r-linear-regression/) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/r-linear-regression.svg)](https://hub.docker.com/r/hbpmip/r-linear-regression/tags "hbpmip/r-linear-regression image tags") [![](https://images.microbadger.com/badges/version/hbpmip/r-linear-regression.svg)](https://microbadger.com/images/hbpmip/r-linear-regression "Get your own version badge on microbadger.com") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/r-linear-regression.svg)](https://microbadger.com/#/images/hbpmip/r-linear-regression "hbpmip/r-linear-regression on microbadger")
+
 # r-linear-regression
 
-Implementation of a linear regression in R
+Implementation of linear regression in R
+
+## Usage
+
+```sh
+
+  docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-knn:0.2.1 compute
+
+```
+
+where the environment variables are:
+
+* NODE: name of the node (machine) used for execution
+* JOB_ID: ID of the job.
+* IN_JDBC_DRIVER: org.postgresql.Driver
+* IN_JDBC_URL: URL to the input database, e.g. jdbc:postgresql://db:5432/features
+* IN_JDBC_USER: User for the input database
+* IN_JDBC_PASSWORD: Password for the input database
+* OUT_JDBC_DRIVER: org.postgresql.Driver
+* OUT_JDBC_URL: URL to the output database, jdbc:postgresql://db:5432/woken
+* OUT_JDBC_USER: User for the output database
+* OUT_JDBC_PASSWORD: Password for the output database
+* PARAM_variables: Name of the target variable (only one variable is supported for Linear regression)
+* PARAM_covariables: List of covariables
+* PARAM_query: Query selecting the variables and covariables to feed into the algorithm for training.
 
 ## Development process
 
@@ -22,8 +48,9 @@ The main build script, it packages this project into a Docker image and performs
 It requires [captain](https://github.com/harbur/captain) and [Docker engine](https://www.docker.com/) to run. If you cannot install captain on your platform, you may use the following commands to build the project:
 
 ```
+  captain build
+  # or
   docker build -t hbpmip/r-linear-regression .
-  ./tests/test.sh
 ```
 
 ### `./dev.sh`
@@ -41,12 +68,12 @@ To develop the main.R script, you should type the following in the R shell:
 
 This script performs the tests. It assumes that the image has been built before using ./build.sh
 
-It executes the Docker image and starts an input database and a result database.
+It executes the Docker image, starts an input database and a result database, then executes the algorithm using sample data for training.
 
-You can run the tests interactively using this environment with the command
+You can run the tests with the command:
 
 ```
-  ./tests/test.sh --interactive
+  ./tests/test.sh
 ```
 
 ## Validation of the PFA output
