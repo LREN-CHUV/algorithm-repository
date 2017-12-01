@@ -34,7 +34,7 @@ function _cleanup() {
   $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null | true
   exit $error_code
 }
-trap _cleanup EXIT INT TERM
+#trap _cleanup EXIT INT TERM
 
 echo "Starting the databases..."
 $DOCKER_COMPOSE up -d --remove-orphans db
@@ -50,8 +50,12 @@ echo
 echo "Run the Linear regression algorithm..."
 $DOCKER_COMPOSE run linreg compute
 
+echo
+echo "Run PFA validator..."
+$DOCKER_COMPOSE run pfa_validator
+
 # TODO: run the unit tests in R
 
 echo
 # Cleanup
-_cleanup
+#_cleanup

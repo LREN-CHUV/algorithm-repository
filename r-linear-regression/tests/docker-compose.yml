@@ -68,16 +68,44 @@ services:
     environment:
       NODE: job_test
       JOB_ID: 1
+      IN_DBI_DRIVER: PostgreSQL
       IN_JDBC_DRIVER: org.postgresql.Driver
       IN_JDBC_URL: jdbc:postgresql://db:5432/features
-      IN_JDBC_USER: features
-      IN_JDBC_PASSWORD: featurespwd
+      IN_DB_HOST: db
+      IN_DB_PORT: 5432
+      IN_DB_NAME: features
+      IN_DB_USER: features
+      IN_DB_PASSWORD: featurespwd
+      OUT_DBI_DRIVER: PostgreSQL
       OUT_JDBC_DRIVER: org.postgresql.Driver
       OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
-      OUT_JDBC_USER: woken
-      OUT_JDBC_PASSWORD: wokenpwd
+      OUT_DB_HOST: db
+      OUT_DB_PORT: 5432
+      OUT_DB_NAME: woken
+      OUT_DB_USER: woken
+      OUT_DB_PASSWORD: wokenpwd
       PARAM_variables: "score_test1"
       PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
+    links:
+      - "db:db"
+
+  pfa_validator:
+    image: "hbpmip/pfa-validator:0.9.0-0"
+    container_name: "pfa-validator"
+    environment:
+      INPUT_METHOD: POSTGRESQL
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: woken
+      DB_USER: woken
+      DB_PASSWORD: wokenpwd
+      JOB_ID: 1
+      DATASET_DB_HOST: db
+      DATASET_DB_PORT: 5432
+      DATASET_DB_NAME: features
+      DATASET_DB_USER: features
+      DATASET_DB_PASSWORD: featurespwd
+      DATASET_DB_TABLE: sample_data
     links:
       - "db:db"
