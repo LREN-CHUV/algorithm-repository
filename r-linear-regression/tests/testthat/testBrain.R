@@ -1,7 +1,7 @@
 context("Brain");
 
 library(testthat);
-library(hbpjdbcconnect);
+library(rmipadaptor);
 library(yaml);
 
 test_that("We can perform linear regression on one variable and one covariable", {

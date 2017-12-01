@@ -63,7 +63,7 @@ services:
 
   linreg:
     image: "hbpmip/r-linear-regression:latest"
-    container_name: "knn"
+    container_name: "linreg"
     restart: "no"
     environment:
       NODE: job_test

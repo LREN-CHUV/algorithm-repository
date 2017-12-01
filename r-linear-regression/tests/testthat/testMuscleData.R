@@ -1,7 +1,7 @@
 context("MuscleData");
 
 library(testthat);
-library(hbpjdbcconnect);
+library(rmipadaptor);
 library(jsonlite);
 library(yaml);
 
