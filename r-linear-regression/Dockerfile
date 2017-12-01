@@ -2,7 +2,7 @@ FROM hbpmip/r-base-build:3.4.2-2 as r-build-env
 
 RUN installGithub.r LREN-CHUV/hbplregress@f5b3ee4f4
 
-FROM hbpmip/r-mip:0.4.0
+FROM hbpmip/r-mip:0.4.1
 
 MAINTAINER ludovic.claude54@gmail.com
 
