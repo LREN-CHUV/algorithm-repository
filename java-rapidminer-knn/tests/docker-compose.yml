@@ -84,10 +84,11 @@ services:
       - "db:db"
 
   pfa_validator:
-    image: "hbpmip/pfa-validator:0.9.0-0"
+    image: "hbpmip/pfa-validator:0.10.0"
     container_name: "pfa-validator"
     environment:
       INPUT_METHOD: POSTGRESQL
+      JOB_ID: 1
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: woken
@@ -95,13 +96,11 @@ services:
       DB_PASSWORD: wokenpwd
       DB_TABLE: job_result
       DB_COLUMN: data
-      DB_WHERE_LVALUE: job_id
-      DB_WHERE_RVALUE: 1
-      DATASET_DB_HOST: db
-      DATASET_DB_PORT: 5432
-      DATASET_DB_NAME: features
-      DATASET_DB_USER: features
-      DATASET_DB_PASSWORD: featurespwd
-      DATASET_DB_TABLE: sample_data
+      FEATURES_DB_HOST: db
+      FEATURES_DB_PORT: 5432
+      FEATURES_DB_NAME: features
+      FEATURES_DB_USER: features
+      FEATURES_DB_PASSWORD: featurespwd
+      FEATURES_DB_TABLE: sample_data
     links:
       - "db:db"
