@@ -1,0 +1,1314 @@
+{
+  "name": "linear_regression",
+  "doc": "Univariate Linear Regression Model\n",
+  "metadata": {
+    "docker_image": "hbpmip/r-linear-regression:latest"
+  },
+  "input": {
+    "doc": "Input is the list of covariables and groups",
+    "name": "DependentVariables",
+    "type": "record",
+    "fields": [
+      {
+        "name": "conc",
+        "type": "double"
+      },
+      {
+        "name": "strip",
+        "type": {
+          "type": "enum",
+          "name": "Enumstrip",
+          "symbols": [
+            "S01",
+            "S02",
+            "S03",
+            "S04",
+            "S05",
+            "S06",
+            "S07",
+            "S08",
+            "S09",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17",
+            "S18",
+            "S19",
+            "S20",
+            "S21"
+          ]
+        }
+      }
+    ]
+  },
+  "output": {
+    "doc": "Output is the estimate of the variable",
+    "type": "double"
+  },
+  "cells": {
+    "query": {
+      "type": {
+        "doc": "Definition of the query that has produced this model",
+        "name": "Query",
+        "type": "record",
+        "fields": [
+          {
+            "name": "variable",
+            "type": "string",
+            "doc": "Dependent variable"
+          },
+          {
+            "name": "covariables",
+            "doc": "List of explanatory variables",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "groups",
+            "doc": "The form \\342\\200\\230first:second\\342\\200\\231 indicates the set of terms obtained by taking the interactions of all terms in \\342\\200\\230first\\342\\200\\231\nwith all terms in \\342\\200\\230second\\342\\200\\231.\nThe specification \\342\\200\\230first*second\\342\\200\\231 indicates the _cross_ of \\342\\200\\230first\\342\\200\\231 and \\342\\200\\230second\\342\\200\\231.\nThis is the same as \\342\\200\\230first + second + first:second\\342\\200\\231\"\n",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "sql",
+            "type": "string",
+            "doc": "SQL query"
+          },
+          {
+            "name": "count",
+            "type": "int",
+            "doc": "Number of records selected by the query"
+          }
+        ]
+      },
+      "init": {
+        "variable": "length",
+        "covariables": [
+          "conc"
+        ],
+        "groups": [
+          "strip"
+        ],
+        "sql": "select strip, conc, length from muscle",
+        "count": 60
+      }
+    },
+    "model": {
+      "type": {
+        "doc": "List of coefficients of the model parameters, compatible with PFA function model.reg.linear",
+        "name": "LinearModel",
+        "type": "record",
+        "fields": [
+          {
+            "name": "const",
+            "type": "double",
+            "doc": "Constant of the linear regression model"
+          },
+          {
+            "name": "coeff",
+            "doc": "Coefficients of the linear regression model",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "double"
+              }
+            }
+          }
+        ]
+      },
+      "init": {
+        "const": 9.00510681428349,
+        "coeff": [
+          4.95,
+          4.7906,
+          -2.4789,
+          -4.0122,
+          -2.2789,
+          13.948,
+          3.8587,
+          6.7714,
+          8.4587,
+          6.9211,
+          13.848,
+          10.448,
+          6.9714,
+          12.3714,
+          5.8,
+          7.125,
+          -0.4677,
+          14.9323,
+          9.399,
+          8.5323,
+          4.698
+        ]
+      }
+    },
+    "anova": {
+      "type": {
+        "doc": "Result from Anova",
+        "type": "record",
+        "name": "Anova",
+        "fields": [
+          {
+            "name": "strip",
+            "type": {
+              "type": "record",
+              "name": "AnovaCoefficient",
+              "namespace": "anova",
+              "fields": [
+                {
+                  "name": "degree_freedom",
+                  "type": "int",
+                  "doc": "Degree of freedom"
+                },
+                {
+                  "name": "sum_sq",
+                  "type": "double",
+                  "doc": "Sum Sq"
+                },
+                {
+                  "name": "mean_sq",
+                  "type": "double",
+                  "doc": "Mean Sq"
+                },
+                {
+                  "name": "f_value",
+                  "type": "double",
+                  "doc": "f-value"
+                },
+                {
+                  "name": "p_value",
+                  "type": "double",
+                  "doc": "p-value"
+                }
+              ]
+            }
+          },
+          {
+            "name": "conc",
+            "type": "anova.AnovaCoefficient"
+          },
+          {
+            "name": "Residuals",
+            "type": {
+              "type": "record",
+              "name": "AnovaResiduals",
+              "namespace": "anova",
+              "fields": [
+                {
+                  "name": "degree_freedom",
+                  "type": "int",
+                  "doc": "Degree of freedom"
+                },
+                {
+                  "name": "sum_sq",
+                  "type": "double",
+                  "doc": "Sum Sq"
+                },
+                {
+                  "name": "mean_sq",
+                  "type": "double",
+                  "doc": "Mean Sq"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "init": {
+        "strip": {
+          "degree_freedom": 20,
+          "sum_sq": 2964.13433333333,
+          "mean_sq": 148.206716666667,
+          "f_value": 7.70361687584806,
+          "p_value": 4.54760887113831e-8
+        },
+        "conc": {
+          "degree_freedom": 1,
+          "sum_sq": 737.187795623474,
+          "mean_sq": 737.187795623474,
+          "f_value": 38.3181847001371,
+          "p_value": 3.122916669535e-7
+        },
+        "Residuals": {
+          "degree_freedom": 38,
+          "sum_sq": 731.066371043192,
+          "mean_sq": 19.238588711663
+        }
+      }
+    },
+    "summary": {
+      "type": {
+        "doc": "R summary",
+        "name": "Summary",
+        "type": "record",
+        "fields": [
+          {
+            "name": "residuals",
+            "doc": "Statistical summary of the _weighted_ residuals, the usual residuals rescaled by the square root of the weights specified in the call to \\342\\200\\230lm\\342\\200\\231\n",
+            "type": {
+              "type": "record",
+              "name": "ResidualsSummary",
+              "namespace": "summary",
+              "fields": [
+                {
+                  "name": "min",
+                  "type": "double",
+                  "doc": "Minimum value"
+                },
+                {
+                  "name": "q1",
+                  "type": "double",
+                  "doc": "First quartile"
+                },
+                {
+                  "name": "median",
+                  "type": "double",
+                  "doc": "Median value"
+                },
+                {
+                  "name": "q3",
+                  "type": "double",
+                  "doc": "Third quartile"
+                },
+                {
+                  "name": "max",
+                  "type": "double",
+                  "doc": "Maximum value"
+                }
+              ]
+            }
+          },
+          {
+            "name": "coefficients",
+            "doc": "a p x 4 matrix with columns for the estimated coefficient, its standard error, t-statistic and corresponding (two-sided) p-value. Aliased coefficients are omitted\n",
+            "type": {
+              "type": "record",
+              "name": "CoefficientMatrix",
+              "namespace": "summary",
+              "fields": [
+                {
+                  "name": "_intercept_",
+                  "type": {
+                    "type": "record",
+                    "name": "Coefficient",
+                    "namespace": "summary",
+                    "fields": [
+                      {
+                        "name": "estimate",
+                        "type": "double",
+                        "doc": "Estimated coefficient"
+                      },
+                      {
+                        "name": "std_error",
+                        "type": "double",
+                        "doc": "Standard error"
+                      },
+                      {
+                        "name": "t_value",
+                        "type": "double",
+                        "doc": "t-statistic"
+                      },
+                      {
+                        "name": "p_value",
+                        "type": "double",
+                        "doc": "Corresponding (two-sided) p-value"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "name": "stripS02",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS03",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS04",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS05",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS06",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS07",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS08",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS09",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS10",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS11",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS12",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS13",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS14",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS15",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS16",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS17",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS18",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS19",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS20",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "stripS21",
+                  "type": "summary.Coefficient"
+                },
+                {
+                  "name": "conc",
+                  "type": "summary.Coefficient"
+                }
+              ]
+            }
+          },
+          {
+            "name": "aliased",
+            "doc": "named logical vector showing if the original coefficients are aliased",
+            "type": {
+              "type": "record",
+              "name": "Aliased",
+              "namespace": "summary",
+              "fields": [
+                {
+                  "name": "_intercept_",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS02",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS03",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS04",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS05",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS06",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS07",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS08",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS09",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS10",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS11",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS12",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS13",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS14",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS15",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS16",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS17",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS18",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS19",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS20",
+                  "type": "boolean"
+                },
+                {
+                  "name": "stripS21",
+                  "type": "boolean"
+                },
+                {
+                  "name": "conc",
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          {
+            "name": "sigma",
+            "doc": "the square root of the estimated variance of the random error     sigma^2 = 1/(n-p) Sum(w[i] R[i]^2),\nwhere R[i] is the i-th residual, \\342\\200\\230residuals[i]\\342\\200\\231\n",
+            "type": "double"
+          },
+          {
+            "name": "degrees_freedom",
+            "doc": "Degrees of freedom, a 3-vector (p, n-p, p*), the first being the number of non-aliased coefficients, the last being the total number of coefficients\n",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "double"
+              }
+            }
+          },
+          {
+            "name": "r_squared",
+            "doc": "R squared",
+            "type": "double"
+          },
+          {
+            "name": "adj_r_squared",
+            "doc": "Adjusted R squared",
+            "type": "double"
+          },
+          {
+            "name": "cov_unscaled",
+            "doc": "Matrix of covariance unscaled. Same columns as coefficients",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "double"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "init": {
+        "coefficients": {
+          "_intercept_": {
+            "estimate": 9.00510681428349,
+            "std_error": 2.89992589865293,
+            "t_value": 3.10528859322458,
+            "p_value": 0.00358412170530256
+          },
+          "stripS02": {
+            "estimate": 4.95000000000001,
+            "std_error": 3.10149872736255,
+            "t_value": 1.59600258943501,
+            "p_value": 0.118772360957522
+          },
+          "stripS03": {
+            "estimate": 4.79055824107282,
+            "std_error": 3.32046898694125,
+            "t_value": 1.44273542680662,
+            "p_value": 0.157287829594547
+          },
+          "stripS04": {
+            "estimate": -2.47891522428401,
+            "std_error": 3.65218631045651,
+            "t_value": -0.678748293094103,
+            "p_value": 0.501410498826816
+          },
+          "stripS05": {
+            "estimate": -4.01224855761734,
+            "std_error": 3.65218631045651,
+            "t_value": -1.09858813777653,
+            "p_value": 0.278859829434078
+          },
+          "stripS06": {
+            "estimate": -2.278915224284,
+            "std_error": 3.6521863104565,
+            "t_value": -0.623986574222483,
+            "p_value": 0.536364625566847
+          },
+          "stripS07": {
+            "estimate": 13.9479572742866,
+            "std_error": 3.87361965351649,
+            "t_value": 3.6007555005109,
+            "p_value": 0.000904690622679354
+          },
+          "stripS08": {
+            "estimate": 3.8586698892874,
+            "std_error": 4.05634049897362,
+            "t_value": 0.951268733545362,
+            "p_value": 0.347479620019089
+          },
+          "stripS09": {
+            "estimate": 6.77142523000155,
+            "std_error": 4.02404073329666,
+            "t_value": 1.68274271529407,
+            "p_value": 0.100625242874246
+          },
+          "stripS10": {
+            "estimate": 8.45866988928736,
+            "std_error": 4.05634049897361,
+            "t_value": 2.08529582056233,
+            "p_value": 0.0438112900120207
+          },
+          "stripS11": {
+            "estimate": 6.921084775716,
+            "std_error": 3.65218631045651,
+            "t_value": 1.89505249387206,
+            "p_value": 0.0657122565786226
+          },
+          "stripS12": {
+            "estimate": 13.8479572742866,
+            "std_error": 3.87361965351649,
+            "t_value": 3.57493985288808,
+            "p_value": 0.000973935526467623
+          },
+          "stripS13": {
+            "estimate": 10.4479572742866,
+            "std_error": 3.87361965351648,
+            "t_value": 2.6972078337123,
+            "p_value": 0.0103674964296419
+          },
+          "stripS14": {
+            "estimate": 6.97142523000155,
+            "std_error": 4.02404073329666,
+            "t_value": 1.73244400145281,
+            "p_value": 0.0913051151375169
+          },
+          "stripS15": {
+            "estimate": 12.3714252300015,
+            "std_error": 4.02404073329666,
+            "t_value": 3.07437872773876,
+            "p_value": 0.00389397014985405
+          },
+          "stripS16": {
+            "estimate": 5.8,
+            "std_error": 3.10149872736255,
+            "t_value": 1.87006364014607,
+            "p_value": 0.0691933769785604
+          },
+          "stripS17": {
+            "estimate": 7.125,
+            "std_error": 3.10149872736254,
+            "t_value": 2.29727645448978,
+            "p_value": 0.0272031518901846
+          },
+          "stripS18": {
+            "estimate": -0.467688029523362,
+            "std_error": 3.37142507011411,
+            "t_value": -0.138721169771551,
+            "p_value": 0.890403047157059
+          },
+          "stripS19": {
+            "estimate": 14.9323119704766,
+            "std_error": 3.3714250701141,
+            "t_value": 4.42908018417602,
+            "p_value": 0.0000775497884909481
+          },
+          "stripS20": {
+            "estimate": 9.3989786371433,
+            "std_error": 3.3714250701141,
+            "t_value": 2.78783554184854,
+            "p_value": 0.00824107158671432
+          },
+          "stripS21": {
+            "estimate": 8.53231197047664,
+            "std_error": 3.3714250701141,
+            "t_value": 2.53077312799002,
+            "p_value": 0.0156427594452414
+          },
+          "conc": {
+            "estimate": 4.6979572742866,
+            "std_error": 0.758938526075706,
+            "t_value": 6.19016839028932,
+            "p_value": 3.12291666953499e-7
+          }
+        },
+        "residuals": {
+          "min": -8.43826602214252,
+          "q1": -1.43545727428661,
+          "median": 0.35,
+          "q3": 2.11385791881075,
+          "max": 8.43826602214252
+        },
+        "aliased": {
+          "_intercept_": false,
+          "stripS02": false,
+          "stripS03": false,
+          "stripS04": false,
+          "stripS05": false,
+          "stripS06": false,
+          "stripS07": false,
+          "stripS08": false,
+          "stripS09": false,
+          "stripS10": false,
+          "stripS11": false,
+          "stripS12": false,
+          "stripS13": false,
+          "stripS14": false,
+          "stripS15": false,
+          "stripS16": false,
+          "stripS17": false,
+          "stripS18": false,
+          "stripS19": false,
+          "stripS20": false,
+          "stripS21": false,
+          "conc": false
+        },
+        "sigma": 4.386181563919,
+        "degrees_freedom": [
+          22,
+          38,
+          22
+        ],
+        "r_squared": 0.835062659547286,
+        "adj_r_squared": 0.743913076665524,
+        "cov_unscaled": [
+          [
+            0.4371,
+            -0.25,
+            -0.3669,
+            -0.3935,
+            -0.3935,
+            -0.3935,
+            -0.3248,
+            -0.3903,
+            -0.381,
+            -0.3903,
+            -0.3935,
+            -0.3248,
+            -0.3248,
+            -0.381,
+            -0.381,
+            -0.25,
+            -0.25,
+            -0.2874,
+            -0.2874,
+            -0.2874,
+            -0.2874,
+            -0.0748
+          ],
+          [
+            -0.25,
+            0.5,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            -4.9859e-18
+          ],
+          [
+            -0.3669,
+            0.25,
+            0.5731,
+            0.3397,
+            0.3397,
+            0.3397,
+            0.2968,
+            0.3377,
+            0.3319,
+            0.3377,
+            0.3397,
+            0.2968,
+            0.2968,
+            0.3319,
+            0.3319,
+            0.25,
+            0.25,
+            0.2734,
+            0.2734,
+            0.2734,
+            0.2734,
+            0.0468
+          ],
+          [
+            -0.3935,
+            0.25,
+            0.3397,
+            0.6933,
+            0.36,
+            0.36,
+            0.3074,
+            0.3576,
+            0.3504,
+            0.3576,
+            0.36,
+            0.3074,
+            0.3074,
+            0.3504,
+            0.3504,
+            0.25,
+            0.25,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.0574
+          ],
+          [
+            -0.3935,
+            0.25,
+            0.3397,
+            0.36,
+            0.6933,
+            0.36,
+            0.3074,
+            0.3576,
+            0.3504,
+            0.3576,
+            0.36,
+            0.3074,
+            0.3074,
+            0.3504,
+            0.3504,
+            0.25,
+            0.25,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.0574
+          ],
+          [
+            -0.3935,
+            0.25,
+            0.3397,
+            0.36,
+            0.36,
+            0.6933,
+            0.3074,
+            0.3576,
+            0.3504,
+            0.3576,
+            0.36,
+            0.3074,
+            0.3074,
+            0.3504,
+            0.3504,
+            0.25,
+            0.25,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.0574
+          ],
+          [
+            -0.3248,
+            0.25,
+            0.2968,
+            0.3074,
+            0.3074,
+            0.3074,
+            0.7799,
+            0.3061,
+            0.3024,
+            0.3061,
+            0.3074,
+            0.2799,
+            0.2799,
+            0.3024,
+            0.3024,
+            0.25,
+            0.25,
+            0.265,
+            0.265,
+            0.265,
+            0.265,
+            0.0299
+          ],
+          [
+            -0.3903,
+            0.25,
+            0.3377,
+            0.3576,
+            0.3576,
+            0.3576,
+            0.3061,
+            0.8553,
+            0.3482,
+            0.3553,
+            0.3576,
+            0.3061,
+            0.3061,
+            0.3482,
+            0.3482,
+            0.25,
+            0.25,
+            0.2781,
+            0.2781,
+            0.2781,
+            0.2781,
+            0.0561
+          ],
+          [
+            -0.381,
+            0.25,
+            0.3319,
+            0.3504,
+            0.3504,
+            0.3504,
+            0.3024,
+            0.3482,
+            0.8417,
+            0.3482,
+            0.3504,
+            0.3024,
+            0.3024,
+            0.3417,
+            0.3417,
+            0.25,
+            0.25,
+            0.2762,
+            0.2762,
+            0.2762,
+            0.2762,
+            0.0524
+          ],
+          [
+            -0.3903,
+            0.25,
+            0.3377,
+            0.3576,
+            0.3576,
+            0.3576,
+            0.3061,
+            0.3553,
+            0.3482,
+            0.8553,
+            0.3576,
+            0.3061,
+            0.3061,
+            0.3482,
+            0.3482,
+            0.25,
+            0.25,
+            0.2781,
+            0.2781,
+            0.2781,
+            0.2781,
+            0.0561
+          ],
+          [
+            -0.3935,
+            0.25,
+            0.3397,
+            0.36,
+            0.36,
+            0.36,
+            0.3074,
+            0.3576,
+            0.3504,
+            0.3576,
+            0.6933,
+            0.3074,
+            0.3074,
+            0.3504,
+            0.3504,
+            0.25,
+            0.25,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.0574
+          ],
+          [
+            -0.3248,
+            0.25,
+            0.2968,
+            0.3074,
+            0.3074,
+            0.3074,
+            0.2799,
+            0.3061,
+            0.3024,
+            0.3061,
+            0.3074,
+            0.7799,
+            0.2799,
+            0.3024,
+            0.3024,
+            0.25,
+            0.25,
+            0.265,
+            0.265,
+            0.265,
+            0.265,
+            0.0299
+          ],
+          [
+            -0.3248,
+            0.25,
+            0.2968,
+            0.3074,
+            0.3074,
+            0.3074,
+            0.2799,
+            0.3061,
+            0.3024,
+            0.3061,
+            0.3074,
+            0.2799,
+            0.7799,
+            0.3024,
+            0.3024,
+            0.25,
+            0.25,
+            0.265,
+            0.265,
+            0.265,
+            0.265,
+            0.0299
+          ],
+          [
+            -0.381,
+            0.25,
+            0.3319,
+            0.3504,
+            0.3504,
+            0.3504,
+            0.3024,
+            0.3482,
+            0.3417,
+            0.3482,
+            0.3504,
+            0.3024,
+            0.3024,
+            0.8417,
+            0.3417,
+            0.25,
+            0.25,
+            0.2762,
+            0.2762,
+            0.2762,
+            0.2762,
+            0.0524
+          ],
+          [
+            -0.381,
+            0.25,
+            0.3319,
+            0.3504,
+            0.3504,
+            0.3504,
+            0.3024,
+            0.3482,
+            0.3417,
+            0.3482,
+            0.3504,
+            0.3024,
+            0.3024,
+            0.3417,
+            0.8417,
+            0.25,
+            0.25,
+            0.2762,
+            0.2762,
+            0.2762,
+            0.2762,
+            0.0524
+          ],
+          [
+            -0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.5,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            -6.6478e-18
+          ],
+          [
+            -0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            0.5,
+            0.25,
+            0.25,
+            0.25,
+            0.25,
+            -1.0803e-17
+          ],
+          [
+            -0.2874,
+            0.25,
+            0.2734,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.265,
+            0.2781,
+            0.2762,
+            0.2781,
+            0.2787,
+            0.265,
+            0.265,
+            0.2762,
+            0.2762,
+            0.25,
+            0.25,
+            0.5908,
+            0.2575,
+            0.2575,
+            0.2575,
+            0.015
+          ],
+          [
+            -0.2874,
+            0.25,
+            0.2734,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.265,
+            0.2781,
+            0.2762,
+            0.2781,
+            0.2787,
+            0.265,
+            0.265,
+            0.2762,
+            0.2762,
+            0.25,
+            0.25,
+            0.2575,
+            0.5908,
+            0.2575,
+            0.2575,
+            0.015
+          ],
+          [
+            -0.2874,
+            0.25,
+            0.2734,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.265,
+            0.2781,
+            0.2762,
+            0.2781,
+            0.2787,
+            0.265,
+            0.265,
+            0.2762,
+            0.2762,
+            0.25,
+            0.25,
+            0.2575,
+            0.2575,
+            0.5908,
+            0.2575,
+            0.015
+          ],
+          [
+            -0.2874,
+            0.25,
+            0.2734,
+            0.2787,
+            0.2787,
+            0.2787,
+            0.265,
+            0.2781,
+            0.2762,
+            0.2781,
+            0.2787,
+            0.265,
+            0.265,
+            0.2762,
+            0.2762,
+            0.25,
+            0.25,
+            0.2575,
+            0.2575,
+            0.2575,
+            0.5908,
+            0.015
+          ],
+          [
+            -0.0748,
+            -4.9859e-18,
+            0.0468,
+            0.0574,
+            0.0574,
+            0.0574,
+            0.0299,
+            0.0561,
+            0.0524,
+            0.0561,
+            0.0574,
+            0.0299,
+            0.0299,
+            0.0524,
+            0.0524,
+            -6.6478e-18,
+            -1.0803e-17,
+            0.015,
+            0.015,
+            0.015,
+            0.015,
+            0.0299
+          ]
+        ]
+      }
+    }
+  },
+  "action": [
+    {
+      "let": {
+        "in": {
+          "a.flatten": {
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "double"
+                }
+              }
+            },
+            "new": [
+              {
+                "type": {
+                  "type": "array",
+                  "items": {
+                    "type": "double"
+                  }
+                },
+                "new": [
+                  "input.conc"
+                ]
+              },
+              {
+                "a.tail": [
+                  {
+                    "cast.fanoutDouble": [
+                      "input.strip"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "model.reg.linear": [
+        "in",
+        {
+          "cell": "model"
+        }
+      ]
+    }
+  ]
+}

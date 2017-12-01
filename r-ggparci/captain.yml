@@ -1,0 +1,9 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/r-ggparci
+  pre:
+    - echo "Preparing r-ggparci"
+  post:
+    - echo "Finished r-ggparci"
+  test:
+    - tests/test.sh
