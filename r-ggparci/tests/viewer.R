@@ -1,5 +1,6 @@
 library(rmipadaptor);
 
+job_id <- Sys.getenv("JOB_ID");
 conn <- connect2outdb();
 
 # Get the results
@@ -7,4 +8,4 @@ results <- DBI::dbGetQuery(out_conn, paste("select * from job_result where job_i
 
 data <- results$data[[1]];
 
-file.save(data, file="data/out/result.svg", ascii=TRUE)
+write(data, file="/data/out/result.svg")

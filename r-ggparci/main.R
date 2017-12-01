@@ -2,7 +2,7 @@
 #' This script computes the ggplot object for parallel coordinates plot.
 #' The data (input parameters: variables, covariables, grouping) are obtained from the local databases using a specific query.
 #' This query will be the same for all nodes.
-#' 
+#'
 #' #' Environment variables:
 #' - Input Parameters:
 #'      PARAM_query  : SQL query producing the dataframe to analyse
@@ -29,8 +29,7 @@ library(rmipadaptor)
 library(magrittr)
 library(ggplot2)
 library(svglite)
-source("ggp.R")
-source("per.R")
+library(ggparci)
 
 # Initialisation
 env_vars_names <- c("PARAM_variables",
@@ -47,7 +46,7 @@ vars_list <- env_vars_names %>%
   strsplit(split = ",")
 
 # assign in the global evviroment (or you can use attach(vars_list))
-lapply(seq_along(vars_list), 
+lapply(seq_along(vars_list),
        function(x) {
          assign(vars_names_r[x], vars_list[[x]], envir=.GlobalEnv)
        }
@@ -59,7 +58,3 @@ data   <- fetchData();
 qp <- ggparci(x = data, group = variables)
 blob <- stringSVG(grid::grid.draw(qp))
 saveResults(results =  blob,shape = "svg")
-
-
-
-
