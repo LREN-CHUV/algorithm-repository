@@ -6,3 +6,5 @@ java-rapidminer-knn/target/
 *.jar
 .Rproj.user
 algorithm-repository.Rproj
+*.orig
+

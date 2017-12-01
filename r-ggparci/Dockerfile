@@ -74,7 +74,7 @@ COPY --from=r-build-env /usr/local/lib/R/site-library/BH/ /usr/local/lib/R/site-
 COPY --from=r-build-env /usr/local/lib/R/site-library/broom/ /usr/local/lib/R/site-library/broom/
 COPY --from=r-build-env /usr/local/lib/R/site-library/desc/ /usr/local/lib/R/site-library/desc/
 
-COPY main.R ggp.R per.R /src/
+COPY main.R /src/
 COPY tests/testthat.R /src/tests/
 COPY tests/testthat/ /src/tests/testthat/
 

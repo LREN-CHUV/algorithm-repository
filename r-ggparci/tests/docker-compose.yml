@@ -121,8 +121,6 @@ services:
       dockerfile: Dockerfile.viewer
     container_name: "viewer"
     restart: "no"
-    ports:
-      - "5555:5555"
     environment:
       JOB_ID: 1
       OUT_DBI_DRIVER: PostgreSQL
