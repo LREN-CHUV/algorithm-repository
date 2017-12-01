@@ -10,7 +10,7 @@ Implementation of ggparci in R
 
 ```sh
 
-  docker run --rm --env [list of environment variables] hbpmip/r-ggparci:0.1.0 compute
+  docker run --rm --env [list of environment variables] hbpmip/r-ggparci:0.2.0 compute
 
 ```
 
