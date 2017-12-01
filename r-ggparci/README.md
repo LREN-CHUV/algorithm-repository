@@ -4,13 +4,13 @@
 
 edit
 
-Implementation of linear regression in R
+Implementation of ggparci in R
 
 ## Usage
 
 ```sh
 
-  docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-knn:0.2.1 compute
+  docker run --rm --env [list of environment variables] hbpmip/r-ggparci:0.1.0 compute
 
 ```
 
