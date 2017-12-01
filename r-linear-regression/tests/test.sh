@@ -34,10 +34,11 @@ function _cleanup() {
   $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null | true
   exit $error_code
 }
-#trap _cleanup EXIT INT TERM
+trap _cleanup EXIT INT TERM
 
 echo "Starting the databases..."
 $DOCKER_COMPOSE up -d --remove-orphans db
+$DOCKER_COMPOSE build r_tests
 $DOCKER_COMPOSE run wait_dbs
 $DOCKER_COMPOSE run create_dbs
 
@@ -52,10 +53,15 @@ $DOCKER_COMPOSE run linreg compute
 
 echo
 echo "Run PFA validator..."
-$DOCKER_COMPOSE run pfa_validator
+# TODO: test disabled, waiting for an update of PFA validator capable of checking pfa_yaml
+#$DOCKER_COMPOSE run pfa_validator
+echo "[skipped]"
 
-# TODO: run the unit tests in R
+# Run the unit tests in R
+echo
+echo "Run R integration tests..."
+$DOCKER_COMPOSE run r_tests
 
 echo
 # Cleanup
-#_cleanup
+_cleanup

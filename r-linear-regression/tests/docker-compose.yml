@@ -109,3 +109,28 @@ services:
       DATASET_DB_TABLE: sample_data
     links:
       - "db:db"
+
+  r_tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "r-integration-tests"
+    command: test
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 1
+      IN_DBI_DRIVER: PostgreSQL
+      IN_DB_HOST: db
+      IN_DB_PORT: 5432
+      IN_DB_NAME: features
+      IN_DB_USER: features
+      IN_DB_PASSWORD: featurespwd
+      OUT_DBI_DRIVER: PostgreSQL
+      OUT_DB_HOST: db
+      OUT_DB_PORT: 5432
+      OUT_DB_NAME: woken
+      OUT_DB_USER: woken
+      OUT_DB_PASSWORD: wokenpwd
+    links:
+      - "db:db"

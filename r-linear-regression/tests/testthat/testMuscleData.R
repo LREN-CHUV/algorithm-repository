@@ -20,7 +20,7 @@ test_that("We can perform linear regression on one variable, one covariable and 
   out_conn <- connect2outdb();
 
   # Get the results
-  results <- RJDBC::dbGetQuery(out_conn, "select node, data, shape from job_result where job_id = ?", job_id);
+  results <- DBI::dbGetQuery(out_conn, paste("select node, data, shape from job_result where job_id =", DBI::dbQuoteString(out_conn, job_id)));
 
   node <- results$node[[1]];
   data <- results$data[[1]];

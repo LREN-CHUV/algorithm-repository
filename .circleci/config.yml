@@ -29,3 +29,11 @@ jobs:
           name: "Test java-rapidminer-knn"
           command: |
             PATH=$PATH:/$HOME/.captain/bin/ ./java-rapidminer-knn/tests/test.sh
+      - run:
+          name: "Build r-linear-regression"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./r-linear-regression/build.sh
+      - run:
+          name: "Test r-linear-regression"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./r-linear-regression/tests/test.sh
