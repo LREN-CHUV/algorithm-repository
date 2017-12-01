@@ -1,22 +1,20 @@
 Sys.setenv(
-  PARAM_query   = "SELECT * FROM iris",
   IN_DBI_DRIVER = "PostgreSQL",
-  IN_DBI_DBNAME = "data",
-  IN_DBI_HOST   = "localhost",
-  IN_DBI_PORT   = 5432,
-  IN_DBI_USER   = "data",
-  IN_DBI_PASSWORD = "data",
+  IN_DB_DBNAME = "data",
+  IN_DB_HOST   = "localhost",
+  IN_DB_PORT   = 5432,
+  IN_DB_USER   = "data",
+  IN_DB_PASSWORD = "data",
   OUT_DBI_DRIVER = "PostgreSQL",
-  OUT_DBI_DBNAME = "woken",
-  OUT_DBI_HOST   = "localhost",
-  OUT_DBI_PORT   = 5432,
-  OUT_DBI_USER   = "woken",
-  OUT_DBI_PASSWORD = "woken")
+  OUT_DB_DBNAME = "woken",
+  OUT_DB_HOST   = "localhost",
+  OUT_DB_PORT   = 5432,
+  OUT_DB_USER   = "woken",
+  OUT_DB_PASSWORD = "woken")
 
 Sys.setenv(
-  PARAM_variables   = "sepal_length",
-  PARAM_covariables = "petal_width, petal_length",
-  PARAM_grouping = "Species", # TODO: fix to match the name in the database 
+  PARAM_variables   = "churn",
+  PARAM_covariables = ".",
   PARAM_query       = "SELECT * FROM iris")
 
 source("../../R/main.R")

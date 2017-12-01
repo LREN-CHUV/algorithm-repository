@@ -17,4 +17,6 @@ Sys.setenv(
   PARAM_covariables = ".",
   PARAM_query       = "SELECT * FROM churn")
 
-#source("../../R/main.R")
+source("main.R")
+
+print("Success!")

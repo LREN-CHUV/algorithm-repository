@@ -54,7 +54,6 @@ lapply(seq_along(vars_list),
 )
 
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-ggparci:latest");
-disconnectdbs()
 data   <- fetchData();
 qp <- ggparci(x = data, group = variables)
 blob <- stringSVG(grid::grid.draw(qp))
