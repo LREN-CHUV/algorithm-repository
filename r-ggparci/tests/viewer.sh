@@ -38,7 +38,7 @@ trap _cleanup EXIT INT TERM
 
 echo "Starting the databases..."
 $DOCKER_COMPOSE up -d --remove-orphans db
-$DOCKER_COMPOSE build r_tests
+$DOCKER_COMPOSE build viewer
 $DOCKER_COMPOSE run wait_dbs
 $DOCKER_COMPOSE run create_dbs
 
@@ -53,8 +53,10 @@ $DOCKER_COMPOSE run ggparci compute
 
 # Run the unit tests in R
 echo
-echo "Run R integration tests..."
-$DOCKER_COMPOSE run r_tests
+echo "Run visualisation..."
+$DOCKER_COMPOSE run viewer
+
+firefox viewer.html
 
 echo
 # Cleanup

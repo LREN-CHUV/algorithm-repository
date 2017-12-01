@@ -1,0 +1,5 @@
+FROM hbpmip/r-mip:0.4.1
+
+COPY viewer.R viewer.html /src
+
+ENTRYPOINT ["/usr/bin/Rscript", "viewer.R"]

@@ -2,13 +2,13 @@ FROM hbpmip/r-base-build:3.4.2-2 as r-build-env
 
 RUN install.r gpsasi
 
-FROM hbpmip/r-mip:0.4.0
+FROM hbpmip/r-mip:0.4.1
 
 MAINTAINER ludovic.claude54@gmail.com
 
 COPY --from=r-build-env /usr/local/lib/R/site-library/hbplregress/ /usr/local/lib/R/site-library/hbplregress/
 
-COPY main.R /src/
+COPY main.R ggp.R per.R /src/
 COPY tests/testthat.R /src/tests/
 COPY tests/testthat/ /src/tests/testthat/
 
