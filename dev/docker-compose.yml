@@ -1,0 +1,64 @@
+version: '2'
+
+services:
+
+  db:
+    image: "postgres:9.6.5-alpine"
+    container_name: "db"
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: test
+    ports:
+      - "5432:5432"
+
+  wait_dbs:
+    image: "waisbrot/wait"
+    links:
+      - "db:db"
+    environment:
+      TARGETS: db:5432
+      TIMEOUT: 60
+
+  create_dbs:
+    image: "hbpmip/create-databases:1.0.0"
+    restart: "no"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_ADMIN_USER: postgres
+      DB_ADMIN_PASSWORD: test
+      DB1: data
+      USER1: data
+      PASSWORD1: data
+      DB2: woken
+      USER2: woken
+      PASSWORD2: woken
+    depends_on:
+      - db
+
+  sample_data_db_setup:
+    image: "hbpmip/sample-data-db-setup:0.4.1"
+    container_name: "sample-data-db-setup"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: data
+      FLYWAY_USER: data
+      FLYWAY_PASSWORD: data
+    depends_on:
+      - db
+
+  woken_db_setup:
+    image: "hbpmip/woken-db-setup:1.0.2"
+    container_name: "woken-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: woken
+      FLYWAY_USER: woken
+      FLYWAY_PASSWORD: woken
+    depends_on:
+      - db
