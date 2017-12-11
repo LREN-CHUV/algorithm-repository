@@ -238,9 +238,9 @@ def generate_scatterchart(data, indep_vars, labels, perplexity, theta, iteration
         'series': get_chart_series(data, labels)
     }
 
-    json_str = json.dumps(chart_template)
+    return json.dumps(chart_template)
     # de-quote the keys - compatible with javascript
-    return re.subn(r"\"(\w+)\"(:)", r"\1\2", json_str)[0]
+    # return re.subn(r"\"(\w+)\"(:)", r"\1\2", json_str)[0]
 
 
 def get_chart_series(data, labels):
