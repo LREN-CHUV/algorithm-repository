@@ -1,4 +1,4 @@
-FROM hbpmip/r-ggparsi
+FROM hbpmip/r-ggparci
 
 COPY testthat.R /src/tests/
 COPY testthat/ /src/tests/testthat/

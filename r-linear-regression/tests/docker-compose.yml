@@ -91,7 +91,7 @@ services:
       - "db:db"
 
   pfa_validator:
-    image: "hbpmip/pfa-validator:0.10.0"
+    image: "hbpmip/pfa-validator:0.10.1"
     container_name: "pfa-validator"
     environment:
       INPUT_METHOD: POSTGRESQL
