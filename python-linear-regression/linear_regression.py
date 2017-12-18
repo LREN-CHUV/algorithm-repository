@@ -32,7 +32,7 @@ def main():
     linear_regression_results = format_output(compute_linear_regression(dep_var, inped_vars, data))
 
     # Store results
-    io_helper.save_results(linear_regression_results, '', 'application/highcharts+json')
+    io_helper.save_results(linear_regression_results, '', 'application/json')
 
 
 def format_data(input_data):
