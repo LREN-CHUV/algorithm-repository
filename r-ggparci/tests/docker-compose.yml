@@ -61,9 +61,9 @@ services:
     depends_on:
       - db
 
-  linreg:
-    image: "hbpmip/r-linear-regression:latest"
-    container_name: "linreg"
+  ggparci:
+    image: "hbpmip/r-ggparci:latest"
+    container_name: "ggparci"
     restart: "no"
     environment:
       NODE: job_test
@@ -84,8 +84,52 @@ services:
       OUT_DB_NAME: woken
       OUT_DB_USER: woken
       OUT_DB_PASSWORD: wokenpwd
-      PARAM_variables: "score_test1"
-      PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
-      PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
+      PARAM_variables: "churn"
+      PARAM_covariables: ""
+      PARAM_query: "SELECT * FROM churn"
+    links:
+      - "db:db"
+
+  r_tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "r-integration-tests"
+    command: test
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 1
+      IN_DBI_DRIVER: PostgreSQL
+      IN_DB_HOST: db
+      IN_DB_PORT: 5432
+      IN_DB_NAME: features
+      IN_DB_USER: features
+      IN_DB_PASSWORD: featurespwd
+      OUT_DBI_DRIVER: PostgreSQL
+      OUT_DB_HOST: db
+      OUT_DB_PORT: 5432
+      OUT_DB_NAME: woken
+      OUT_DB_USER: woken
+      OUT_DB_PASSWORD: wokenpwd
+    links:
+      - "db:db"
+
+  viewer:
+    build:
+      context: .
+      dockerfile: Dockerfile.viewer
+    container_name: "viewer"
+    restart: "no"
+    environment:
+      JOB_ID: 1
+      OUT_DBI_DRIVER: PostgreSQL
+      OUT_DB_HOST: db
+      OUT_DB_PORT: 5432
+      OUT_DB_NAME: woken
+      OUT_DB_USER: woken
+      OUT_DB_PASSWORD: wokenpwd
+    volumes:
+      - "./tmp:/data/out/"
     links:
       - "db:db"

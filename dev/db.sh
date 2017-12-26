@@ -37,8 +37,7 @@ function _cleanup() {
 trap _cleanup EXIT INT TERM
 
 echo "Starting the databases..."
-$DOCKER_COMPOSE up -d --remove-orphans db
-$DOCKER_COMPOSE build r_tests
+$DOCKER_COMPOSE up -d db
 $DOCKER_COMPOSE run wait_dbs
 $DOCKER_COMPOSE run create_dbs
 
@@ -48,13 +47,8 @@ $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
 echo
-echo "Run GGParsi algorithm..."
-$DOCKER_COMPOSE run ggparci compute
-
-# Run the unit tests in R
-echo
-echo "Run R integration tests..."
-$DOCKER_COMPOSE run r_tests
+echo "Press enter to stop the database"
+read -p ">"
 
 echo
 # Cleanup

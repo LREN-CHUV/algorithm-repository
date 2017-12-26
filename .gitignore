@@ -7,3 +7,5 @@ java-rapidminer-knn/target/
 algorithm-repository.Rproj
 .Rhistory
 **/.Rhistory
+*.orig
+.Rproj.user
