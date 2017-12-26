@@ -4,5 +4,6 @@
 java-rapidminer-naivebayes/target/
 java-rapidminer-knn/target/
 *.jar
-.Rproj.user
 algorithm-repository.Rproj
+.Rhistory
+**/.Rhistory
