@@ -1,6 +1,6 @@
 #'
 #' This script computes the ggplot object for parallel coordinates plot.
-#' The data (input parameters: variables, covariables, grouping) are obtained from the local databases using a specific query.
+#' The data (input parameters: variable - the grouping variable  , covariables) are obtained from the local databases using a specific query.
 #' This query will be the same for all nodes.
 #'
 #' #' Environment variables:
@@ -8,7 +8,6 @@
 #'      PARAM_query  : SQL query producing the dataframe to analyse
 #'      PARAM_variables : Column separated list of variables, only the first variable will be used
 #'      PARAM_covariables : Column separated list of covariables
-#'      PARAM_grouping : Column separated list of groupings
 #' - Execution context:
 #'      JOB_ID : ID of the job
 #'      NODE : Node used for the execution of the script
@@ -34,7 +33,6 @@ library(ggparci)
 # Initialisation
 env_vars_names <- c("PARAM_variables",
                     "PARAM_covariables",
-                    "PARAM_grouping",
                     "PARAM_query")
 
 vars_names_r <- substring(text = env_vars_names,first = 7)
@@ -54,7 +52,12 @@ lapply(seq_along(vars_list),
 
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-ggparci:latest");
 data   <- fetchData();
-qp <- ggparci(x = data, group = variables)
+
+if (covariables == ""){
+  qp <- ggparci(data = data, group_column = variables)
+else
+  qp <- ggparci(data = data, columns = covariables , group_column = variables)
+
 blob <- stringSVG(grid::grid.draw(qp))
 saveResults(results =  blob,shape = "svg")
 disconnectdbs()
