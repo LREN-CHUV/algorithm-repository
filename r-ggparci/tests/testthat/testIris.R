@@ -13,8 +13,8 @@ Sys.setenv(
   OUT_DB_PASSWORD = "woken")
 
 Sys.setenv(
-  PARAM_variables   = "churn",
+  PARAM_variables   = "iris",
   PARAM_covariables = ".",
   PARAM_query       = "SELECT * FROM iris")
 
-source("../../R/main.R")
+source("main.R")

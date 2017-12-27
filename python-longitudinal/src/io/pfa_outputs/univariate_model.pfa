@@ -1,0 +1,42 @@
+{"input":
+    {
+    "type": "record",
+    "name": "UnivarRecord",
+    "fields":[
+            {"name": "t", "type": "float"},
+            {"name": "p", "type": "float"},
+            {"name": "v0", "type": "float"},
+            {"name": "t0", "type": "float"}
+        ]
+    },
+"output": "double",
+"action":
+    {"/":
+        [1,
+        {"+":
+           [1,
+            {"*":
+                [{"+":
+                    [{"/":
+                        [1,
+                        {"/":
+                            [1,
+                            {"+":
+                                [1,
+                                {"m.exp": [{"u-": ["input.p"]}]}]
+                             }]
+                        }]
+                    },
+                    {"u-": [1]}]
+                },
+                {"m.exp":
+                    [{"*": [{"u-": ["input.v0"]},
+                            {"-" : ["input.t",
+                                    "input.t0"]}]
+                    }]
+                }]
+            }]
+        }]
+    }
+}
+;

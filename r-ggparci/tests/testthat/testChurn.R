@@ -14,7 +14,7 @@ Sys.setenv(
 
 Sys.setenv(
   PARAM_variables   = "churn",
-  PARAM_covariables = ".",
+  PARAM_covariables = "",
   PARAM_query       = "SELECT * FROM churn")
 
 source("main.R")

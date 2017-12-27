@@ -48,7 +48,7 @@ $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
 echo
-echo "Run GGParsi algorithm..."
+echo "Run ggparci algorithm..."
 $DOCKER_COMPOSE run ggparci compute
 
 # Run the unit tests in R

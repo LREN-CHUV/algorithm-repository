@@ -58,8 +58,4 @@ model  <- lm(formula = formul, data = data)
 blob   <- write_pfa(pfa(model))
 saveResults(results = blob,shape = "pfa_json")
 
-saveResults(results = blob,shape = "pfa_json")
-
-saveResults(results = blob,shape = "pfa_json")
-
 

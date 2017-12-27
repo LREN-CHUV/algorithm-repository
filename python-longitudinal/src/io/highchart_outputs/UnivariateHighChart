@@ -1,0 +1,65 @@
+$(function () {
+    var pop_param = {'noise': 0.00453556, 'p0': 0.267115, 't0': 71.5777, 'v0': 0.072968},
+    		indiv_param= [{'id': 116, 'tau': 78.7282, 'ksi': -3.48327},
+        							{'id': 142, 'tau': 86.8357, 'ksi': -2.65181},
+                      {'id': 169, 'tau': 84.5199, 'ksi': -3.31398},
+                      {'id': 178, 'tau': 77.4350, 'ksi': -3.68487}]
+        series = [];
+
+    series = generateAllDataUnivar(pop_param, indiv_param);
+    //series = generateDataUnivar(pop_param.P0, pop_param.V0, pop_param.T0);
+
+    function generateDataUnivar(p0, v0, t0) {
+      // generate an array of random data
+      var loc_series = [],
+          t;
+      for (var t = 40; t <= 110; t++) {
+        loc_series.push({
+          x: t,
+          y: 1. / (1. + (1./ p0 - 1) * Math.exp(-v0*(t-t0)))
+        });
+      }
+      return loc_series;
+    }
+
+    function generateAllDataUnivar(pop_param, indiv_param){
+    	var loc_series = [],
+          p0 = pop_param.p0,
+          v0 = pop_param.v0,
+          t0 = pop_param.t0;
+
+      loc_series.push({'data': generateDataUnivar(p0, v0, t0), 'name' : 'Mean'});
+      for (var i = 0; i < indiv_param.length; i++){
+      	var t0 = indiv_param[i].tau,
+        		v0 = Math.exp(indiv_param[i].ksi),
+            id = indiv_param[i].id,
+      	 		indiv_results = [];
+        indiv_results = generateDataUnivar(p0, v0, t0, id);
+        loc_series.push({'data': indiv_results, 'name' : 'Patient ' + id});
+      }
+      return loc_series;
+    }
+
+    $('#container').highcharts({
+        title: {
+            text: 'Evolution of scores in time',
+        },
+        yAxis: {
+            title: {
+                text: 'Scores'
+            }
+        },
+        xAxis: {
+            title: {
+                text: 'Age'
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: series
+    });
+});
