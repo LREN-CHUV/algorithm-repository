@@ -53,10 +53,11 @@ lapply(seq_along(vars_list),
 docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-ggparci:latest");
 data   <- fetchData();
 
-if (covariables == ""){
+if (length(covariables) == 0 || covariables == "") {
   qp <- ggparci(data = data, group_column = variables)
-else
+} else {
   qp <- ggparci(data = data, columns = covariables , group_column = variables)
+}
 
 blob <- stringSVG(grid::grid.draw(qp))
 saveResults(results =  blob,shape = "svg")
