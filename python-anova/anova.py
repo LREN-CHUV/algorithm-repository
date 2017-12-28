@@ -37,7 +37,7 @@ def main():
     anova_results = format_output(compute_anova(dep_var, inped_vars, data, design).to_dict())
 
     # Store results
-    io_helper.save_results(anova_results, '', 'application/highcharts+json')
+    io_helper.save_results(anova_results, '', 'application/json')
 
 
 def format_data(input_data):

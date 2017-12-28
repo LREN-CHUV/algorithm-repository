@@ -42,20 +42,20 @@ vars_list <- env_vars_names %>%
   # split each string and output a list of character vectors
   strsplit(split = ",")
 
-# assign in the global evviroment (or you can use attach(vars_list))
+# assign in the global environment (or you can use attach(vars_list))
 lapply(seq_along(vars_list),
        function(x) {
          assign(vars_names_r[x], vars_list[[x]], envir=.GlobalEnv)
        }
 )
 
-docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-ggparci:latest");
 data   <- fetchData();
 
-if (covariables == ""){
-  qp <- ggparci(data = data, group_column = variables)
-else
-  qp <- ggparci(data = data, columns = covariables , group_column = variables)
+if (length(covariables) == 0 || covariables == "") {
+  qp <- ggparci(data = data, groups_column = variables)
+} else {
+  qp <- ggparci(data = data, columns = covariables , groups_column = variables)
+}
 
 blob <- stringSVG(grid::grid.draw(qp))
 saveResults(results =  blob,shape = "svg")
