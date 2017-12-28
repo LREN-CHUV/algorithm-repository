@@ -3,7 +3,6 @@ FROM hbpmip/r-base-build:3.4.2-2 as r-build-env
 RUN install.r ggplot2
 RUN install.r dplyr
 RUN install.r tidyr
-RUN install.r seriation
 
 ENV GGPARCI_VERSION=master
 #TODO - use version like HBPMedical/ggparci@0.1.0
