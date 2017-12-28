@@ -3,6 +3,8 @@
 #' The data are obtained from the local databases using a specific query.
 #' This query will be the same for all nodes.
 #'
+#' The environment variables are:
+#' 
 #' * Input Parameters (for ggparci):  
 #'    - PARAM_query  : SQL query producing the dataframe to analyse  
 #'    - PARAM_variables : the grouping variable
