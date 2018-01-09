@@ -1,0 +1,54 @@
+{"input":
+    {
+    "type": "record",
+    "name": "MultivarRecord",
+    "fields":[
+            {"name": "t", "type": "float"},
+            {"name": "g", "type": "float"},
+            {"name": "w", "type": "float"},
+            {"name": "v0", "type": "float"},
+            {"name": "t0", "type": "float"},
+            {"name": "delta", "type": "float"}
+        ]
+    },
+"output": "double",
+"action":
+    { "/":
+        [1,
+        {"+":
+            [1,
+            {"*":
+                ["input.g",
+                {"m.exp":
+                    [{"+":
+                        [{"*":
+                            [{"*":
+                                [{"u-": ["input.w"]},
+                                 {"m.exp": [{"u-": ["input.delta"]}]}]
+                            },
+                            {"/":
+                                [{"**":
+                                    [{"+":
+                                        [{"*": ["input.g",
+                                                {"m.exp": [{"u-": ["input.delta"]}]}]
+                                          },
+                                          1]
+                                      },
+                                      2]
+                                  },
+                                  "input.g"]
+                            }]
+                        },
+                        {"+":
+                            [{"u-": ["input.delta"]},
+                             {"*":
+                                [{"u-": ["input.v0"]},
+                                 {"-": ["input.t", "input.t0"]}]
+                             }]
+                        }]
+                    }]
+                }]
+            }]
+        }]
+    }
+}
