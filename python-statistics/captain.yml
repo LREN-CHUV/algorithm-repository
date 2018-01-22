@@ -1,0 +1,9 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/python-statistics
+  pre:
+    - echo "Preparing python-statistics"
+  post:
+    - echo "Finished python-statistics"
+  test:
+    - ./tests/test.sh
