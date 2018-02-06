@@ -62,7 +62,7 @@ services:
       - db
 
   statistics:
-    image: "hbpmip/python-statistics:latest"
+    image: "hbpmip/python-summary-statistics:latest"
     container_name: "statistics"
     restart: "no"
     environment:

@@ -2,8 +2,8 @@ FROM hbpmip/python-mip:0.2.4
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-statistics:0.3.6 \
-    FUNCTION=python-statistics
+ENV DOCKER_IMAGE=hbpmip/python-summary-statistics:$VERSION \
+    FUNCTION=python-summary-statistics
 
 COPY requirements.txt /requirements.txt
 COPY statistics.py /statistics.py
@@ -13,7 +13,7 @@ RUN pip install -r /requirements.txt
 ENTRYPOINT ["python", "/statistics.py"]
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
-      org.label-schema.name="hbpmip/python-statistics" \
+      org.label-schema.name="hbpmip/python-summary-statistics" \
       org.label-schema.description="Python implementation of Statistics" \
       org.label-schema.url="https://github.com/LREN-CHUV/algorithm-repository" \
       org.label-schema.vcs-type="git" \
