@@ -1,14 +1,14 @@
 #'
-#' This script generates the parallel coordinates vislualization and save it as svg file.
+#' This script generates the heatmap vislualization and save it as svg file.
 #' The data are obtained from the local databases using a specific query.
 #' This query will be the same for all nodes.
 #'
 #' The environment variables are:
 #' 
-#' * Input Parameters (for ggparci):  
+#' * Input Parameters (for heatmaply):  
 #'    - PARAM_query  : SQL query producing the dataframe to analyse  
-#'    - PARAM_variables : the grouping variable
-#'    - PARAM_covariables : The variables to be ploted in the parallel coordinates plot.
+#'    - PARAM_variables : Ignored.
+#'    - PARAM_covariables : The variables to be ploted in the heatmap.
 #' * Execution context:  
 #'    - JOB_ID : ID of the job  
 #'    - NODE : Node used for the execution of the script  
@@ -29,11 +29,10 @@ library(rmipadaptor)
 library(magrittr)
 library(ggplot2)
 library(svglite)
-library(ggparci)
+library(heatmaply)
 
 # Initialisation
-env_vars_names <- c("PARAM_variables",
-                    "PARAM_covariables",
+env_vars_names <- c("PARAM_covariables",
                     "PARAM_query")
 
 vars_names_r <- substring(text = env_vars_names,first = 7)
@@ -44,21 +43,21 @@ vars_list <- env_vars_names %>%
   # split each string and output a list of character vectors
   strsplit(split = ",")
 
-# assign in the global environment (or you can use attach(vars_list))
+# assign in the global evviroment (or you can use attach(vars_list))
 lapply(seq_along(vars_list),
        function(x) {
          assign(vars_names_r[x], vars_list[[x]], envir=.GlobalEnv)
        }
 )
 
+docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-heatmaply:latest");
+
 data   <- fetchData();
 
-if (length(covariables) == 0 || covariables == "") {
-  qp <- ggparci(data = data, groups_column = variables)
-} else {
-  qp <- ggparci(data = data, columns = covariables , groups_column = variables)
-}
+p <- heatmaply(x = data[covariables])
 
-blob <- stringSVG(grid::grid.draw(qp))
+blob <- stringSVG(grid::grid.draw(p))
+
 saveResults(results =  blob,shape = "svg")
+
 disconnectdbs()

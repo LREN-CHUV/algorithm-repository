@@ -1,12 +1,8 @@
 FROM hbpmip/r-base-build:3.4.2-2 as r-build-env
 
-RUN install.r ggplot2
-RUN install.r dplyr
-RUN install.r tidyr
-
-ENV GGPARCI_VERSION=master
-#TODO - use version like HBPMedical/ggparci@0.1.0
-RUN installGithub.r HBPMedical/ggparci
+ENV heatmaply_VERSION=master
+#TODO - use version like HBPMedical/heatmaply@0.1.0
+RUN installGithub.r HBPMedical/heatmaply
 
 FROM hbpmip/r-mip:0.4.1
 
@@ -39,7 +35,7 @@ COPY --from=r-build-env /usr/local/lib/R/site-library/registry/ /usr/local/lib/R
 COPY --from=r-build-env /usr/local/lib/R/site-library/dplyr/ /usr/local/lib/R/site-library/dplyr/
 COPY --from=r-build-env /usr/local/lib/R/site-library/tidyr/ /usr/local/lib/R/site-library/tidyr/
 COPY --from=r-build-env /usr/local/lib/R/site-library/seriation/ /usr/local/lib/R/site-library/seriation/
-COPY --from=r-build-env /usr/local/lib/R/site-library/ggparci/ /usr/local/lib/R/site-library/ggparci/
+COPY --from=r-build-env /usr/local/lib/R/site-library/heatmaply/ /usr/local/lib/R/site-library/heatmaply/
 COPY --from=r-build-env /usr/local/lib/R/site-library/scales/ /usr/local/lib/R/site-library/scales/
 COPY --from=r-build-env /usr/local/lib/R/site-library/Rcpp/ /usr/local/lib/R/site-library/Rcpp/
 COPY --from=r-build-env /usr/local/lib/R/site-library/munsell/ /usr/local/lib/R/site-library/munsell/
@@ -77,20 +73,20 @@ COPY main.R /src/
 COPY tests/testthat.R /src/tests/
 COPY tests/testthat/ /src/tests/testthat/
 
-ENV DOCKER_IMAGE=hbpmip/r-ggparci:0.1.0 \
-    FUNCTION=r-ggparci
+ENV DOCKER_IMAGE=hbpmip/r-heatmaply:0.1.0 \
+    FUNCTION=r-heatmaply
 
 RUN chown -R compute:compute /src/ \
     && chown -R root:www-data /var/www/html/
 
-LABEL eu.humanbrainproject.function=ggparci \
+LABEL eu.humanbrainproject.function=heatmaply \
       eu.humanbrainproject.function.location=node \
       eu.humanbrainproject.function.version=0.1 \
       eu.humanbrainproject.function.author="Shay Yaacoby, Loduvic Claude" \
       eu.humanbrainproject.function.organisation="" \
       eu.humanbrainproject.function.date="" \
       org.label-schema.build-date=$BUILD_DATE \
-      org.label-schema.name="hbpmip/ggparci" \
+      org.label-schema.name="hbpmip/heatmaply" \
       org.label-schema.description="Parallel coordinates Plot with confidence intervals" \
       org.label-schema.url="" \
       org.label-schema.vcs-type="git" \

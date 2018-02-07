@@ -1,21 +1,21 @@
-[![CHUV](https://img.shields.io/badge/CHUV-LREN-AF4C64.svg)](https://www.unil.ch/lren/en/home.html) [![DockerHub](https://img.shields.io/badge/docker-hbpmip%r--ggparci-008bb8.svg)](https://hub.docker.com/r/hbpmip/r-ggparci) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/r-ggparci.svg)](https://hub.docker.com/r/hbpmip/r-ggparci/tags "hbpmip/r-ggparci image tags") [![](https://images.microbadger.com/badges/version/hbpmip/r-ggparci.svg)](https://microbadger.com/images/hbpmip/r-ggparci "Get your own version badge on microbadger.com") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/r-ggparci.svg)](https://microbadger.com/#/images/hbpmip/r-ggparci "hbpmip/r-ggparci on microbadger")
+[![CHUV](https://img.shields.io/badge/CHUV-LREN-AF4C64.svg)](https://www.unil.ch/lren/en/home.html) [![DockerHub](https://img.shields.io/badge/docker-hbpmip%r--heatmaply-008bb8.svg)](https://hub.docker.com/r/hbpmip/r-ggparci) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/r-heatmaply.svg)](https://hub.docker.com/r/hbpmip/r-heatmaply/tags "hbpmip/r-heatmaply image tags") [![](https://images.microbadger.com/badges/version/hbpmip/r-heatmaply.svg)](https://microbadger.com/images/hbpmip/r-heatmaply "Get your own version badge on microbadger.com") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/r-heatmaply.svg)](https://microbadger.com/#/images/hbpmip/r-heatmaply "hbpmip/r-heatmaply on microbadger")
 
-# ggparci Docker for MIP
+# heatmaply Docker for MIP
 
 ## Usage
 
 ```sh
 
-  docker run --rm --env [list of environment variables] hbpmip/r-ggparci:latest compute
+  docker run --rm --env [list of environment variables] hbpmip/r-heatmaply:latest compute
 
 ```
 
 where the environment variables are:
 
-* Input Parameters (for ggparci):  
+* Input Parameters (for heatmaply):  
    - PARAM_query  : SQL query producing the dataframe to analyse  
-   - PARAM_variables : the grouping variable
-   - PARAM_covariables : The variables to be ploted in the parallel coordinates plot.
+   - PARAM_variables : Ignored.
+   - PARAM_covariables : The variables to be ploted in the heatmap.
 * Execution context:  
    - JOB_ID : ID of the job  
    - NODE : Node used for the execution of the script  
@@ -54,7 +54,7 @@ It requires [captain](https://github.com/harbur/captain) and [Docker engine](htt
 ```
   captain build
   # or
-  docker build -t hbpmip/r-ggparci .
+  docker build -t hbpmip/r-heatmaply .
 ```
 
 ### `./dev.sh`

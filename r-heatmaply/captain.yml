@@ -1,0 +1,9 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/r-heatmaply
+  pre:
+    - echo "Preparing r-heatmaply"
+  post:
+    - echo "Finished r-heatmaply"
+  test:
+    - tests/test.sh
