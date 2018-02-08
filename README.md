@@ -18,6 +18,7 @@ The format of the results should be easily shared.
 
 * For algorithms providing statistical analysis or machine learning, we require the results to be in [PFA format](http://dmg.org/pfa/) in its YAML or JSON form.
 * For algorithms providing visualisations, we support different formats, including Highcharts, Vis.js, PNG and SVG.
+* For algorithms providing tabular data, we expect a JSON output in this format: [Tabular Data Resource](https://github.com/frictionlessdata/specs/blob/master/specs/tabular-data-resource.md)
 
 # Acknowledgements
 
