@@ -23,10 +23,9 @@ def main():
 
     # Generate results
     logging.info("Generating results...")
-    io_helper.save_results(df.describe().to_json(), '', 'application/json')
+    io_helper.save_results(df.describe().transpose().to_json(orient='table'), '', 'application/vnd.dataresource+json')
 
     logging.info("DONE")
-
 
 if __name__ == '__main__':
     main()
