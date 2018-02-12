@@ -1,0 +1,7 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/java-jsi-clus-pct
+  pre:
+    - echo "Preparing java-jsi-clus-pct"
+  post:
+    - echo "Finished java-jsi-clus-pct"
