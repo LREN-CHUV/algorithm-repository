@@ -6,9 +6,9 @@
 #' The environment variables are:
 #' 
 #' * Input Parameters (for heatmaply):  
-#'    - PARAM_query  : SQL query producing the dataframe to analyse  
+#'    - PARAM_query  : SQL query producing the dataframe to plot  
 #'    - PARAM_variables : Ignored.
-#'    - PARAM_covariables : The variables to be ploted in the heatmap.
+#'    - PARAM_covariables : Ignored.
 #' * Execution context:  
 #'    - JOB_ID : ID of the job  
 #'    - NODE : Node used for the execution of the script  
@@ -26,14 +26,11 @@
 #'    - OUT_DBI_PASSWORD : Password for the database connection for output data  
 
 library(rmipadaptor)
-library(magrittr)
-library(ggplot2)
 library(svglite)
 library(heatmaply)
 
 # Initialisation
-env_vars_names <- c("PARAM_covariables",
-                    "PARAM_query")
+env_vars_names <- "PARAM_query"
 
 vars_names_r <- substring(text = env_vars_names,first = 7)
 
@@ -54,7 +51,7 @@ docker_image <- Sys.getenv("DOCKER_IMAGE", "hbpmip/r-heatmaply:latest");
 
 data   <- fetchData();
 
-p <- heatmaply(x = data[covariables])
+p <- heatmaply(x = data)
 
 blob <- stringSVG(grid::grid.draw(p))
 
