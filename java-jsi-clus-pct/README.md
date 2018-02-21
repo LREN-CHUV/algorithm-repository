@@ -9,7 +9,7 @@ Implementation of the Predictive Clustering Trees from CLUS software. http://kt.
 
 ```sh
 
-  docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-naivebayes:0.2.0 compute
+  docker run --rm --env [list of environment variables] hbpmip/java-jsi-clus-pct compute
 
 ```
 
