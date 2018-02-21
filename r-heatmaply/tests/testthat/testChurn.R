@@ -13,8 +13,6 @@ Sys.setenv(
   OUT_DB_PASSWORD = "woken")
 
 Sys.setenv(
-  PARAM_variables   = "churn",
-  PARAM_covariables = "",
   PARAM_query       = "SELECT * FROM churn")
 
 source("main.R")
