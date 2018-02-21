@@ -231,7 +231,8 @@ public class PCTTest {
         files.add(new File(ClusConstants.CLUS_MODELFILE));
         files.add(new File(ClusConstants.CLUS_OUTFILE));
         files.add(new File(ClusConstants.CLUS_SETTINGSFILE));
-
+        files.add(new File(ClusConstants.CLUS_FIMPFILE));
+        
         for (File f : files) {
             try {
                 f.delete();

@@ -18,6 +18,12 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 
 
+/**
+ * 
+ * @author Martin Breskvar
+ *
+ * This class serializes a PCT for multi-target prediction
+ */
 public class PCTSerializer extends ClusGenericSerializer<ClusNode> {
 
     @Override
@@ -168,6 +174,5 @@ public class PCTSerializer extends ClusGenericSerializer<ClusNode> {
             constructRecursive(model, jgen);
         }
         jgen.writeEndObject();
-
     }
 }

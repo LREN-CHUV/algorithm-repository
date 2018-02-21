@@ -7,6 +7,11 @@ import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusModelPFASeria
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusVisualizationSerializer;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 
+/**
+ * 
+ * @author Martin Breskvar
+ *
+ */
 public final class Entrypoint {
 
 	public static void main(String[] args) {

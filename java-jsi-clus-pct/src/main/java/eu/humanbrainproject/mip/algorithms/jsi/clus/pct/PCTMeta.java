@@ -10,7 +10,13 @@ import eu.humanbrainproject.mip.algorithms.Configuration;
 import eu.humanbrainproject.mip.algorithms.Algorithm.AlgorithmCapability;
 import eu.humanbrainproject.mip.algorithms.jsi.common.ClusMeta;
 
-
+/**
+ * 
+ * @author Martin Breskvar
+ * 
+ * This class sets the algorithm parameters
+ * 
+ */
 public class PCTMeta extends ClusMeta {
 
     public PCTMeta() {
