@@ -27,7 +27,7 @@ RUN chown -R compute:compute /src/ \
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.name="hbpmip/java-jsi-clus-pct" \
-      org.label-schema.description="PCT algorithm" \
+      org.label-schema.description="PCT algorithm for multi-target prediction" \
       org.label-schema.url="https://github.com/LREN-CHUV/algorithm-repository" \
       org.label-schema.vcs-type="git" \
       org.label-schema.vcs-url="https://github.com/LREN-CHUV/algorithm-repository.git" \

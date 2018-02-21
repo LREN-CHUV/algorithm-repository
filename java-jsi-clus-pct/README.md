@@ -1,6 +1,6 @@
-[![DockerHub](https://img.shields.io/badge/docker-hbpmip%2Fjava--jsi--clus-008bb8.svg)](https://hub.docker.com/r/hbpmip/java-jsi-clus-pct/) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/java-jsi-clus-pct.svg)](https://hub.docker.com/r/hbpmip/java-jsi-clus-pct/tags "hbpmip/java-jsi-clus-pct image tags") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/java-jsi-clus-pct.svg)](https://microbadger.com/#/images/hbpmip/java-jsi-clus-pct "hbpmip/java-jsi-clus-pct on microbadger")
+[![DockerHub](https://img.shields.io/badge/docker-hbpmip%2Fjava--jsi--clus--pct-008bb8.svg)](https://hub.docker.com/r/hbpmip/java-jsi-clus-pct/) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/java-jsi-clus-pct.svg)](https://hub.docker.com/r/hbpmip/java-jsi-clus-pct/tags "hbpmip/java-jsi-clus-pct image tags") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/java-jsi-clus-pct.svg)](https://microbadger.com/#/images/hbpmip/java-jsi-clus-pct "hbpmip/java-jsi-clus-pct on microbadger")
 
-# hbpmip/java-jsi-clus-pct: Predictive Clustering Trees (PCTs) from JSI
+# hbpmip/java-jsi-clus-pct: Predictive Clustering Trees (PCTs) for multi-target prediction
 
 Implementation of the Predictive Clustering Trees from CLUS software. http://kt.ijs.si
 
