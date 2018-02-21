@@ -51,5 +51,8 @@ echo "Run the CLUS PCT algorithm..."
 $DOCKER_COMPOSE run clus-pct compute
 
 echo
+echo "Run PFA validator..."
+$DOCKER_COMPOSE run pfa_validator
+echo
 # Cleanup
 _cleanup

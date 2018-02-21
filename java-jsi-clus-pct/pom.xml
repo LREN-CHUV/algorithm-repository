@@ -5,7 +5,7 @@
 	<groupId>eu.humanbrainproject.mip.algorithms.jsi</groupId>
 	<artifactId>jsi-clus-pct</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>0.9.0</version><!-- bumpversion -->
 	<name>java-jsi-clus-pct</name>
 
 	<properties>
@@ -14,7 +14,6 @@
 		<compiler.plugin.version>3.6.2</compiler.plugin.version>
 		<jar.plugin.version>3.0.2</jar.plugin.version>
 		<surefire.plugin.version>2.19</surefire.plugin.version>
-		<assembly.plugin.version>3.1.0</assembly.plugin.version>
 		<site.plugin.version>3.6</site.plugin.version>
 		<info.reports.plugin.version>2.9</info.reports.plugin.version>
 		<surefire.report.plugin.version>2.20</surefire.report.plugin.version>
@@ -23,7 +22,7 @@
 		<junit.version>5.0.0</junit.version>
 		<postgres.version>9.4.1212.jre7</postgres.version>
 		<clus.version>1.0.0</clus.version>
-		<jsi-clus.version>0.2.0</jsi-clus.version>
+		<jsi-clus.version>0.3.7</jsi-clus.version>
 		<jackson.version>2.7.0</jackson.version>
 		<mip.adapter.version>0.5.3</mip.adapter.version>
 	</properties>
@@ -34,6 +33,12 @@
 			<id>maven</id>
 			<url>https://repo.maven.apache.org/maven2</url>
 			<name>Central Maven repository</name>
+		</repository>
+
+		<repository>
+			<id>opendatagroup</id>
+			<url>http://repository.opendatagroup.com/maven</url>
+			<name>Repository for Hadrian</name>
 		</repository>
 
 		<repository>
@@ -48,18 +53,11 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>eu.humanbrainproject.mip.algorithms</groupId>
 			<artifactId>adapter</artifactId>
 			<version>${mip.adapter.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>eu.humanbrainproject.mip.algorithms</groupId>
 			<artifactId>jsi-clus</artifactId>
@@ -102,21 +100,12 @@
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
-		<resources>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.properties</include>
-					<include>**/*.jinja</include>
-				</includes>
-				<filtering>false</filtering>
-			</resource>
-		</resources>
 		<testResources>
 			<testResource>
 				<directory>src/test/java</directory>
 				<includes>
-					<include>**/*.props</include>
+					<include>**/*.csv</include>
+					<include>**/*.json</include>
 				</includes>
 				<filtering>false</filtering>
 			</testResource>
@@ -181,4 +170,5 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	
 </project>

@@ -34,7 +34,7 @@ services:
       - db
 
   sample_data_db_setup:
-    image: "hbpmip/sample-data-db-setup:0.4.0"
+    image: "hbpmip/sample-data-db-setup:0.5.0"
     container_name: "data-db-setup"
     restart: "no"
     environment:
@@ -79,5 +79,29 @@ services:
       PARAM_variables: "score_test1"
       PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
+      MODEL_PARAM_pruned: "yes"
+      MODEL_PARAM_minobj: 4
     links:
       - "db:db"
+      
+  pfa_validator:
+    image: "hbpmip/pfa-validator:0.10.1"
+    container_name: "pfa-validator"
+    environment:
+      INPUT_METHOD: POSTGRESQL
+      JOB_ID: 1
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: woken
+      DB_USER: woken
+      DB_PASSWORD: wokenpwd
+      DB_TABLE: job_result
+      DB_COLUMN: data
+      FEATURES_DB_HOST: db
+      FEATURES_DB_PORT: 5432
+      FEATURES_DB_NAME: features
+      FEATURES_DB_USER: features
+      FEATURES_DB_PASSWORD: featurespwd
+      FEATURES_DB_TABLE: sample_data
+    links:
+      - "db:db"      
