@@ -34,7 +34,7 @@ services:
       - db
 
   sample_data_db_setup:
-    image: "hbpmip/sample-data-db-setup:0.4.1"
+    image: "hbpmip/sample-data-db-setup:0.5.0"
     container_name: "data-db-setup"
     restart: "no"
     environment:
@@ -84,9 +84,11 @@ services:
       OUT_DB_NAME: woken
       OUT_DB_USER: woken
       OUT_DB_PASSWORD: wokenpwd
-      PARAM_variables: "churn"
+      PARAM_variables: ""
       PARAM_covariables: ""
-      PARAM_query: "SELECT * FROM churn"
+      PARAM_query: "SELECT * FROM iris LIMIT 20"
+      PARAM_k_row: 3
+      PARAM_k_col: 2
     links:
       - "db:db"
 
