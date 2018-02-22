@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 
-import logging
-import os
-#import sys
-import math
-
 
 # Might need to add a transformation function to go from the dictionnary to lists to write in the different files,
 # especially if we get several queries.
@@ -34,7 +29,6 @@ def write_content_to_file(serie, path_to_file):
     for value in serie:
         file.write(value)
     file.close()
-
 
 # This function must edit the settings file to take into account the number of scores (the dimension)
 # and return the model_type

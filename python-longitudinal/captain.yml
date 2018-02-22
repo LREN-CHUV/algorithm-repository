@@ -1,7 +1,7 @@
 python-example:
   build: Dockerfile
-  image: hbpmip/python-longitudinal
+  image: hbpmip/python-example
   pre:
-    - echo "Preparing python-longitudinal"
+    - echo "Preparing python-example"
   post:
-    - echo "Finished python-longitudinal"
+    - echo "Finished python-example"
