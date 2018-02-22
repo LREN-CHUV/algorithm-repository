@@ -22,7 +22,7 @@ import si.ijs.kt.clus.statistic.RegressionStat;
  * 
  * @author Martin Breskvar
  *
- * This class serializes a PCT for multi-target prediction
+ *         This class serializes a PCT for multi-target prediction
  */
 public class PCTSerializer extends ClusGenericSerializer<ClusNode> {
 
@@ -169,10 +169,15 @@ public class PCTSerializer extends ClusGenericSerializer<ClusNode> {
     @Override
     public void writePfaAction(ClusNode model, JsonGenerator jgen) throws IOException {
 
-        jgen.writeStartObject();
-        {
-            constructRecursive(model, jgen);
+        if (model.atBottomLevel()) {
+            writePrediction(model.getTargetStat(), jgen);
         }
-        jgen.writeEndObject();
+        else {
+            jgen.writeStartObject();
+            {
+                constructRecursive(model, jgen);
+            }
+            jgen.writeEndObject();
+        }
     }
 }

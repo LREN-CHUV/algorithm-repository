@@ -22,7 +22,7 @@
 		<junit.version>5.0.0</junit.version>
 		<postgres.version>9.4.1212.jre7</postgres.version>
 		<clus.version>1.0.0</clus.version>
-		<jsi-clus.version>0.3.7</jsi-clus.version>
+		<jsi-clus.version>0.3.8</jsi-clus.version>
 		<jackson.version>2.7.0</jackson.version>
 		<mip.adapter.version>0.5.3</mip.adapter.version>
 	</properties>
