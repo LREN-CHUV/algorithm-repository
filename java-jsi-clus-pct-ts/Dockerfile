@@ -15,6 +15,7 @@ FROM hbpmip/java-jsi-clus:latest
 MAINTAINER martin.breskvar@ijs.si
 
 ENV DOCKER_IMAGE=java-jsi-clus-pct-ts \
+	FUNCTION=java-jsi-clus-pct-ts \
     JAVA_CLASSPATH=${JAVA_CLASSPATH}:/usr/share/jars/jsi-clus-pct-ts.jar \
     JAVA_MAINCLASS=eu.humanbrainproject.mip.algorithms.jsi.clus.pct.ts.Entrypoint
 
