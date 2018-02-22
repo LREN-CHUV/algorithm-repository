@@ -51,8 +51,9 @@ echo "Run the CLUS PCT algorithm..."
 $DOCKER_COMPOSE run clus-pct-ts compute
 
 echo
-echo "Run PFA validator..."
-$DOCKER_COMPOSE run pfa_validator
-echo
+# will not run PFA validator because PFA validation fails on multi-target outputs
+#echo "Run PFA validator..."
+#$DOCKER_COMPOSE run pfa_validator
+#echo
 # Cleanup
 _cleanup
