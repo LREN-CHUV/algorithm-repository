@@ -13,6 +13,9 @@ Sys.setenv(
   OUT_DB_PASSWORD = "woken")
 
 Sys.setenv(
-  PARAM_query       = "SELECT * FROM iris")
+  PARAM_query       = "SELECT * FROM iris LIMIT 20")
 
 source("main.R")
+
+print("Success!")
+
