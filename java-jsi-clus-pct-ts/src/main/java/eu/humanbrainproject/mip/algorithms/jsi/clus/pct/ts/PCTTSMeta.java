@@ -25,7 +25,7 @@ public class PCTTSMeta extends ClusMeta {
 
         this.NAME = "PredictiveClusteringTreesForTS";
         this.DOCUMENTATION = "This is the pct TS documentation.";
-        this.CAPABILITIES = new HashSet<AlgorithmCapability>(Arrays.asList(AlgorithmCapability.PREDICTIVE_MODEL));
+        this.CAPABILITIES = new HashSet<AlgorithmCapability>(Arrays.asList(AlgorithmCapability.PREDICTIVE_MODEL, AlgorithmCapability.VISUALISATION));
 
         Map<String, String> prms = new HashMap<String, String>();
         prms.put("pruned", "yes");
