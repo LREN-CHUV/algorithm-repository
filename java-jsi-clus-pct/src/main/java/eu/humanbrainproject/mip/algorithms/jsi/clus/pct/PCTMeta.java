@@ -25,7 +25,9 @@ public class PCTMeta extends ClusMeta {
         new HashSet<AlgorithmCapability>(
             Arrays.asList(
                 AlgorithmCapability.CLASSIFICATION,
+                AlgorithmCapability.CLASSIFICATION_MT,
                 AlgorithmCapability.REGRESSION,
+                AlgorithmCapability.REGRESSION_MT,
                 AlgorithmCapability.PREDICTIVE_MODEL,
                 AlgorithmCapability.VISUALISATION));
 
