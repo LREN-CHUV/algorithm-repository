@@ -27,7 +27,6 @@
 #'    - OUT_DBI_PASSWORD : Password for the database connection for output data  
 
 library(rmipadaptor)
-library(magrittr)
 library(ggplot2)
 library(svglite)
 library(ggparci)
