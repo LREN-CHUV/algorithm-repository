@@ -83,7 +83,7 @@ services:
       MODEL_PARAM_minobj: 4
     links:
       - "db:db"
-      
+
   pfa_validator:
     image: "hbpmip/pfa-validator:0.10.1"
     container_name: "pfa-validator"
@@ -104,4 +104,4 @@ services:
       FEATURES_DB_PASSWORD: featurespwd
       FEATURES_DB_TABLE: sample_data
     links:
-      - "db:db"      
+      - "db:db"

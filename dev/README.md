@@ -22,4 +22,3 @@ It contains several sample databases. Please refer to [sample-data-db-setup](htt
 * 'woken': username: 'woken', password: 'woken'
 
 It contains the JOB_RESULTS table used to store the results of the algorithm.
-
