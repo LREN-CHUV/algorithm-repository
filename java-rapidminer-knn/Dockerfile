@@ -1,4 +1,4 @@
-FROM hbpmip/java-base-build:3.5.0-jdk-8-9 as build-java-env
+FROM hbpmip/java-base-build:3.5.2-jdk-8-0 as build-java-env
 
 COPY pom.xml /project/pom.xml
 # Fill the cache for jar dependencies, to allow code changes reusing previously downloaded jars
