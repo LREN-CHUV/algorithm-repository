@@ -1,0 +1,9 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/python-jsi-hedwig
+  pre:
+    - echo "Preparing python-jsi-hedwig"
+  post:
+    - echo "Finished python-jsi-hedwig"
+  test:
+    - ./tests/test.sh

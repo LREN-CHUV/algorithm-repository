@@ -1,0 +1,4 @@
+rdflib==4.2.2
+scipy>=0.13.0
+numpy>=1.7.1
+networkx==1.9.1

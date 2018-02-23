@@ -14,7 +14,9 @@ Sys.setenv(
 
 Sys.setenv(
   PARAM_variables   = "iris",
-  PARAM_covariables = ".",
+  PARAM_covariables = "",
   PARAM_query       = "SELECT * FROM iris")
 
 source("main.R")
+
+print("Success!")

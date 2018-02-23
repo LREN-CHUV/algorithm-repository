@@ -84,9 +84,16 @@ services:
       OUT_DB_NAME: woken
       OUT_DB_USER: woken
       OUT_DB_PASSWORD: wokenpwd
-      PARAM_variables: "churn"
+      PARAM_variables: "name"
       PARAM_covariables: ""
-      PARAM_query: "SELECT * FROM churn"
+      PARAM_query: "SELECT * FROM iris"
+      PARAM_flip_coords: "F"
+      PARAM_include_obs_lines: "T"
+      PARAM_alpha_obs_lines: "0.2"
+      PARAM_title: "Parallel Coordinates - Iris Data" 
+      PARAM_width: 5
+      PARAM_height: 4
+
     links:
       - "db:db"
 

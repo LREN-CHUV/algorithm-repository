@@ -1,0 +1,110 @@
+---
+
+version: '2'
+services:
+
+  db:
+    image: postgres:9.6.5-alpine
+    hostname: db
+    environment:
+      POSTGRES_PASSWORD: test
+
+  wait_dbs:
+    image: "waisbrot/wait"
+    restart: "no"
+    environment:
+      TARGETS: "db:5432"
+      TIMEOUT: 60
+
+  create_dbs:
+    image: "hbpmip/create-databases:1.0.0"
+    restart: "no"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_ADMIN_USER: postgres
+      DB_ADMIN_PASSWORD: test
+      DB1: features
+      USER1: features
+      PASSWORD1: featurespwd
+      DB2: woken
+      USER2: woken
+      PASSWORD2: wokenpwd
+    depends_on:
+      - db
+
+  sample_data_db_setup:
+    image: "hbpmip/sample-data-db-setup:0.4.0"
+    container_name: "data-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: features
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: test
+    depends_on:
+      - db
+
+  woken_db_setup:
+    image: "hbpmip/woken-db-setup:1.0.2"
+    container_name: "woken-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: woken
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: test
+    depends_on:
+      - db
+
+  hinmine-iris:
+     image: "hbpmip/python-jsi-hinmine:latest"
+     container_name: "python-jsi-hinmine"
+     restart: "no"
+     environment:
+       NODE: job_test
+       JOB_ID: 1
+       IN_JDBC_DRIVER: org.postgresql.Driver
+       IN_JDBC_URL: jdbc:postgresql://db:5432/features
+       IN_JDBC_USER: features
+       IN_JDBC_PASSWORD: featurespwd
+       OUT_JDBC_DRIVER: org.postgresql.Driver
+       OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
+       OUT_JDBC_USER: woken
+       OUT_JDBC_PASSWORD: wokenpwd
+       PARAM_variables: "name"
+       PARAM_covariables: "sepal_length,sepal_width,petal_length,petal_width"
+       PARAM_grouping: ""
+       PARAM_query: "SELECT name,sepal_length,sepal_width,petal_length,petal_width FROM iris"
+       PARAM_meta: "{\"name\":{\"code\":\"name\",\"type\":\"string\"},\"sepal_length\":{\"code\":\"sepal_length\",\"type\":\"real\"},\"sepal_width\":{\"code\":\"sepal_width\",\"type\":\"real\"},\"petal_length\":{\"code\":\"petal_length\",\"type\":\"real\"}, \"petal_width\":{\"code\":\"petal_width\",\"type\":\"real\"}}"
+       PARAM_MODEL_normalize: "True"
+       PARAM_MODEL_damping: 0.85
+     links:
+       - "db:db"
+
+  hinmine-sample:
+    image: "hbpmip/python-jsi-hinmine:latest"
+    container_name: "python-jsi-hinmine"
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 2
+      IN_JDBC_DRIVER: org.postgresql.Driver
+      IN_JDBC_URL: jdbc:postgresql://db:5432/features
+      IN_JDBC_USER: features
+      IN_JDBC_PASSWORD: featurespwd
+      OUT_JDBC_DRIVER: org.postgresql.Driver
+      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
+      OUT_JDBC_USER: woken
+      OUT_JDBC_PASSWORD: wokenpwd
+      PARAM_variables: "score_test1"
+      PARAM_covariables: "stress_before_test1,iq"
+      PARAM_grouping: ""
+      PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
+      PARAM_meta: "{\"score_test1\":{\"code\":\"score_test1\",\"type\":\"real\"},\"stress_before_test1\":{\"code\":\"stress_before_test1\",\"type\":\"real\"},\"iq\":{\"code\":\"iq\",\"type\":\"real\"},\"cognitive_task2\":{\"code\":\"cognitive_task2\",\"type\":\"real\"},\"practice_task2\":{\"code\":\"practice_task2\",\"type\":\"real\"},\"response_time_task2\":{\"code\":\"response_time_task2\",\"type\":\"real\"},\"college_math\":{\"code\":\"college_math\",\"type\":\"real\"},\"score_math_course1\":{\"code\":\"score_math_course1\",\"type\":\"real\"},\"score_math_course2\":{\"code\":\"score_math_course2\",\"type\":\"real\"}}"
+    links:
+      - "db:db"

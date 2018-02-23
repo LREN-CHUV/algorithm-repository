@@ -1,22 +1,11 @@
 #!/usr/bin/env python3
 
-import logging
-import os
-#import sys
-import math
+try:
+    import utils_read_inputs
+except:
+    from utils import utils_read_inputs
 
-
-def get_parameters_from_population_file(path):
-    return
-
-def get_parameters_from_individual_file(path):
-    return
-
-def get_model_function(type):
-    return
-
-# TODO: convert to PFA, with inputs t0 and v0
-def get_univariate_function(t, p, v0, t0):
+def get_univariate_function(p, v0, t0):
     """
     Univariate function
     Args:
@@ -27,49 +16,40 @@ def get_univariate_function(t, p, v0, t0):
         p0 = 1/(1 + math.exp(-p))
         result = 1/(1+(1/p0 - 1)*math.exp(-v0*(t-t0)))
     """
-    return {"input":
-                {
-                "type": "record",
-                "fields":{
-                        {"name": "t", "type": float},
-                        {"name": "p", "type": float},
-                        {"name": "v0", "type": float},
-                        {"name": "t0", "type": float}
-                    }
-                },
-            "output": "float",
-            "action":
-                {"/":
-                    [1,
-                    {"+":
-                       [1,
-                        {"*":
-                            [{"+":
-                                [{"/":
-                                    [1,
-                                    {"/":
-                                        [1,
-                                        {"+":
-                                            [1,
-                                            {"m.exp": [{"u-": [input.p]}]}]
-                                         }]
-                                    }] #P0 end
-                                },
-                                {"u-": [1]}]
-                            },
-                            {"m.exp":
-                                [{"*", [{"u-": [input.v0]},
-                                        {"-" : [input.t,
-                                                input.t0]}]
-                                }]
-                            }]
-                        }]
-                    }]
-                }
-            }
+    return "{'input': 'double', \
+            'output': 'float', \
+            'action': \
+                {'/': \
+                    [1, \
+                    {'+': \
+                       [1, \
+                        {'*': \
+                             [{'+': \
+                                  [{'/': \
+                                      [1, \
+                                     {'/': \
+                                         [1, \
+                                         {'+': \
+                                             [1, \
+                                             {'m.exp': [{'u-': [" + p + "]}]}] \
+                                         }] \
+                                    }] #P0 end \
+                                }, \
+                                {'u-': [1]}]\
+                            },\
+                            {'m.exp': \
+                                 [{'*', [{'u-': [" + v0 + "]}, \
+                                        {'-' : [input, \
+                                                " + t0 + "]}] \
+                                  }]\
+                            }]\
+                        }]\
+                    }]\
+                }\
+            }"
 
-# TODO: convert to PFA, with inputs t0 and v0
-def get_multivariate_function(t, g, delta, w, v0, t0):
+
+def get_multivariate_function(g, delta, w, v0, t0):
     """
     Multivariate function
     Args:
@@ -81,63 +61,57 @@ def get_multivariate_function(t, g, delta, w, v0, t0):
         t0 (float): initial start of the slope for the specific individual (individual parameter)
         equation: 1 / (1 + g*math.exp ((-w*math.pow(g*math.exp(-delta)+1,2)/g*math.exp(-delta)) - delta - v0*(t - t0)) )
         """
-    return {"input":
-                {
-                "type": "record",
-                "fields":{
-                        {"name": "t", "type": float},
-                        {"name": "g", "type": float},
-                        {"name": "w", "type": float},
-                        {"name": "v0", "type": float},
-                        {"name": "t0", "type": float},
-                        {"name": "delta", "type": float}
-                    }
-                },
-            "output": "float",
-            "action":
-                { "/",
-                    [1,
-                    {"+",
-                        [1,
-                        {"*",
-                            [input.g,
-                            {"m.exp",
-                                [{"+",
-                                    [{"*",
-                                        [{"*",
-                                            [{"u-", [input.w]},
-                                             {"m.exp", [{"u-", [input.delta]}]}]
-                                          },
-                                        {"/",
-                                            [{"**",
-                                                [{"+",
-                                                    [{"*", [input.g,
-                                                            {"m.exp", [{"u-", [input.delta]}]}]
-                                                      },
-                                                      1]
-                                                  },
-                                                  2]
-                                              },
-                                              input.g]
-                                        }]
-                                    },
-                                    {"+",
-                                        [{"u-", [input.delta]},
-                                         {"*",
-                                            [{"u-", [input.v0]},
-                                             {"-", [input.t, input.t0]}]
-                                         }]
-                                    }]
-                                }]
-                            }]
-                        }]
-                    }]
-                }
-            }
+
+    return "{'input': double, \
+             'output': float, \
+             'action': \
+                { '/', \
+                  [1, \
+                   {'+', \
+                    [1, \
+                     {'*', \
+                      [" + g + ", \
+                       {'m.exp', \
+                        [{'+', \
+                          [{'*', \
+                            [{'*', \
+                              [{'u-', [" + w + "]}, \
+                               {'m.exp', [{'u-', [" + delta + "]}]}] \
+                              }, \
+                             {'/', \
+                              [{'**', \
+                                [{'+', \
+                                  [{'*', [" + g + ", \
+                                          {'m.exp', [{'u-', [" + delta + "]}]}] \
+                                    }, \
+                                   1] \
+                                  }, \
+                                 2] \
+                                }, \
+                               " + g + "] \
+                              }] \
+                            }, \
+                           {'+', \
+                            [{'u-', [" + delta + "]}, \
+                             {'*', \
+                              [{'u-', [" + v0 + "]}, \
+                               {'-', [input," + t0 + "]}] \
+                              }] \
+                            }] \
+                          }] \
+                        }] \
+                      }] \
+                    }] \
+                  } \
+                }"
 
 def write_output_to_pfa(model_type):
-    #reads the population file
-    #creates the pfa file
-    #creates the dict for the population
-    #creates the dict for the individuals
-    return
+    pop_param = utils_read_inputs.read_population_parameters("longitudina/examples/scalar_models/" + model_type + "/output/population_parameters.csv")
+    result_pfa = ""
+    if model_type == "univariate":
+        result_pfa += get_univariate_function(pop_param['p'], pop_param['v0'], pop_param['t0'])
+    elif model_type == "multivariate":
+        for delta in pop_param['deltas']:
+            result_pfa += get_multivariate_function(pop_param['g'], delta, pop_param['w'], pop_param['v0'], pop_param['t0'])
+
+    return result_pfa

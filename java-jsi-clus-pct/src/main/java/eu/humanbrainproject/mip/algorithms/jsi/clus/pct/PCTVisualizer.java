@@ -4,6 +4,12 @@ import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusVisualization
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.model.test.NodeTest;
 
+/**
+ * 
+ * @author Martin Breskvar
+ * 
+ * This class produces javascript for PCT visualization
+ */
 public class PCTVisualizer extends ClusVisualizationSerializer<ClusNode> {
 
 	private void visualizationRecursive(ClusNode model, StringBuilder nodes, StringBuilder edges) {

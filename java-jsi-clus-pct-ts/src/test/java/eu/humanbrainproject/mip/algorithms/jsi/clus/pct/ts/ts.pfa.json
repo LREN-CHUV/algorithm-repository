@@ -1,0 +1,85 @@
+{
+  "name" : "PredictiveClusteringTreesForTS",
+  "method" : "map",
+  "doc" : "This is the pct TS documentation.",
+  "metadata" : {
+    "docker_image" : "",
+    "accepts_missing_values" : "false"
+  },
+  "input" : {
+    "doc" : "Input is the list of covariables and groups",
+    "name" : "DependentVariables",
+    "type" : "record",
+    "fields" : [ {
+      "name" : "input1",
+      "type" : "double"
+    }, {
+      "name" : "input2",
+      "type" : "double"
+    } ]
+  },
+  "output" : {
+    "doc" : "Output is the estimate of the variable",
+    "type" : "record",
+    "fields" : [ {
+      "name" : "output1",
+      "type" : "double"
+    }, {
+      "name" : "output2",
+      "type" : "double"
+    }, {
+      "name" : "output3",
+      "type" : "double"
+    }, {
+      "name" : "output4",
+      "type" : "double"
+    } ]
+  },
+  "cells" : {
+    "query" : {
+      "type" : {
+        "doc" : "Definition of the query that has produced this model",
+        "name" : "Query",
+        "type" : "record",
+        "fields" : [ {
+          "doc" : "Dependent variable",
+          "name" : "variable",
+          "type" : "string"
+        }, {
+          "doc" : "List of explanatory variables",
+          "name" : "covariables",
+          "type" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "doc" : "SQL query",
+          "name" : "sql",
+          "type" : "string"
+        }, {
+          "doc" : "Number of records selected by the query",
+          "name" : "count",
+          "type" : "int"
+        } ]
+      },
+      "init" : {
+        "variable" : "output1",
+        "covariables" : [ "input1", "input2" ],
+        "sql" : "SELECT",
+        "count" : 7
+      }
+    }
+  },
+  "pools" : { },
+  "begin" : [ ],
+  "action" : [ {
+    "output1" : 0.6714285714285715,
+    "output2" : 0.1714285714285715,
+    "output3" : 1.5714285714285714,
+    "output4" : 1.2571428571428573
+  } ],
+  "end" : [ ],
+  "fcns" : { }
+}

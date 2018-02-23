@@ -34,7 +34,7 @@ services:
       - db
 
   sample_data_db_setup:
-    image: "hbpmip/sample-data-db-setup:0.4.0"
+    image: "hbpmip/sample-data-db-setup:0.5.0"
     container_name: "data-db-setup"
     restart: "no"
     environment:
@@ -61,9 +61,9 @@ services:
     depends_on:
       - db
 
-  clus-pct:
+  clus_pct_regression_st:
     image: "hbpmip/java-jsi-clus-pct:latest"
-    container_name: "clus-pct"
+    container_name: "clus-pct-regression-st"
     restart: "no"
     environment:
       NODE: job_test
@@ -79,5 +79,76 @@ services:
       PARAM_variables: "score_test1"
       PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
+      FUNCTION: java-jsi-clus-pct
+      PARAM_MODEL_pruned: "yes"
+      PARAM_MODEL_minobj: 4
     links:
       - "db:db"
+      
+  clus_pct_classification_st:
+    image: "hbpmip/java-jsi-clus-pct:latest"
+    container_name: "clus-pct-classification-st"
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 2
+      IN_JDBC_DRIVER: org.postgresql.Driver
+      IN_JDBC_URL: jdbc:postgresql://db:5432/features
+      IN_JDBC_USER: features
+      IN_JDBC_PASSWORD: featurespwd
+      OUT_JDBC_DRIVER: org.postgresql.Driver
+      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
+      OUT_JDBC_USER: woken
+      OUT_JDBC_PASSWORD: wokenpwd
+      PARAM_variables: "name"
+      PARAM_covariables: "sepal_length,sepal_width,petal_length,petal_width"
+      PARAM_query: "SELECT * FROM iris"
+      PARAM_MODEL_pruned: "yes"
+      PARAM_MODEL_minobj: 4
+    links:
+      - "db:db"
+
+      
+  pfa_validator_regression_st:
+    image: "hbpmip/pfa-validator:0.10.1"
+    container_name: "pfa-validator-regression-st"
+    environment:
+      INPUT_METHOD: POSTGRESQL
+      JOB_ID: 1
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: woken
+      DB_USER: woken
+      DB_PASSWORD: wokenpwd
+      DB_TABLE: job_result
+      DB_COLUMN: data
+      FEATURES_DB_HOST: db
+      FEATURES_DB_PORT: 5432
+      FEATURES_DB_NAME: features
+      FEATURES_DB_USER: features
+      FEATURES_DB_PASSWORD: featurespwd
+      FEATURES_DB_TABLE: sample_data
+    links:
+      - "db:db"      
+
+   pfa_validator_classification_st:
+    image: "hbpmip/pfa-validator:0.10.1"
+    container_name: "pfa-validator-classification-st"
+    environment:
+      INPUT_METHOD: POSTGRESQL
+      JOB_ID: 2
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: woken
+      DB_USER: woken
+      DB_PASSWORD: wokenpwd
+      DB_TABLE: job_result
+      DB_COLUMN: data
+      FEATURES_DB_HOST: db
+      FEATURES_DB_PORT: 5432
+      FEATURES_DB_NAME: features
+      FEATURES_DB_USER: features
+      FEATURES_DB_PASSWORD: featurespwd
+      FEATURES_DB_TABLE: iris
+    links:
+      - "db:db"     
