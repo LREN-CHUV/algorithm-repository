@@ -84,7 +84,7 @@ services:
       PARAM_MODEL_minobj: 4
     links:
       - "db:db"
-      
+
   clus_pct_classification_st:
     image: "hbpmip/java-jsi-clus-pct:latest"
     container_name: "clus-pct-classification-st"
@@ -107,7 +107,7 @@ services:
       PARAM_MODEL_minobj: 4
     links:
       - "db:db"
-      
+
   pfa_validator_regression_st:
     image: "hbpmip/pfa-validator:latest"
     container_name: "pfa-validator-regression-st"
@@ -129,7 +129,7 @@ services:
       FEATURES_DB_TABLE: sample_data
     links:
       - "db:db"
-      
+
   pfa_validator_classification_st:
     image: "hbpmip/pfa-validator:latest"
     container_name: "pfa-validator-classification-st"
