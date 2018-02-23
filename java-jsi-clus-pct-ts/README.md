@@ -7,13 +7,10 @@
 
 Implementation of the Predictive Clustering Trees capable of time-series prediction. http://kt.ijs.si
 
-
 ## Usage
 
 ```sh
-
   docker run --rm --env [list of environment variables] hbpmip/java-jsi-clus-pct-ts compute
-
 ```
 
 where the environment variables are:
