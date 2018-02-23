@@ -3,7 +3,6 @@
 [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/python-jsi-hinmine.svg)](https://hub.docker.com/r/hbpmip/python-jsi-hinmine/tags "hbpmip/python-jsi-hinmine image tags")
 [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/python-jsi-hinmine.svg)](https://microbadger.com/images/hbpmip/python-jsi-hinmine "Get your own image badge on microbadger.com")
 
-
 # Python HINMine
 
 HINMine algorithm for network-based propositionalization
@@ -19,17 +18,13 @@ The algorithm has two parameters:
   - normalize: [default value True] This parameter is a boolean parameter which tells the algorithm whether it should first normalize the data. Data normalization normalizes the range of each feature to [-1, 1] and can be useful when comparing two instances. However, if two features have different values for a non-arbitrary reason, normalization should not be performed
   - damping: [default value 0.85] This parameter is the damping factor of the PageRank algorithm used in calculating feature values for the data instances. It represents the probability of a random walker in a network to continue its random walk as oposed to teleporting to a random node
 
-
-
 ## Build (for contributors)
 
 Run: `./build.sh`
 
-
 ## Test (for contributors)
 
 Run: `./tests/test.sh`
-
 
 ## Publish (for contributors)
 

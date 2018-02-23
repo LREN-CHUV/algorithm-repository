@@ -11,21 +11,22 @@ RUN apt-get update \
   && python -m pip install --upgrade pip
 
 # Install hinmine and its requirements
-COPY netSDM/ /project/netSDM
-COPY mip_hinmine.py /project/mip_hinmine.py
-COPY requirements_mip.txt /project/requirements_mip.txt
+COPY netSDM/ /src/netSDM
+COPY mip_hinmine.py /src/mip_hinmine.py
+COPY requirements_mip.txt /src/requirements_mip.txt
+COPY doc/ /src/doc/
 
-WORKDIR /project/netSDM
+WORKDIR /src/netSDM
 
 RUN python3.6 setup.py install
 
-WORKDIR /project
+WORKDIR /src
 
-RUN pip install -r /project/netSDM/requirements.txt \
-  && pip install -r /project/requirements_mip.txt \
-  && rm -rf /project/netSDM
+RUN pip install -r /src/netSDM/requirements.txt \
+  && pip install -r /src/requirements_mip.txt \
+  && rm -rf /src/netSDM
 
-ENTRYPOINT ["python3.6", "/project/mip_hinmine.py"]
+ENTRYPOINT ["python3.6", "/src/mip_hinmine.py"]
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.name="hbpmip/python-jsi-hinmine" \
