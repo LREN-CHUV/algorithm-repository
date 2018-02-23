@@ -107,10 +107,9 @@ services:
       PARAM_MODEL_minobj: 4
     links:
       - "db:db"
-
       
   pfa_validator_regression_st:
-    image: "hbpmip/pfa-validator:0.10.1"
+    image: "hbpmip/pfa-validator:latest"
     container_name: "pfa-validator-regression-st"
     environment:
       INPUT_METHOD: POSTGRESQL
@@ -129,10 +128,10 @@ services:
       FEATURES_DB_PASSWORD: featurespwd
       FEATURES_DB_TABLE: sample_data
     links:
-      - "db:db"      
-
-   pfa_validator_classification_st:
-    image: "hbpmip/pfa-validator:0.10.1"
+      - "db:db"
+      
+  pfa_validator_classification_st:
+    image: "hbpmip/pfa-validator:latest"
     container_name: "pfa-validator-classification-st"
     environment:
       INPUT_METHOD: POSTGRESQL
@@ -151,4 +150,4 @@ services:
       FEATURES_DB_PASSWORD: featurespwd
       FEATURES_DB_TABLE: iris
     links:
-      - "db:db"     
+      - "db:db"
