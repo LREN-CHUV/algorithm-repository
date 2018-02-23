@@ -110,7 +110,7 @@ BUILD_DATE=$(date -Iseconds) \
   $CAPTAIN push target_image --branch-tags=false --commit-tags=false --tag $updated_version
 
 ## Notify Microbadger
-curl -XPOST https://hooks.microbadger.com/images/hbpmip/java-jsi-clus-pct/eqm5EMJzbfgo1X3c_E03j5YxL1c=
+curl -XPOST https://hooks.microbadger.com/images/hbpmip/java-jsi-clus-pct/qL9YEShLJRp1Yttlr6JtdMGRh4c=
 
 # Notify on slack
 sed "s/USER/${USER^}/" $WORKSPACE/slack.json > $WORKSPACE/.slack.json
