@@ -22,6 +22,7 @@ ENV DOCKER_IMAGE=java-jsi-clus-pct-ts \
 COPY --from=build-java-env /project/target/jsi-clus-pct-ts.jar /usr/share/jars/jsi-clus-pct-ts.jar
 COPY --from=build-java-env /project/target/site/ /var/www/html/
 COPY src/ /src/
+COPY doc/ /src/doc/
 
 RUN chown -R compute:compute /src/ \
     && chown -R root:www-data /var/www/html/
