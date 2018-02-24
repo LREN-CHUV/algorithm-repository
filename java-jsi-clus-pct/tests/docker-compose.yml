@@ -103,6 +103,7 @@ services:
       PARAM_variables: "name"
       PARAM_covariables: "sepal_length,sepal_width,petal_length,petal_width"
       PARAM_query: "SELECT * FROM iris"
+      FUNCTION: java-jsi-clus-pct
       PARAM_MODEL_pruned: "yes"
       PARAM_MODEL_minobj: 4
     links:
