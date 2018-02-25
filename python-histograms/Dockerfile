@@ -6,11 +6,11 @@ ENV DOCKER_IMAGE=hbpmip/python-histograms:0.3.6 \
     FUNCTION=python-histograms
 
 COPY requirements.txt /requirements.txt
-COPY histograms.py /histograms.py
+COPY histograms.py /src/histograms.py
 
 RUN pip install -r /requirements.txt
 
-ENTRYPOINT ["python", "/histograms.py"]
+ENTRYPOINT ["python", "/src/histograms.py"]
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.name="hbpmip/python-histograms" \
