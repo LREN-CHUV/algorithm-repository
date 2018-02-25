@@ -84,3 +84,13 @@ services:
       MODEL_PARAM_design: "factorial"
     links:
       - "db:db"
+
+  test_suite:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    environment:
+      IN_DB_URL: postgresql://features:featurespwd@db:5432/features
+      OUT_DB_URL: postgresql://woken:wokenpwd@db:5432/woken
+    links:
+     - "db:db"
