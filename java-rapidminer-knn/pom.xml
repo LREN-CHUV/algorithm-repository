@@ -6,7 +6,7 @@
     <groupId>eu.humanbrainproject.mip.algorithms.rapidminer</groupId>
     <artifactId>knn</artifactId>
     <packaging>jar</packaging>
-    <version>0.2.1</version><!-- bumpversion -->
+    <version>0.2.2</version><!-- bumpversion -->
     <name>java-rapidminer-knn</name>
 
     <properties>
