@@ -8,7 +8,7 @@ Implementation of the [Naive Bayes classifier](https://en.wikipedia.org/wiki/Nai
 
 ```sh
 
-  docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-naivebayes:0.2.0 compute
+  docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-naivebayes:0.2.1 compute
 
 ```
 

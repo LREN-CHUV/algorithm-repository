@@ -6,7 +6,7 @@
     <groupId>eu.humanbrainproject.mip.algorithms.rapidminer</groupId>
     <artifactId>naivebayes</artifactId>
     <packaging>jar</packaging>
-    <version>0.2.0</version><!-- bumpversion -->
+    <version>0.2.1</version><!-- bumpversion -->
     <name>java-rapidminer-naivebayes</name>
 
     <properties>
