@@ -85,10 +85,15 @@ services:
       OUT_DB_USER: woken
       OUT_DB_PASSWORD: wokenpwd
       PARAM_variables: ""
-      PARAM_covariables: ""
-      PARAM_query: "SELECT * FROM iris LIMIT 100"
+      PARAM_covariables: "sepal_length,sepal_width,petal_length,petal_width"
+      PARAM_query: "SELECT * FROM iris"
       PARAM_k_row: 3
       PARAM_k_col: 2
+      PARAM_main: "Interactive Heatmap - Iris Data"
+      PARAM_xlab: "Variables"
+      PARAM_ylab: "Observations"
+
+
     links:
       - "db:db"
 
