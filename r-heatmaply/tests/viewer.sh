@@ -56,7 +56,7 @@ echo
 echo "Run visualisation..."
 $DOCKER_COMPOSE run viewer
 
-sensible-browser viewer.html
+sensible-browser tmp/result.html
 
 echo
 # Cleanup
