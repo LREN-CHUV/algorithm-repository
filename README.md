@@ -1,4 +1,4 @@
-[![CHUV](https://img.shields.io/badge/CHUV-LREN-AF4C64.svg)](https://www.unil.ch/lren/en/home.html) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a170b1b08f81441f85c004480ddaac0f)](https://www.codacy.com/app/hbp-mip/algorithm-repository?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=HBPMedical/algorithm-repository&amp;utm_campaign=Badge_Grade) [![CircleCI](https://circleci.com/gh/HBPMedical/algorithm-repository.svg?style=svg)](https://circleci.com/gh/HBPMedical/algorithm-repository)
+[![CHUV](https://img.shields.io/badge/CHUV-LREN-AF4C64.svg)](https://www.unil.ch/lren/en/home.html) [![JSI](https://img.shields.io/badge/JSI-KT-AF4C64.svg)](https://www.unil.ch/lren/en/home.html) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a170b1b08f81441f85c004480ddaac0f)](https://www.codacy.com/app/hbp-mip/algorithm-repository?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=HBPMedical/algorithm-repository&amp;utm_campaign=Badge_Grade) [![CircleCI](https://circleci.com/gh/HBPMedical/algorithm-repository.svg?style=svg)](https://circleci.com/gh/HBPMedical/algorithm-repository)
 
 # Algorithm repository
 

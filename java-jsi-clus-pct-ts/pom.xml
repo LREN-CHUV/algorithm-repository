@@ -5,7 +5,7 @@
 	<groupId>eu.humanbrainproject.mip.algorithms.jsi</groupId>
 	<artifactId>jsi-clus-pct-ts</artifactId>
 	<packaging>jar</packaging>
-	<version>0.9.2</version><!-- bumpversion -->
+	<version>0.9.4</version><!-- bumpversion -->
 	<name>java-jsi-clus-pct-ts</name>
 
 	<properties>
@@ -21,10 +21,10 @@
 		<hadrian.version>0.8.5</hadrian.version>
 		<junit.version>5.0.0</junit.version>
 		<postgres.version>9.4.1212.jre7</postgres.version>
-		<clus.version>1.0.0</clus.version>
-		<jsi-clus.version>0.3.8</jsi-clus.version>
 		<jackson.version>2.7.0</jackson.version>
-		<mip.adapter.version>0.5.3</mip.adapter.version>
+		<mip.adapter.version>0.5.4</mip.adapter.version>
+		<clus.version>1.0.0</clus.version>
+		<jsi-clus.version>0.3.9</jsi-clus.version>
 	</properties>
 
 

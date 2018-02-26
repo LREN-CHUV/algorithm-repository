@@ -47,12 +47,15 @@ $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
 echo
-echo "Run the CLUS PCT algorithm..."
-$DOCKER_COMPOSE run clus-pct compute
+echo "Run the CLUS PCT algorithm for single-target classification..."
+$DOCKER_COMPOSE run clus_pct_classification_st compute
+echo "Run the CLUS PCT algorithm for single-target regression..."
+$DOCKER_COMPOSE run clus_pct_regression_st compute
 
 echo
 echo "Run PFA validator..."
-$DOCKER_COMPOSE run pfa_validator
+$DOCKER_COMPOSE run pfa_validator_classification_st
+$DOCKER_COMPOSE run pfa_validator_regression_st
 echo
 # Cleanup
 _cleanup

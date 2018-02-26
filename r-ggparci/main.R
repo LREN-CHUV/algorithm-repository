@@ -4,27 +4,27 @@
 #' This query will be the same for all nodes.
 #'
 #' The environment variables are:
-#' 
-#' * Input Parameters (for ggparci):  
-#'    - PARAM_query  : SQL query producing the dataframe to analyse  
+#'
+#' * Input Parameters (for ggparci):
+#'    - PARAM_query  : SQL query producing the dataframe to analyse
 #'    - PARAM_variables : the grouping variable
 #'    - PARAM_covariables : The variables to be ploted in the parallel coordinates plot.
 #'    - PARAM_* : to pass any option to the R function. See example in the docker-compose.yml file.
-#' * Execution context:  
-#'    - JOB_ID : ID of the job  
-#'    - NODE : Node used for the execution of the script  
-#'    - IN_DBI_DRIVER   : Class name of the DBI driver for input data  
-#'    - IN_DBI_DBNAME     : Database name for the database connection for input data  
-#'    - IN_DBI_HOST     : Host name for the database connection for input data  
-#'    - IN_DBI_PORT     : Port number for the database connection for input data  
-#'    - IN_DBI_PASSWORD : Password for the database connection for input data  
-#'    - IN_DBI_USER     : User for the database connection for input data  
-#'    - OUT_DBI_DRIVER   : Class name of the DBI driver for output data  
-#'    - OUT_DBI_DBNAME     : Database name for the database connection for output data  
-#'    - OUT_DBI_HOST     : Host name for the database connection for output data  
-#'    - OUT_DBI_PORT     : Port number for the database connection for output data  
-#'    - OUT_DBI_USER     : User for the database connection for output data  
-#'    - OUT_DBI_PASSWORD : Password for the database connection for output data  
+#' * Execution context:
+#'    - JOB_ID : ID of the job
+#'    - NODE : Node used for the execution of the script
+#'    - IN_DBI_DRIVER   : Class name of the DBI driver for input data
+#'    - IN_DBI_DBNAME     : Database name for the database connection for input data
+#'    - IN_DBI_HOST     : Host name for the database connection for input data
+#'    - IN_DBI_PORT     : Port number for the database connection for input data
+#'    - IN_DBI_PASSWORD : Password for the database connection for input data
+#'    - IN_DBI_USER     : User for the database connection for input data
+#'    - OUT_DBI_DRIVER   : Class name of the DBI driver for output data
+#'    - OUT_DBI_DBNAME     : Database name for the database connection for output data
+#'    - OUT_DBI_HOST     : Host name for the database connection for output data
+#'    - OUT_DBI_PORT     : Port number for the database connection for output data
+#'    - OUT_DBI_USER     : User for the database connection for output data
+#'    - OUT_DBI_PASSWORD : Password for the database connection for output data
 
 library(rmipadaptor)
 library(ggplot2)
@@ -42,7 +42,7 @@ data   <- fetchData()
 ## the following function definition should be moved to r-mip-adaptor, as it is general for all R images
 get_PARAM_env_vars_into_R_list <- function()
 {
-  all_env_vars <- Sys.getenv() 
+  all_env_vars <- Sys.getenv()
   env_vars_starting_with_PARAM <- as.list(all_env_vars[ grep(pattern = "^PARAM_.*", x = names(all_env_vars)) ])
   truncated_names <- substring(text = names(env_vars_starting_with_PARAM),first = 7)
   var_list <- env_vars_starting_with_PARAM

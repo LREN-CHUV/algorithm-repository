@@ -16,7 +16,7 @@ Sys.setenv(
 Sys.setenv(
   PARAM_variables   = "sepal_length",
   PARAM_covariables = "petal_width, petal_length",
-  PARAM_grouping = "Species", # TODO: fix to match the name in the database 
+  PARAM_grouping = "Species", # TODO: fix to match the name in the database
   PARAM_query       = "SELECT * FROM iris")
 
 source("../../R/main.R")

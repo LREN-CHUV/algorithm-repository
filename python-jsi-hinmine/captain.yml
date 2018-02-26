@@ -1,0 +1,9 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/python-jsi-hinmine
+  pre:
+    - echo "Preparing python-jsi-hinmine"
+  post:
+    - echo "Finished python-jsi-hinmine"
+  test:
+    - ./tests/test.sh

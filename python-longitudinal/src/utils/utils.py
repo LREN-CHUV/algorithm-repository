@@ -17,4 +17,3 @@ def write_output_to_highchart(model_type):
 
 def write_output_to_pfa(model_type):
     return utils_PFA.write_output_to_pfa(model_type)
-

@@ -37,3 +37,61 @@ jobs:
           name: "Test r-linear-regression"
           command: |
             PATH=$PATH:/$HOME/.captain/bin/ ./r-linear-regression/tests/test.sh
+
+      #JSI METHODS
+      - run:
+          name: "Build java-jsi-clus-pct"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-pct/build.sh
+      - run:
+          name: "Test java-jsi-clus-pct"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-pct/tests/test.sh
+      - run:
+          name: "Build java-jsi-clus-pct-ts"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-pct-ts/build.sh
+      - run:
+          name: "Test java-jsi-clus-pct-ts"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-pct-ts/tests/test.sh
+     # - run:
+     #     name: "Build java-jsi-clus-fire"
+     #     command: |
+     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fire/build.sh
+     # - run:
+     #     name: "Test java-jsi-clus-fire"
+     #     command: |
+     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fire/tests/test.sh
+     # - run:
+     #     name: "Build java-jsi-clus-fr"
+     #     command: |
+     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fr/build.sh
+     # - run:
+     #     name: "Test java-jsi-clus-fr"
+     #     command: |
+     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fr/tests/test.sh
+     # - run:
+     #     name: "Build java-jsi-clus-rm"
+     #     command: |
+     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-rm/build.sh
+     # - run:
+     #     name: "Test java-jsi-clus-rm"
+     #     command: |
+     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-rm/tests/test.sh
+      - run:
+          name: "Build python-jsi-hedwig"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-jsi-hedwig/build.sh
+      - run:
+          name: "Test python-jsi-hedwig"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-jsi-hedwig/tests/test.sh
+      - run:
+          name: "Build python-jsi-hinmine"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-jsi-hinmine/build.sh
+      - run:
+          name: "Test python-jsi-hinmine"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-jsi-hinmine/tests/test.sh

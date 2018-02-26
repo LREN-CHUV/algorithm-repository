@@ -1,0 +1,2 @@
+recursive-include cf_netSDM *
+global-exclude *.pyc
