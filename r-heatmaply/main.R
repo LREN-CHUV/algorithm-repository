@@ -8,7 +8,7 @@
 #' * Input Parameters (for heatmaply):
 #'    - PARAM_query  : SQL query producing the dataframe to plot
 #'    - PARAM_variables : Ignored.
-#'    - PARAM_covariables : Ignored.
+#'    - PARAM_covariables : The variables to be ploted in the heatmap (as string, comma seperated, eg : "a,b,c")
 #'    - PARAM_* : any other parameters to pass to the R function. See example in the docker-compose file.
 #' * Execution context:
 #'    - JOB_ID : ID of the job
