@@ -62,8 +62,8 @@ for (i in seq_along(var_list))
 ## run the main function and save to "plot.html"
 var_list$file <- NULL
 p <- do.call(what = heatmaply, args = var_list)
-htmlwidgets::saveWidget(as_widget(p), "plot.html")
-html_str <- paste0(readLines(con = "plot.html"),collapse = "\n")
+htmlwidgets::saveWidget(as_widget(p), "/tmp/plot.html")
+html_str <- paste0(readLines(con = "/tmp/plot.html"),collapse = "\n")
 saveResults(results =  html_str, shape = "html")
 disconnectdbs()
 
