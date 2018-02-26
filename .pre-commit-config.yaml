@@ -4,6 +4,7 @@
     - id: trailing-whitespace
     - id: end-of-file-fixer
     - id: check-merge-conflict
+      exclude: Guidelines.md
     - id: check-added-large-files
     - id: check-yaml
     - id: check-json

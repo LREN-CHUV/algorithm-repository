@@ -3,18 +3,4 @@
 [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/python-jsi-hedwig.svg)](https://hub.docker.com/r/hbpmip/python-jsi-hedwig/tags "hbpmip/python-jsi-hedwig image tags")
 [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/python-jsi-hedwig.svg)](https://microbadger.com/images/hbpmip/python-jsi-hedwig "Get your own image badge on microbadger.com")
 
-# Python Hedwig
-
-Hedwig method for semantic subgroup discovery.
-
-## Build (for contributors)
-
-Run: `./build.sh`
-
-## Test (for contributors)
-
-Run: `./tests/test.sh`
-
-## Publish (for contributors)
-
-Run: `./publish.sh`
+# Hedwig user reference manual

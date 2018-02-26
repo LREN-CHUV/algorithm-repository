@@ -1,6 +1,6 @@
 ---
 
-version: '2'
+version: '3'
 services:
 
   db:
@@ -107,7 +107,6 @@ services:
       PARAM_MODEL_minobj: 4
     links:
       - "db:db"
-
 
   pfa_validator_regression_st:
     image: "hbpmip/pfa-validator:0.10.1"

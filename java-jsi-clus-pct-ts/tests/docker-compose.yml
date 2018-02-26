@@ -79,6 +79,7 @@ services:
       PARAM_variables: "score_test1,stress_before_test1,score_math_course1,score_math_course2"
       PARAM_covariables: "iq,cognitive_task2,practice_task2,response_time_task2,college_math"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
+      FUNCTION: java-jsi-clus-pct-ts
       MODEL_PARAM_pruned: "yes"
       MODEL_PARAM_minobj: 4
     links:

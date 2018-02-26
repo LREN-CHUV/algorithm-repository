@@ -7,13 +7,10 @@
 
 Implementation of the Predictive Clustering Trees from CLUS software. http://kt.ijs.si
 
-
 ## Usage
 
 ```sh
-
-  docker run --rm --env [list of environment variables] hbpmip/java-jsi-clus-pct compute
-
+docker run --rm --env [list of environment variables] hbpmip/java-jsi-clus-pct compute
 ```
 
 where the environment variables are:
