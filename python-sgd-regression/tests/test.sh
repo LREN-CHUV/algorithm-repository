@@ -47,8 +47,10 @@ $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
 echo
-echo "Run the sgd-regression algorithm..."
-$DOCKER_COMPOSE run sgd-regression compute
+echo "Run the sgd-regression algorithm iteratively..."
+$DOCKER_COMPOSE run sgd-regression-a compute
+$DOCKER_COMPOSE run sgd-regression-b compute
+$DOCKER_COMPOSE run sgd-regression-c compute
 
 echo
 # Cleanup

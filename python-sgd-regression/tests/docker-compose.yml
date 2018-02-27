@@ -61,7 +61,7 @@ services:
     depends_on:
       - db
 
-  sgd-regression:
+  sgd-regression-a:
     image: "hbpmip/python-sgd-regression:latest"
     container_name: "sgd-regression"
     restart: "no"
@@ -84,3 +84,9 @@ services:
       MODEL_PARAM_design: "factorial"
     links:
       - "db:db"
+
+  sgd-regression-b:
+    # TODO - inherit from `sgd-regression-a` and change table and JOB_ID
+
+  sgd-regression-c:
+    # TODO - inherit from `sgd-regression-a` and change table and JOB_ID
