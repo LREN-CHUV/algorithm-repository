@@ -6,10 +6,13 @@ ENV heatmaply_VERSION=master
 RUN install.r heatmaply
 RUN install.r svglite
 
-
 FROM hbpmip/r-mip:0.4.1
 
 MAINTAINER ludovic.claude54@gmail.com
+
+# install pandoc for writing the html output file as standalone
+RUN wget https://github.com/jgm/pandoc/releases/download/2.1.1/pandoc-2.1.1-1-amd64.deb
+RUN dpkg -i pandoc-2.1.1-1-amd64.deb
 
 # copy heatmaply and svglite and their dependencies
 COPY --from=r-build-env /usr/local/lib/R/site-library/assertthat/ /usr/local/lib/R/site-library/assertthat    

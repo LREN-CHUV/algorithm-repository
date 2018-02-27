@@ -8,4 +8,4 @@ results <- DBI::dbGetQuery(out_conn, paste("select * from job_result where job_i
 
 data <- results$data[[1]];
 
-write(data, file="/data/out/result.svg")
+write(data, file="/data/out/result.html")
