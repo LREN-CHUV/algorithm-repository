@@ -11,7 +11,8 @@
     "grouping": [{"code": "var4"}],
     "filters": [],
     "algorithm": "python-sgd-regression",
-    "datasets": [{"code": "dataset1"},{"code": "dataset2"}]
+    "datasets": [{"code": "dataset1"},{"code": "dataset2"}],
+    "targetTable": "cde_features_A",
 }
 ```
 3. `woken` converts request body to ENV variables and runs `docker-compose run python-sgd-regression compute`

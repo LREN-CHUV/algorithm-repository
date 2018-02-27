@@ -1,3 +1,5 @@
-io_helper==0.2.5
+io_helper==0.2.6
 pandas==0.21.1
 scikit-learn==0.19.1
+patsy==0.5.0
+jsonpickle==0.9.5
