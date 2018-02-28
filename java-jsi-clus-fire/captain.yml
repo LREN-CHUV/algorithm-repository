@@ -1,0 +1,7 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/java-jsi-clus-fire
+  pre:
+    - echo "Preparing java-jsi-clus-fire"
+  post:
+    - echo "Finished java-jsi-clus-fire"
