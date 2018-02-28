@@ -1,11 +1,4 @@
-# TODO: this module with ORM for database should go to io_helpers
-# QUESTION: does it make sense to use heavy ORM like SQLALchemy or should I simply use raw SQL through SqlAlchemy? (or
-# maybe different ORM?)
-
-
-from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.sql import func
 
