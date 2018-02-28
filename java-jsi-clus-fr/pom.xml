@@ -1,0 +1,174 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>eu.humanbrainproject.mip.algorithms.jsi</groupId>
+	<artifactId>jsi-clus-fr</artifactId>
+	<packaging>jar</packaging>
+	<version>0.9.4</version><!-- bumpversion -->
+	<name>java-jsi-clus-fr</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.version>1.8</jdk.version>
+		<compiler.plugin.version>3.6.2</compiler.plugin.version>
+		<jar.plugin.version>3.0.2</jar.plugin.version>
+		<surefire.plugin.version>2.19</surefire.plugin.version>
+		<site.plugin.version>3.6</site.plugin.version>
+		<info.reports.plugin.version>2.9</info.reports.plugin.version>
+		<surefire.report.plugin.version>2.20</surefire.report.plugin.version>
+		<jxr.plugin.version>2.5</jxr.plugin.version>
+		<hadrian.version>0.8.5</hadrian.version>
+		<junit.version>5.0.0</junit.version>
+		<postgres.version>9.4.1212.jre7</postgres.version>
+		<jackson.version>2.7.0</jackson.version>
+		<mip.adapter.version>0.5.4</mip.adapter.version>
+		<clus.version>1.0.0</clus.version>
+		<jsi-clus.version>0.3.9</jsi-clus.version>
+	</properties>
+
+
+	<repositories>
+		<repository>
+			<id>maven</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+			<name>Central Maven repository</name>
+		</repository>
+
+		<repository>
+			<id>opendatagroup</id>
+			<url>http://repository.opendatagroup.com/maven</url>
+			<name>Repository for Hadrian</name>
+		</repository>
+
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray-hbpmedical-mip</id>
+			<name>bintray</name>
+			<url>https://dl.bintray.com/hbpmedical/maven</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>eu.humanbrainproject.mip.algorithms</groupId>
+			<artifactId>adapter</artifactId>
+			<version>${mip.adapter.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.humanbrainproject.mip.algorithms</groupId>
+			<artifactId>jsi-clus</artifactId>
+			<version>${jsi-clus.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>si.ijs.kt</groupId>
+			<artifactId>clus</artifactId>
+			<version>${clus.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.opendatagroup</groupId>
+			<artifactId>hadrian</artifactId>
+			<version>${hadrian.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgres.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+	</dependencies>
+
+
+
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<testResources>
+			<testResource>
+				<directory>src/test/java</directory>
+				<includes>
+					<include>**/*.csv</include>
+					<include>**/*.json</include>
+				</includes>
+				<filtering>false</filtering>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler.plugin.version}</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${jar.plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire.plugin.version}</version>
+				<!-- lock down our surefire provider -->
+				<dependencies>
+					<dependency>
+						<groupId>org.junit.platform</groupId>
+						<artifactId>junit-platform-surefire-provider</artifactId>
+						<version>1.0.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-engine</artifactId>
+						<version>5.0.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>${site.plugin.version}</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>${info.reports.plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${surefire.report.plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${jxr.plugin.version}</version>
+			</plugin>
+		</plugins>
+	</reporting>
+	
+</project>
