@@ -24,12 +24,12 @@ public class PCTMeta extends ClusMeta {
     this.CAPABILITIES =
         new HashSet<AlgorithmCapability>(
             Arrays.asList(
-                AlgorithmCapability.CLASSIFICATION,
-                AlgorithmCapability.CLASSIFICATION_MT,
-                AlgorithmCapability.REGRESSION,
-                AlgorithmCapability.REGRESSION_MT,
-                AlgorithmCapability.PREDICTIVE_MODEL,
-                AlgorithmCapability.VISUALISATION));
+                AlgorithmCapability.CLASSIFICATION, /* handles ST classification tasks */
+                AlgorithmCapability.CLASSIFICATION_MT, /* handles MT classification tasks */
+                AlgorithmCapability.REGRESSION, /* handles ST regression tasks */
+                AlgorithmCapability.REGRESSION_MT, /* handles MT regression tasks */
+                AlgorithmCapability.PREDICTIVE_MODEL, /* algorithm can make predictions */
+                AlgorithmCapability.VISUALISATION /* visualization is a VIS.js graph */));
 
     Map<String, String> prms = new HashMap<String, String>();
     prms.put("pruned", "yes");
