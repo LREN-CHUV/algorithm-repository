@@ -12,11 +12,23 @@ This is a Python implementation of sgd-regression.
 Run: `./build.sh`
 
 
-## Test (for contributors)
+## Integration Test (for contributors)
 
-Run: `./tests/test.sh`
+Run: `captain test`
 
 
 ## Publish (for contributors)
 
 Run: `./publish.sh`
+
+
+## Unit tests (for contributors)
+
+Create symlink from `python-sgd-regression` to `mip_helper` module from `python-mip`
+```
+ln -s ~/projects/python-base-docker-images/python-mip/mip_helper/mip_helper mip_helper
+```
+Run unit tests
+```
+(cd tests; docker-compose run test_suite)
+```

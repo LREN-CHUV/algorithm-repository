@@ -1,4 +1,4 @@
-# io_helper==0.2.6
+# git+https://github.com/Marigold/python-base-docker-images.git@get-results-method#egg=mip_helper&subdirectory=python-mip/mip_helper
 io_helper==0.2.5
 pandas==0.21.1
 scipy==1.0.0

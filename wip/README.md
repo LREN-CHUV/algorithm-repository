@@ -22,3 +22,11 @@
 
 # Notes:
 - don't forget to stop your local PG database, otherwise `psql -h localhost -U data -d data` won't work and would try to connect to your local one and not the one running on Docker
+- installing `mip_helper` from pull request
+```
+pip install -e 'git+https://github.com/Marigold/python-base-docker-images.git@get-results-method#egg=mip_helper&subdirectory=python-mip/mip_helper'
+```
+- copying symlinked `mip_helper` to docker for testing purposes
+```
+docker cp mip_helper eloquent_golick:/ --follow-link
+```

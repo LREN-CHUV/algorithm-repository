@@ -67,20 +67,25 @@ services:
     environment:
       NODE: job_test
       JOB_ID: 1
-      IN_JDBC_DRIVER: org.postgresql.Driver
-      IN_JDBC_URL: jdbc:postgresql://db:5432/features
-      IN_JDBC_USER: features
-      IN_JDBC_PASSWORD: featurespwd
-      OUT_JDBC_DRIVER: org.postgresql.Driver
-      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
-      OUT_JDBC_USER: woken
-      OUT_JDBC_PASSWORD: wokenpwd
+      IN_DBAPI: postgresql
+      IN_USER: features
+      IN_PASSWORD: featurespwd
+      IN_HOST: db
+      IN_PORT: 5432
+      IN_DATABASE: features
+      OUT_DBAPI: postgresql
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
       PARAM_variables: "lefthippocampus"
       PARAM_covariables: "minimentalstate,opticchiasm,subjectage"
       PARAM_grouping: ""
-      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectage FROM cde_features_a LIMIT 100"
       PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\"},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\"},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\"},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\"}}"
       MODEL_PARAM_design: "factorial"
+    volumes:
+      - ../mip_helper:/mip_helper
 
   sgd-regression-a:
     extends: sgd-regression-base
@@ -110,3 +115,7 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
+    volumes:
+      - ../tests:/tests
+      - ../sgd_regression.py:/sgd_regression.py
+      - ../mip_helper:/mip_helper
