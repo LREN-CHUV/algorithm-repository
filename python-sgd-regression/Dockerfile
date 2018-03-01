@@ -15,7 +15,6 @@ COPY sgd_regression.py /sgd_regression.py
 
 # TODO: put these dependencies out of /python-sgd-regression
 COPY sklearn_to_pfa /sklearn_to_pfa
-COPY io_helper /io_helper
 
 RUN pip install -r /requirements.txt
 

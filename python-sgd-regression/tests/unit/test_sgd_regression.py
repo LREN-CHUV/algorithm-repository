@@ -7,19 +7,19 @@ from .fixtures import inputs
 
 def test_main(inputs):
     # create mock objects from database
-    io_helper = mock.MagicMock()
+    mip_helper = mock.MagicMock()
     job_result = mock.MagicMock()
     job_result.data = None
 
-    with mock.patch.dict('sys.modules', io_helper=io_helper):
+    with mock.patch.dict('sys.modules', mip_helper=mip_helper):
         # TODO: it is imported here to avoid importing io_helpers which are not available. Fix it in docker container
         from sgd_regression import main
-        io_helper.io_helper.fetch_data.return_value = inputs
-        io_helper.io_helper.get_results.return_value = None
+        mip_helper.io_helper.fetch_data.return_value = inputs
+        mip_helper.io_helper.get_results.return_value = None
 
         main()
 
-        pfa = io_helper.io_helper.save_results.call_args[0][0]
+        pfa = mip_helper.io_helper.save_results.call_args[0][0]
         # TODO: convert PFA first and check individual sections instead
         assert pfa.startswith("""
 input: record(Data,
