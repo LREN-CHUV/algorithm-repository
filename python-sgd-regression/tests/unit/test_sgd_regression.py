@@ -1,41 +1,43 @@
-# TODO: run from python-sgd-regression directory with `python -m pytest tests/unit/ --capture=no`
-
 from sklearn.linear_model import SGDRegressor
+import json
 import mock
-from .fixtures import inputs
+from . import fixtures as fx
+from sgd_regression import main, serialize_sklearn_estimator, deserialize_sklearn_estimator, get_Xy
 
 
-def test_main(inputs):
+@mock.patch('sgd_regression.io_helper.fetch_data')
+@mock.patch('sgd_regression.io_helper.get_results')
+@mock.patch('sgd_regression.io_helper.save_results')
+def test_main(mock_save_results, mock_get_results, mock_fetch_data):
     # create mock objects from database
-    mip_helper = mock.MagicMock()
-    job_result = mock.MagicMock()
-    job_result.data = None
+    mock_fetch_data.return_value = fx.inputs_regression()
+    mock_get_results.return_value = None
 
-    with mock.patch.dict('sys.modules', mip_helper=mip_helper):
-        # TODO: it is imported here to avoid importing io_helpers which are not available. Fix it in docker container
-        from sgd_regression import main
-        mip_helper.io_helper.fetch_data.return_value = inputs
-        mip_helper.io_helper.get_results.return_value = None
+    main()
 
-        main()
+    pfa = mock_save_results.call_args[0][0]
+    # TODO: convert PFA first and check individual sections instead
+    pfa_dict = json.loads(pfa)
 
-        pfa = mip_helper.io_helper.save_results.call_args[0][0]
-        # TODO: convert PFA first and check individual sections instead
-        assert pfa.startswith("""
-input: record(Data,
-    stress_before_test1: real,
-    iq: real
-)
-output: double
-action:
-    2986436262.26812 + 191016471927.55804 * input.stress_before_test1 + 141237784325.43924 * input.iq
-metadata: {"py/object": "sklearn.linear_model.stochastic_gradient.SGDRegressor"
-        """.strip())
+    # deserialize model
+    estimator = deserialize_sklearn_estimator(pfa_dict['metadata']['estimator'])
+    assert estimator.__class__.__name__ == 'SGDRegressor'
+
+    # make some prediction with PFA
+    from titus.genpy import PFAEngine
+    engine, = PFAEngine.fromJson(pfa_dict)
+    engine.action({'stress_before_test1': 10., 'iq': 10.})
 
 
 def test_deserialize_sklearn_estimator():
-    from sgd_regression import serialize_sklearn_estimator, deserialize_sklearn_estimator
     estimator = SGDRegressor()
     serialized = serialize_sklearn_estimator(estimator)
     original = deserialize_sklearn_estimator(serialized)
     assert original.__dict__ == estimator.__dict__
+
+
+def test_get_Xy():
+    inputs = fx.inputs_regression()
+    X, y = get_Xy(inputs['data']['dependent'][0], inputs['data']['independent'])
+    assert list(X.columns) == ['C(agegroup)[-50y]', 'C(agegroup)[50-59y]', 'stress_before_test1', 'iq']
+    assert len(X) == len(y) == 6
