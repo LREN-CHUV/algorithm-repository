@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from mip_helper import io_helper
+from mip_helper import io_helper, shapes
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
 
 import logging
@@ -68,7 +68,7 @@ def main():
         # TODO: if woken cannnot convert `pfa_pretty` format we might have to do it here either with titus
         # and python 2 or its python 3 fork https://github.com/animator/hadrian
         logging.info('Saving PFA to job_results table')
-        io_helper.save_results(pfa, '', 'pfa_pretty')
+        io_helper.save_results(pfa, '', shapes.PFA)
 
 
 def _extract_metadata(pfa):
