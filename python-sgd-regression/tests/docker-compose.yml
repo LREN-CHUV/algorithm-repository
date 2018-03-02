@@ -119,3 +119,4 @@ services:
       - ../tests:/tests
       - ../sgd_regression.py:/sgd_regression.py
       - ../mip_helper:/mip_helper
+      - ../sklearn_to_pfa:/sklearn_to_pfa

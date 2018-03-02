@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
 from mip_helper import io_helper, shapes
-from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
+from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_prettypfa
 
 import logging
 import json
 
 import pandas as pd
-from sklearn.linear_model import SGDRegressor
+from sklearn.linear_model import SGDRegressor, SGDClassifier
 import patsy
+import titus.prettypfa
 import jsonpickle
 import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
@@ -27,7 +28,7 @@ def main():
     if job_result:
         logging.info('Loading existing estimator')
         # reconstruct estimator from metadata in PFA
-        pfa = _extract_metadata(job_result.data)
+        pfa = _extract_metadata(job_result.data)['estimator']
         estimator = deserialize_sklearn_estimator(pfa)
     else:
         logging.info('Creating new estimator')
@@ -35,7 +36,13 @@ def main():
         #   see http://dask-ml.readthedocs.io/en/latest/modules/generated/dask_ml.preprocessing.StandardScaler.html#dask_ml.preprocessing.StandardScaler.partial_fit
         #   for inspiration
         # TODO: add optional parameters to `SGDRegressor`
-        estimator = SGDRegressor()
+
+        job_type = 'regression'
+
+        if job_type == 'regression':
+            estimator = SGDRegressor()
+        elif job_type == 'classification':
+            estimator = SGDClassifier()
 
         inputs = io_helper.fetch_data()
 
@@ -43,40 +50,45 @@ def main():
         indep_vars = inputs["data"]["independent"]
 
         # Check dependent variable type (should be continuous)
-        if dep_var["type"]["name"] not in ["integer", "real"]:
-            logging.warning("Dependent variable should be continuous !")
-            return None
-
-        # Extract data and parameters from inputs
-        data = format_data(inputs["data"])
+        if job_type == 'regression':
+            if dep_var["type"]["name"] not in ["integer", "real"]:
+                logging.warning("Dependent variable should be continuous!")
+                return None
+        elif job_type == 'classification':
+            if dep_var["type"]["name"] not in ['polynominal', 'binominal']:
+                logging.warning("Dependent variable needs to be categorical!")
+                return None
 
         # Select dependent and independent variables with patsy
         # TODO: how to treat missing variables?
-        X, y = get_Xy(dep_var, indep_vars, data)
+        X, y = get_Xy(dep_var, indep_vars)
 
         # Train single step
-        estimator.partial_fit(X, y)
+        if job_type == 'classification':
+            estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
+        else:
+            estimator.partial_fit(X, y)
 
-        # Create PFA from the estimator and add serialized model as metadata for next partial fit
-        # TODO: add support for categorical variables
+        # Create PFA from the estimator
         types = [(var['name'], var['type']['name']) for var in indep_vars if var['name'] in X.columns]
-        pfa = sklearn_to_pfa(estimator, types)
-        serialized = serialize_sklearn_estimator(estimator)
-        pfa += '\nmetadata: {}'.format(serialized)
+        pretty_pfa = sklearn_to_prettypfa(estimator, types)
+        pfa = titus.prettypfa.jsonNode(pretty_pfa)
+
+        # Add serialized model as metadata for next partial fit
+        serialized_estimator = serialize_sklearn_estimator(estimator)
+        pfa['metadata'] = {
+            'estimator': serialized_estimator
+        }
 
         # Save or update job_result
-        # TODO: if woken cannnot convert `pfa_pretty` format we might have to do it here either with titus
-        # and python 2 or its python 3 fork https://github.com/animator/hadrian
         logging.info('Saving PFA to job_results table')
-        io_helper.save_results(pfa, '', shapes.PFA)
+        pfa = json.dumps(pfa)
+        io_helper.save_results(pfa, '', shapes.Shapes.PFA)
 
 
 def _extract_metadata(pfa):
     """Extract metadata from PrettyPFA."""
-    # TODO: string extraction is not ideal, save JSON instead and extract metadata directly from it
-    for line in pfa.split('\n'):
-        if line.startswith('metadata'):
-            return line[10:]
+    return json.loads(pfa)['metadata']
 
 
 def serialize_sklearn_estimator(estimator):
@@ -89,24 +101,16 @@ def deserialize_sklearn_estimator(js):
     return jsonpickle.decode(js)
 
 
-def format_data(input_data):
-    all_vars = input_data["dependent"] + input_data["independent"]
-    data = {v["name"]: v["series"] for v in all_vars}
-    return data
-
-
-def format_output(statsmodels_dict):
-    return json.dumps(pd.DataFrame.from_dict(statsmodels_dict).transpose().fillna("NaN").to_dict())
-
-
-def get_Xy(dep_var, indep_vars, data, dropna=True):
+def get_Xy(dep_var, indep_vars, dropna=True):
     """Create feature matrix and target from data.
     :param dep_var:
     :param indep_vars:
     :param data:
     :param dropna: drop rows with NULL values
     """
-    formula = generate_formula(dep_var, indep_vars, intercept=False)
+    data = generate_data(dep_var, indep_vars)
+
+    formula = generate_formula(indep_vars, intercept=False)
     logging.info("Formula: %s" % formula)
 
     if dropna:
@@ -115,23 +119,40 @@ def get_Xy(dep_var, indep_vars, data, dropna=True):
     else:
         NA_action = 'raise'
 
-    y, X = patsy.dmatrices(formula, data, NA_action=NA_action, return_type='dataframe')
+    X = patsy.dmatrix(formula, data, NA_action=NA_action, return_type='dataframe')
+    y = data[dep_var['name']]
 
-    return X, y.values.ravel()
+    return X, y
 
 
-def generate_formula(dep_var, indep_vars, intercept=True):
+def generate_data(dep_var, indep_vars):
+    """Create dataframe from input data.
+    :param dep_var:
+    :param indep_vars:
+    :return: dataframe with data from all variables
+    """
+    df = {}
+    for var in [dep_var] + indep_vars:
+        # categorical variable - we need to add all categories to make one-hot encoding work right
+        if 'enumeration' in var['type']:
+            df[var['name']] = pd.Categorical(var['series'], categories=var['type']['enumeration'])
+        else:
+            # infer type automatically
+            df[var['name']] = var['series']
+
+    return pd.DataFrame(df)
+
+
+def generate_formula(indep_vars, intercept=True):
     op = " + "
-    dep_var = dep_var["name"]
     indep_vars = [v["name"] if v["type"]["name"] in ["integer", "real"]
                   else str.format("C(%s)" % v["name"]) for v in indep_vars]
-    indep_vars = op.join(indep_vars)
-    indep_vars = indep_vars.strip(op)
+    indep_vars = op.join(indep_vars).strip(op)
 
     if intercept:
-        return "{} ~ {}".format(dep_var, indep_vars)
+        return indep_vars
     else:
-        return "{} ~ 0 + {}".format(dep_var, indep_vars)
+        return "0 + {}".format(indep_vars)
 
 
 if __name__ == '__main__':

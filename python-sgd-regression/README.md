@@ -30,5 +30,5 @@ ln -s ~/projects/python-base-docker-images/python-mip/mip_helper/mip_helper mip_
 ```
 Run unit tests
 ```
-(cd tests; docker-compose run test_suite)
+(cd tests; docker-compose run test_suite -x --ff --capture=no)
 ```

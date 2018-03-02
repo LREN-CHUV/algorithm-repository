@@ -2,7 +2,7 @@
 from sklearn.linear_model import SGDRegressor
 
 
-def sklearn_to_pfa(estimator, types):
+def sklearn_to_prettypfa(estimator, types):
     """
     Convert scikit-learn estimator to PrettyPFA format.
     :param estimator: Scikit-learn estimator, must be supported
@@ -19,6 +19,8 @@ def sklearn_to_pfa(estimator, types):
     """
     if not _is_supported(estimator):
         raise NotImplementedError('Estimator {} is not yet supported'.format(estimator.__class__.__name__))
+
+    types = _fix_types_compatibility(types)
 
     formula = _regression_formula(estimator, types)
     input_record = _input_record(types)
@@ -57,3 +59,12 @@ def _input_record(types):
 
 def _is_supported(estimator):
     return isinstance(estimator, (SGDRegressor, ))
+
+
+def _fix_types_compatibility(types):
+    new_types = []
+    for name, typ in types:
+        if typ == 'real':
+            typ = 'double'
+        new_types.append((name, typ))
+    return new_types
