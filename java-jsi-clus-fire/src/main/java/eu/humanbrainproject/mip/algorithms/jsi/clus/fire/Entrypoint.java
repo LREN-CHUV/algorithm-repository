@@ -2,6 +2,7 @@ package eu.humanbrainproject.mip.algorithms.jsi.clus.fire;
 
 import eu.humanbrainproject.mip.algorithms.jsi.Main;
 import eu.humanbrainproject.mip.algorithms.jsi.common.ClusMeta;
+import eu.humanbrainproject.mip.algorithms.jsi.common.InputData;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusDescriptiveSerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusGenericSerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusModelPFASerializer;
@@ -18,7 +19,8 @@ public final class Entrypoint {
 
 		try {
 			ClusMeta clusMeta = new FIREMeta();
-			ClusGenericSerializer<ClusRuleSet> modelSerializer = new FIRESerializer();
+			
+			ClusGenericSerializer<ClusRuleSet> modelSerializer = new FIRESerializer(InputData.fromEnv());
 			ClusModelPFASerializer<ClusRuleSet> mainSerializer = new ClusModelPFASerializer<>(modelSerializer);
 			ClusDescriptiveSerializer modelDescriptiveSerializer = new FIREDescriptiveSerializer();
 			

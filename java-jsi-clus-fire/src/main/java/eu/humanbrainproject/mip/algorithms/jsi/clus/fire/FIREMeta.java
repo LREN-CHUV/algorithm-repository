@@ -58,7 +58,7 @@ public class FIREMeta extends ClusMeta {
     // max number of rules in the rule set
     rulesSettings.put("MaxRulesNb", prms.get("rules"));
     // add linear terms
-    rulesSettings.put("OptAddLinearTerms", "Yes");
+    rulesSettings.put("OptAddLinearTerms", "No");
     this.SETTINGS.put("[Rules]", rulesSettings);
 
     /* model section */

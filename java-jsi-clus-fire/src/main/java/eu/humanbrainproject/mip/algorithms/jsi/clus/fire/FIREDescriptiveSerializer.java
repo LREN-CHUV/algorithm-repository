@@ -1,12 +1,11 @@
 package eu.humanbrainproject.mip.algorithms.jsi.clus.fire;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.commons.lang.StringUtils;
-
 import si.ijs.kt.clus.algo.rules.ClusRule;
-import si.ijs.kt.clus.algo.rules.ClusRuleLinearTerm;
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.ext.featureRanking.Fimp;
 import si.ijs.kt.clus.model.test.NodeTest;
@@ -14,17 +13,23 @@ import si.ijs.kt.clus.model.test.NodeTest;
 public class FIREDescriptiveSerializer
     extends eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusDescriptiveSerializer {
 
+  private final DecimalFormat df = new DecimalFormat("#.######");
+
+  public FIREDescriptiveSerializer() {
+    df.setRoundingMode(RoundingMode.HALF_EVEN);
+  }
+
   @Override
   public String getFimpString(Fimp fimp) {
     // This is not a feature importance generating method. We leave this as is.
     return null;
   }
 
-  private String getPredictionHTML(double[] predictions) {
+  private String getPredictionHTML(double[] predictions, double weight) {
     ArrayList<String> lst = new ArrayList<>();
-    for (double d : predictions) lst.add(Double.toString(d));
+    for (double d : predictions) lst.add(df.format(d * weight));
 
-    String s = "[" + String.join(", ", lst) + "]";
+    String s = "(" + String.join(", ", lst) + ")";
 
     return String.format("<span class=\"prediction\">%s</span>", s);
   }
@@ -45,7 +50,8 @@ public class FIREDescriptiveSerializer
       htmlParts.add("<!-- Rule " + rule.getID() + " -->");
 
       if (tests.size() != 0) {
-        htmlParts.add("&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"ruleframe\">IF</span>");
+        htmlParts.add(
+            "&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"bracket\">[</span><span class=\"ruleframe\">IF</span>");
 
         htmlParts.add("<span class=\"condition\">");
         for (int i = 0; i < tests.size(); i++) {
@@ -65,13 +71,14 @@ public class FIREDescriptiveSerializer
       // the prediction
       htmlParts.add(
           (tests.size() == 0 ? "&nbsp;&nbsp;&nbsp;&nbsp;" : "&nbsp;")
-              + getPredictionHTML(rule.getTargetStat().getNumericPred()));
+              + getPredictionHTML(rule.getTargetStat().getNumericPred(), rule.getOptWeight())
+              + (tests.size() == 0 ? "" : "<span class=\"bracket\">]</span>"));
 
       return String.join("", htmlParts);
     } else {
-            // linar term
-        ClusRuleLinearTerm term = (ClusRuleLinearTerm)rule;
-        //term.getOptWeight()
+      // linear term
+      //ClusRuleLinearTerm term = (ClusRuleLinearTerm) rule;
+      //term.getOptWeight()
       return "";
     }
   }
@@ -82,6 +89,7 @@ public class FIREDescriptiveSerializer
     styles.add("<style>");
     styles.add(".ruleframe {font-weight: bold;text-decoration:underline;}");
     styles.add(".prediction {color:red;}");
+    styles.add(".bracket {color:blue;}");
     styles.add("</style>");
 
     return String.join(System.lineSeparator(), styles);
@@ -98,6 +106,8 @@ public class FIREDescriptiveSerializer
     for (ClusRule r : rules) {
       htmlParts.add(getRuleHTML(r));
     }
+    
+    htmlParts.removeAll(Arrays.asList(""));
 
     for (int i = 0; i < htmlParts.size(); i++) {
 

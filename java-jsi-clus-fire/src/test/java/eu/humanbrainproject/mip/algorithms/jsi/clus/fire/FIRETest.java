@@ -11,13 +11,19 @@ import org.junit.jupiter.api.Test;
 import eu.humanbrainproject.mip.algorithms.jsi.clus.fire.FIREMeta;
 import eu.humanbrainproject.mip.algorithms.jsi.clus.fire.FIRESerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.common.ClusAlgorithm;
+import eu.humanbrainproject.mip.algorithms.jsi.common.ClusHelpers;
 import eu.humanbrainproject.mip.algorithms.jsi.common.ClusMeta;
 import eu.humanbrainproject.mip.algorithms.jsi.dummy.FileInputData;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusDescriptiveSerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusGenericSerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusModelPFASerializer;
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
+
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** @author Martin Breskvar */
 @DisplayName("With CLUS FIRE algorithm")
@@ -35,7 +41,7 @@ public class FIRETest {
 
   private ClusAlgorithm<ClusRuleSet> getAlgorithm(FileInputData input) {
     ClusMeta clusMeta = new FIREMeta();
-    ClusGenericSerializer<ClusRuleSet> modelSerializer = new FIRESerializer();
+    ClusGenericSerializer<ClusRuleSet> modelSerializer = new FIRESerializer(input);
     ClusModelPFASerializer<ClusRuleSet> mainSerializer =
         new ClusModelPFASerializer<>(modelSerializer);
     ClusAlgorithm<ClusRuleSet> algorithm = new ClusAlgorithm<>(input, mainSerializer, clusMeta);
@@ -44,27 +50,26 @@ public class FIRETest {
   }
 
   @Test
-  @DisplayName("we can implement a FIRE model for ST regression and export its model to PFA")
+  @DisplayName("we can implement a FIRE model for ST regression and export its model to PFA and HTML")
   public void testRegressionST() throws Exception {
-    String[] featureNames = new String[] {"input1", "input2"};
+    //String[] featureNames = new String[] {"input0", "input1", "input2"};
+      String[] featureNames = new String[] {"input0", "input1"};
     String[] variableNames = new String[] {"output1", "output2"};
 
     ClusAlgorithm<ClusRuleSet> algorithm = getAlgorithm(getData(featureNames, variableNames));
 
     algorithm.run();
 
-    //System.out.println(algorithm.toPrettyPFA());
+    System.out.println(algorithm.toPrettyPFA());
     //String pfa = algorithm.toPFA();
 
-    ClusDescriptiveSerializer descriptiveSerializer = new FIREDescriptiveSerializer();
-    String html = descriptiveSerializer.getRuleSetString(algorithm.getModel());
+//    ClusDescriptiveSerializer descriptiveSerializer = new FIREDescriptiveSerializer();
+//    String html = descriptiveSerializer.getRuleSetString(algorithm.getModel());
+//    System.out.println("HTML OUTPUT:" + System.lineSeparator() + html);
+//    assertTrue(html.contains("Model = "));
+    
 
-    System.out.println(html);
-
-    /*assertTrue(!pfa.contains("error"));
-    assertTrue(pfa.contains("\"action\""));
-
-    final JsonNode jsonPfa =
+/*    final JsonNode jsonPfa =
         mapper.readTree(pfa.replaceFirst("SELECT \\* FROM .*\\\\\"", "SELECT"));
     final JsonNode jsonExpected = mapper.readTree(getClass().getResource("regressionST.pfa.json"));
 
