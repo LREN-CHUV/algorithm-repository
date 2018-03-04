@@ -1,8 +1,8 @@
 import pytest
 
 
-def independent():
-    return [
+def independent(include_categorical=False):
+    ret = [
         {
             'name': 'stress_before_test1',
             'type': {
@@ -19,7 +19,10 @@ def independent():
             'series': [
                 73.5856470359, 73.6181456345, 73.7897320711, 73.8623274925, 73.9894228193, 74.4441778038
             ]
-        }, {
+        }
+    ]
+    if include_categorical:
+        ret.append({
             'name': 'agegroup',
             'type': {
                 'name': 'polynominal',
@@ -28,8 +31,8 @@ def independent():
             'series': [
                 '-50y', '50-59y', '-50y', '50-59y', '-50y', '50-59y'
             ]
-        }
-    ]
+        })
+    return ret
 
 
 @pytest.fixture

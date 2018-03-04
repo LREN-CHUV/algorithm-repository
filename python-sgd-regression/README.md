@@ -24,11 +24,15 @@ Run: `./publish.sh`
 
 ## Unit tests (for contributors)
 
+WARNING: unit tests can fail nondeterministically on `AttributeError: can't set attribute` because of some error
+in Titus port to Python 3
+
 Create symlink from `python-sgd-regression` to `mip_helper` module from `python-mip`
 ```
 ln -s ~/projects/python-base-docker-images/python-mip/mip_helper/mip_helper mip_helper
 ```
 Run unit tests
 ```
+find . -name \*.pyc -delete
 (cd tests; docker-compose run test_suite -x --ff --capture=no)
 ```
