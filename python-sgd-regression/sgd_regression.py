@@ -22,6 +22,15 @@ def main():
     # Configure logging
     logging.basicConfig(level=logging.INFO)
 
+    inputs = io_helper.fetch_data()
+    dep_var = inputs["data"]["dependent"][0]
+    indep_vars = inputs["data"]["independent"]
+
+    if dep_var['type']['name'] in ('polynominal', 'binominal'):
+        job_type = 'classification'
+    else:
+        job_type = 'regression'
+
     # Get existing results with partial model if they exist
     job_result = io_helper.get_results()
 
@@ -37,53 +46,46 @@ def main():
         #   for inspiration
         # TODO: add optional parameters to `SGDRegressor`
 
-        job_type = 'regression'
-
         if job_type == 'regression':
             estimator = SGDRegressor()
         elif job_type == 'classification':
             estimator = SGDClassifier()
 
-        inputs = io_helper.fetch_data()
+    # Check dependent variable type (should be continuous)
+    # TODO: probably redundant block of code
+    if job_type == 'regression':
+        if dep_var["type"]["name"] not in ["integer", "real"]:
+            logging.warning("Dependent variable should be continuous!")
+            return None
+    elif job_type == 'classification':
+        if dep_var["type"]["name"] not in ['polynominal', 'binominal']:
+            logging.warning("Dependent variable needs to be categorical!")
+            return None
 
-        dep_var = inputs["data"]["dependent"][0]
-        indep_vars = inputs["data"]["independent"]
+    # Select dependent and independent variables with patsy
+    # TODO: how to treat missing variables?
+    X, y = get_Xy(dep_var, indep_vars)
 
-        # Check dependent variable type (should be continuous)
-        if job_type == 'regression':
-            if dep_var["type"]["name"] not in ["integer", "real"]:
-                logging.warning("Dependent variable should be continuous!")
-                return None
-        elif job_type == 'classification':
-            if dep_var["type"]["name"] not in ['polynominal', 'binominal']:
-                logging.warning("Dependent variable needs to be categorical!")
-                return None
+    # Train single step
+    if job_type == 'classification':
+        estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
+    else:
+        estimator.partial_fit(X, y)
 
-        # Select dependent and independent variables with patsy
-        # TODO: how to treat missing variables?
-        X, y = get_Xy(dep_var, indep_vars)
+    # Create PFA from the estimator
+    types = [(var['name'], var['type']['name']) for var in indep_vars if var['name'] in X.columns]
+    pfa = sklearn_to_pfa(estimator, types)
 
-        # Train single step
-        if job_type == 'classification':
-            estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
-        else:
-            estimator.partial_fit(X, y)
+    # Add serialized model as metadata for next partial fit
+    serialized_estimator = serialize_sklearn_estimator(estimator)
+    pfa['metadata'] = {
+        'estimator': serialized_estimator
+    }
 
-        # Create PFA from the estimator
-        types = [(var['name'], var['type']['name']) for var in indep_vars if var['name'] in X.columns]
-        pretty_pfa = sklearn_to_pfa(estimator, types)
-        pfa = titus.prettypfa.jsonNode(pretty_pfa)
-
-        # Add serialized model as metadata for next partial fit
-        serialized_estimator = serialize_sklearn_estimator(estimator)
-        pfa['metadata'] = {
-            'estimator': serialized_estimator
-        }
-
-        # Save or update job_result
-        logging.info('Saving PFA to job_results table')
-        pfa = json.dumps(pfa)
-        io_helper.save_results(pfa, '', shapes.Shapes.PFA)
+    # Save or update job_result
+    logging.info('Saving PFA to job_results table')
+    pfa = json.dumps(pfa)
+    io_helper.save_results(pfa, '', shapes.Shapes.PFA)
 
 
 def _extract_metadata(pfa):

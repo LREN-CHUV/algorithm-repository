@@ -8,7 +8,7 @@ from sgd_regression import main, serialize_sklearn_estimator, deserialize_sklear
 @mock.patch('sgd_regression.io_helper.fetch_data')
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
-def test_main(mock_save_results, mock_get_results, mock_fetch_data):
+def test_main_regression(mock_save_results, mock_get_results, mock_fetch_data):
     # create mock objects from database
     mock_fetch_data.return_value = fx.inputs_regression()
     mock_get_results.return_value = None
@@ -22,6 +22,31 @@ def test_main(mock_save_results, mock_get_results, mock_fetch_data):
     # deserialize model
     estimator = deserialize_sklearn_estimator(pfa_dict['metadata']['estimator'])
     assert estimator.__class__.__name__ == 'SGDRegressor'
+
+    # make some prediction with PFA
+    from titus.genpy import PFAEngine
+    engine, = PFAEngine.fromJson(pfa_dict)
+    engine.action({'stress_before_test1': 10., 'iq': 10.})
+
+
+@mock.patch('sgd_regression.io_helper.fetch_data')
+@mock.patch('sgd_regression.io_helper.get_results')
+@mock.patch('sgd_regression.io_helper.save_results')
+def test_main_classification(mock_save_results, mock_get_results, mock_fetch_data):
+    # TODO: DRY both test_main_* methods
+    # create mock objects from database
+    mock_fetch_data.return_value = fx.inputs_classification()
+    mock_get_results.return_value = None
+
+    main()
+
+    pfa = mock_save_results.call_args[0][0]
+    # TODO: convert PFA first and check individual sections instead
+    pfa_dict = json.loads(pfa)
+
+    # deserialize model
+    estimator = deserialize_sklearn_estimator(pfa_dict['metadata']['estimator'])
+    assert estimator.__class__.__name__ == 'SGDClassifier'
 
     # make some prediction with PFA
     from titus.genpy import PFAEngine
