@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from mip_helper import io_helper, shapes
-from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_prettypfa
+from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
 
 import logging
 import json
@@ -71,7 +71,7 @@ def main():
 
         # Create PFA from the estimator
         types = [(var['name'], var['type']['name']) for var in indep_vars if var['name'] in X.columns]
-        pretty_pfa = sklearn_to_prettypfa(estimator, types)
+        pretty_pfa = sklearn_to_pfa(estimator, types)
         pfa = titus.prettypfa.jsonNode(pretty_pfa)
 
         # Add serialized model as metadata for next partial fit
