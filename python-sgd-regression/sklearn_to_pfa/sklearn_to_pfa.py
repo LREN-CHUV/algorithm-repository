@@ -1,5 +1,6 @@
 # TODO: move to a separate repository or at least python-mip
 from sklearn.linear_model import SGDRegressor, SGDClassifier
+from sklearn.neural_network import MLPRegressor, MLPClassifier
 import titus.prettypfa
 
 
@@ -15,6 +16,10 @@ def sklearn_to_pfa(estimator, types):
         return _pfa_sgdregressor(estimator, types)
     elif isinstance(estimator, SGDClassifier):
         return _pfa_sgdclassifier(estimator, types)
+    elif isinstance(estimator, MLPRegressor):
+        return _pfa_mlpregressor(estimator, types)
+    elif isinstance(estimator, MLPClassifier):
+        return _pfa_mlpclassifier(estimator, types)
     else:
         raise NotImplementedError('Estimator {} is not yet supported'.format(estimator.__class__.__name__))
 
@@ -116,6 +121,94 @@ action:
     # add model from scikit-learn
     pfa['cells']['classes']['init'] = list(estimator.classes_)
     pfa['cells']['model']['init'] = [{'const': const, 'coeff': list(coeff)} for const, coeff in zip(estimator.intercept_, estimator.coef_)]
+
+    return pfa
+
+
+def _pfa_mlpregressor(estimator, types):
+    """
+    See https://github.com/opendatagroup/hadrian/wiki/Basic-neural-network
+    """
+    input_record = _input_record(types)
+    featurizer = _construct_featurizer(types)
+
+    # construct template
+    pretty_pfa = """
+types:
+    Query = record(Query,
+                   sql: string,
+                   variable: string,
+                   covariables: array(string));
+    Layer = record(Layer,
+                   weights: array(array(double)),
+                   bias: array(double));
+    Input = {input_record}
+input: Input
+output: double
+cells:
+    neuralnet(array(Layer)) = [];
+action:
+    var x = {featurizer};
+    var activation = model.neural.simpleLayers(x, neuralnet, fcn(x: double -> double) m.link.relu(x));
+    activation[0]
+    """.format(
+        input_record=input_record, featurizer=featurizer
+    ).strip()
+
+    # compile
+    pfa = titus.prettypfa.jsonNode(pretty_pfa)
+
+    # add model from scikit-learn
+    # NOTE: `model.neural.simpleLayers` accepts transposed matrices
+    pfa['cells']['neuralnet']['init'] = [
+        {'bias': bias.tolist(), 'weights': weights.T.tolist()}
+        for bias, weights in zip(estimator.intercepts_, estimator.coefs_)
+    ]
+
+    return pfa
+
+
+def _pfa_mlpclassifier(estimator, types):
+    """
+    See https://github.com/opendatagroup/hadrian/wiki/Basic-neural-network
+    """
+    input_record = _input_record(types)
+    featurizer = _construct_featurizer(types)
+
+    # construct template
+    pretty_pfa = """
+types:
+    Query = record(Query,
+                   sql: string,
+                   variable: string,
+                   covariables: array(string));
+    Layer = record(Layer,
+                   weights: array(array(double)),
+                   bias: array(double));
+    Input = {input_record}
+input: Input
+output: string
+cells:
+    neuralnet(array(Layer)) = [];
+    classes(array(string)) = [];
+action:
+    var x = {featurizer};
+    var activations = model.neural.simpleLayers(x, neuralnet, fcn(x: double -> double) m.link.relu(x));
+    classes[a.argmax(activations)]
+    """.format(
+        input_record=input_record, featurizer=featurizer
+    ).strip()
+
+    # compile
+    pfa = titus.prettypfa.jsonNode(pretty_pfa)
+
+    # add model from scikit-learn
+    pfa['cells']['classes']['init'] = list(estimator.classes_)
+    # NOTE: `model.neural.simpleLayers` accepts transposed matrices
+    pfa['cells']['neuralnet']['init'] = [
+        {'bias': bias.tolist(), 'weights': weights.T.tolist()}
+        for bias, weights in zip(estimator.intercepts_, estimator.coefs_)
+    ]
 
     return pfa
 
