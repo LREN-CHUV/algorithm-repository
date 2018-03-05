@@ -4,7 +4,7 @@ from sklearn.neural_network import MLPRegressor, MLPClassifier
 import titus.prettypfa
 
 
-def sklearn_to_pfa(estimator, types):
+def sklearn_to_pfa(estimator, types, featurizer=None):
     """
     Convert scikit-learn estimator to PFA format.
     :param estimator: Scikit-learn estimator, must be supported
@@ -12,19 +12,21 @@ def sklearn_to_pfa(estimator, types):
     """
     types = _fix_types_compatibility(types)
 
+    featurizer = featurizer or _construct_featurizer(types)
+
     if isinstance(estimator, SGDRegressor):
-        return _pfa_sgdregressor(estimator, types)
+        return _pfa_sgdregressor(estimator, types, featurizer)
     elif isinstance(estimator, SGDClassifier):
-        return _pfa_sgdclassifier(estimator, types)
+        return _pfa_sgdclassifier(estimator, types, featurizer)
     elif isinstance(estimator, MLPRegressor):
-        return _pfa_mlpregressor(estimator, types)
+        return _pfa_mlpregressor(estimator, types, featurizer)
     elif isinstance(estimator, MLPClassifier):
-        return _pfa_mlpclassifier(estimator, types)
+        return _pfa_mlpclassifier(estimator, types, featurizer)
     else:
         raise NotImplementedError('Estimator {} is not yet supported'.format(estimator.__class__.__name__))
 
 
-def _pfa_sgdregressor(estimator, types):
+def _pfa_sgdregressor(estimator, types, featurizer):
     """
     Example output:
         input: record(Data,
@@ -52,7 +54,7 @@ action:
     return pfa
 
 
-def _pfa_sgdclassifier(estimator, types):
+def _pfa_sgdclassifier(estimator, types, featurizer):
     """
     Example output:
         types:
@@ -90,7 +92,6 @@ def _pfa_sgdclassifier(estimator, types):
             classes[a.argmax(scores)]
     """
     input_record = _input_record(types)
-    featurizer = _construct_featurizer(types)
 
     # construct template
     pretty_pfa = """
@@ -125,12 +126,11 @@ action:
     return pfa
 
 
-def _pfa_mlpregressor(estimator, types):
+def _pfa_mlpregressor(estimator, types, featurizer):
     """
     See https://github.com/opendatagroup/hadrian/wiki/Basic-neural-network
     """
     input_record = _input_record(types)
-    featurizer = _construct_featurizer(types)
 
     # construct template
     pretty_pfa = """
@@ -168,12 +168,11 @@ action:
     return pfa
 
 
-def _pfa_mlpclassifier(estimator, types):
+def _pfa_mlpclassifier(estimator, types, featurizer):
     """
     See https://github.com/opendatagroup/hadrian/wiki/Basic-neural-network
     """
     input_record = _input_record(types)
-    featurizer = _construct_featurizer(types)
 
     # construct template
     pretty_pfa = """
@@ -213,15 +212,6 @@ action:
     return pfa
 
 
-def _construct_featurizer(types):
-    inputs = ',\n'.join(['input.' + name for name, _ in types])
-    return """
-new(array(double),
-    {inputs}
-    );
-    """.format(inputs=inputs)
-
-
 def _regression_formula(estimator, types):
     """
     Create regression formula from estimator's coefficients.
@@ -233,6 +223,15 @@ def _regression_formula(estimator, types):
     return ' + '.join(
         [str(estimator.intercept_[0])] + ['{} * {}'.format(a, b) for a, b in zip(estimator.coef_, feature_names)]
     )
+
+
+def _construct_featurizer(types):
+    inputs = ',\n'.join(['input.' + name for name, _ in types])
+    return """
+new(array(double),
+    {inputs}
+    );
+    """.format(inputs=inputs)
 
 
 def _input_record(types):

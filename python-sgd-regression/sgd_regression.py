@@ -2,14 +2,13 @@
 
 from mip_helper import io_helper, shapes
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
+from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
 
 import logging
 import json
 
 import pandas as pd
 from sklearn.linear_model import SGDRegressor, SGDClassifier
-import patsy
-import titus.prettypfa
 import jsonpickle
 import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
@@ -62,9 +61,19 @@ def main():
             logging.warning("Dependent variable needs to be categorical!")
             return None
 
-    # Select dependent and independent variables with patsy
-    # TODO: how to treat missing variables?
+    # featurization
+    transforms = []
+    for var in indep_vars:
+        if dep_var['type']['name'] in ('integer', 'real'):
+            transforms.append(Standardize(var['name'], var['mean'], var['std']))
+        elif dep_var["type"]["name"] in ['polynominal', 'binominal']:
+            transforms.append(OneHotEncoding(var['name'], var['enumeration']))
+
+    featurizer = Featurizer(transforms)
+
+    # convert variables into dataframe
     X, y = get_Xy(dep_var, indep_vars)
+    X = featurizer.transform(X)
 
     # Train single step
     if job_type == 'classification':
@@ -73,8 +82,8 @@ def main():
         estimator.partial_fit(X, y)
 
     # Create PFA from the estimator
-    types = [(var['name'], var['type']['name']) for var in indep_vars if var['name'] in X.columns]
-    pfa = sklearn_to_pfa(estimator, types)
+    types = [(var['name'], var['type']['name']) for var in indep_vars]
+    pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
 
     # Add serialized model as metadata for next partial fit
     serialized_estimator = serialize_sklearn_estimator(estimator)
@@ -103,31 +112,7 @@ def deserialize_sklearn_estimator(js):
     return jsonpickle.decode(js)
 
 
-def get_Xy(dep_var, indep_vars, dropna=True):
-    """Create feature matrix and target from data.
-    :param dep_var:
-    :param indep_vars:
-    :param data:
-    :param dropna: drop rows with NULL values
-    """
-    data = generate_data(dep_var, indep_vars)
-
-    formula = generate_formula(indep_vars, intercept=False)
-    logging.info("Formula: %s" % formula)
-
-    if dropna:
-        NA_action = 'drop'
-        # TODO: check NULL values and raise warning if you find them
-    else:
-        NA_action = 'raise'
-
-    X = patsy.dmatrix(formula, data, NA_action=NA_action, return_type='dataframe')
-    y = data[dep_var['name']]
-
-    return X, y
-
-
-def generate_data(dep_var, indep_vars):
+def get_Xy(dep_var, indep_vars):
     """Create dataframe from input data.
     :param dep_var:
     :param indep_vars:
@@ -141,20 +126,10 @@ def generate_data(dep_var, indep_vars):
         else:
             # infer type automatically
             df[var['name']] = var['series']
-
-    return pd.DataFrame(df)
-
-
-def generate_formula(indep_vars, intercept=True):
-    op = " + "
-    indep_vars = [v["name"] if v["type"]["name"] in ["integer", "real"]
-                  else str.format("C(%s)" % v["name"]) for v in indep_vars]
-    indep_vars = op.join(indep_vars).strip(op)
-
-    if intercept:
-        return indep_vars
-    else:
-        return "0 + {}".format(indep_vars)
+    X = pd.DataFrame(df)
+    y = df[dep_var['name']]
+    del X[dep_var['name']]
+    return X, y
 
 
 if __name__ == '__main__':

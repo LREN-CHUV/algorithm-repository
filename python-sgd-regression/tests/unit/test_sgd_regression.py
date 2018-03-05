@@ -3,6 +3,7 @@ import json
 import mock
 from . import fixtures as fx
 from sgd_regression import main, serialize_sklearn_estimator, deserialize_sklearn_estimator, get_Xy
+from sklearn import datasets
 
 
 @mock.patch('sgd_regression.io_helper.fetch_data')
@@ -55,14 +56,19 @@ def test_main_classification(mock_save_results, mock_get_results, mock_fetch_dat
 
 
 def test_deserialize_sklearn_estimator():
-    estimator = SGDRegressor()
+    X, y = datasets.make_regression(n_samples=100, n_features=10)
+    estimator = SGDRegressor().fit(X, y)
+
     serialized = serialize_sklearn_estimator(estimator)
     original = deserialize_sklearn_estimator(serialized)
+    for col in ('intercept_', 'coef_'):
+        del original.__dict__[col]
+        del estimator.__dict__[col]
     assert original.__dict__ == estimator.__dict__
 
 
 def test_get_Xy():
     inputs = fx.inputs_regression()
     X, y = get_Xy(inputs['data']['dependent'][0], inputs['data']['independent'])
-    assert list(X.columns) == ['C(agegroup)[-50y]', 'C(agegroup)[50-59y]', 'stress_before_test1', 'iq']
+    assert list(X.columns) == ['iq', 'score_test1', 'stress_before_test1']
     assert len(X) == len(y) == 6
