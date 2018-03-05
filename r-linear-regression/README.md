@@ -8,7 +8,7 @@ Implementation of linear regression in R
 
 ```sh
 
-  docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-knn:0.2.1 compute
+  docker run --rm --env [list of environment variables] hbpmip/java-rapidminer-knn:0.2.2 compute
 
 ```
 
