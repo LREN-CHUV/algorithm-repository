@@ -50,7 +50,7 @@ public class FIRESerializer extends ClusGenericSerializer<ClusRuleSet> {
             if (attr.isNumeric()) {
               jgen.writeStringField(s, "double");
             } else if (attr.isNominal()) {
-              jgen.writeStringField(s, "Enum_input" + a);
+              jgen.writeStringField(s, "Enum_" + attr.name());
             }
           }
           jgen.writeEndObject();
@@ -69,62 +69,30 @@ public class FIRESerializer extends ClusGenericSerializer<ClusRuleSet> {
         }
         jgen.writeEndObject();
 
-        jgen.writeObjectField("then", r.getOptWeight() * targetPrediction);
+        jgen.writeNumberField("then", r.getOptWeight() * targetPrediction);
 
-        jgen.writeObjectField("else", (double) 0.0);
+        jgen.writeNumberField("else", (double) 0.0);
       }
       jgen.writeEndObject();
     }
     jgen.writeEndObject();
   }
 
-  //  private void makeTests(ArrayList<NodeTest> tests, JsonGenerator jgen) throws IOException {
-  //      jgen.writeArrayFieldStart("&&");
-  //      {
-  //
-  //        // tests
-  //        for (NodeTest t : tests) {
-  //          String[] testParts = t.getTestString().split(" ");
-  //
-  //          jgen.writeStartObject();
-  //          {
-  //            if (testParts[1].trim().equals("=")) testParts[1] = "==";
-  //
-  //            jgen.writeArrayFieldStart(testParts[1].trim());
-  //            {
-  //              jgen.writeString(testParts[0].trim());
-  //
-  //              if (t instanceof NumericTest) {
-  //                jgen.writeObject(Double.parseDouble(testParts[2].trim()));
-  //              } else if (t instanceof SubsetTest) {
-  //                jgen.writeStartObject();
-  //                {
-  //                  jgen.writeStringField("string", testParts[2].trim());
-  //                }
-  //                jgen.writeEndObject();
-  //              } else {
-  //                jgen.writeString(testParts[2].trim());
-  //              }
-  //            }
-  //            jgen.writeEndArray();
-  //          }
-  //          jgen.writeEndObject();
-  //        }
-  //      }
-  //      jgen.writeEndArray();
-  //  }
-  //
-
+  /**
+   * This method recursively creates tests for rules
+   *
+   * @param tests Array of NodeTest-s
+   */
   private void makeTests(ArrayList<NodeTest> tests, JsonGenerator jgen) throws IOException {
-    if (tests.size() > 0) {
-
+    if (tests != null && tests.size() > 0) {
       // first test
       NodeTest t = tests.get(0);
-      tests.remove(t);
 
       jgen.writeArrayFieldStart("&&");
       {
         String[] testParts = t.getTestString().split(" ");
+        testParts[2] = testParts[2].replaceAll(",", "");
+
         jgen.writeStartObject();
         {
           if (testParts[1].trim().equals("=")) testParts[1] = "==";
@@ -133,39 +101,40 @@ public class FIRESerializer extends ClusGenericSerializer<ClusRuleSet> {
           {
             jgen.writeString(testParts[0].trim());
 
-            if (t instanceof NumericTest) {
-              jgen.writeObject(Double.parseDouble(testParts[2].trim()));
-            } else if (t instanceof SubsetTest) {
+            if (t instanceof SubsetTest) {
               jgen.writeStartObject();
               {
                 jgen.writeStringField("string", testParts[2].trim());
               }
               jgen.writeEndObject();
-            } else {
-              jgen.writeString(testParts[2].trim());
+            } else if (t instanceof NumericTest) {
+              jgen.writeNumber(Double.parseDouble(testParts[2].trim()));
             }
           }
           jgen.writeEndArray();
         }
         jgen.writeEndObject();
 
-        jgen.writeStartObject();
-        {
-          makeTests(tests, jgen);
+        if (tests.size() != 1) {
+          jgen.writeStartObject();
+          {
+            tests.remove(0);
+            makeTests(tests, jgen);
+          }
+          jgen.writeEndObject();
+        } else {
+          jgen.writeBoolean(true);
         }
-        jgen.writeEndObject();
       }
       jgen.writeEndArray();
     } else {
-      jgen.writeObject(true);
-      return;
+      jgen.writeBoolean(true);
     }
   }
 
   @Override
   public void writePfaFunctionDefinitions(ClusRuleSet model, JsonGenerator jgen)
       throws IOException {
-
     if (model.getRules().size() > 1) {
       for (int j = 1; j < model.getRules().size(); j++) {
         ClusRule r = model.getRule(j);
@@ -177,40 +146,76 @@ public class FIRESerializer extends ClusGenericSerializer<ClusRuleSet> {
             makeRule(r, i, jgen);
           } catch (Exception ex) {
             // suppress
+            System.err.println(ex.toString());
           }
         }
       }
     }
   }
 
+  /**
+   * This method creates the PFA that sums values returned from rules
+   *
+   * @param rules An array of ClusRule objects
+   * @param targetID Target we are focusing on
+   */
+  private void makeFinalSum(ArrayList<ClusRule> rules, int targetID, JsonGenerator jgen)
+      throws IOException {
+
+    if (rules != null && rules.size() > 0) {
+      ClusRule r = rules.get(0);
+      rules.remove(0);
+
+      jgen.writeStartObject();
+      {
+        jgen.writeArrayFieldStart("+");
+        {
+          jgen.writeStartObject();
+          {
+            jgen.writeArrayFieldStart("u.rule" + r.getID() + "_t" + targetID);
+            {
+              for (int j = 0; j < input.getInputFeaturesNames().length; j++) {
+                jgen.writeString("input." + input.getInputFeaturesNames()[j]);
+              }
+            }
+            jgen.writeEndArray();
+          }
+          jgen.writeEndObject();
+
+          makeFinalSum(rules, targetID, jgen);
+        }
+        jgen.writeEndArray();
+      }
+      jgen.writeEndObject();
+    } else {
+      jgen.writeNumber(0.0);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
   @Override
   public void writePfaAction(ClusRuleSet model, JsonGenerator jgen) throws IOException {
 
     // predictions of the first rule
     double[] avgPredictions = model.getRule(0).getTargetStat().getNumericPred();
 
+    ArrayList<ClusRule> rules = null;
+
     if (input.getOutputFeaturesNames().length == 1) {
-
-      jgen.writeArrayFieldStart("+");
+      jgen.writeStartObject();
       {
-        jgen.writeObject(avgPredictions[0]);
+        jgen.writeArrayFieldStart("+");
+        {
+          jgen.writeNumber(avgPredictions[0]);
 
-        for (int r = 1; r < model.getRules().size(); r++) {
-          jgen.writeStartObject();
-          {
-            jgen.writeArrayFieldStart("u.rule" + model.getRule(r).getID() + "_t0");
-            {
-              for (int j = 0; j < input.getInputFeaturesNames().length; j++) {
-                jgen.writeString(input.getInputFeaturesNames()[j]);
-              }
-            }
-            jgen.writeEndArray();
-          }
-          jgen.writeEndObject();
+          rules = (ArrayList<ClusRule>) model.getRules().clone();
+          rules.remove(0);
+
+          makeFinalSum(rules, 0, jgen);
         }
+        jgen.writeEndArray();
       }
-      jgen.writeEndArray();
-
+      jgen.writeEndObject();
     } else {
       jgen.writeStartObject();
       {
@@ -222,21 +227,12 @@ public class FIRESerializer extends ClusGenericSerializer<ClusRuleSet> {
             {
               jgen.writeArrayFieldStart("+");
               {
-                jgen.writeObject(avgPredictions[i]);
+                jgen.writeNumber(avgPredictions[i]);
 
-                for (int r = 1; r < model.getRules().size(); r++) {
-                  jgen.writeStartObject();
-                  {
-                    jgen.writeArrayFieldStart("u.rule" + model.getRule(r).getID() + "_t" + i);
-                    {
-                      for (int j = 0; j < input.getInputFeaturesNames().length; j++) {
-                        jgen.writeString("input." + input.getInputFeaturesNames()[j]);
-                      }
-                    }
-                    jgen.writeEndArray();
-                  }
-                  jgen.writeEndObject();
-                }
+                rules = (ArrayList<ClusRule>) model.getRules().clone();
+                rules.remove(0);
+
+                makeFinalSum(rules, i, jgen);
               }
               jgen.writeEndArray();
             }
@@ -245,7 +241,7 @@ public class FIRESerializer extends ClusGenericSerializer<ClusRuleSet> {
         }
         jgen.writeEndObject();
       }
+      jgen.writeEndObject();
     }
-    jgen.writeEndObject();
   }
 }

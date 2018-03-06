@@ -86,7 +86,7 @@
           "input1",
           "input2"
         ],
-        "sql": "SELECT",
+        "sql": "SELECT * FROM \"file:/media/sf_mip/algorithm-repository/java-jsi-clus-fire/target/test-classes/eu/humanbrainproject/mip/algorithms/jsi/clus/fire/regression.csv\"",
         "variable": "output1"
       },
       "type": {
@@ -158,12 +158,22 @@
         "if": {
           "&&": [
             {
-              "<=": [
+              ">": [
                 "input2",
-                6.7
+                4.6
               ]
             },
-            true
+            {
+              "&&": [
+                {
+                  "<=": [
+                    "input2",
+                    6.7
+                  ]
+                },
+                true
+              ]
+            }
           ]
         },
         "then": 2.561517376842116
@@ -184,12 +194,34 @@
         "if": {
           "&&": [
             {
-              ">": [
+              "<=": [
                 "input2",
-                1.2
+                3.4
               ]
             },
-            true
+            {
+              "&&": [
+                {
+                  "==": [
+                    "input1",
+                    {
+                      "string": "A"
+                    }
+                  ]
+                },
+                {
+                  "&&": [
+                    {
+                      ">": [
+                        "input2",
+                        1.2
+                      ]
+                    },
+                    true
+                  ]
+                }
+              ]
+            }
           ]
         },
         "then": 0.9046558644030188
@@ -210,12 +242,34 @@
         "if": {
           "&&": [
             {
-              ">": [
-                "input2",
-                1.2
+              "==": [
+                "input1",
+                {
+                  "string": "B"
+                }
               ]
             },
-            true
+            {
+              "&&": [
+                {
+                  "<=": [
+                    "input2",
+                    3.4
+                  ]
+                },
+                {
+                  "&&": [
+                    {
+                      ">": [
+                        "input2",
+                        1.2
+                      ]
+                    },
+                    true
+                  ]
+                }
+              ]
+            }
           ]
         },
         "then": 0.9402861957254142
@@ -236,12 +290,22 @@
         "if": {
           "&&": [
             {
-              ">": [
+              "<=": [
                 "input2",
-                3.4
+                4.6
               ]
             },
-            true
+            {
+              "&&": [
+                {
+                  ">": [
+                    "input2",
+                    3.4
+                  ]
+                },
+                true
+              ]
+            }
           ]
         },
         "then": -7.066557367514119

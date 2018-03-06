@@ -1,7 +1,5 @@
 package eu.humanbrainproject.mip.algorithms.jsi.clus.fire;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -10,14 +8,12 @@ import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.ext.featureRanking.Fimp;
 import si.ijs.kt.clus.model.test.NodeTest;
 
+/**
+ * @author Martin Breskvar
+ *     <p>This class serializes a Fitted Rule Ensemble for multi-target regression model into HTML
+ */
 public class FIREDescriptiveSerializer
     extends eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusDescriptiveSerializer {
-
-  private final DecimalFormat df = new DecimalFormat("#.######");
-
-  public FIREDescriptiveSerializer() {
-    df.setRoundingMode(RoundingMode.HALF_EVEN);
-  }
 
   @Override
   public String getFimpString(Fimp fimp) {
@@ -27,7 +23,7 @@ public class FIREDescriptiveSerializer
 
   private String getPredictionHTML(double[] predictions, double weight) {
     ArrayList<String> lst = new ArrayList<>();
-    for (double d : predictions) lst.add(df.format(d * weight));
+    for (double d : predictions) lst.add(Double.toString(d * weight));
 
     String s = "(" + String.join(", ", lst) + ")";
 
@@ -38,10 +34,18 @@ public class FIREDescriptiveSerializer
     return "<span>&nbsp;+&nbsp;</span>";
   }
 
+  /**
+   * @param input String that potentially contains characters that need to be encoded.
+   * @return input string with HTML encoded characters
+   */
   private String replaceStuff(String input) {
     return input.replaceAll(">", "&gt;").replaceAll("<", "&lt;");
   }
 
+  /**
+   * @param rule ClusRule that will be serialized to HTML
+   * @return HTML describing ClusRule
+   */
   private String getRuleHTML(ClusRule rule) {
     ArrayList<String> htmlParts = new ArrayList<>();
 
@@ -76,13 +80,15 @@ public class FIREDescriptiveSerializer
 
       return String.join("", htmlParts);
     } else {
-      // linear term
+      // linear term, currently ignored
+        
       //ClusRuleLinearTerm term = (ClusRuleLinearTerm) rule;
       //term.getOptWeight()
       return "";
     }
   }
 
+  /** @return HTML defining CSS styles */
   private String getStyles() {
     ArrayList<String> styles = new ArrayList<>();
 
@@ -97,7 +103,7 @@ public class FIREDescriptiveSerializer
 
   @Override
   public String getRuleSetString(ClusRuleSet model) {
-    // We need to make a HTML output of rules object here
+    // We make a HTML output of model here
 
     ArrayList<String> htmlParts = new ArrayList<String>();
 
@@ -106,11 +112,10 @@ public class FIREDescriptiveSerializer
     for (ClusRule r : rules) {
       htmlParts.add(getRuleHTML(r));
     }
-    
+
     htmlParts.removeAll(Arrays.asList(""));
 
     for (int i = 0; i < htmlParts.size(); i++) {
-
       htmlParts.set(
           i,
           "<div>" + htmlParts.get(i) + (i < htmlParts.size() - 1 ? getPlusHTML() : "") + "</div>");
