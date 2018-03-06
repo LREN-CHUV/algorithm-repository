@@ -4,7 +4,8 @@ import numpy as np
 class Featurizer:
     """Class for preprocessing input data to numerical format required for scikit-learn. Can transform
     input dataframe and also generate PrettyPFA code.
-    Inspired by fit_transform from scikit-learn.
+    Inspired by Pipeline from scikit-learn. In the future we might use native scikit-learn Pipeline and
+    convert it to PFA.
     """
 
     def __init__(self, transforms):
@@ -17,9 +18,9 @@ class Featurizer:
         """Generate string for PrettyPFA that converts input to array of doubles."""
         transforms_pfa = ',\n    '.join([t.pfa() for t in self.transforms])
         return """
-new(array(double),
+a.flatten(new(array(array(double)),
     {transforms}
-);
+))
         """.format(transforms=transforms_pfa).strip()
 
 
@@ -43,7 +44,7 @@ class Standardize(Transform):
         return ((X[self.col] - self.mu) / self.sigma)[:, np.newaxis]
 
     def pfa(self):
-        return 'arr((x.{col} - {mu}) / {sigma})'.format(col=self.col, mu=self.mu, sigma=self.sigma)
+        return 'u.arr((input.{col} - {mu}) / {sigma})'.format(col=self.col, mu=self.mu, sigma=self.sigma)
 
 
 class OneHotEncoding(Transform):
@@ -59,4 +60,4 @@ class OneHotEncoding(Transform):
         return Y
 
     def pfa(self):
-        return 'C(x.{col})'.format(col=self.col)
+        return 'u.C(input.{col})'.format(col=self.col)
