@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# Tests python-sgd-regression using Docker-compose.
-# The Docker image for python-sgd-regression needs to have been built before using ./build.sh in parent directory.
+# Run the environment required for executing python-sgd-regression.
+# Docker containers are created with docker-compose, but no cleanup operation is performed and you will need to
+# stop those running containers using the ./stop.sh script.
 
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
@@ -35,9 +36,8 @@ function _cleanup() {
   $DOCKER_COMPOSE stop | true
   $DOCKER_COMPOSE down | true
   $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null | true
-  exit $error_code
 }
-trap _cleanup EXIT INT TERM
+_cleanup || true
 
 echo "Starting the databases..."
 $DOCKER_COMPOSE up -d --remove-orphans db
@@ -56,7 +56,3 @@ echo "Run the sgd-regression-b algorithm..."
 $DOCKER_COMPOSE run sgd-regression-b compute
 echo "Run the sgd-regression-c algorithm..."
 $DOCKER_COMPOSE run sgd-regression-c compute
-
-echo
-# Cleanup
-_cleanup
