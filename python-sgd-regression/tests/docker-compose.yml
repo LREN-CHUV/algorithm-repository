@@ -1,0 +1,122 @@
+---
+
+version: '2'
+services:
+
+  db:
+    image: postgres:9.6.5-alpine
+    hostname: db
+    environment:
+      POSTGRES_PASSWORD: test
+
+  wait_dbs:
+    image: "waisbrot/wait"
+    restart: "no"
+    environment:
+      TARGETS: "db:5432"
+      TIMEOUT: 60
+
+  create_dbs:
+    image: "hbpmip/create-databases:1.0.0"
+    restart: "no"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_ADMIN_USER: postgres
+      DB_ADMIN_PASSWORD: test
+      DB1: features
+      USER1: features
+      PASSWORD1: featurespwd
+      DB2: woken
+      USER2: woken
+      PASSWORD2: wokenpwd
+    depends_on:
+      - db
+
+  sample_data_db_setup:
+    image: "hbpmip/sample-data-db-setup:0.5.0"
+    container_name: "data-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: features
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: test
+    depends_on:
+      - db
+
+  woken_db_setup:
+    image: "hbpmip/woken-db-setup:1.0.2"
+    container_name: "woken-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: woken
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: test
+    depends_on:
+      - db
+
+  sgd-regression-base:
+    image: "hbpmip/python-sgd-regression:latest"
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 1
+      IN_DBAPI: postgresql
+      IN_USER: features
+      IN_PASSWORD: featurespwd
+      IN_HOST: db
+      IN_PORT: 5432
+      IN_DATABASE: features
+      OUT_DBAPI: postgresql
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
+      PARAM_variables: "lefthippocampus"
+      PARAM_covariables: "minimentalstate,opticchiasm,subjectage"
+      PARAM_grouping: ""
+      PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\"},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\"},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\"},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\"}}"
+      MODEL_PARAM_design: "factorial"
+    volumes:
+      - ../mip_helper:/mip_helper
+
+  sgd-regression-a:
+    extends: sgd-regression-base
+    container_name: "sgd-regression-a"
+    environment:
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectage FROM cde_features_a LIMIT 100"
+    links:
+      - "db:db"
+
+  sgd-regression-b:
+    extends: sgd-regression-base
+    container_name: "sgd-regression-b"
+    environment:
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectage FROM cde_features_b LIMIT 100"
+    links:
+      - "db:db"
+
+  sgd-regression-c:
+    extends: sgd-regression-base
+    container_name: "sgd-regression-c"
+    environment:
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectage FROM cde_features_c LIMIT 100"
+    links:
+      - "db:db"
+
+  test_suite:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    volumes:
+      - ../tests:/tests
+      - ../sgd_regression.py:/sgd_regression.py
+      - ../mip_helper:/mip_helper
+      - ../sklearn_to_pfa:/sklearn_to_pfa
