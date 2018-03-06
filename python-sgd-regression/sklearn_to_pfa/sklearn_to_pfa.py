@@ -1,6 +1,8 @@
 # TODO: move to a separate repository or at least python-mip
 from sklearn.linear_model import SGDRegressor, SGDClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
+from sklearn.naive_bayes import MultinomialNB
+import numpy as np
 import titus.prettypfa
 
 
@@ -22,6 +24,8 @@ def sklearn_to_pfa(estimator, types, featurizer=None):
         return _pfa_mlpregressor(estimator, types, featurizer)
     elif isinstance(estimator, MLPClassifier):
         return _pfa_mlpclassifier(estimator, types, featurizer)
+    elif isinstance(estimator, MultinomialNB):
+        return _pfa_multinomialnb(estimator, types, featurizer)
     else:
         raise NotImplementedError('Estimator {} is not yet supported'.format(estimator.__class__.__name__))
 
@@ -213,6 +217,59 @@ action:
     pfa['cells']['neuralnet']['init'] = [
         {'bias': bias.tolist(), 'weights': weights.T.tolist()}
         for bias, weights in zip(estimator.intercepts_, estimator.coefs_)
+    ]
+
+    return pfa
+
+
+def _pfa_multinomialnb(estimator, types, featurizer):
+    """
+    See https://github.com/opendatagroup/hadrian/wiki/Basic-naive-bayes
+    NOTE: in our use case we use mostly one-hot encoded variables, so using BernoulliNB might make
+        more sense
+    """
+    input_record = _input_record(types)
+
+    # construct template
+    pretty_pfa = """
+types:
+    Query = record(Query,
+                   sql: string,
+                   variable: string,
+                   covariables: array(string));
+    Distribution = record(Distribution,
+                        logLikelihoods: array(double),
+                        logPrior: double);
+    Input = {input_record}
+input: Input
+output: string
+cells:
+    model(array(Distribution)) = [];
+    classes(array(string)) = [];
+fcns:
+{functions}
+action:
+    var x = {featurizer};
+
+    var classLL = a.map(model, fcn(dist: Distribution -> double) {{
+        model.naive.multinomial(x, dist.logLikelihoods) + dist.logPrior
+    }});
+    var norm = a.logsumexp(classLL);
+    var probs = a.map(classLL, fcn(x: double -> double) m.exp(x - norm));
+    classes[a.argmax(probs)]
+    """.format(
+        input_record=input_record, featurizer=featurizer, functions=_functions()
+    ).strip()
+
+    # compile
+    pfa = titus.prettypfa.jsonNode(pretty_pfa)
+
+    # add model from scikit-learn
+    pfa['cells']['classes']['init'] = list(estimator.classes_)
+    # NOTE: `model.neural.simpleLayers` accepts transposed matrices
+    pfa['cells']['model']['init'] = [
+        {'logLikelihoods': ll.tolist(), 'logPrior': log_prior.tolist()}
+        for log_prior, ll in zip(estimator.class_log_prior_, np.exp(estimator.feature_log_prob_))
     ]
 
     return pfa
