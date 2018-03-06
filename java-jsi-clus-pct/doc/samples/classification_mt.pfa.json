@@ -1,17 +1,46 @@
 {
   "action": [
-    -0.003907983870967769
+    {
+      "else": {
+        "new": {
+          "output1": {
+            "string": "A"
+          },
+          "output2": {
+            "string": "X"
+          }
+        },
+        "type": "DependentVariables"
+      },
+      "if": {
+        ">": [
+          "input.input1",
+          4.6
+        ]
+      },
+      "then": {
+        "new": {
+          "output1": {
+            "string": "B"
+          },
+          "output2": {
+            "string": "Y"
+          }
+        },
+        "type": "DependentVariables"
+      }
+    }
   ],
   "begin": [],
   "cells": {
     "query": {
       "init": {
-        "count": 682,
+        "count": 7,
         "covariables": [
           "input1",
           "input2"
         ],
-        "sql": "SELECT",
+        "sql": "SELECT * FROM \"file:classification.csv\"",
         "variable": "output1"
       },
       "type": {
@@ -74,7 +103,18 @@
   "name": "PredictiveClusteringTrees",
   "output": {
     "doc": "Output is the estimate of the variable",
-    "type": "double"
+    "fields": [
+      {
+        "name": "output1",
+        "type": "string"
+      },
+      {
+        "name": "output2",
+        "type": "string"
+      }
+    ],
+    "name": "DependentVariables",
+    "type": "record"
   },
   "pools": {}
 }

@@ -1,17 +1,30 @@
 {
   "action": [
-    -0.003907983870967769
+    {
+      "else": {
+        "string": "A"
+      },
+      "if": {
+        ">": [
+          "input.input1",
+          4.6
+        ]
+      },
+      "then": {
+        "string": "B"
+      }
+    }
   ],
   "begin": [],
   "cells": {
     "query": {
       "init": {
-        "count": 682,
+        "count": 7,
         "covariables": [
           "input1",
           "input2"
         ],
-        "sql": "SELECT",
+        "sql": "SELECT * FROM \"file:classification.csv\"",
         "variable": "output1"
       },
       "type": {
@@ -74,7 +87,7 @@
   "name": "PredictiveClusteringTrees",
   "output": {
     "doc": "Output is the estimate of the variable",
-    "type": "double"
+    "type": "string"
   },
   "pools": {}
 }

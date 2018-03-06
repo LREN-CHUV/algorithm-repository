@@ -65,7 +65,13 @@ public class PCTTest {
   }
 
   private ClusAlgorithm<ClusNode> getAlgorithm(FileInputData input) {
-    ClusMeta clusMeta = new PCTMeta();
+    PCTMeta clusMeta = new PCTMeta();
+
+    return getAlgorithm(input, clusMeta);
+  }
+
+  private ClusAlgorithm<ClusNode> getAlgorithm(FileInputData input, PCTMeta clusMeta) {
+
     ClusGenericSerializer<ClusNode> modelSerializer = new PCTSerializer();
     ClusModelPFASerializer<ClusNode> mainSerializer = new ClusModelPFASerializer<>(modelSerializer);
     ClusAlgorithm<ClusNode> algorithm = new ClusAlgorithm<>(input, mainSerializer, clusMeta);
@@ -111,6 +117,25 @@ public class PCTTest {
     }
   }
 
+  private void predictMT(String pfa, String[] featureNames, double[][] testData, String[] expected)
+      throws JsonGenerationException, JsonMappingException, IOException {
+    System.out.println("Trying to get PFAEngine...");
+    PFAEngine<Object, Object> engine = getPFAEngine(pfa);
+
+    for (int tuple = 0; tuple < testData.length; tuple++) {
+      Map<String, Double> inputs = Maps.newHashMap();
+      for (int i = 0; i < featureNames.length; i++) {
+        inputs.put(featureNames[i], testData[tuple][i]);
+      }
+      final Object jsonInput = engine.jsonInput(new ObjectMapper().writeValueAsString(inputs));
+      final Object jsonOutput = engine.jsonOutput(engine.action(jsonInput));
+
+      System.out.println("Input: " + jsonInput.toString() + " Output: " + jsonOutput.toString());
+
+      assertEquals(expected[tuple], jsonOutput.toString());
+    }
+  }
+
   @Test
   @DisplayName(
       "we can implement a predictive clustering tree for ST regression and export its model to PFA")
@@ -139,7 +164,16 @@ public class PCTTest {
         new double[][] {
           {1.2, 2.4}, {6.7, 8.9}, {4.6, 23.4}, {7.6, 5.4}, {1.2, 1.6}, {3.4, 4.7}, {3.4, 6.5}
         };
-    Double[] expected = new Double[] {4.5, 1.5, 1.5, 1.5, 4.5, 1.5, 1.5};
+    Double[] expected =
+        new Double[] {
+          -0.003907983870967769,
+          -0.003907983870967769,
+          -0.003907983870967769,
+          -0.003907983870967769,
+          -0.003907983870967769,
+          -0.003907983870967769,
+          -0.003907983870967769
+        };
 
     predictST(pfa, featureNames, testData, expected, false);
   }
@@ -182,38 +216,90 @@ public class PCTTest {
   @DisplayName(
       "we can implement a predictive clustering tree for MT regression and export its model to PFA")
   public void testRegressionMT() throws Exception {
-    System.out.println(
-        "This tests will be written when PFAEngine will be able to handle multi-target outputs.");
-    assertTrue(true);
-  }
-
-  @Test
-  @DisplayName(
-      "we can implement a predictive clustering tree for MT classification and export its model to PFA")
-  public void testClassificationMT() {
-    System.out.println(
-        "This tests will be written when PFAEngine will be able to handle multi-target outputs.");
-    assertTrue(true);
-  }
-
-  @Test
-  @DisplayName("we can implement a predictive clustering tree for ST regression and visualize it")
-  public void testVisualization() throws Exception {
     String[] featureNames = new String[] {"input1", "input2"};
-    String[] variableNames = new String[] {"output1"};
+    String[] variableNames = new String[] {"output1", "output2"};
 
     ClusAlgorithm<ClusNode> algorithm =
         getAlgorithm(getRegressionData(featureNames, variableNames));
 
     algorithm.run();
 
-    ClusNode model = algorithm.getModel();
-    assertNotNull(model);
+    System.out.println(algorithm.toPrettyPFA());
+    String pfa = algorithm.toPFA();
 
-    PCTVisualizer visualizer = new PCTVisualizer();
+    assertTrue(!pfa.contains("error"));
+    assertTrue(pfa.contains("\"action\""));
 
-    String vis = visualizer.getVisualizationString(model);
+    final JsonNode jsonPfa =
+        mapper.readTree(pfa.replaceFirst("SELECT \\* FROM .*\\\\\"", "SELECT"));
+    final JsonNode jsonExpected = mapper.readTree(getClass().getResource("regressionMT.pfa.json"));
 
+    assertEquals(jsonExpected, jsonPfa);
+
+    double[][] testData =
+        new double[][] {
+          {1.2, 2.4}, {6.7, 8.9}, {4.6, 23.4}, {7.6, 5.4}, {1.2, 1.6}, {3.4, 4.7}, {3.4, 6.5}
+        };
+
+    String[] expected =
+        new String[] {
+          "{\"output1\":-0.003907983870967769,\"output2\":0.0031527595307917914}",
+          "{\"output1\":-0.003907983870967769,\"output2\":0.0031527595307917914}",
+          "{\"output1\":-0.003907983870967769,\"output2\":0.0031527595307917914}",
+          "{\"output1\":-0.003907983870967769,\"output2\":0.0031527595307917914}",
+          "{\"output1\":-0.003907983870967769,\"output2\":0.0031527595307917914}",
+          "{\"output1\":-0.003907983870967769,\"output2\":0.0031527595307917914}",
+          "{\"output1\":-0.003907983870967769,\"output2\":0.0031527595307917914}"
+        };
+
+    predictMT(pfa, featureNames, testData, expected);
+  }
+
+  @Test
+  @DisplayName(
+      "we can implement a predictive clustering tree for MT classification and export its model to PFA")
+  public void testClassificationMT() throws Exception {
+    String[] featureNames = new String[] {"input1", "input2"};
+    String[] variableNames = new String[] {"output1", "output2"};
+
+    ClusAlgorithm<ClusNode> algorithm =
+        getAlgorithm(getClassificationData(featureNames, variableNames));
+
+    algorithm.run();
+
+    System.out.println(algorithm.toPrettyPFA());
+    String pfa = algorithm.toPFA();
+
+    assertTrue(!pfa.contains("error"));
+    assertTrue(pfa.contains("\"action\""));
+
+    final JsonNode jsonPfa =
+        mapper.readTree(pfa.replaceFirst("SELECT \\* FROM .*\\\\\"", "SELECT"));
+    final JsonNode jsonExpected =
+        mapper.readTree(getClass().getResource("classificationMT.pfa.json"));
+
+    assertEquals(jsonExpected, jsonPfa);
+
+    double[][] testData =
+        new double[][] {
+          {1.2, 2.4}, {6.7, 8.9}, {4.6, 23.4}, {7.6, 5.4}, {1.2, 1.6}, {3.4, 4.7}, {3.4, 6.5}
+        };
+
+    String[] expected =
+        new String[] {
+          "{\"output1\":\"A\",\"output2\":\"X\"}",
+          "{\"output1\":\"B\",\"output2\":\"Y\"}",
+          "{\"output1\":\"A\",\"output2\":\"X\"}",
+          "{\"output1\":\"B\",\"output2\":\"Y\"}",
+          "{\"output1\":\"A\",\"output2\":\"X\"}",
+          "{\"output1\":\"A\",\"output2\":\"X\"}",
+          "{\"output1\":\"A\",\"output2\":\"X\"}"
+        };
+
+    predictMT(pfa, featureNames, testData, expected);
+  }
+
+  private void commonVisJSAssertions(ClusNode model, String vis, String[] featureNames) {
     assertNotNull(vis);
     assertTrue(vis.contains("var nodes=[]; var edges=[];"));
     assertTrue(vis.contains("nodes.push"));
@@ -232,7 +318,68 @@ public class PCTTest {
         }
       }
       assertTrue(known);
+
+      assertTrue(vis.contains("edges.push"));
+    } else {
+      String prediction = model.getTargetStat().toString();
+      assertTrue(prediction.length() > 0);
     }
+  }
+
+  @Test
+  @DisplayName("we can implement a predictive clustering tree for ST regression and visualize it")
+  public void testVisualizationST() throws Exception {
+    String[] featureNames = new String[] {"input1", "input2"};
+    String[] variableNames = new String[] {"output1"};
+
+    PCTMeta meta = new PCTMeta();
+    meta.SETTINGS.remove("[Tree]");
+    meta.WHICH_MODEL_TO_USE = 1;
+    meta.SETTINGS.get("[Model]").put("MinimalWeight", "30");
+
+    ClusAlgorithm<ClusNode> algorithm =
+        getAlgorithm(getRegressionData(featureNames, variableNames), meta);
+
+    algorithm.run();
+
+    ClusNode model = algorithm.getModel();
+    assertNotNull(model);
+
+    PCTVisualizer visualizer = new PCTVisualizer();
+
+    String vis = visualizer.getVisualizationString(model, variableNames);
+
+    System.out.println(vis);
+
+    commonVisJSAssertions(model, vis, featureNames);
+  }
+
+  @Test
+  @DisplayName("we can implement a predictive clustering tree for MT regression and visualize it")
+  public void testVisualizationMT() throws Exception {
+    String[] featureNames = new String[] {"input1", "input2"};
+    String[] variableNames = new String[] {"output1", "output2"};
+
+    PCTMeta meta = new PCTMeta();
+    meta.SETTINGS.remove("[Tree]");
+    meta.WHICH_MODEL_TO_USE = 1;
+    meta.SETTINGS.get("[Model]").put("MinimalWeight", "30");
+
+    ClusAlgorithm<ClusNode> algorithm =
+        getAlgorithm(getRegressionData(featureNames, variableNames), meta);
+
+    algorithm.run();
+
+    ClusNode model = algorithm.getModel();
+    assertNotNull(model);
+
+    PCTVisualizer visualizer = new PCTVisualizer();
+
+    String vis = visualizer.getVisualizationString(model, variableNames);
+
+    System.out.println(vis);
+
+    commonVisJSAssertions(model, vis, featureNames);
   }
 
   @AfterEach

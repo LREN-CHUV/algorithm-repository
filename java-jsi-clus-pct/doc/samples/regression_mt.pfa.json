@@ -1,17 +1,23 @@
 {
   "action": [
-    -0.003907983870967769
+    {
+      "new": {
+        "output1": 2.357142857142857,
+        "output2": 0.4514285714285715
+      },
+      "type": "DependentVariables"
+    }
   ],
   "begin": [],
   "cells": {
     "query": {
       "init": {
-        "count": 682,
+        "count": 7,
         "covariables": [
           "input1",
           "input2"
         ],
-        "sql": "SELECT",
+        "sql": "SELECT * FROM \"file:regression.csv\"",
         "variable": "output1"
       },
       "type": {
@@ -74,7 +80,18 @@
   "name": "PredictiveClusteringTrees",
   "output": {
     "doc": "Output is the estimate of the variable",
-    "type": "double"
+    "fields": [
+      {
+        "name": "output1",
+        "type": "double"
+      },
+      {
+        "name": "output2",
+        "type": "double"
+      }
+    ],
+    "name": "DependentVariables",
+    "type": "record"
   },
   "pools": {}
 }
