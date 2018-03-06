@@ -70,5 +70,5 @@ def test_deserialize_sklearn_estimator():
 def test_get_Xy():
     inputs = fx.inputs_regression()
     X, y = get_Xy(inputs['data']['dependent'][0], inputs['data']['independent'])
-    assert list(X.columns) == ['iq', 'score_test1', 'stress_before_test1']
+    assert list(X.columns) == ['iq', 'stress_before_test1']
     assert len(X) == len(y) == 6

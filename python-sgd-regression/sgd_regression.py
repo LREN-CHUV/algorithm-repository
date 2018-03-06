@@ -64,9 +64,9 @@ def main():
     # featurization
     transforms = []
     for var in indep_vars:
-        if dep_var['type']['name'] in ('integer', 'real'):
+        if var['type']['name'] in ('integer', 'real'):
             transforms.append(Standardize(var['name'], var['mean'], var['std']))
-        elif dep_var["type"]["name"] in ['polynominal', 'binominal']:
+        elif var["type"]["name"] in ['polynominal', 'binominal']:
             transforms.append(OneHotEncoding(var['name'], var['enumeration']))
 
     featurizer = Featurizer(transforms)

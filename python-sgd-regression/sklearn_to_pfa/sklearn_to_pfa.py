@@ -108,12 +108,14 @@ cells:
     // query(Query) = {{}};
     model(array(Regression)) = [];
     classes(array(string)) = [];
+fcns:
+    {functions}
 action:
     var x = {featurizer};
     var scores = a.map(model, fcn(r: Regression -> double) model.reg.linear(x, r));
     classes[a.argmax(scores)]
     """.format(
-        input_record=input_record, featurizer=featurizer
+        input_record=input_record, featurizer=featurizer, functions=_functions()
     ).strip()
 
     # compile
@@ -147,12 +149,14 @@ input: Input
 output: double
 cells:
     neuralnet(array(Layer)) = [];
+fcns:
+{functions}
 action:
     var x = {featurizer};
     var activation = model.neural.simpleLayers(x, neuralnet, fcn(x: double -> double) m.link.relu(x));
     activation[0]
     """.format(
-        input_record=input_record, featurizer=featurizer
+        input_record=input_record, featurizer=featurizer, functions=_functions()
     ).strip()
 
     # compile
@@ -190,12 +194,14 @@ output: string
 cells:
     neuralnet(array(Layer)) = [];
     classes(array(string)) = [];
+fcns:
+{functions}
 action:
     var x = {featurizer};
     var activations = model.neural.simpleLayers(x, neuralnet, fcn(x: double -> double) m.link.relu(x));
     classes[a.argmax(activations)]
     """.format(
-        input_record=input_record, featurizer=featurizer
+        input_record=input_record, featurizer=featurizer, functions=_functions()
     ).strip()
 
     # compile
@@ -248,3 +254,16 @@ def _fix_types_compatibility(types):
             typ = 'double'
         new_types.append((name, typ))
     return new_types
+
+
+def _functions():
+    return """
+    arr = fcn(x: double -> array(double))
+        new(array(double), x);
+
+    C = fcn(x: string, categories: array(string) -> array(double))
+        a.map(categories, fcn(cat: string -> double) if(cat == x) 1 else 0);
+
+    standardize = fcn(x: double, mu: double, sigma: double -> double)
+        (x - mu) / sigma;
+""".strip()
