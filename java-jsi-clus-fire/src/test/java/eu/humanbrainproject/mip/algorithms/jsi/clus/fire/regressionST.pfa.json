@@ -1,0 +1,345 @@
+{
+  "action": [
+    {
+      "+": [
+        4.6369558567581635,
+        {
+          "+": [
+            {
+              "u.rule2_t0": [
+                "input.input1",
+                "input.input2"
+              ]
+            },
+            {
+              "+": [
+                {
+                  "u.rule3_t0": [
+                    "input.input1",
+                    "input.input2"
+                  ]
+                },
+                {
+                  "+": [
+                    {
+                      "u.rule4_t0": [
+                        "input.input1",
+                        "input.input2"
+                      ]
+                    },
+                    {
+                      "+": [
+                        {
+                          "u.rule5_t0": [
+                            "input.input1",
+                            "input.input2"
+                          ]
+                        },
+                        {
+                          "+": [
+                            {
+                              "u.rule6_t0": [
+                                "input.input1",
+                                "input.input2"
+                              ]
+                            },
+                            {
+                              "+": [
+                                {
+                                  "u.rule7_t0": [
+                                    "input.input1",
+                                    "input.input2"
+                                  ]
+                                },
+                                {
+                                  "+": [
+                                    {
+                                      "u.rule8_t0": [
+                                        "input.input1",
+                                        "input.input2"
+                                      ]
+                                    },
+                                    0.0
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "begin": [],
+  "cells": {
+    "query": {
+      "init": {
+        "count": 77,
+        "covariables": [
+          "input1",
+          "input2"
+        ],
+        "sql": "SELECT",
+        "variable": "output1"
+      },
+      "type": {
+        "doc": "Definition of the query that has produced this model",
+        "fields": [
+          {
+            "doc": "Dependent variable",
+            "name": "variable",
+            "type": "string"
+          },
+          {
+            "doc": "List of explanatory variables",
+            "name": "covariables",
+            "type": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "doc": "SQL query",
+            "name": "sql",
+            "type": "string"
+          },
+          {
+            "doc": "Number of records selected by the query",
+            "name": "count",
+            "type": "int"
+          }
+        ],
+        "name": "Query",
+        "type": "record"
+      }
+    }
+  },
+  "doc": "This is the FIRE documentation.",
+  "end": [],
+  "fcns": {
+    "rule2_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              ">": [
+                "input2",
+                6.7
+              ]
+            },
+            true
+          ]
+        },
+        "then": -0.8979190464696276
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule3_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                6.7
+              ]
+            },
+            true
+          ]
+        },
+        "then": 2.561517376842116
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule4_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              ">": [
+                "input2",
+                1.2
+              ]
+            },
+            true
+          ]
+        },
+        "then": 0.9046558644030188
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule5_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              ">": [
+                "input2",
+                1.2
+              ]
+            },
+            true
+          ]
+        },
+        "then": 0.9402861957254142
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule6_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              ">": [
+                "input2",
+                3.4
+              ]
+            },
+            true
+          ]
+        },
+        "then": -7.066557367514119
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule7_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              ">": [
+                "input2",
+                4.6
+              ]
+            },
+            true
+          ]
+        },
+        "then": 1.6813433291737965
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule8_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                1.2
+              ]
+            },
+            true
+          ]
+        },
+        "then": -2.6464077150880376
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    }
+  },
+  "input": {
+    "doc": "Input is the list of covariables and groups",
+    "fields": [
+      {
+        "name": "input1",
+        "type": {
+          "name": "Enum_input1",
+          "symbols": [
+            "A",
+            "B"
+          ],
+          "type": "enum"
+        }
+      },
+      {
+        "name": "input2",
+        "type": "double"
+      }
+    ],
+    "name": "IndependentVariables",
+    "type": "record"
+  },
+  "metadata": {
+    "accepts_missing_values": "false",
+    "docker_image": ""
+  },
+  "method": "map",
+  "name": "FittedRuleEnsemblesForMTR",
+  "output": {
+    "doc": "Output is the estimate of the variable",
+    "type": "double"
+  },
+  "pools": {}
+}

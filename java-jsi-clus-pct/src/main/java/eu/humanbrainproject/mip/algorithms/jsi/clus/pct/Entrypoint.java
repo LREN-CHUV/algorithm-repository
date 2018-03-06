@@ -1,5 +1,7 @@
 package eu.humanbrainproject.mip.algorithms.jsi.clus.pct;
 
+import java.util.logging.Logger;
+
 import eu.humanbrainproject.mip.algorithms.jsi.Main;
 import eu.humanbrainproject.mip.algorithms.jsi.common.ClusMeta;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusGenericSerializer;
@@ -7,28 +9,28 @@ import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusModelPFASeria
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusVisualizationSerializer;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 
-/**
- * 
- * @author Martin Breskvar
- *
- */
+/** @author Martin Breskvar */
 public final class Entrypoint {
 
-	public static void main(String[] args) {
+  private static final Logger LOGGER = Logger.getLogger(Entrypoint.class.getName());
 
-		try {
-			ClusMeta clusMeta = new PCTMeta();
-			ClusGenericSerializer<ClusNode> modelSerializer = new PCTSerializer();
-			ClusModelPFASerializer<ClusNode> mainSerializer = new ClusModelPFASerializer<>(modelSerializer);
-			ClusVisualizationSerializer<ClusNode> modelVisualizationSerializer = new PCTVisualizer();
-			
-			eu.humanbrainproject.mip.algorithms.jsi.Main<ClusNode> entry = new Main<ClusNode>(mainSerializer, clusMeta, modelVisualizationSerializer);
+  public static void main(String[] args) {
 
-			entry.run();
-		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    try {
+      ClusMeta clusMeta = new PCTMeta();
+      ClusGenericSerializer<ClusNode> modelSerializer = new PCTSerializer();
+      ClusModelPFASerializer<ClusNode> mainSerializer =
+          new ClusModelPFASerializer<>(modelSerializer);
+      ClusVisualizationSerializer<ClusNode> modelVisualizationSerializer = new PCTVisualizer();
+
+      eu.humanbrainproject.mip.algorithms.jsi.Main<ClusNode> entry =
+          new Main<ClusNode>(mainSerializer, clusMeta, modelVisualizationSerializer);
+
+      entry.run();
+
+    } catch (Exception e) {
+      LOGGER.severe(e.getMessage());
+      System.exit(1);
+    }
+  }
 }

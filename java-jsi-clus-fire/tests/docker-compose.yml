@@ -1,0 +1,154 @@
+---
+
+version: '2'
+services:
+
+  db:
+    image: postgres:9.6.5-alpine
+    hostname: db
+    environment:
+      POSTGRES_PASSWORD: test
+
+  wait_dbs:
+    image: "waisbrot/wait"
+    restart: "no"
+    environment:
+      TARGETS: "db:5432"
+      TIMEOUT: 60
+
+  create_dbs:
+    image: "hbpmip/create-databases:1.0.0"
+    restart: "no"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_ADMIN_USER: postgres
+      DB_ADMIN_PASSWORD: test
+      DB1: features
+      USER1: features
+      PASSWORD1: featurespwd
+      DB2: woken
+      USER2: woken
+      PASSWORD2: wokenpwd
+    depends_on:
+      - db
+
+  sample_data_db_setup:
+    image: "hbpmip/sample-data-db-setup:0.5.0"
+    container_name: "data-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: features
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: test
+    depends_on:
+      - db
+
+  woken_db_setup:
+    image: "hbpmip/woken-db-setup:latest"
+    container_name: "woken-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: woken
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: test
+    depends_on:
+      - db
+
+  clus_fire_regression_st:
+    image: "hbpmip/java-jsi-clus-fire:latest"
+    container_name: "clus-fire-regression-st"
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 1
+      IN_JDBC_DRIVER: org.postgresql.Driver
+      IN_JDBC_URL: jdbc:postgresql://db:5432/features
+      IN_JDBC_USER: features
+      IN_JDBC_PASSWORD: featurespwd
+      OUT_JDBC_DRIVER: org.postgresql.Driver
+      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
+      OUT_JDBC_USER: woken
+      OUT_JDBC_PASSWORD: wokenpwd
+      PARAM_variables: "score_test1"
+      PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
+      PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
+      FUNCTION: java-jsi-clus-fire
+      PARAM_MODEL_size: 10
+      PARAM_MODEL_rules: 15
+    links:
+      - "db:db"
+
+  clus_fire_regression_mt:
+    image: "hbpmip/java-jsi-clus-fire:latest"
+    container_name: "clus-fire-regression-mt"
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 2
+      IN_JDBC_DRIVER: org.postgresql.Driver
+      IN_JDBC_URL: jdbc:postgresql://db:5432/features
+      IN_JDBC_USER: features
+      IN_JDBC_PASSWORD: featurespwd
+      OUT_JDBC_DRIVER: org.postgresql.Driver
+      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
+      OUT_JDBC_USER: woken
+      OUT_JDBC_PASSWORD: wokenpwd
+      PARAM_variables: "score_test1,stress_before_test1,iq,cognitive_task2"
+      PARAM_covariables: "practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
+      PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
+      FUNCTION: java-jsi-clus-fire
+      PARAM_MODEL_size: 15
+      PARAM_MODEL_rules: 15
+    links:
+      - "db:db"
+
+  pfa_validator_regression_st:
+    image: "hbpmip/pfa-validator:latest"
+    container_name: "pfa-validator-regression-st"
+    environment:
+      INPUT_METHOD: POSTGRESQL
+      JOB_ID: 1
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: woken
+      DB_USER: woken
+      DB_PASSWORD: wokenpwd
+      DB_TABLE: job_result
+      DB_COLUMN: data
+      FEATURES_DB_HOST: db
+      FEATURES_DB_PORT: 5432
+      FEATURES_DB_NAME: features
+      FEATURES_DB_USER: features
+      FEATURES_DB_PASSWORD: featurespwd
+      FEATURES_DB_TABLE: sample_data
+    links:
+      - "db:db"
+
+  pfa_validator_regression_mt:
+    image: "hbpmip/pfa-validator:latest"
+    container_name: "pfa-validator-regression-mt"
+    environment:
+      INPUT_METHOD: POSTGRESQL
+      JOB_ID: 2
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: woken
+      DB_USER: woken
+      DB_PASSWORD: wokenpwd
+      DB_TABLE: job_result
+      DB_COLUMN: data
+      FEATURES_DB_HOST: db
+      FEATURES_DB_PORT: 5432
+      FEATURES_DB_NAME: features
+      FEATURES_DB_USER: features
+      FEATURES_DB_PASSWORD: featurespwd
+      FEATURES_DB_TABLE: sample_data
+    links:
+      - "db:db"

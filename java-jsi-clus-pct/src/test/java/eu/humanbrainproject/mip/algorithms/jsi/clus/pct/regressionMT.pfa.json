@@ -1,0 +1,105 @@
+{
+  "action": [
+    {
+      "new": {
+        "output1": -0.003907983870967769,
+        "output2": 0.0031527595307917914
+      },
+      "type": "DependentVariables"
+    }
+  ],
+  "begin": [],
+  "cells": {
+    "query": {
+      "init": {
+        "count": 682,
+        "covariables": [
+          "input1",
+          "input2"
+        ],
+        "sql": "SELECT",
+        "variables": [
+          "output1",
+          "output2"
+        ]
+      },
+      "type": {
+        "doc": "Definition of the query that has produced this model",
+        "fields": [
+          {
+            "doc": "List of dependent variables",
+            "name": "variables",
+            "type": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "doc": "List of explanatory variables",
+            "name": "covariables",
+            "type": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "doc": "SQL query",
+            "name": "sql",
+            "type": "string"
+          },
+          {
+            "doc": "Number of records selected by the query",
+            "name": "count",
+            "type": "int"
+          }
+        ],
+        "name": "Query",
+        "type": "record"
+      }
+    }
+  },
+  "doc": "This is the pct documentation.",
+  "end": [],
+  "fcns": {},
+  "input": {
+    "doc": "Input is the list of covariables and groups",
+    "fields": [
+      {
+        "name": "input1",
+        "type": "double"
+      },
+      {
+        "name": "input2",
+        "type": "double"
+      }
+    ],
+    "name": "IndependentVariables",
+    "type": "record"
+  },
+  "metadata": {
+    "accepts_missing_values": "false",
+    "docker_image": ""
+  },
+  "method": "map",
+  "name": "PredictiveClusteringTrees",
+  "output": {
+    "doc": "Output is the list of estimations of output variables",
+    "fields": [
+      {
+        "name": "output1",
+        "type": "double"
+      },
+      {
+        "name": "output2",
+        "type": "double"
+      }
+    ],
+    "name": "DependentVariables",
+    "type": "record"
+  },
+  "pools": {}
+}

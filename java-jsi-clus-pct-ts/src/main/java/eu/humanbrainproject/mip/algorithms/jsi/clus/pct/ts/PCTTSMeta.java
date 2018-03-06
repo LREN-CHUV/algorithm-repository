@@ -24,9 +24,9 @@ public class PCTTSMeta extends ClusMeta {
     this.CAPABILITIES =
         new HashSet<AlgorithmCapability>(
             Arrays.asList(
-                AlgorithmCapability.PREDICTIVE_MODEL,
-                AlgorithmCapability.VISUALISATION,
-                AlgorithmCapability.TIME_SERIES));
+                AlgorithmCapability.PREDICTIVE_MODEL, /* algorithm can make predictions */
+                AlgorithmCapability.TIME_SERIES, /* handles time-series prediction */
+                AlgorithmCapability.VISUALISATION /* visualization is a VIS.js graph */));
 
     Map<String, String> prms = new HashMap<String, String>();
     prms.put("pruned", "yes");

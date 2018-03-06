@@ -1,0 +1,674 @@
+{
+  "action": [
+    {
+      "new": {
+        "output1": {
+          "+": [
+            4.049550664584123,
+            {
+              "+": [
+                {
+                  "u.rule2_t0": [
+                    "input.input1",
+                    "input.input2"
+                  ]
+                },
+                {
+                  "+": [
+                    {
+                      "u.rule3_t0": [
+                        "input.input1",
+                        "input.input2"
+                      ]
+                    },
+                    {
+                      "+": [
+                        {
+                          "u.rule4_t0": [
+                            "input.input1",
+                            "input.input2"
+                          ]
+                        },
+                        {
+                          "+": [
+                            {
+                              "u.rule5_t0": [
+                                "input.input1",
+                                "input.input2"
+                              ]
+                            },
+                            {
+                              "+": [
+                                {
+                                  "u.rule6_t0": [
+                                    "input.input1",
+                                    "input.input2"
+                                  ]
+                                },
+                                0.0
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "output2": {
+          "+": [
+            2.4383640492120193,
+            {
+              "+": [
+                {
+                  "u.rule2_t1": [
+                    "input.input1",
+                    "input.input2"
+                  ]
+                },
+                {
+                  "+": [
+                    {
+                      "u.rule3_t1": [
+                        "input.input1",
+                        "input.input2"
+                      ]
+                    },
+                    {
+                      "+": [
+                        {
+                          "u.rule4_t1": [
+                            "input.input1",
+                            "input.input2"
+                          ]
+                        },
+                        {
+                          "+": [
+                            {
+                              "u.rule5_t1": [
+                                "input.input1",
+                                "input.input2"
+                              ]
+                            },
+                            {
+                              "+": [
+                                {
+                                  "u.rule6_t1": [
+                                    "input.input1",
+                                    "input.input2"
+                                  ]
+                                },
+                                0.0
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "output3": {
+          "+": [
+            0.5904832732470559,
+            {
+              "+": [
+                {
+                  "u.rule2_t2": [
+                    "input.input1",
+                    "input.input2"
+                  ]
+                },
+                {
+                  "+": [
+                    {
+                      "u.rule3_t2": [
+                        "input.input1",
+                        "input.input2"
+                      ]
+                    },
+                    {
+                      "+": [
+                        {
+                          "u.rule4_t2": [
+                            "input.input1",
+                            "input.input2"
+                          ]
+                        },
+                        {
+                          "+": [
+                            {
+                              "u.rule5_t2": [
+                                "input.input1",
+                                "input.input2"
+                              ]
+                            },
+                            {
+                              "+": [
+                                {
+                                  "u.rule6_t2": [
+                                    "input.input1",
+                                    "input.input2"
+                                  ]
+                                },
+                                0.0
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "type": "DependentVariables"
+    }
+  ],
+  "begin": [],
+  "cells": {
+    "query": {
+      "init": {
+        "count": 77,
+        "covariables": [
+          "input1",
+          "input2"
+        ],
+        "sql": "SELECT",
+        "variables": [
+          "output1",
+          "output2",
+          "output3"
+        ]
+      },
+      "type": {
+        "doc": "Definition of the query that has produced this model",
+        "fields": [
+          {
+            "doc": "List of dependent variables",
+            "name": "variables",
+            "type": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "doc": "List of explanatory variables",
+            "name": "covariables",
+            "type": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "doc": "SQL query",
+            "name": "sql",
+            "type": "string"
+          },
+          {
+            "doc": "Number of records selected by the query",
+            "name": "count",
+            "type": "int"
+          }
+        ],
+        "name": "Query",
+        "type": "record"
+      }
+    }
+  },
+  "doc": "This is the FIRE documentation.",
+  "end": [],
+  "fcns": {
+    "rule2_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                4.6
+              ]
+            },
+            true
+          ]
+        },
+        "then": -6.500195302557049
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule2_t1": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                4.6
+              ]
+            },
+            true
+          ]
+        },
+        "then": -1.9118221478108968
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule2_t2": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                4.6
+              ]
+            },
+            true
+          ]
+        },
+        "then": -0.8147303614517207
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule3_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                3.4
+              ]
+            },
+            true
+          ]
+        },
+        "then": 1.073894855120119
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule3_t1": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                3.4
+              ]
+            },
+            true
+          ]
+        },
+        "then": -0.08474549046086793
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule3_t2": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                3.4
+              ]
+            },
+            true
+          ]
+        },
+        "then": 0.17003335206068548
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule4_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                1.2
+              ]
+            },
+            true
+          ]
+        },
+        "then": -1.7132539308614194
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule4_t1": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                1.2
+              ]
+            },
+            true
+          ]
+        },
+        "then": 1.9728768071059846
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule4_t2": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                1.2
+              ]
+            },
+            true
+          ]
+        },
+        "then": -1.1798702989728298
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule5_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              ">": [
+                "input2",
+                6.7
+              ]
+            },
+            true
+          ]
+        },
+        "then": 1.1685972032894778
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule5_t1": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              ">": [
+                "input2",
+                6.7
+              ]
+            },
+            true
+          ]
+        },
+        "then": -0.6522402995104065
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule5_t2": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              ">": [
+                "input2",
+                6.7
+              ]
+            },
+            true
+          ]
+        },
+        "then": 0.7979072997343971
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule6_t0": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                6.7
+              ]
+            },
+            true
+          ]
+        },
+        "then": 4.420892431763627
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule6_t1": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                6.7
+              ]
+            },
+            true
+          ]
+        },
+        "then": -1.1914461872838145
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    },
+    "rule6_t2": {
+      "do": {
+        "else": 0.0,
+        "if": {
+          "&&": [
+            {
+              "<=": [
+                "input2",
+                6.7
+              ]
+            },
+            true
+          ]
+        },
+        "then": 0.6571766338281247
+      },
+      "params": [
+        {
+          "input1": "Enum_input1"
+        },
+        {
+          "input2": "double"
+        }
+      ],
+      "ret": "double"
+    }
+  },
+  "input": {
+    "doc": "Input is the list of covariables and groups",
+    "fields": [
+      {
+        "name": "input1",
+        "type": {
+          "name": "Enum_input1",
+          "symbols": [
+            "A",
+            "B"
+          ],
+          "type": "enum"
+        }
+      },
+      {
+        "name": "input2",
+        "type": "double"
+      }
+    ],
+    "name": "IndependentVariables",
+    "type": "record"
+  },
+  "metadata": {
+    "accepts_missing_values": "false",
+    "docker_image": ""
+  },
+  "method": "map",
+  "name": "FittedRuleEnsemblesForMTR",
+  "output": {
+    "doc": "Output is the list of estimations of output variables",
+    "fields": [
+      {
+        "name": "output1",
+        "type": "double"
+      },
+      {
+        "name": "output2",
+        "type": "double"
+      },
+      {
+        "name": "output3",
+        "type": "double"
+      }
+    ],
+    "name": "DependentVariables",
+    "type": "record"
+  },
+  "pools": {}
+}

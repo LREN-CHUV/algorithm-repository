@@ -22,6 +22,7 @@ import eu.humanbrainproject.mip.algorithms.jsi.clus.pct.ts.PCTTSSerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.clus.pct.ts.PCTTSVisualizer;
 import eu.humanbrainproject.mip.algorithms.jsi.common.ClusAlgorithm;
 import eu.humanbrainproject.mip.algorithms.jsi.common.ClusConstants;
+import eu.humanbrainproject.mip.algorithms.jsi.common.ClusHelpers;
 import eu.humanbrainproject.mip.algorithms.jsi.common.ClusMeta;
 import eu.humanbrainproject.mip.algorithms.jsi.dummy.FileInputData;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusGenericSerializer;
@@ -41,149 +42,162 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-/**
- * @author Martin Breskvar
- */
-
+/** @author Martin Breskvar */
 @DisplayName("With CLUS PCT time-series algorithm")
 public class PCTTSTest {
 
-    private static ObjectMapper mapper = new ObjectMapper();
+  private static ObjectMapper mapper = new ObjectMapper();
 
+  private FileInputData getData(String[] featureNames, String[] variableNames) throws IOException {
 
-    private FileInputData getData(String[] featureNames, String[] variableNames) throws IOException {
+    final URL resource = getClass().getResource("ts.csv");
+    assertNotNull(resource);
 
-        final URL resource = getClass().getResource("ts.csv");
-        assertNotNull(resource);
+    return new FileInputData(featureNames, variableNames, resource, ".csv", 0);
+  }
 
-        return new FileInputData(featureNames, variableNames, resource, ".csv", 0);
+  private ClusAlgorithm<ClusNode> getAlgorithm(FileInputData input) {
+    PCTTSMeta clusMeta = new PCTTSMeta();
+
+    return getAlgorithm(input, clusMeta);
+  }
+
+  private ClusAlgorithm<ClusNode> getAlgorithm(FileInputData input, PCTTSMeta clusMeta) {
+    ClusGenericSerializer<ClusNode> modelSerializer = new PCTTSSerializer();
+    ClusModelPFASerializer<ClusNode> mainSerializer = new ClusModelPFASerializer<>(modelSerializer);
+    ClusAlgorithm<ClusNode> algorithm = new ClusAlgorithm<>(input, mainSerializer, clusMeta);
+
+    return algorithm;
+  }
+
+  private PFAEngine<Object, Object> getPFAEngine(String pfa) {
+    return PFAEngine$.MODULE$
+        .fromJson(pfa, new HashMap<>(), "0.8.5", Option.empty(), 1, Option.empty(), false)
+        .head();
+  }
+
+  private void predict(String pfa, String[] featureNames, double[][] testData, String[] expected)
+      throws JsonGenerationException, JsonMappingException, IOException {
+    System.out.println("Trying to get PFAEngine...");
+    PFAEngine<Object, Object> engine = getPFAEngine(pfa);
+
+    for (int tuple = 0; tuple < testData.length; tuple++) {
+      Map<String, Double> inputs = Maps.newHashMap();
+      for (int i = 0; i < featureNames.length; i++) {
+        inputs.put(featureNames[i], testData[tuple][i]);
+      }
+      final Object jsonInput = engine.jsonInput(new ObjectMapper().writeValueAsString(inputs));
+      final Object jsonOutput = engine.jsonOutput(engine.action(jsonInput));
+
+      System.out.println("Input: " + jsonInput.toString() + " Output: " + jsonOutput.toString());
+
+      assertEquals(expected[tuple], jsonOutput.toString());
     }
+  }
 
-    private ClusAlgorithm<ClusNode> getAlgorithm(FileInputData input) {
-        ClusMeta clusMeta = new PCTTSMeta();
-        ClusGenericSerializer<ClusNode> modelSerializer = new PCTTSSerializer();
-        ClusModelPFASerializer<ClusNode> mainSerializer = new ClusModelPFASerializer<>(modelSerializer);
-        ClusAlgorithm<ClusNode> algorithm = new ClusAlgorithm<>(input, mainSerializer, clusMeta);
+  @Test
+  @DisplayName(
+      "we can implement a predictive clustering tree for time-series prediction and export its model to PFA")
+  public void testTimeSeries() throws Exception {
+    String[] featureNames = new String[] {"input1", "input2"};
+    String[] variableNames = new String[] {"output1", "output2", "output3", "output4"};
 
-        return algorithm;
-    }
+    PCTTSMeta meta = new PCTTSMeta();
+    meta.SETTINGS.remove("[Tree]");
+    meta.WHICH_MODEL_TO_USE = 1;
+    meta.SETTINGS.get("[Model]").put("MinimalWeight", "4");
 
+    ClusAlgorithm<ClusNode> algorithm = getAlgorithm(getData(featureNames, variableNames), meta);
 
-    private PFAEngine<Object, Object> getPFAEngine(String pfa) {
-        return PFAEngine$.MODULE$.fromJson(pfa, new HashMap<>(), "0.8.5", Option.empty(), 1, Option.empty(), false).head();
-    }
+    algorithm.run();
 
+    System.out.println(algorithm.toPrettyPFA());
+    String pfa = algorithm.toPFA();
 
-    private void predict(String pfa, String[] featureNames, double[][] testData, Double[][] expected) throws JsonGenerationException, JsonMappingException, IOException {
-        System.out.println("Trying to get PFAEngine...");
-        PFAEngine<Object, Object> engine = getPFAEngine(pfa);
+    assertTrue(!pfa.contains("error"));
+    assertTrue(pfa.contains("\"action\""));
 
-        for (int tuple = 0; tuple < testData.length; tuple++) {
-            Map<String, Double> inputs = Maps.newHashMap();
-            for (int i = 0; i < featureNames.length; i++) {
-                inputs.put(featureNames[i], testData[tuple][i]);
-            }
-            final Object jsonInput = engine.jsonInput(new ObjectMapper().writeValueAsString(inputs));
-            final Object jsonOutput = engine.jsonOutput(engine.action(jsonInput));
+    final JsonNode jsonPfa =
+        mapper.readTree(pfa.replaceFirst("SELECT \\* FROM .*\\\\\"", "SELECT"));
+    final JsonNode jsonExpected = mapper.readTree(getClass().getResource("ts.pfa.json"));
 
-            System.out.println("Input: " + jsonInput.toString() + " Output: " + jsonOutput.toString());
+    assertEquals(jsonExpected, jsonPfa);
 
-            //JSONObject obj = new JSONObject(jsonOutput.toString());
-            //Double result = Double.parseDouble(jsonOutput.toString());
+    double[][] testData =
+        new double[][] {
+          {1.2, 2.4}, {6.7, 8.9}, {4.6, 23.4}, {7.6, 5.4}, {1.2, 1.6}, {3.4, 4.7}, {3.4, 6.5}
+        };
+    String[] expected =
+        new String[] {
+          "{\"output1\":-1.05,\"output2\":1.1142857142857143,\"output3\":1.3657142857142854,\"output4\":0.2457142857142858}",
+          "{\"output1\":1.6875,\"output2\":-0.4999999999999998,\"output3\":2.3925,\"output4\":0.625}",
+          "{\"output1\":1.6875,\"output2\":-0.4999999999999998,\"output3\":2.3925,\"output4\":0.625}",
+          "{\"output1\":1.6875,\"output2\":-0.4999999999999998,\"output3\":2.3925,\"output4\":0.625}",
+          "{\"output1\":-1.05,\"output2\":1.1142857142857143,\"output3\":1.3657142857142854,\"output4\":0.2457142857142858}",
+          "{\"output1\":2.4875,\"output2\":1.12,\"output3\":0.32999999999999996,\"output4\":1.4049999999999998}",
+          "{\"output1\":2.4875,\"output2\":1.12,\"output3\":0.32999999999999996,\"output4\":1.4049999999999998}"
+        };
 
-            //assertEquals(expected[tuple], result.doubleValue());
+    predict(pfa, featureNames, testData, expected);
+  }
+
+  private void commonVisJSAssertions(ClusNode model, String vis, String[] featureNames) {
+    assertNotNull(vis);
+    assertTrue(vis.contains("var nodes=[]; var edges=[];"));
+    assertTrue(vis.contains("nodes.push"));
+    assertTrue(vis.contains("new vis.Network("));
+
+    // first node
+    if (!model.atBottomLevel()) {
+      NodeTest t = model.getTest();
+      String testString = t.getString();
+
+      boolean known = false;
+      for (String a : featureNames) {
+        if (testString.contains(a)) {
+          known = true;
+          break;
         }
+      }
+      assertTrue(known);
+
+      assertTrue(vis.contains("edges.push"));
+    } else {
+      String prediction = model.getTargetStat().toString();
+      assertTrue(prediction.length() > 0);
     }
+  }
 
+  @Test
+  @DisplayName(
+      "we can implement a predictive clustering tree for time-series prediction and visualize it")
+  public void testVisualization() throws Exception {
+    String[] featureNames = new String[] {"input1", "input2"};
+    String[] variableNames = new String[] {"output1", "output2", "output3", "output4"};
 
-    @Test
-    @DisplayName("we can implement a predictive clustering tree for time-series prediction and export its model to PFA")
-    public void testTimeSeries() throws Exception {
-        String[] featureNames = new String[] { "input1", "input2" };
-        String[] variableNames = new String[] { "output1", "output2", "output3", "output4" };
+    PCTTSMeta meta = new PCTTSMeta();
+    meta.SETTINGS.remove("[Tree]");
+    meta.WHICH_MODEL_TO_USE = 1;
+    meta.SETTINGS.get("[Model]").put("MinimalWeight", "4");
 
-        ClusAlgorithm<ClusNode> algorithm = getAlgorithm(getData(featureNames, variableNames));
+    ClusAlgorithm<ClusNode> algorithm = getAlgorithm(getData(featureNames, variableNames), meta);
 
-        algorithm.run();
+    algorithm.run();
 
-        System.out.println(algorithm.toPrettyPFA());
-        String pfa = algorithm.toPFA();
+    ClusNode model = algorithm.getModel();
+    assertNotNull(model);
 
-        assertTrue(!pfa.contains("error"));
-        assertTrue(pfa.contains("\"action\""));
+    PCTTSVisualizer visualizer = new PCTTSVisualizer();
 
-        final JsonNode jsonPfa = mapper.readTree(pfa.replaceFirst("SELECT \\* FROM .*\\\\\"", "SELECT"));
-        final JsonNode jsonExpected = mapper.readTree(getClass().getResource("ts.pfa.json"));
+    String vis = visualizer.getVisualizationString(model, variableNames);
 
-        assertEquals(jsonExpected, jsonPfa);
+    System.out.println(vis);
 
-        /*
-         * Unable to make predictions because PFAEngine does not seem to support multi-target outputs
-        double[][] testData = new double[][] { { 1.2, 2.4 }, { 6.7, 8.9 }, { 4.6, 23.4 }, { 7.6, 5.4 }, { 1.2, 1.6 }, { 3.4, 4.7 }, { 3.4, 6.5 } };
-        Double[][] expected = new Double[][] { { 1.2, 2.4,1.2, 2.4 }, { 6.7, 8.9,1.2, 2.4, }, { 4.6, 23.4,1.2, 2.4, }, { 7.6, 5.4,1.2, 2.4, }, { 1.2, 1.6,1.2, 2.4, }, { 3.4, 4.7,1.2, 2.4, }, { 3.4, 6.5,1.2, 2.4, } };
+    commonVisJSAssertions(model, vis, featureNames);
+  }
 
-        predict(pfa, featureNames, testData, expected);
-        */
-    }
- 
-
-
-    @Test
-    @DisplayName("we can implement a predictive clustering tree for time-series prediction and visualize it")
-    public void testVisualization() throws Exception {
-        String[] featureNames = new String[] { "input1", "input2" };
-        String[] variableNames = new String[] { "output1", "output2", "output3", "output4" };
-
-        ClusAlgorithm<ClusNode> algorithm = getAlgorithm(getData(featureNames, variableNames));
-
-        algorithm.run();
-
-        ClusNode model = algorithm.getModel();
-        assertNotNull(model);
-
-        PCTTSVisualizer visualizer = new PCTTSVisualizer();
-
-        String vis = visualizer.getVisualizationString(model);
-
-        assertNotNull(vis);
-        assertTrue(vis.contains("var nodes=[]; var edges=[];"));
-        assertTrue(vis.contains("nodes.push"));
-        assertTrue(vis.contains("new vis.Network("));
-        
-        // first node
-        if (!model.atBottomLevel()) {
-            NodeTest t = model.getTest();
-            String testString = t.getString();
-
-            boolean known = false;
-            for (String a : featureNames) {
-                if (testString.contains(a)) {
-                    known = true;
-                    break;
-                }
-            }
-            assertTrue(known);
-        }
-    }
-
-
-    @AfterEach
-    public void cleanUp() {
-        // remove all temp files
-        ArrayList<File> files = new ArrayList<File>();
-
-        files.add(new File(ClusConstants.CLUS_DATAFILE));
-        files.add(new File(ClusConstants.CLUS_MODELFILE));
-        files.add(new File(ClusConstants.CLUS_OUTFILE));
-        files.add(new File(ClusConstants.CLUS_SETTINGSFILE));
-        files.add(new File(ClusConstants.CLUS_FIMPFILE));
-
-        for (File f : files) {
-            try {
-                f.delete();
-            }
-            catch (Exception ex) { /* suppress */ }
-        }
-    }
+  @AfterEach
+  public void cleanUp() {
+    ClusHelpers.CleanUp();
+  }
 }

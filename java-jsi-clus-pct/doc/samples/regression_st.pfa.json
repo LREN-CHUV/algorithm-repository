@@ -1,0 +1,89 @@
+{
+  "action": [
+    {
+      "else": 4.5,
+      "if": {
+        ">": [
+          "input.input1",
+          1.2
+        ]
+      },
+      "then": 1.5
+    }
+  ],
+  "begin": [],
+  "cells": {
+    "query": {
+      "init": {
+        "count": 7,
+        "covariables": [
+          "input1",
+          "input2"
+        ],
+        "sql": "SELECT * FROM \"file:regression.csv\"",
+        "variable": "output1"
+      },
+      "type": {
+        "doc": "Definition of the query that has produced this model",
+        "fields": [
+          {
+            "doc": "Dependent variable",
+            "name": "variable",
+            "type": "string"
+          },
+          {
+            "doc": "List of explanatory variables",
+            "name": "covariables",
+            "type": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "doc": "SQL query",
+            "name": "sql",
+            "type": "string"
+          },
+          {
+            "doc": "Number of records selected by the query",
+            "name": "count",
+            "type": "int"
+          }
+        ],
+        "name": "Query",
+        "type": "record"
+      }
+    }
+  },
+  "doc": "This is the pct documentation.",
+  "end": [],
+  "fcns": {},
+  "input": {
+    "doc": "Input is the list of covariables and groups",
+    "fields": [
+      {
+        "name": "input1",
+        "type": "double"
+      },
+      {
+        "name": "input2",
+        "type": "double"
+      }
+    ],
+    "name": "IndependentVariables",
+    "type": "record"
+  },
+  "metadata": {
+    "accepts_missing_values": "false",
+    "docker_image": ""
+  },
+  "method": "map",
+  "name": "PredictiveClusteringTrees",
+  "output": {
+    "doc": "Output is the estimate of the variable",
+    "type": "double"
+  },
+  "pools": {}
+}

@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+    <style type="text/css">
+        body {
+            font: 11pt sans;
+        }
+
+        #visualization {
+            width: 1800px;
+            height: 1200px;
+        }
+    </style>
+
+    <script type="text/javascript" src="http://visjs.org/dist/vis.js"></script>
+
+
+    <script type="text/javascript">
+        var network = null;
+
+        function destroy() {
+            if (network !== null) {
+                network.destroy();
+                network = null;
+            }
+        }
+
+        function draw() {
+            destroy();
+
+            
+            // ---- produced by java-jsi-clus-pct 
+			var nodes=[]; var edges=[];
+			nodes.push({id: 1, label: 'input2 > -1.2512', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 2, label: 'input2 > 0.092744', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 3, label: 'input2 > 0.520544', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 4, label: 'input2 > 0.753123', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 5, label: 'input2 > 1.455518', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 6, label: 'input2 > 2.042201', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 7, label: 'input2 > 2.833372', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 8, label: 'output1: 0.0569443488372093\noutput2: 0.02442118604651164', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 9, label: 'output1: -0.4271653888888889\noutput2: -0.2467533888888889', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 10, label: 'output1: 0.198943037037037\noutput2: 0.47657964814814807', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 11, label: 'input2 > 1.112423', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 12, label: 'output1: -0.17686756666666673\noutput2: -0.40195829999999994', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 13, label: 'output1: 0.4334271707317073\noutput2: -0.6003346829268292', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 14, label: 'output1: 0.33418616666666673\noutput2: 0.6632076666666666', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 15, label: 'input2 > 0.328202', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 16, label: 'output1: -0.463010870967742\noutput2: -0.867546064516129', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 17, label: 'output1: -0.5545668333333336\noutput2: -0.07200911111111116', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 18, label: 'input1 > 1.154192', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 19, label: 'output1: 0.5879871960784313\noutput2: 0.6495133921568628', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 20, label: 'input2 > -0.575944', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 21, label: 'input1 > -0.337683', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 22, label: 'output1: -0.07029823529411766\noutput2: -0.03600325490196072', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 23, label: 'input1 > -1.319536', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 24, label: 'output1: 0.23013689999999995\noutput2: 0.7965053333333335', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 25, label: 'output1: 0.22752484374999998\noutput2: 0.01645449999999999', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 26, label: 'input2 > -0.801166', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 27, label: 'output1: -0.46712176666666666\noutput2: 0.5437071666666667', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 28, label: 'output1: -0.07487173333333332\noutput2: 0.34007190000000004', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 29, label: 'input1 > 0.999886', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 30, label: 'output1: -0.7324671891891893\noutput2: -0.43025318918918937', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 31, label: 'input1 > -0.510534', color: 'orange', font: {'face': 'Monospace'}});
+			nodes.push({id: 32, label: 'output1: 0.444120309090909\noutput2: -0.13474779999999997', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			nodes.push({id: 33, label: 'output1: -0.20862428813559328\noutput2: -0.5485161525423728', shape: 'box', font: {'face': 'Monospace', align: 'left'}});
+			edges.push({from: 1, to: 2, label: 'No', font: {align: 'top'}});
+			edges.push({from: 2, to: 3, label: 'No', font: {align: 'top'}});
+			edges.push({from: 3, to: 4, label: 'No', font: {align: 'top'}});
+			edges.push({from: 4, to: 5, label: 'No', font: {align: 'top'}});
+			edges.push({from: 5, to: 6, label: 'No', font: {align: 'top'}});
+			edges.push({from: 6, to: 7, label: 'No', font: {align: 'top'}});
+			edges.push({from: 7, to: 8, label: 'No', font: {align: 'top'}});
+			edges.push({from: 7, to: 9, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 6, to: 10, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 5, to: 11, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 11, to: 12, label: 'No', font: {align: 'top'}});
+			edges.push({from: 11, to: 13, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 4, to: 14, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 3, to: 15, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 15, to: 16, label: 'No', font: {align: 'top'}});
+			edges.push({from: 15, to: 17, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 2, to: 18, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 18, to: 19, label: 'No', font: {align: 'top'}});
+			edges.push({from: 18, to: 20, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 20, to: 21, label: 'No', font: {align: 'top'}});
+			edges.push({from: 21, to: 22, label: 'No', font: {align: 'top'}});
+			edges.push({from: 21, to: 23, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 23, to: 24, label: 'No', font: {align: 'top'}});
+			edges.push({from: 23, to: 25, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 20, to: 26, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 26, to: 27, label: 'No', font: {align: 'top'}});
+			edges.push({from: 26, to: 28, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 1, to: 29, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 29, to: 30, label: 'No', font: {align: 'top'}});
+			edges.push({from: 29, to: 31, label: 'Yes', font: {align: 'top'}});
+			edges.push({from: 31, to: 32, label: 'No', font: {align: 'top'}});
+			edges.push({from: 31, to: 33, label: 'Yes', font: {align: 'top'}});
+			var container=document.getElementById('visualization');
+			var data={
+				nodes: nodes,
+				edges: edges
+			};
+			var options={
+				layout: {
+					hierarchical: {
+						direction: 'UD',
+						sortMethod: 'directed',
+						levelSeparation: 155,
+						nodeSpacing: 340,
+						edgeMinimization: false
+					}
+				},
+				edges: {
+					arrows: {
+						to: {
+							enabled: true
+						}
+					}
+				},
+				interaction: {
+					dragNodes: true
+				},
+				physics: {
+					enabled: false
+				}
+			};
+			network=new vis.Network(container,data,options);
+			// ----
+        }
+    </script>
+</head>
+
+<body onload="draw();">
+
+<div id="visualization"></div>
+
+</body>
+</html>

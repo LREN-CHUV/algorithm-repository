@@ -1,0 +1,457 @@
+{
+  "action": [
+    {
+      "else": {
+        "else": {
+          "else": {
+            "else": {
+              "else": {
+                "else": {
+                  "new": {
+                    "output1": 0.345,
+                    "output2": 0.125,
+                    "output3": 0.5700000000000001,
+                    "output4": 1.1925
+                  },
+                  "type": "DependentVariables"
+                },
+                "if": {
+                  ">": [
+                    "input.input1",
+                    0.08
+                  ]
+                },
+                "then": {
+                  "new": {
+                    "output1": 1.9125,
+                    "output2": 1.05,
+                    "output3": 1.5375,
+                    "output4": 1.165
+                  },
+                  "type": "DependentVariables"
+                }
+              },
+              "if": {
+                ">": [
+                  "input.input2",
+                  -0.32
+                ]
+              },
+              "then": {
+                "else": {
+                  "new": {
+                    "output1": 0.14999999999999997,
+                    "output2": 1.9880000000000002,
+                    "output3": 1.55,
+                    "output4": 2.062
+                  },
+                  "type": "DependentVariables"
+                },
+                "if": {
+                  ">": [
+                    "input.input1",
+                    -0.01
+                  ]
+                },
+                "then": {
+                  "else": {
+                    "new": {
+                      "output1": 1.15,
+                      "output2": 1.29,
+                      "output3": 1.0925,
+                      "output4": 0.2675
+                    },
+                    "type": "DependentVariables"
+                  },
+                  "if": {
+                    ">": [
+                      "input.input2",
+                      0.27
+                    ]
+                  },
+                  "then": {
+                    "new": {
+                      "output1": 0.6,
+                      "output2": 1.3116666666666665,
+                      "output3": 2.085,
+                      "output4": 1.5933333333333335
+                    },
+                    "type": "DependentVariables"
+                  }
+                }
+              }
+            },
+            "if": {
+              ">": [
+                "input.input2",
+                0.51
+              ]
+            },
+            "then": {
+              "else": {
+                "else": {
+                  "else": {
+                    "new": {
+                      "output1": 0.8025,
+                      "output2": 0.815,
+                      "output3": 1.6575,
+                      "output4": 1.1075
+                    },
+                    "type": "DependentVariables"
+                  },
+                  "if": {
+                    ">": [
+                      "input.input1",
+                      -0.59
+                    ]
+                  },
+                  "then": {
+                    "new": {
+                      "output1": 1.512,
+                      "output2": 0.9359999999999999,
+                      "output3": 0.055999999999999994,
+                      "output4": -0.9479999999999998
+                    },
+                    "type": "DependentVariables"
+                  }
+                },
+                "if": {
+                  ">": [
+                    "input.input1",
+                    -0.11
+                  ]
+                },
+                "then": {
+                  "else": {
+                    "new": {
+                      "output1": 1.4742857142857144,
+                      "output2": -0.040000000000000015,
+                      "output3": 1.2771428571428571,
+                      "output4": 0.44000000000000006
+                    },
+                    "type": "DependentVariables"
+                  },
+                  "if": {
+                    ">": [
+                      "input.input2",
+                      1.74
+                    ]
+                  },
+                  "then": {
+                    "new": {
+                      "output1": 0.336,
+                      "output2": 0.4,
+                      "output3": 1.1239999999999999,
+                      "output4": 1.684
+                    },
+                    "type": "DependentVariables"
+                  }
+                }
+              },
+              "if": {
+                ">": [
+                  "input.input1",
+                  0.77
+                ]
+              },
+              "then": {
+                "else": {
+                  "new": {
+                    "output1": 1.7725,
+                    "output2": 1.4249999999999998,
+                    "output3": 0.26250000000000007,
+                    "output4": 0.745
+                  },
+                  "type": "DependentVariables"
+                },
+                "if": {
+                  ">": [
+                    "input.input2",
+                    0.99
+                  ]
+                },
+                "then": {
+                  "else": {
+                    "else": {
+                      "new": {
+                        "output1": 0.017499999999999974,
+                        "output2": 1.1275,
+                        "output3": 0.7775,
+                        "output4": 0.9925
+                      },
+                      "type": "DependentVariables"
+                    },
+                    "if": {
+                      ">": [
+                        "input.input2",
+                        1.51
+                      ]
+                    },
+                    "then": {
+                      "new": {
+                        "output1": 1.6025,
+                        "output2": 0.7125000000000001,
+                        "output3": 1.6800000000000002,
+                        "output4": 1.3425
+                      },
+                      "type": "DependentVariables"
+                    }
+                  },
+                  "if": {
+                    ">": [
+                      "input.input2",
+                      2.34
+                    ]
+                  },
+                  "then": {
+                    "new": {
+                      "output1": 0.8720000000000001,
+                      "output2": 1.8719999999999999,
+                      "output3": 0.568,
+                      "output4": 1.2500000000000002
+                    },
+                    "type": "DependentVariables"
+                  }
+                }
+              }
+            }
+          },
+          "if": {
+            ">": [
+              "input.input1",
+              1.18
+            ]
+          },
+          "then": {
+            "new": {
+              "output1": -1.05,
+              "output2": 1.1142857142857143,
+              "output3": 1.3657142857142854,
+              "output4": 0.2457142857142858
+            },
+            "type": "DependentVariables"
+          }
+        },
+        "if": {
+          ">": [
+            "input.input1",
+            1.36
+          ]
+        },
+        "then": {
+          "else": {
+            "new": {
+              "output1": 0.1433333333333334,
+              "output2": 0.4566666666666667,
+              "output3": 0.34833333333333333,
+              "output4": 0.6050000000000001
+            },
+            "type": "DependentVariables"
+          },
+          "if": {
+            ">": [
+              "input.input2",
+              0.87
+            ]
+          },
+          "then": {
+            "else": {
+              "new": {
+                "output1": 1.2,
+                "output2": 0.29,
+                "output3": -0.5625,
+                "output4": 0.83
+              },
+              "type": "DependentVariables"
+            },
+            "if": {
+              ">": [
+                "input.input1",
+                1.47
+              ]
+            },
+            "then": {
+              "else": {
+                "else": {
+                  "new": {
+                    "output1": 0.534,
+                    "output2": 1.464,
+                    "output3": 1.4439999999999997,
+                    "output4": 1.16
+                  },
+                  "type": "DependentVariables"
+                },
+                "if": {
+                  ">": [
+                    "input.input1",
+                    2.53
+                  ]
+                },
+                "then": {
+                  "new": {
+                    "output1": 2.0275,
+                    "output2": 1.71,
+                    "output3": 0.9825,
+                    "output4": 2.0125
+                  },
+                  "type": "DependentVariables"
+                }
+              },
+              "if": {
+                ">": [
+                  "input.input2",
+                  1.52
+                ]
+              },
+              "then": {
+                "else": {
+                  "new": {
+                    "output1": 1.6133333333333333,
+                    "output2": 0.9016666666666667,
+                    "output3": 0.46166666666666667,
+                    "output4": 1.9816666666666667
+                  },
+                  "type": "DependentVariables"
+                },
+                "if": {
+                  ">": [
+                    "input.input1",
+                    2.12
+                  ]
+                },
+                "then": {
+                  "new": {
+                    "output1": 2.4875,
+                    "output2": 1.12,
+                    "output3": 0.32999999999999996,
+                    "output4": 1.4049999999999998
+                  },
+                  "type": "DependentVariables"
+                }
+              }
+            }
+          }
+        }
+      },
+      "if": {
+        ">": [
+          "input.input1",
+          3.94
+        ]
+      },
+      "then": {
+        "new": {
+          "output1": 1.6875,
+          "output2": -0.4999999999999998,
+          "output3": 2.3925,
+          "output4": 0.625
+        },
+        "type": "DependentVariables"
+      }
+    }
+  ],
+  "begin": [],
+  "cells": {
+    "query": {
+      "init": {
+        "count": 101,
+        "covariables": [
+          "input1",
+          "input2"
+        ],
+        "sql": "SELECT",
+        "variables": [
+          "output1",
+          "output2",
+          "output3",
+          "output4"
+        ]
+      },
+      "type": {
+        "doc": "Definition of the query that has produced this model",
+        "fields": [
+          {
+            "doc": "List of dependent variables",
+            "name": "variables",
+            "type": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "doc": "List of explanatory variables",
+            "name": "covariables",
+            "type": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "doc": "SQL query",
+            "name": "sql",
+            "type": "string"
+          },
+          {
+            "doc": "Number of records selected by the query",
+            "name": "count",
+            "type": "int"
+          }
+        ],
+        "name": "Query",
+        "type": "record"
+      }
+    }
+  },
+  "doc": "This is the pct TS documentation.",
+  "end": [],
+  "fcns": {},
+  "input": {
+    "doc": "Input is the list of covariables and groups",
+    "fields": [
+      {
+        "name": "input1",
+        "type": "double"
+      },
+      {
+        "name": "input2",
+        "type": "double"
+      }
+    ],
+    "name": "IndependentVariables",
+    "type": "record"
+  },
+  "metadata": {
+    "accepts_missing_values": "false",
+    "docker_image": ""
+  },
+  "method": "map",
+  "name": "PredictiveClusteringTreesForTS",
+  "output": {
+    "doc": "Output is the estimate of the variable",
+    "fields": [
+      {
+        "name": "output1",
+        "type": "double"
+      },
+      {
+        "name": "output2",
+        "type": "double"
+      },
+      {
+        "name": "output3",
+        "type": "double"
+      },
+      {
+        "name": "output4",
+        "type": "double"
+      }
+    ],
+    "name": "DependentVariables",
+    "type": "record"
+  },
+  "pools": {}
+}

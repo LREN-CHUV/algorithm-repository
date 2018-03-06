@@ -51,11 +51,18 @@ echo "Run the CLUS PCT algorithm for single-target classification..."
 $DOCKER_COMPOSE run clus_pct_classification_st compute
 echo "Run the CLUS PCT algorithm for single-target regression..."
 $DOCKER_COMPOSE run clus_pct_regression_st compute
+echo "Run the CLUS PCT algorithm for multi-target classification..."
+$DOCKER_COMPOSE run clus_pct_classification_mt compute
+echo "Run the CLUS PCT algorithm for multi-target regression..."
+$DOCKER_COMPOSE run clus_pct_regression_mt compute
 
-echo
-echo "Run PFA validator..."
+#echo
+echo "Running PFA validation..."
 $DOCKER_COMPOSE run pfa_validator_classification_st
 $DOCKER_COMPOSE run pfa_validator_regression_st
+$DOCKER_COMPOSE run pfa_validator_classification_mt
+$DOCKER_COMPOSE run pfa_validator_regression_mt
+
 echo
 # Cleanup
 _cleanup

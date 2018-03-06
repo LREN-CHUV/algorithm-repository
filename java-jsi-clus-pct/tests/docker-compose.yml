@@ -48,7 +48,7 @@ services:
       - db
 
   woken_db_setup:
-    image: "hbpmip/woken-db-setup:1.0.2"
+    image: "hbpmip/woken-db-setup:latest"
     container_name: "woken-db-setup"
     restart: "no"
     environment:
@@ -103,6 +103,55 @@ services:
       PARAM_variables: "name"
       PARAM_covariables: "sepal_length,sepal_width,petal_length,petal_width"
       PARAM_query: "SELECT * FROM iris"
+      FUNCTION: java-jsi-clus-pct
+      PARAM_MODEL_pruned: "yes"
+      PARAM_MODEL_minobj: 4
+    links:
+      - "db:db"
+
+  clus_pct_regression_mt:
+    image: "hbpmip/java-jsi-clus-pct:latest"
+    container_name: "clus-pct-regression-mt"
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 3
+      IN_JDBC_DRIVER: org.postgresql.Driver
+      IN_JDBC_URL: jdbc:postgresql://db:5432/features
+      IN_JDBC_USER: features
+      IN_JDBC_PASSWORD: featurespwd
+      OUT_JDBC_DRIVER: org.postgresql.Driver
+      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
+      OUT_JDBC_USER: woken
+      OUT_JDBC_PASSWORD: wokenpwd
+      PARAM_variables: "score_test1,stress_before_test1,iq"
+      PARAM_covariables: "cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
+      PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
+      FUNCTION: java-jsi-clus-pct
+      PARAM_MODEL_pruned: "yes"
+      PARAM_MODEL_minobj: 2
+    links:
+      - "db:db"
+
+  clus_pct_classification_mt:
+    image: "hbpmip/java-jsi-clus-pct:latest"
+    container_name: "clus-pct-classification-mt"
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 4
+      IN_JDBC_DRIVER: org.postgresql.Driver
+      IN_JDBC_URL: jdbc:postgresql://db:5432/features
+      IN_JDBC_USER: features
+      IN_JDBC_PASSWORD: featurespwd
+      OUT_JDBC_DRIVER: org.postgresql.Driver
+      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
+      OUT_JDBC_USER: woken
+      OUT_JDBC_PASSWORD: wokenpwd
+      PARAM_variables: "area_code,intl_plan"
+      PARAM_covariables: "vmail_plan,day_mins,night_charge"
+      PARAM_query: "SELECT area_code,intl_plan,vmail_plan,day_mins,night_charge FROM churn LIMIT 50"
+      FUNCTION: java-jsi-clus-pct
       PARAM_MODEL_pruned: "yes"
       PARAM_MODEL_minobj: 4
     links:
@@ -149,5 +198,49 @@ services:
       FEATURES_DB_USER: features
       FEATURES_DB_PASSWORD: featurespwd
       FEATURES_DB_TABLE: iris
+    links:
+      - "db:db"
+
+  pfa_validator_regression_mt:
+    image: "hbpmip/pfa-validator:latest"
+    container_name: "pfa-validator-regression-mt"
+    environment:
+      INPUT_METHOD: POSTGRESQL
+      JOB_ID: 3
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: woken
+      DB_USER: woken
+      DB_PASSWORD: wokenpwd
+      DB_TABLE: job_result
+      DB_COLUMN: data
+      FEATURES_DB_HOST: db
+      FEATURES_DB_PORT: 5432
+      FEATURES_DB_NAME: features
+      FEATURES_DB_USER: features
+      FEATURES_DB_PASSWORD: featurespwd
+      FEATURES_DB_TABLE: sample_data
+    links:
+      - "db:db"
+
+  pfa_validator_classification_mt:
+    image: "hbpmip/pfa-validator:latest"
+    container_name: "pfa-validator-classification-mt"
+    environment:
+      INPUT_METHOD: POSTGRESQL
+      JOB_ID: 4
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: woken
+      DB_USER: woken
+      DB_PASSWORD: wokenpwd
+      DB_TABLE: job_result
+      DB_COLUMN: data
+      FEATURES_DB_HOST: db
+      FEATURES_DB_PORT: 5432
+      FEATURES_DB_NAME: features
+      FEATURES_DB_USER: features
+      FEATURES_DB_PASSWORD: featurespwd
+      FEATURES_DB_TABLE: churn
     links:
       - "db:db"

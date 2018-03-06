@@ -8,7 +8,7 @@
   },
   "input" : {
     "doc" : "Input is the list of covariables and groups",
-    "name" : "DependentVariables",
+    "name" : "IndependentVariables",
     "type" : "record",
     "fields" : [ {
       "name" : "input1",
