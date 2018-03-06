@@ -1,6 +1,7 @@
 package eu.humanbrainproject.mip.algorithms.rapidminer.models.tests;
 
 import com.google.common.collect.Maps;
+import com.opendatagroup.hadrian.data.PFAArray;
 import com.opendatagroup.hadrian.jvmcompiler.PFAEngine;
 import com.opendatagroup.hadrian.jvmcompiler.PFAEngine$;
 import com.rapidminer.example.Attribute;
@@ -72,7 +73,7 @@ public class NaiveBayesTest {
     }
 
     @Test
-    @DisplayName("We can perform binary Naive Bayes classification on two features")
+    @DisplayName("We can perform binary Naive Bayes classification on continuous features")
     public void testBinaryClassificationWithContinuousInput2Features() throws Exception {
 
         final String[] featureNames = new String[]{"input1", "input2"};
@@ -233,8 +234,51 @@ public class NaiveBayesTest {
     }
 
     @Test
-    //@Disabled("Not working currently")
-    @DisplayName("We can perform binary Naive Bayes classification on two features")
+    @Disabled("Dev tests")
+    public void pfaEval() {
+        String pfa = "{ \"input\": {\"type\": \"array\", \"items\": \"string\"},"
+                + "\"output\": {\"type\": \"array\", \"items\": \"int\"}," +
+                "  \"cells\": {" +
+                "    \"oneHot\": {" +
+                "      \"type\": {\"type\": \"array\", \"items\": {\"type\": \"array\", \"items\": \"string\"}}," +
+                "      \"init\": [[\"sunny\",\"overcast\"],[\"other\"]]}}," +
+                "  \"action\": {\"a.flatMapWithIndex\": [ \"input\", { \"fcn\": \"u.expand\" }]}," +
+                "  \"fcns\": {\n" +
+                "    \"expand\": {\n" +
+                "      \"params\": [{\n" +
+                "        \"i\": \"int\"\n" +
+                "      }, {\n" +
+                "        \"value\": \"string\"\n" +
+                "      }],\n" +
+                "      \"ret\": {\n" +
+                "        \"type\": \"array\",\n" +
+                "        \"items\": \"int\"\n" +
+                "      },\n" +
+                "      \"do\": {\n" +
+                "        \"cast.fanoutInt\": [\n" +
+                "            \"value\",\n" +
+                "            {\"attr\": {\"cell\": \"oneHot\"}, \"path\": [\"i\"] },\n" +
+                "          false\n" +
+                "        ]\n" +
+                "      }" +
+                "    }\n" +
+                "  }" +
+                " }";
+
+        System.out.println(pfa);
+
+        PFAEngine<Object, Object> engine = getPFAEngine(pfa);
+        final Object jsonInput = engine.jsonInput("[\"sunny\", \"overcast\"]");
+        final Object jsonInput2 = engine.jsonInput("[\"overcast\", \"other\"]");
+
+        System.out.println(engine.action(jsonInput));
+        System.out.println(engine.action(jsonInput2));
+
+    }
+
+    @Test
+    @Disabled("Not working currently")
+    @DisplayName("We can perform binary Naive Bayes classification on nominal features")
     public void testClassificationWithNominalInput() throws Exception {
 
         final String[] featureNames = new String[]{"input1", "input2"};

@@ -5,7 +5,6 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.hubspot.jinjava.Jinjava;
-import com.hubspot.jinjava.lib.fn.ELFunctionDefinition;
 import com.rapidminer.operator.learner.bayes.SimpleDistributionModel;
 import com.rapidminer.tools.Ontology;
 import com.rapidminer.tools.math.distribution.DiscreteDistribution;
@@ -43,23 +42,26 @@ public class NaiveBayesSerializer extends RapidMinerModelSerializer<SimpleDistri
         String[] attributeNames = trainedModel.getAttributeNames();
 
         // TODO At the moment we only support features either all nominal, either all continuous
-        boolean continuousFeatures = !trainedModel.isDiscrete(0);
+        int firstFeature = 0;
+        boolean allNominalFeatures = trainedModel.isDiscrete(firstFeature);
 
         for (int i = 1; i < attributeNames.length; i++) {
-            if (trainedModel.isDiscrete(i) == continuousFeatures) {
+            boolean featureIsNominal = trainedModel.isDiscrete(i);
+            if (featureIsNominal != allNominalFeatures) {
                 throw new RuntimeException("Problem with features domains! Features should either be all continuous either all nominal!\n"
-                        + "Expected a " + (continuousFeatures ? "continuous" : "nominal") + " feature, found a "
-                        + (trainedModel.isDiscrete(i) ? "continuous" : "nominal") + " feature on attribute " + attributeNames[i]);
+                        + "Expected a " + (allNominalFeatures ? "nominal" : "continuous") + " feature, found a "
+                        + (featureIsNominal ? "nominal" : "continuous") + " feature on attribute " + attributeNames[i]);
             }
         }
 
-        Jinjava jinjava = new Jinjava();
-        Map<String, Object> context = Maps.newHashMap();
-        context.put("classNames", Arrays.asList(classNames));
-        context.put("attributeNames", Arrays.asList(attributeNames));
-        // define a custom public static function (this one will bind to naive_bayes:map_distribution_values(distribution))
-        jinjava.getGlobalContext().registerFunction(new ELFunctionDefinition("naive_bayes", "map_distribution_values",
-                NaiveBayesSerializer.class, "mapDistributionValues", DiscreteDistribution.class));
+        // TODO: dead code, keep?
+//        Jinjava jinjava = new Jinjava();
+//        Map<String, Object> context = Maps.newHashMap();
+//        context.put("classNames", Arrays.asList(classNames));
+//        context.put("attributeNames", Arrays.asList(attributeNames));
+//        // define a custom public static function (this one will bind to naive_bayes:map_distribution_values(distribution))
+//        jinjava.getGlobalContext().registerFunction(new ELFunctionDefinition("naive_bayes", "map_distribution_values",
+//                NaiveBayesSerializer.class, "mapDistributionValues", DiscreteDistribution.class));
 
         jgen.writeObjectFieldStart("model");
         {
@@ -68,15 +70,15 @@ public class NaiveBayesSerializer extends RapidMinerModelSerializer<SimpleDistri
             {
                 Schema schema;
 
-                if (continuousFeatures) {
+                if (allNominalFeatures) {
+                    schema = SchemaBuilder.map().values().array().items()
+                            .map().values()
+                            /* */.map().values(SchemaBuilder.builder().doubleType());
+                } else {
                     schema = SchemaBuilder.map().values().array().items().record("GaussianDistribution").fields()
                             /* */.name("mean").type().doubleType().noDefault()
                             /* */.name("variance").type().doubleType().noDefault()
                             .endRecord();
-                } else {
-                    schema = SchemaBuilder.map().values().array().items()
-                            .map().values()
-                            /* */.map().values(SchemaBuilder.builder().doubleType());
                 }
 
                 jgen.writeRawValue(schema.toString());
@@ -90,15 +92,15 @@ public class NaiveBayesSerializer extends RapidMinerModelSerializer<SimpleDistri
                         for (int j = 0; j < attributeNames.length; j++) {
                             jgen.writeStartObject();
                             {
-                                if (continuousFeatures) {
-                                    NormalDistribution d = (NormalDistribution) trainedModel.getDistribution(i, j);
-                                    jgen.writeNumberField("mean", d.getMean());
-                                    jgen.writeNumberField("variance", d.getVariance());
-                                } else {
+                                if (allNominalFeatures) {
                                     DiscreteDistribution d = (DiscreteDistribution) trainedModel.getDistribution(i, j);
                                     for (int k = 0; k < d.getNumberOfParameters(); k++) {
                                         jgen.writeNumberField(d.mapValue((double) k), d.getProbability((double) k));
                                     }
+                                } else {
+                                    NormalDistribution d = (NormalDistribution) trainedModel.getDistribution(i, j);
+                                    jgen.writeNumberField("mean", d.getMean());
+                                    jgen.writeNumberField("variance", d.getVariance());
                                 }
                             }
                             jgen.writeEndObject();

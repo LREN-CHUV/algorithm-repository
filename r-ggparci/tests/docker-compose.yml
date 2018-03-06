@@ -90,7 +90,7 @@ services:
       PARAM_flip_coords: "F"
       PARAM_include_obs_lines: "T"
       PARAM_alpha_obs_lines: "0.2"
-      PARAM_title: "Parallel Coordinates - Iris Data" 
+      PARAM_title: "Parallel Coordinates - Iris Data"
       PARAM_width: 5
       PARAM_height: 4
 

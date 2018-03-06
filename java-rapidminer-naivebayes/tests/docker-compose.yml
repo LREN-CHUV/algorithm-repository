@@ -78,7 +78,7 @@ services:
       OUT_JDBC_PASSWORD: wokenpwd
       PARAM_variables: "churn"
       PARAM_covariables: "account_length,day_mins,day_calls,day_charge,eve_mins,eve_calls,eve_charge,night_mins,night_calls,night_charge,intl_mins,intl_calls,intl_charge,custserv_calls"
-      PARAM_query: "SELECT churn,account_length,day_mins,day_calls,day_charge,eve_mins,eve_calls,eve_charge,night_mins,night_calls,night_charge,intl_mins,intl_calls,intl_charge,custserv_calls FROM CHURN"
+      PARAM_query: "SELECT churn,CAST(account_length as numeric),day_mins,CAST(day_calls as numeric),day_charge,eve_mins,CAST(eve_calls as numeric),eve_charge,night_mins,CAST(night_calls as numeric),night_charge,intl_mins,CAST(intl_calls as numeric),intl_charge,CAST(custserv_calls as numeric) FROM CHURN"
     links:
       - "db:db"
 

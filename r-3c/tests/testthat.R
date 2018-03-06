@@ -1,5 +1,4 @@
 library(testthat);
-library(hbpjdbcconnect);
-library(jsonlite);
+library(rmipadaptor);
 
 test_dir("/src/tests/testthat", reporter="stop");

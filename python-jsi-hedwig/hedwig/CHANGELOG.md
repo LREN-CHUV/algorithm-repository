@@ -32,7 +32,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 2014/08/25 VERSION 0.2.1
 ========================
 
-* Added support for custom annotation naming in rules. This allows the user to give meaningful names to annotation relationships. For example, in `example/finance/data.n3` we define a custom annotation name as follows: 
+* Added support for custom annotation naming in rules. This allows the user to give meaningful names to annotation relationships. For example, in `example/finance/data.n3` we define a custom annotation name as follows:
 
 ```
 ns1:GeographicalRegion

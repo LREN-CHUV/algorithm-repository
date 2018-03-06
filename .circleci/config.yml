@@ -37,8 +37,8 @@ jobs:
           name: "Test r-linear-regression"
           command: |
             PATH=$PATH:/$HOME/.captain/bin/ ./r-linear-regression/tests/test.sh
-      
-      #JSI METHODS            
+
+      #JSI METHODS
       - run:
           name: "Build java-jsi-clus-pct"
           command: |
@@ -46,7 +46,7 @@ jobs:
       - run:
           name: "Test java-jsi-clus-pct"
           command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-pct/tests/test.sh            
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-pct/tests/test.sh
       - run:
           name: "Build java-jsi-clus-pct-ts"
           command: |
@@ -54,7 +54,7 @@ jobs:
       - run:
           name: "Test java-jsi-clus-pct-ts"
           command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-pct-ts/tests/test.sh            
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-pct-ts/tests/test.sh
      # - run:
      #     name: "Build java-jsi-clus-fire"
      #     command: |
@@ -62,7 +62,7 @@ jobs:
      # - run:
      #     name: "Test java-jsi-clus-fire"
      #     command: |
-     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fire/tests/test.sh            
+     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fire/tests/test.sh
      # - run:
      #     name: "Build java-jsi-clus-fr"
      #     command: |
@@ -70,7 +70,7 @@ jobs:
      # - run:
      #     name: "Test java-jsi-clus-fr"
      #     command: |
-     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fr/tests/test.sh                       
+     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fr/tests/test.sh
      # - run:
      #     name: "Build java-jsi-clus-rm"
      #     command: |
@@ -78,7 +78,7 @@ jobs:
      # - run:
      #     name: "Test java-jsi-clus-rm"
      #     command: |
-     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-rm/tests/test.sh          
+     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-rm/tests/test.sh
       - run:
           name: "Build python-jsi-hedwig"
           command: |
@@ -86,7 +86,7 @@ jobs:
       - run:
           name: "Test python-jsi-hedwig"
           command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./python-jsi-hedwig/tests/test.sh            
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-jsi-hedwig/tests/test.sh
       - run:
           name: "Build python-jsi-hinmine"
           command: |
@@ -94,7 +94,4 @@ jobs:
       - run:
           name: "Test python-jsi-hinmine"
           command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./python-jsi-hinmine/tests/test.sh            
-            
-
-            
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-jsi-hinmine/tests/test.sh

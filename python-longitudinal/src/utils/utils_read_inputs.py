@@ -85,4 +85,3 @@ def compute_individual_parameters(list_elements, number_of_params):
         idx_start = idx_end
 
     return individual_parameters
-

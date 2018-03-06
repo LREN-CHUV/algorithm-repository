@@ -284,10 +284,10 @@ class Rule:
             if isinstance(pred, UnaryPredicate):
                 anno_names = self.kb.annotation_name.get(pred.label, [DEFAULT_ANNOTATION_NAME])
                 predicate_label = '_and_'.join(anno_names)
-                
+
                 if pred.negated:
                     predicate_label = '~' + predicate_label
-                
+
                 conj = '%s(%s, %s)' % (predicate_label, pred.input_var, label)
             else:
                 conj = '%s(%s, %s)' % (label,

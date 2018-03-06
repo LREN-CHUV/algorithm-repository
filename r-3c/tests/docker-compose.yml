@@ -1,0 +1,137 @@
+---
+
+version: '2'
+services:
+
+  db:
+    image: postgres:9.6.5-alpine
+    hostname: db
+    environment:
+      POSTGRES_PASSWORD: test
+
+  wait_dbs:
+    image: "waisbrot/wait"
+    restart: "no"
+    environment:
+      TARGETS: "db:5432"
+      TIMEOUT: 60
+
+  create_dbs:
+    image: "hbpmip/create-databases:1.0.0"
+    restart: "no"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_ADMIN_USER: postgres
+      DB_ADMIN_PASSWORD: test
+      DB1: features
+      USER1: features
+      PASSWORD1: featurespwd
+      DB2: woken
+      USER2: woken
+      PASSWORD2: wokenpwd
+    depends_on:
+      - db
+
+  sample_data_db_setup:
+    image: "hbpmip/sample-data-db-setup:0.4.1"
+    container_name: "data-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: features
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: test
+    depends_on:
+      - db
+
+  woken_db_setup:
+    image: "hbpmip/woken-db-setup:1.0.2"
+    container_name: "woken-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: woken
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: test
+    depends_on:
+      - db
+
+  3c:
+    image: "hbpmip/r-3c:latest"
+    container_name: "3c"
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 1
+      IN_DBI_DRIVER: PostgreSQL
+      IN_JDBC_DRIVER: org.postgresql.Driver
+      IN_JDBC_URL: jdbc:postgresql://db:5432/features
+      IN_DB_HOST: db
+      IN_DB_PORT: 5432
+      IN_DB_NAME: features
+      IN_DB_USER: features
+      IN_DB_PASSWORD: featurespwd
+      OUT_DBI_DRIVER: PostgreSQL
+      OUT_JDBC_DRIVER: org.postgresql.Driver
+      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
+      OUT_DB_HOST: db
+      OUT_DB_PORT: 5432
+      OUT_DB_NAME: woken
+      OUT_DB_USER: woken
+      OUT_DB_PASSWORD: wokenpwd
+      PARAM_variables: "churn"
+      PARAM_covariables1: "day_mins,day_calls,day_charge,eve_mins,eve_calls,eve_charge,night_mins,night_calls,night_charge"
+      PARAM_covariables2: "intl_mins,intl_calls,intl_charge,custserv_calls"
+      PARAM_n_clusters: "3"
+      PARAM_query: "SELECT * FROM churn LIMIT 300"
+    links:
+      - "db:db"
+
+  r_tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "r-integration-tests"
+    command: test
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 1
+      IN_DBI_DRIVER: PostgreSQL
+      IN_DB_HOST: db
+      IN_DB_PORT: 5432
+      IN_DB_NAME: features
+      IN_DB_USER: features
+      IN_DB_PASSWORD: featurespwd
+      OUT_DBI_DRIVER: PostgreSQL
+      OUT_DB_HOST: db
+      OUT_DB_PORT: 5432
+      OUT_DB_NAME: woken
+      OUT_DB_USER: woken
+      OUT_DB_PASSWORD: wokenpwd
+    links:
+      - "db:db"
+
+  viewer:
+    build:
+      context: .
+      dockerfile: Dockerfile.viewer
+    container_name: "viewer"
+    restart: "no"
+    environment:
+      JOB_ID: 1
+      OUT_DBI_DRIVER: PostgreSQL
+      OUT_DB_HOST: db
+      OUT_DB_PORT: 5432
+      OUT_DB_NAME: woken
+      OUT_DB_USER: woken
+      OUT_DB_PASSWORD: wokenpwd
+    volumes:
+      - "./tmp:/data/out/"
+    links:
+      - "db:db"

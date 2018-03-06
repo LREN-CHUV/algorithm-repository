@@ -107,7 +107,7 @@ BUILD_DATE=$(date -Iseconds) \
 
 ## Notify Microbadger
 curl -XPOST https://hooks.microbadger.com/images/hbpmip/python-jsi-hinmine/xRhfOroD8NFdqWlEilSqHzdU5nc=
-  
+
 # Notify on slack
 sed "s/USER/${USER^}/" $WORKSPACE/slack.json > $WORKSPACE/.slack.json
 sed -i.bak "s/VERSION/$updated_version/" $WORKSPACE/.slack.json

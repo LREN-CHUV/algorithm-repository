@@ -18,4 +18,3 @@ Sys.setenv(
 source("main.R")
 
 print("Success!")
-

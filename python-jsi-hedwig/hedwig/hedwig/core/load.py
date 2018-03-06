@@ -103,7 +103,7 @@ def csv_parse_data(g, data_file):
 
         for att_idx, att in enumerate(attributes):
 
-            # Skip the label 
+            # Skip the label
             if att_idx == 0:
                 continue
 

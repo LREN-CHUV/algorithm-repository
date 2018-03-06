@@ -1,0 +1,9 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/r-3c
+  pre:
+    - echo "Preparing r-3c"
+  post:
+    - echo "Finished r-3c"
+  test:
+    - tests/test.sh

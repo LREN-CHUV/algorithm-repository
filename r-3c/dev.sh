@@ -20,7 +20,7 @@ function cheat_sheet() {
   echo
   echo "library(devtools)"
   echo
-  echo "devtools::install_github(\"jkrijthe/Rtsne\")"
+  echo "devtools::install_github(\"LREN-CHUV/hbplregress\")"
   echo "  # Load the library"
   echo
   echo "source(\"/src/main.R\")"

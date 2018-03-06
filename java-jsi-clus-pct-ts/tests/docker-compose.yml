@@ -105,4 +105,4 @@ services:
       FEATURES_DB_PASSWORD: featurespwd
       FEATURES_DB_TABLE: sample_data
     links:
-      - "db:db"      
+      - "db:db"
