@@ -3,7 +3,7 @@ package eu.humanbrainproject.mip.algorithms.jsi.clus.fr;
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.ext.featureRanking.Fimp;
 
-public class FRescriptiveSerializer
+public class FRDescriptiveSerializer
     extends eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusDescriptiveSerializer {
 
   @Override
