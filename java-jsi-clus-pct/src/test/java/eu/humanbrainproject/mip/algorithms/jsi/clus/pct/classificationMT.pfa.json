@@ -110,7 +110,7 @@
   "method": "map",
   "name": "PredictiveClusteringTrees",
   "output": {
-    "doc": "Output is the estimate of the variable",
+    "doc": "Output is the list of estimations of output variables",
     "fields": [
       {
         "name": "output1",
