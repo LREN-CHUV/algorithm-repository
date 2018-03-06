@@ -431,7 +431,7 @@
   "method": "map",
   "name": "PredictiveClusteringTreesForTS",
   "output": {
-    "doc": "Output is the list of estimations of output variables",
+    "doc": "Output is the estimate of the variable",
     "fields": [
       {
         "name": "output1",

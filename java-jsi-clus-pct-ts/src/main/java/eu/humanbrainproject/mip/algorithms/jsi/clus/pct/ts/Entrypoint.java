@@ -6,29 +6,29 @@ import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusGenericSerial
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusModelPFASerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusVisualizationSerializer;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
+import java.util.logging.Logger;
 
-/**
- * 
- * @author Martin Breskvar
- *
- */
+/** @author Martin Breskvar */
 public final class Entrypoint {
+  private static final Logger LOGGER = Logger.getLogger(Entrypoint.class.getName());
 
-	public static void main(String[] args) {
+  public static void main(String[] args) {
 
-		try {
-			ClusMeta clusMeta = new PCTTSMeta();
-			ClusGenericSerializer<ClusNode> modelSerializer = new PCTTSSerializer();
-			ClusModelPFASerializer<ClusNode> mainSerializer = new ClusModelPFASerializer<>(modelSerializer);
-			ClusVisualizationSerializer<ClusNode> modelVisualizationSerializer = new PCTTSVisualizer();
-			
-			eu.humanbrainproject.mip.algorithms.jsi.Main<ClusNode> entry = new Main<ClusNode>(mainSerializer, clusMeta, modelVisualizationSerializer);
+    try {
+      ClusMeta clusMeta = new PCTTSMeta();
+      ClusGenericSerializer<ClusNode> modelSerializer = new PCTTSSerializer();
+      ClusModelPFASerializer<ClusNode> mainSerializer =
+          new ClusModelPFASerializer<>(modelSerializer);
+      ClusVisualizationSerializer<ClusNode> modelVisualizationSerializer = new PCTTSVisualizer();
 
-			entry.run();
-		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+      eu.humanbrainproject.mip.algorithms.jsi.Main<ClusNode> entry =
+          new Main<ClusNode>(mainSerializer, clusMeta, modelVisualizationSerializer);
+
+      entry.run();
+
+    } catch (Exception e) {
+      LOGGER.severe(e.getMessage());
+      System.exit(1);
+    }
+  }
 }
