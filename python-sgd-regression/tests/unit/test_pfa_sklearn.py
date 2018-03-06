@@ -2,10 +2,10 @@
 
 import numpy as np
 import pandas as pd
-import titus.prettypfa as prettypfa
 from titus.genpy import PFAEngine
 from sklearn.linear_model import SGDRegressor, SGDClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
+from sklearn.naive_bayes import MultinomialNB
 from sklearn import datasets
 
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
@@ -31,6 +31,12 @@ def _sgd_classifier(X, y, **kwargs):
 
 def _mlp_classifier(X, y, **kwargs):
     estimator = MLPClassifier(hidden_layer_sizes=(3, 3))
+    estimator.partial_fit(X, y, **kwargs)
+    return estimator
+
+
+def _multinomialnb(X, y, **kwargs):
+    estimator = MultinomialNB()
     estimator.partial_fit(X, y, **kwargs)
     return estimator
 
@@ -106,6 +112,23 @@ def test_estimator_to_pfa_mlp_classifier():
     """Check that converted PFA is giving the same results as MLPClassifier"""
     X, y, types = _classification_task()
     estimator = _mlp_classifier(X, y, classes=['a', 'b', 'c'])
+
+    pfa = sklearn_to_pfa(estimator, types)
+
+    estimator_pred = estimator.predict(X)
+    pfa_pred = _predict_pfa(X, types, pfa)
+
+    assert all(estimator_pred == pfa_pred)
+
+
+def test_estimator_to_pfa_multinomialnb():
+    """Check that converted PFA is giving the same results as MultinomialNB"""
+    X, y, types = _classification_task()
+
+    # artifically create 0, 1 inputs from X because `MultinomialNB` works only with counts
+    X = (X > 0).astype(int)
+
+    estimator = _multinomialnb(X, y, classes=['a', 'b', 'c'])
 
     pfa = sklearn_to_pfa(estimator, types)
 
