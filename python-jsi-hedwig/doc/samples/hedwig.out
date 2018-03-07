@@ -1,0 +1,73 @@
+Hedwig semantic pattern mining (anze.vavpetic@ijs.si)
+Version: 0.3.1
+Start: 2018-03-07T14:13:22.298356
+Time taken: 0.41 seconds
+Parameters:
+	bk_dir=/tmp/tmpznrb6rh8
+	data=input.csv
+	format=csv
+	output=rules.txt
+	covered=None
+	mode=subgroups
+	target=None
+	score=lift
+	negations=False
+	alpha=0.05
+	adjust=fwer
+	FDR=0.05
+	leaves=True
+	learner=heuristic
+	optimalsubclass=False
+	uris=False
+	beam=20
+	support=0.1
+	depth=5
+	nocache=True
+	verbose=False
+----------------------------------------
+'Iris-versicolor'(X) <--
+	annotated_with(X, 0.7<=petal_width<1.3) [cov=15, pos=15, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 0.7<=petal_width<1.3), annotated_with(X, root) [cov=15, pos=15, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 0.7<=petal_width<1.3), annotated_with(X, 0.7<=petal_width<1.3) [cov=15, pos=15, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 5.2<=sepal_length<6.1), annotated_with(X, 1.3<=petal_width<1.9) [cov=19, pos=16, prec=0.842, lift=2.526, pval=0.000]
+	annotated_with(X, 3.95<=petal_length<5.425), annotated_with(X, 1.3<=petal_width<1.9) [cov=41, pos=33, prec=0.805, lift=2.415, pval=0.000]
+	annotated_with(X, 1.3<=petal_width<1.9) [cov=51, pos=35, prec=0.686, lift=2.059, pval=0.000]
+	annotated_with(X, 1.3<=petal_width<1.9), annotated_with(X, root) [cov=51, pos=35, prec=0.686, lift=2.059, pval=0.000]
+	annotated_with(X, 1.3<=petal_width<1.9), annotated_with(X, 1.3<=petal_width<1.9) [cov=51, pos=35, prec=0.686, lift=2.059, pval=0.000]
+	annotated_with(X, 2.0<=sepal_width<2.6) [cov=19, pos=13, prec=0.684, lift=2.053, pval=0.000]
+	annotated_with(X, 2.0<=sepal_width<2.6), annotated_with(X, root) [cov=19, pos=13, prec=0.684, lift=2.053, pval=0.000]
+	annotated_with(X, 2.0<=sepal_width<2.6), annotated_with(X, 2.0<=sepal_width<2.6) [cov=19, pos=13, prec=0.684, lift=2.053, pval=0.000]
+	annotated_with(X, 2.6<=sepal_width<3.2), annotated_with(X, 1.3<=petal_width<1.9) [cov=37, pos=25, prec=0.676, lift=2.027, pval=0.000]
+	annotated_with(X, 6.1<=sepal_length<7.0), annotated_with(X, 1.3<=petal_width<1.9) [cov=27, pos=18, prec=0.667, lift=2.000, pval=0.000]
+	annotated_with(X, 3.95<=petal_length<5.425) [cov=61, pos=39, prec=0.639, lift=1.918, pval=0.000]
+	annotated_with(X, 5.2<=sepal_length<6.1) [cov=48, pos=26, prec=0.542, lift=1.625, pval=0.000]
+	annotated_with(X, 2.6<=sepal_width<3.2) [cov=76, pos=32, prec=0.421, lift=1.263, pval=0.000]
+'Iris-virginica'(X) <--
+	annotated_with(X, 1.9<=petal_width<2.5) [cov=34, pos=34, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 1.9<=petal_width<2.5), annotated_with(X, root) [cov=34, pos=34, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 1.9<=petal_width<2.5), annotated_with(X, 1.9<=petal_width<2.5) [cov=34, pos=34, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 5.425<=petal_length<6.9) [cov=28, pos=28, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 5.425<=petal_length<6.9), annotated_with(X, root) [cov=28, pos=28, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 5.425<=petal_length<6.9), annotated_with(X, 5.425<=petal_length<6.9) [cov=28, pos=28, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 2.6<=sepal_width<3.2), annotated_with(X, 1.9<=petal_width<2.5) [cov=20, pos=20, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 6.1<=sepal_length<7.0), annotated_with(X, 1.9<=petal_width<2.5) [cov=20, pos=20, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 1.9<=petal_width<2.5), annotated_with(X, 5.425<=petal_length<6.9) [cov=20, pos=20, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 5.425<=petal_length<6.9), annotated_with(X, 2.6<=sepal_width<3.2) [cov=17, pos=17, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 5.425<=petal_length<6.9), annotated_with(X, 6.1<=sepal_length<7.0) [cov=16, pos=16, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 6.1<=sepal_length<7.0) [cov=48, pos=29, prec=0.604, lift=1.812, pval=0.000]
+	annotated_with(X, 6.1<=sepal_length<7.0), annotated_with(X, root) [cov=48, pos=29, prec=0.604, lift=1.812, pval=0.000]
+	annotated_with(X, 6.1<=sepal_length<7.0), annotated_with(X, 2.6<=sepal_width<3.2) [cov=32, pos=18, prec=0.562, lift=1.688, pval=0.001]
+	annotated_with(X, 2.6<=sepal_width<3.2) [cov=76, pos=32, prec=0.421, lift=1.263, pval=0.000]
+'Iris-setosa'(X) <--
+	annotated_with(X, 1.0<=petal_length<2.475) [cov=50, pos=50, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 0.1<=petal_width<0.7) [cov=50, pos=50, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 1.0<=petal_length<2.475), annotated_with(X, root) [cov=50, pos=50, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 1.0<=petal_length<2.475), annotated_with(X, 0.1<=petal_width<0.7) [cov=50, pos=50, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 0.1<=petal_width<0.7), annotated_with(X, root) [cov=50, pos=50, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 0.1<=petal_width<0.7), annotated_with(X, 0.1<=petal_width<0.7) [cov=50, pos=50, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 4.3<=sepal_length<5.2), annotated_with(X, 0.1<=petal_width<0.7) [cov=36, pos=36, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 3.2<=sepal_width<3.8), annotated_with(X, 0.1<=petal_width<0.7) [cov=31, pos=31, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 4.3<=sepal_length<5.2), annotated_with(X, 3.2<=sepal_width<3.8) [cov=23, pos=23, prec=1.000, lift=3.000, pval=0.000]
+	annotated_with(X, 4.3<=sepal_length<5.2) [cov=41, pos=36, prec=0.878, lift=2.634, pval=0.000]
+	annotated_with(X, 4.3<=sepal_length<5.2), annotated_with(X, root) [cov=41, pos=36, prec=0.878, lift=2.634, pval=0.000]
+	annotated_with(X, 3.2<=sepal_width<3.8) [cov=49, pos=31, prec=0.633, lift=1.898, pval=0.000]
