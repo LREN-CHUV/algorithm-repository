@@ -194,9 +194,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # > compute intermediate
+    # > compute --mode intermediate
     if args.mode == 'intermediate':
         intermediate_stats()
-    # > compute aggregate --job-ids 12 13 14
+    # > compute --mode aggregate --job-ids 12 13 14
     elif args.mode == 'aggregate':
         aggregate_stats(args.job_ids)
