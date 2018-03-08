@@ -1,0 +1,150 @@
+{
+  "data": [
+    {
+      "Root mean squared error (RMSE)-overall": 0.001715702477428658,
+      "Root mean squared error (RMSE)-overallRank": 1,
+      "attributeDatasetIndex": 16,
+      "attributeName": "input16",
+      "id": 1
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.004471161474187219,
+      "Root mean squared error (RMSE)-overallRank": 2,
+      "attributeDatasetIndex": 14,
+      "attributeName": "input14",
+      "id": 2
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.005468231685397082,
+      "Root mean squared error (RMSE)-overallRank": 3,
+      "attributeDatasetIndex": 9,
+      "attributeName": "input9",
+      "id": 3
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.005498700425691784,
+      "Root mean squared error (RMSE)-overallRank": 4,
+      "attributeDatasetIndex": 13,
+      "attributeName": "input13",
+      "id": 4
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.0061655296113774264,
+      "Root mean squared error (RMSE)-overallRank": 5,
+      "attributeDatasetIndex": 10,
+      "attributeName": "input10",
+      "id": 5
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.007283615718304835,
+      "Root mean squared error (RMSE)-overallRank": 6,
+      "attributeDatasetIndex": 15,
+      "attributeName": "input15",
+      "id": 6
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.008112668983072748,
+      "Root mean squared error (RMSE)-overallRank": 7,
+      "attributeDatasetIndex": 7,
+      "attributeName": "input7",
+      "id": 7
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.008432520185961518,
+      "Root mean squared error (RMSE)-overallRank": 8,
+      "attributeDatasetIndex": 5,
+      "attributeName": "input5",
+      "id": 8
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.008668725576155566,
+      "Root mean squared error (RMSE)-overallRank": 9,
+      "attributeDatasetIndex": 6,
+      "attributeName": "input6",
+      "id": 9
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.009648170634604289,
+      "Root mean squared error (RMSE)-overallRank": 10,
+      "attributeDatasetIndex": 2,
+      "attributeName": "input2",
+      "id": 10
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.010484475560180697,
+      "Root mean squared error (RMSE)-overallRank": 11,
+      "attributeDatasetIndex": 17,
+      "attributeName": "input17",
+      "id": 11
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.01092530202275275,
+      "Root mean squared error (RMSE)-overallRank": 12,
+      "attributeDatasetIndex": 8,
+      "attributeName": "input8",
+      "id": 12
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.013538697204628535,
+      "Root mean squared error (RMSE)-overallRank": 13,
+      "attributeDatasetIndex": 3,
+      "attributeName": "input3",
+      "id": 13
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.013847485276771085,
+      "Root mean squared error (RMSE)-overallRank": 14,
+      "attributeDatasetIndex": 1,
+      "attributeName": "input1",
+      "id": 14
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.0150264808485986,
+      "Root mean squared error (RMSE)-overallRank": 15,
+      "attributeDatasetIndex": 4,
+      "attributeName": "input4",
+      "id": 15
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.015308931104010364,
+      "Root mean squared error (RMSE)-overallRank": 16,
+      "attributeDatasetIndex": 12,
+      "attributeName": "input12",
+      "id": 16
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.017934486412840504,
+      "Root mean squared error (RMSE)-overallRank": 17,
+      "attributeDatasetIndex": 11,
+      "attributeName": "input11",
+      "id": 17
+    }
+  ],
+  "name": "feature-importances",
+  "profile": "tabular-data-resource",
+  "schema": {
+    "fields": [
+      {
+        "name": "id",
+        "type": "integer"
+      },
+      {
+        "name": "attributeDatasetIndex",
+        "type": "integer"
+      },
+      {
+        "name": "attributeName",
+        "type": "string"
+      },
+      {
+        "name": "Root mean squared error (RMSE)-overallRank",
+        "type": "integer"
+      },
+      {
+        "name": "Root mean squared error (RMSE)-overall",
+        "type": "double"
+      }
+    ],
+    "primaryKey": "id"
+  }
+}

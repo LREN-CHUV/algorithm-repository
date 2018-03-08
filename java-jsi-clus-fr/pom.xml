@@ -5,7 +5,7 @@
 	<groupId>eu.humanbrainproject.mip.algorithms.jsi</groupId>
 	<artifactId>jsi-clus-fr</artifactId>
 	<packaging>jar</packaging>
-	<version>0.9.4</version><!-- bumpversion -->
+	<version>0.9.5</version><!-- bumpversion -->
 	<name>java-jsi-clus-fr</name>
 
 	<properties>
@@ -24,7 +24,7 @@
 		<jackson.version>2.7.0</jackson.version>
 		<mip.adapter.version>0.5.7</mip.adapter.version>
 		<clus.version>1.0.0</clus.version>
-		<jsi-clus.version>0.4.0</jsi-clus.version>
+		<jsi-clus.version>0.4.1</jsi-clus.version>
 	</properties>
 
 

@@ -1,0 +1,94 @@
+{
+  "data": [
+    {
+      "Root mean squared error (RMSE)-overall": 0.05816588189863536,
+      "Root mean squared error (RMSE)-overallRank": 1,
+      "attributeDatasetIndex": 9,
+      "attributeName": "input9",
+      "id": 1
+    },
+    {
+      "Root mean squared error (RMSE)-overall": 0.039558951770772885,
+      "Root mean squared error (RMSE)-overallRank": 2,
+      "attributeDatasetIndex": 1,
+      "attributeName": "input1",
+      "id": 2
+    },
+    {
+      "Root mean squared error (RMSE)-overall": 0.03287201595938097,
+      "Root mean squared error (RMSE)-overallRank": 3,
+      "attributeDatasetIndex": 8,
+      "attributeName": "input8",
+      "id": 3
+    },
+    {
+      "Root mean squared error (RMSE)-overall": 0.02032144054422691,
+      "Root mean squared error (RMSE)-overallRank": 4,
+      "attributeDatasetIndex": 5,
+      "attributeName": "input5",
+      "id": 4
+    },
+    {
+      "Root mean squared error (RMSE)-overall": 0.015513243213930005,
+      "Root mean squared error (RMSE)-overallRank": 5,
+      "attributeDatasetIndex": 2,
+      "attributeName": "input2",
+      "id": 5
+    },
+    {
+      "Root mean squared error (RMSE)-overall": 0.01149432661300421,
+      "Root mean squared error (RMSE)-overallRank": 6,
+      "attributeDatasetIndex": 7,
+      "attributeName": "input7",
+      "id": 6
+    },
+    {
+      "Root mean squared error (RMSE)-overall": 0.009394524080608193,
+      "Root mean squared error (RMSE)-overallRank": 7,
+      "attributeDatasetIndex": 3,
+      "attributeName": "input3",
+      "id": 7
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.0031947642109536032,
+      "Root mean squared error (RMSE)-overallRank": 8,
+      "attributeDatasetIndex": 6,
+      "attributeName": "input6",
+      "id": 8
+    },
+    {
+      "Root mean squared error (RMSE)-overall": -0.0140351392743078,
+      "Root mean squared error (RMSE)-overallRank": 9,
+      "attributeDatasetIndex": 4,
+      "attributeName": "input4",
+      "id": 9
+    }
+  ],
+  "name": "feature-importances",
+  "profile": "tabular-data-resource",
+  "schema": {
+    "fields": [
+      {
+        "name": "id",
+        "type": "integer"
+      },
+      {
+        "name": "attributeDatasetIndex",
+        "type": "integer"
+      },
+      {
+        "name": "attributeName",
+        "type": "string"
+      },
+      {
+        "name": "Root mean squared error (RMSE)-overallRank",
+        "type": "integer"
+      },
+      {
+        "name": "Root mean squared error (RMSE)-overall",
+        "type": "double"
+      }
+    ],
+    "primaryKey": "id"
+  }
+}
