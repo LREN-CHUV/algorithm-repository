@@ -55,22 +55,22 @@ jobs:
           name: "Test java-jsi-clus-pct-ts"
           command: |
             PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-pct-ts/tests/test.sh
-     # - run:
-     #     name: "Build java-jsi-clus-fire"
-     #     command: |
-     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fire/build.sh
-     # - run:
-     #     name: "Test java-jsi-clus-fire"
-     #     command: |
-     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fire/tests/test.sh
-     # - run:
-     #     name: "Build java-jsi-clus-fr"
-     #     command: |
-     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fr/build.sh
-     # - run:
-     #     name: "Test java-jsi-clus-fr"
-     #     command: |
-     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fr/tests/test.sh
+      - run:
+          name: "Build java-jsi-clus-fire"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fire/build.sh
+      - run:
+          name: "Test java-jsi-clus-fire"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fire/tests/test.sh
+      - run:
+          name: "Build java-jsi-clus-fr"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fr/build.sh
+      - run:
+          name: "Test java-jsi-clus-fr"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fr/tests/test.sh
      # - run:
      #     name: "Build java-jsi-clus-rm"
      #     command: |
