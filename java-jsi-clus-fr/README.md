@@ -28,3 +28,4 @@ where the environment variables are:
 * PARAM_variables: List of target variables
 * PARAM_covariables: List of input variables
 * PARAM_query: Query selecting the data to feed into the algorithm for training
+* PARAM_MODEL_size: How many models should the ensemble contain. (default is MODEL_PARAM_size=100)

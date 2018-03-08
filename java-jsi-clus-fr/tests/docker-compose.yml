@@ -61,9 +61,9 @@ services:
     depends_on:
       - db
 
-  clus_fire_regression_st:
-    image: "hbpmip/java-jsi-clus-fire:latest"
-    container_name: "clus-fire-regression-st"
+  clus_fr_regression_st:
+    image: "hbpmip/java-jsi-clus-fr:latest"
+    container_name: "clus-fr-regression-st"
     restart: "no"
     environment:
       NODE: job_test
@@ -79,15 +79,14 @@ services:
       PARAM_variables: "score_test1"
       PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
-      FUNCTION: java-jsi-clus-fire
-      PARAM_MODEL_pruned: "yes"
-      PARAM_MODEL_minobj: 4
+      FUNCTION: java-jsi-clus-fr
+      PARAM_MODEL_size: 100
     links:
       - "db:db"
 
-  clus_fire_regression_mt:
-    image: "hbpmip/java-jsi-clus-fire:latest"
-    container_name: "clus-fire-regression-mt"
+  clus_fr_regression_mt:
+    image: "hbpmip/java-jsi-clus-fr:latest"
+    container_name: "clus-fr-regression-mt"
     restart: "no"
     environment:
       NODE: job_test
@@ -103,52 +102,7 @@ services:
       PARAM_variables: "score_test1,stress_before_test1,iq,cognitive_task2"
       PARAM_covariables: "practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
-      FUNCTION: java-jsi-clus-fire
-      PARAM_MODEL_pruned: "yes"
-      PARAM_MODEL_minobj: 4
-    links:
-      - "db:db"
-
-  pfa_validator_regression_1:
-    image: "hbpmip/pfa-validator:latest"
-    container_name: "pfa-validator-regression-1"
-    environment:
-      INPUT_METHOD: POSTGRESQL
-      JOB_ID: 1
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: woken
-      DB_USER: woken
-      DB_PASSWORD: wokenpwd
-      DB_TABLE: job_result
-      DB_COLUMN: data
-      FEATURES_DB_HOST: db
-      FEATURES_DB_PORT: 5432
-      FEATURES_DB_NAME: features
-      FEATURES_DB_USER: features
-      FEATURES_DB_PASSWORD: featurespwd
-      FEATURES_DB_TABLE: sample_data
-    links:
-      - "db:db"
-
-  pfa_validator_regression_2:
-    image: "hbpmip/pfa-validator:latest"
-    container_name: "pfa-validator-regression-2"
-    environment:
-      INPUT_METHOD: POSTGRESQL
-      JOB_ID: 2
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: woken
-      DB_USER: woken
-      DB_PASSWORD: wokenpwd
-      DB_TABLE: job_result
-      DB_COLUMN: data
-      FEATURES_DB_HOST: db
-      FEATURES_DB_PORT: 5432
-      FEATURES_DB_NAME: features
-      FEATURES_DB_USER: features
-      FEATURES_DB_PASSWORD: featurespwd
-      FEATURES_DB_TABLE: sample_data
+      FUNCTION: java-jsi-clus-fr
+      PARAM_MODEL_size: 100
     links:
       - "db:db"

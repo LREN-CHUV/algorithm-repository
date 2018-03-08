@@ -4,10 +4,11 @@ import java.util.logging.Logger;
 
 import eu.humanbrainproject.mip.algorithms.jsi.Main;
 import eu.humanbrainproject.mip.algorithms.jsi.common.ClusMeta;
+import eu.humanbrainproject.mip.algorithms.jsi.dummy.DummyModelSerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusDescriptiveSerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusGenericSerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusModelPFASerializer;
-import si.ijs.kt.clus.ext.ensemble.ClusForest;
+import si.ijs.kt.clus.model.ClusModel;
 
 /** @author Martin Breskvar */
 public final class Entrypoint {
@@ -17,13 +18,12 @@ public final class Entrypoint {
 
     try {
       ClusMeta clusMeta = new FRMeta();
-      ClusGenericSerializer<ClusForest> modelSerializer = new FRSerializer();
-      ClusModelPFASerializer<ClusForest> mainSerializer =
-          new ClusModelPFASerializer<>(modelSerializer);
       ClusDescriptiveSerializer modelDescriptiveSerializer = new FRDescriptiveSerializer();
-
-      eu.humanbrainproject.mip.algorithms.jsi.Main<ClusForest> entry =
-          new Main<ClusForest>(mainSerializer, clusMeta, modelDescriptiveSerializer);
+      ClusGenericSerializer<ClusModel> modelSerializer = new DummyModelSerializer();
+      ClusModelPFASerializer<ClusModel> mainSerializer =
+          new ClusModelPFASerializer<>(modelSerializer);
+      eu.humanbrainproject.mip.algorithms.jsi.Main<ClusModel> entry =
+          new Main<ClusModel>(mainSerializer, clusMeta, modelDescriptiveSerializer);
 
       entry.run();
 

@@ -23,7 +23,7 @@ public class FRMeta extends ClusMeta {
     this.DOCUMENTATION = "This is the feature ranking for SOP documentation.";
 
     // 0 = pruned, 1 = original, 2 = rules
-    this.WHICH_MODEL_TO_USE = 0;
+    this.WHICH_MODEL_TO_USE = 1;
 
     // Random forest ranking
     this.CMDLINE_SWITCHES.add("-forest");
