@@ -6,6 +6,7 @@ from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
 
 import logging
 import json
+import argparse
 
 import pandas as pd
 from sklearn.linear_model import SGDRegressor, SGDClassifier
@@ -14,13 +15,14 @@ import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
 
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
+
 DEFAULT_DOCKER_IMAGE = "python-sgd-regression"
 
 
-def main():
-    # Configure logging
-    logging.basicConfig(level=logging.INFO)
-
+def main(job_id, generate_pfa):
     inputs = io_helper.fetch_data()
     dep_var = inputs["data"]["dependent"][0]
     indep_vars = inputs["data"]["independent"]
@@ -31,20 +33,19 @@ def main():
         job_type = 'regression'
 
     # Get existing results with partial model if they exist
-    job_result = io_helper.get_results()
+    if job_id:
+        job_result = io_helper.get_results(job_id=str(job_id))
 
-    if job_result:
         logging.info('Loading existing estimator')
         # reconstruct estimator from metadata in PFA
-        pfa = _extract_metadata(job_result.data)['estimator']
-        estimator = deserialize_sklearn_estimator(pfa)
+        estimator = deserialize_sklearn_estimator(job_result.data)
     else:
         logging.info('Creating new estimator')
         # TODO: SGD-type algorithms require normalized data! how do we do that in incremental learning?
         #   see http://dask-ml.readthedocs.io/en/latest/modules/generated/dask_ml.preprocessing.StandardScaler.html#dask_ml.preprocessing.StandardScaler.partial_fit
         #   for inspiration
         # TODO: add optional parameters to `SGDRegressor`
-
+        # TODO: add more estimators like NaiveBayes, MLPRegressor, etc.
         if job_type == 'regression':
             estimator = SGDRegressor()
         elif job_type == 'classification':
@@ -75,31 +76,38 @@ def main():
     X, y = get_Xy(dep_var, indep_vars)
     X = featurizer.transform(X)
 
+    # Drop NaN values
+    # TODO: how should we treat NaNs?
+    is_null = (pd.isnull(X).any(1) | pd.isnull(y)).values
+    X = X[~is_null, :]
+    y = y[~is_null]
+
     # Train single step
     if job_type == 'classification':
         estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
     else:
         estimator.partial_fit(X, y)
 
-    # Create PFA from the estimator
-    types = [(var['name'], var['type']['name']) for var in indep_vars]
-    pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
-
-    # Add serialized model as metadata for next partial fit
     serialized_estimator = serialize_sklearn_estimator(estimator)
-    pfa['metadata'] = {
-        'estimator': serialized_estimator
-    }
 
-    # Save or update job_result
-    logging.info('Saving PFA to job_results table')
-    pfa = json.dumps(pfa)
-    io_helper.save_results(pfa, '', shapes.Shapes.PFA)
+    if generate_pfa:
+        # Create PFA from the estimator
+        types = [(var['name'], var['type']['name']) for var in indep_vars]
+        pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
 
+        # Add serialized model as metadata
+        pfa['metadata'] = {
+            'estimator': serialized_estimator
+        }
 
-def _extract_metadata(pfa):
-    """Extract metadata from PrettyPFA."""
-    return json.loads(pfa)['metadata']
+        # Save or update job_result
+        logging.info('Saving PFA to job_results table')
+        pfa = json.dumps(pfa)
+        io_helper.save_results(pfa, '', shapes.Shapes.PFA)
+    else:
+        # Save or update job_result
+        logging.info('Saving serialized estimator into job_results table')
+        io_helper.save_results(serialized_estimator, '', shapes.Shapes.JSON)
 
 
 def serialize_sklearn_estimator(estimator):
@@ -127,10 +135,22 @@ def get_Xy(dep_var, indep_vars):
             # infer type automatically
             df[var['name']] = var['series']
     X = pd.DataFrame(df)
-    y = df[dep_var['name']]
+    y = X[dep_var['name']]
     del X[dep_var['name']]
     return X, y
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('compute', choices=['compute'])
+    parser.add_argument('mode', choices=['partial', 'final'])
+    parser.add_argument('--job-id', type=int)
+
+    args = parser.parse_args()
+
+    # > compute partial --job-id 12
+    if args.mode == 'partial':
+        main(args.job_id, generate_pfa=False)
+    # > compute final --job-id 13
+    elif args.mode == 'final':
+        main(args.job_id, generate_pfa=True)

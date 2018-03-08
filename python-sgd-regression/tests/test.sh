@@ -48,11 +48,11 @@ $DOCKER_COMPOSE run woken_db_setup
 
 echo
 echo "Run the sgd-regression-a algorithm..."
-$DOCKER_COMPOSE run sgd-regression-a compute
+$DOCKER_COMPOSE run sgd-regression-a compute partial
 echo "Run the sgd-regression-b algorithm..."
-$DOCKER_COMPOSE run sgd-regression-b compute
+$DOCKER_COMPOSE run sgd-regression-b compute partial --job-id 1
 echo "Run the sgd-regression-c algorithm..."
-$DOCKER_COMPOSE run sgd-regression-c compute
+$DOCKER_COMPOSE run sgd-regression-c compute final --job-id 2
 
 echo
 # Cleanup

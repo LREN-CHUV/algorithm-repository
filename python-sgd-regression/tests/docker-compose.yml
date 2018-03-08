@@ -66,7 +66,6 @@ services:
     restart: "no"
     environment:
       NODE: job_test
-      JOB_ID: 1
       IN_DBAPI: postgresql
       IN_USER: features
       IN_PASSWORD: featurespwd
@@ -82,7 +81,7 @@ services:
       PARAM_variables: "lefthippocampus"
       PARAM_covariables: "minimentalstate,opticchiasm,subjectage"
       PARAM_grouping: ""
-      PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\"},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\"},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\"},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\"}}"
+      PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0}}"
       MODEL_PARAM_design: "factorial"
     volumes:
       - ../mip_helper:/mip_helper
@@ -91,6 +90,7 @@ services:
     extends: sgd-regression-base
     container_name: "sgd-regression-a"
     environment:
+      JOB_ID: '1'
       PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectage FROM cde_features_a LIMIT 100"
     links:
       - "db:db"
@@ -99,6 +99,7 @@ services:
     extends: sgd-regression-base
     container_name: "sgd-regression-b"
     environment:
+      JOB_ID: '2'
       PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectage FROM cde_features_b LIMIT 100"
     links:
       - "db:db"
@@ -107,6 +108,7 @@ services:
     extends: sgd-regression-base
     container_name: "sgd-regression-c"
     environment:
+      JOB_ID: '3'
       PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectage FROM cde_features_c LIMIT 100"
     links:
       - "db:db"

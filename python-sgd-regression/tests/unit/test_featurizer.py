@@ -17,7 +17,7 @@ def test_featurizer():
     pfa = featurizer.generate_pretty_pfa()
     assert X.tolist() == [[1.0, 0.0, 0.0], [1.0, 0.0, 0.5], [0.0, 1.0, 1.0]]
     assert pfa == """
-new(array(double),
-    C(x.c0),
-    arr((x.c1 - 1) / 2)
-);""".strip()
+a.flatten(new(array(array(double)),
+    u.C(input.c0),
+    u.arr((input.c1 - 1) / 2)
+))""".strip()

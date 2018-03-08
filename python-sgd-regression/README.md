@@ -4,7 +4,17 @@
 
 # Python sgd-regression
 
-This is a Python implementation of sgd-regression.
+This is a Python implementation of sgd-regressio.
+
+It has two modes
+
+1. `compute partial --job-id 12`
+2. `compute final --job-id 13`
+
+`partial` mode calls `partial_fit` of scikit-learn estimator and saves intermediate results into job_results table. If
+`--job-id` is specified, it will first load the estimator and continue its training. If not, it will start from scratch.
+
+`final` mode in addition converts estimator into PFA.
 
 
 ## Build (for contributors)

@@ -14,7 +14,7 @@ def test_main_regression(mock_save_results, mock_get_results, mock_fetch_data):
     mock_fetch_data.return_value = fx.inputs_regression()
     mock_get_results.return_value = None
 
-    main()
+    main(job_id=None, generate_pfa=True)
 
     pfa = mock_save_results.call_args[0][0]
     # TODO: convert PFA first and check individual sections instead
@@ -39,7 +39,7 @@ def test_main_classification(mock_save_results, mock_get_results, mock_fetch_dat
     mock_fetch_data.return_value = fx.inputs_classification()
     mock_get_results.return_value = None
 
-    main()
+    main(job_id=None, generate_pfa=True)
 
     pfa = mock_save_results.call_args[0][0]
     # TODO: convert PFA first and check individual sections instead
