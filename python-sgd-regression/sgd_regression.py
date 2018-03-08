@@ -82,11 +82,14 @@ def main(job_id, generate_pfa):
     X = X[~is_null, :]
     y = y[~is_null]
 
-    # Train single step
-    if job_type == 'classification':
-        estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
+    if len(X) == 0:
+        logging.warning("All data are NULL, cannot fit model")
     else:
-        estimator.partial_fit(X, y)
+        # Train single step
+        if job_type == 'classification':
+            estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
+        else:
+            estimator.partial_fit(X, y)
 
     serialized_estimator = serialize_sklearn_estimator(estimator)
 

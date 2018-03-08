@@ -11,12 +11,12 @@ RUN apt-get update
 RUN apt-get install -y git
 
 COPY requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
+
 COPY sgd_regression.py /sgd_regression.py
 
 # TODO: put these dependencies out of /python-sgd-regression
 COPY sklearn_to_pfa /sklearn_to_pfa
-
-RUN pip install -r /requirements.txt
 
 ENTRYPOINT ["python", "/sgd_regression.py"]
 
