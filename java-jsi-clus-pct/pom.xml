@@ -5,7 +5,7 @@
 	<groupId>eu.humanbrainproject.mip.algorithms.jsi</groupId>
 	<artifactId>jsi-clus-pct</artifactId>
 	<packaging>jar</packaging>
-	<version>0.9.4</version><!-- bumpversion -->
+	<version>0.9.5</version><!-- bumpversion -->
 	<name>java-jsi-clus-pct</name>
 
 	<properties>
