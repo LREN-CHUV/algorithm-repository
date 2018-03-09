@@ -47,13 +47,12 @@ $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
 echo
-echo "Run the CLUS PCT algorithm..."
+echo "Run the CLUS PCT TS algorithm..."
 $DOCKER_COMPOSE run clus-pct-ts compute
 
 echo
-# will not run PFA validator because PFA validation fails on multi-target outputs
-#echo "Run PFA validator..."
-#$DOCKER_COMPOSE run pfa_validator
-#echo
+echo "Run PFA validator..."
+$DOCKER_COMPOSE run pfa_validator
+echo
 # Cleanup
 _cleanup
