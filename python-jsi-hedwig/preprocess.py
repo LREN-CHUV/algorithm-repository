@@ -38,7 +38,7 @@ def preprocess_attribute(att, series_map, bins, target=False):
     if type == 'real':
         binned_attributes = binarize(name, series, bins, target=target)
         for att in binned_attributes:
-            series_map[att] = binned_attributes[att]
+            series_map[att.replace('<', 'less_than')] = binned_attributes[att]
     else:
         series_map[name] = series
 
