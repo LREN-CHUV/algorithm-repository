@@ -10,6 +10,7 @@ import argparse
 
 import pandas as pd
 from sklearn.linear_model import SGDRegressor, SGDClassifier
+from sklearn.neural_network import MLPRegressor, MLPClassifier
 import jsonpickle
 import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
@@ -46,21 +47,26 @@ def main(job_id, generate_pfa):
         #   for inspiration
         # TODO: add optional parameters to `SGDRegressor`
         # TODO: add more estimators like NaiveBayes, MLPRegressor, etc.
-        if job_type == 'regression':
-            estimator = SGDRegressor()
-        elif job_type == 'classification':
-            estimator = SGDClassifier()
+        model_parameters = {x['name']: x['value']for x in io_helper._get_parameters()}
+        model_type = model_parameters.pop('type', 'linear_model')
 
-    # Check dependent variable type (should be continuous)
-    # TODO: probably redundant block of code
-    if job_type == 'regression':
-        if dep_var["type"]["name"] not in ["integer", "real"]:
-            logging.warning("Dependent variable should be continuous!")
-            return None
-    elif job_type == 'classification':
-        if dep_var["type"]["name"] not in ['polynominal', 'binominal']:
-            logging.warning("Dependent variable needs to be categorical!")
-            return None
+        if job_type == 'regression':
+            if model_type == 'linear_model':
+                estimator = SGDRegressor(**model_parameters)
+            elif model_type == 'neural_network':
+                estimator = MLPRegressor(**model_parameters)
+            else:
+                raise ValueError('Unknown model type {}'.format(model_type))
+
+        elif job_type == 'classification':
+            if model_type == 'linear_model':
+                estimator = SGDClassifier(**model_parameters)
+            elif model_type == 'neural_network':
+                estimator = MLPClassifier(**model_parameters)
+            elif model_type == 'naive_bayes':
+                estimator = MixedNB(**model_parameters)
+            else:
+                raise ValueError('Unknown model type {}'.format(model_type))
 
     # featurization
     transforms = []

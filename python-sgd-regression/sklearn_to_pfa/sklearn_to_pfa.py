@@ -1,7 +1,7 @@
 # TODO: move to a separate repository or at least python-mip
 from sklearn.linear_model import SGDRegressor, SGDClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import MultinomialNB, GaussianNB
 import numpy as np
 import titus.prettypfa
 
@@ -26,6 +26,8 @@ def sklearn_to_pfa(estimator, types, featurizer=None):
         return _pfa_mlpclassifier(estimator, types, featurizer)
     elif isinstance(estimator, MultinomialNB):
         return _pfa_multinomialnb(estimator, types, featurizer)
+    elif isinstance(estimator, GaussianNB):
+        return _pfa_gaussiannb(estimator, types, featurizer)
     else:
         raise NotImplementedError('Estimator {} is not yet supported'.format(estimator.__class__.__name__))
 
@@ -275,6 +277,57 @@ action:
     return pfa
 
 
+def _pfa_gaussiannb(estimator, types, featurizer):
+    """
+    See https://github.com/opendatagroup/hadrian/wiki/Basic-naive-bayes
+    """
+    input_record = _input_record(types)
+
+    # construct template
+    pretty_pfa = """
+types:
+    Query = record(Query,
+                   sql: string,
+                   variable: string,
+                   covariables: array(string));
+    Distribution = record(Distribution,
+                          stats: array(record(M, mean: double, variance: double)),
+                          logPrior: double);
+    Input = {input_record}
+input: Input
+output: string
+cells:
+    model(array(Distribution)) = [];
+    classes(array(string)) = [];
+fcns:
+{functions}
+action:
+    var x = {featurizer};
+
+    var classLL = a.map(model, fcn(dist: Distribution -> double) {{
+      model.naive.gaussian(x, dist.stats) + dist.logPrior
+    }});
+
+    var norm = a.logsumexp(classLL);
+    var probs = a.map(classLL, fcn(x: double -> double) m.exp(x - norm));
+    classes[a.argmax(probs)]
+    """.format(
+        input_record=input_record, featurizer=featurizer, functions=_functions()
+    ).strip()
+
+    # compile
+    pfa = titus.prettypfa.jsonNode(pretty_pfa)
+
+    # add model from scikit-learn
+    pfa['cells']['classes']['init'] = list(estimator.classes_)
+    pfa['cells']['model']['init'] = [
+        {'stats': [{'mean': m, 'variance': s} for m, s in zip(means, sigmas)], 'logPrior': np.log(prior).tolist()}
+        for prior, means, sigmas in zip(estimator.class_prior_, estimator.theta_, estimator.sigma_)
+    ]
+
+    return pfa
+
+
 def _regression_formula(estimator, types):
     """
     Create regression formula from estimator's coefficients.
@@ -293,7 +346,7 @@ def _construct_featurizer(types):
     return """
 new(array(double),
     {inputs}
-    );
+    )
     """.format(inputs=inputs)
 
 

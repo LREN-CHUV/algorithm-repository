@@ -5,7 +5,7 @@ import pandas as pd
 from titus.genpy import PFAEngine
 from sklearn.linear_model import SGDRegressor, SGDClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import MultinomialNB, GaussianNB
 from sklearn import datasets
 
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
@@ -37,6 +37,12 @@ def _mlp_classifier(X, y, **kwargs):
 
 def _multinomialnb(X, y, **kwargs):
     estimator = MultinomialNB()
+    estimator.partial_fit(X, y, **kwargs)
+    return estimator
+
+
+def _gaussiannb(X, y, **kwargs):
+    estimator = GaussianNB()
     estimator.partial_fit(X, y, **kwargs)
     return estimator
 
@@ -129,6 +135,20 @@ def test_estimator_to_pfa_multinomialnb():
     X = (X > 0).astype(int)
 
     estimator = _multinomialnb(X, y, classes=['a', 'b', 'c'])
+
+    pfa = sklearn_to_pfa(estimator, types)
+
+    estimator_pred = estimator.predict(X)
+    pfa_pred = _predict_pfa(X, types, pfa)
+
+    assert all(estimator_pred == pfa_pred)
+
+
+def test_estimator_to_pfa_gaussiannb():
+    """Check that converted PFA is giving the same results as GaussianNB"""
+    X, y, types = _classification_task()
+
+    estimator = _gaussiannb(X, y, classes=['a', 'b', 'c'])
 
     pfa = sklearn_to_pfa(estimator, types)
 
