@@ -44,16 +44,18 @@ class MixedNB(BaseEstimator, ClassifierMixin):
         return self
 
     def _multi_joint_log_likelihood(self, X):
-        if all(~self.is_nominal):
+        is_nominal = self._is_nominal(X)
+        if all(~is_nominal):
             return 0
 
-        return X[:, self.is_nominal].dot(self.multi_nb.feature_log_prob_.T)
+        return X[:, is_nominal].dot(self.multi_nb.feature_log_prob_.T)
 
     def _gauss_joint_log_likelihood(self, X):
-        if all(self.is_nominal):
+        is_nominal = self._is_nominal(X)
+        if all(is_nominal):
             return 0
 
-        X = X[:, ~self.is_nominal]
+        X = X[:, ~is_nominal]
         joint_log_likelihood = []
         for i in range(np.size(self.gauss_nb.classes_)):
             n_ij = - 0.5 * np.sum(np.log(2. * np.pi * self.gauss_nb.sigma_[i, :]))

@@ -18,6 +18,6 @@ def test_featurizer():
     assert X.tolist() == [[1.0, 0.0, 0.0], [1.0, 0.0, 0.5], [0.0, 1.0, 1.0]]
     assert pfa == """
 a.flatten(new(array(array(double)),
-    u.C(input.c0),
+    u.C(input.c0, new(array(string), "a","b")),
     u.arr((input.c1 - 1) / 2)
 ))""".strip()

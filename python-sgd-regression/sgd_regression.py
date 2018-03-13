@@ -126,7 +126,7 @@ def _create_estimator(job_type):
         elif model_type == 'neural_network':
             estimator = MLPRegressor(**model_parameters)
         else:
-            raise ValueError('Unknown model type {}'.format(model_type))
+            raise ValueError('Unknown model type {} for regression'.format(model_type))
 
     elif job_type == 'classification':
         if model_type == 'linear_model':
@@ -136,7 +136,7 @@ def _create_estimator(job_type):
         elif model_type == 'naive_bayes':
             estimator = MixedNB(**model_parameters)
         else:
-            raise ValueError('Unknown model type {}'.format(model_type))
+            raise ValueError('Unknown model type {} for classification'.format(model_type))
 
     return estimator
 

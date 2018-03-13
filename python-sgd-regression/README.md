@@ -4,17 +4,51 @@
 
 # Python sgd-regression
 
-This is a Python implementation of sgd-regressio.
+This is a Python implementation of [scikit-learn estimators](http://scikit-learn.org/stable/modules/scaling_strategies.html) that use `partial_fit` method for distributed learning.
+
+Implemented methods:
+- `linear_model` - calls `SGDRegressor` or `SGDClassifier`
+- `neural_network` - calls `MLPRegressor` or `MLPClassifier`
+- `naive_bayes` - calls `MixedNB` (mix of `GaussianNB` and `MultinomialNB`), only works for classification tasks
+
+
+## Usage
 
 It has two modes
 
-1. `compute partial --job-id 12`
-2. `compute final --job-id 13`
+```sh
+docker run --rm --env [list of environment variables] hbpmip/python-sgd-regression:VERSION compute partial --job-id 12
+```
 
-`partial` mode calls `partial_fit` of scikit-learn estimator and saves intermediate results into job_results table. If
+which calls `partial_fit` of scikit-learn estimator and saves intermediate results into `job_results` table. If
 `--job-id` is specified, it will first load the estimator and continue its training. If not, it will start from scratch.
 
-`final` mode in addition converts estimator into PFA.
+```sh
+docker run --rm --env [list of environment variables] hbpmip/python-sgd-regression:VERSION compute final --job-id 13
+```
+
+this mode in addition converts estimator into PFA. If you have only one node, calling `naive_bayes` with `compute final`
+will be equivalent to running Naive Bayes in a non-distributed way.
+
+Environment variables are:
+
+* NODE: name of the node (machine) used for execution
+* JOB_ID: ID of the job.
+* IN_JDBC_DRIVER: org.postgresql.Driver
+* IN_JDBC_URL: URL to the input database, e.g. jdbc:postgresql://db:5432/features
+* IN_JDBC_USER: User for the input database
+* IN_JDBC_PASSWORD: Password for the input database
+* OUT_JDBC_DRIVER: org.postgresql.Driver
+* OUT_JDBC_URL: URL to the output database, jdbc:postgresql://db:5432/woken
+* OUT_JDBC_USER: User for the output database
+* OUT_JDBC_PASSWORD: Password for the output database
+* PARAM_variables: Name of the target variable (only one variable is supported for KNN)
+* PARAM_covariables: List of covariables
+* PARAM_query: Query selecting the variables and covariables to feed into the algorithm for training.
+* MODEL_PARAM_type: Type of model to use, could be `linear_model`, `neural_network` or `naive_bayes`
+
+Use additional `MODEL_PARAM_[sklearn_parameter]` envs to specify scikit-learn model parameters (e.g. `MODEL_PARAM_alpha`
+  for Naive Bayes).
 
 
 ## Build (for contributors)
