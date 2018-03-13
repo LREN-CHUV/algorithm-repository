@@ -62,19 +62,36 @@ def _pfa_sgdregressor(estimator, types, featurizer):
         action:
             -2.525797382870301 + 31.7004451488 * input.feature0 + 42.5005713274 * input.feature1
     """
-    formula = _regression_formula(estimator, types)
     input_record = _input_record(types)
 
+    # construct template
     pretty_pfa = """
-input: {input_record}
+types:
+    Query = record(Query,
+                   sql: string,
+                   variable: string,
+                   covariables: array(string));
+    Regression = record(Regression, const: double, coeff: array(double));
+    Input = {input_record}
+input: Input
 output: double
+cells:
+    // query(Query) = {{}};
+    model(Regression) = {{const: 0.0, coeff: []}};
+fcns:
+    {functions}
 action:
-    {formula}
+    var x = {featurizer};
+    model.reg.linear(x, model)
     """.format(
-        input_record=input_record, formula=formula
+        input_record=input_record, featurizer=featurizer, functions=_functions()
     ).strip()
 
+    # compile
     pfa = titus.prettypfa.jsonNode(pretty_pfa)
+
+    # add model from scikit-learn
+    pfa['cells']['model']['init'] = {'const': estimator.intercept_[0], 'coeff': list(estimator.coef_)}
 
     return pfa
 
@@ -418,26 +435,13 @@ action:
     return pfa
 
 
-def _regression_formula(estimator, types):
-    """
-    Create regression formula from estimator's coefficients.
-
-    Example output:
-        1.2 + 3.45 * input.featureA + 6.78 * input.featureB
-    """
-    feature_names = ['input.' + c for c, _ in types]
-    return ' + '.join(
-        [str(estimator.intercept_[0])] + ['{} * {}'.format(a, b) for a, b in zip(estimator.coef_, feature_names)]
-    )
-
-
 def _construct_featurizer(types):
     inputs = ',\n'.join(['input.' + name for name, _ in types])
     return """
 new(array(double),
     {inputs}
     )
-    """.format(inputs=inputs)
+    """.format(inputs=inputs).strip()
 
 
 def _input_record(types):
