@@ -2,6 +2,7 @@
 from sklearn.linear_model import SGDRegressor, SGDClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.naive_bayes import MultinomialNB, GaussianNB
+from .mixed_nb import MixedNB
 import numpy as np
 import titus.prettypfa
 
@@ -28,6 +29,8 @@ def sklearn_to_pfa(estimator, types, featurizer=None):
         return _pfa_multinomialnb(estimator, types, featurizer)
     elif isinstance(estimator, GaussianNB):
         return _pfa_gaussiannb(estimator, types, featurizer)
+    elif isinstance(estimator, MixedNB):
+        return _pfa_mixednb(estimator, types, featurizer)
     else:
         raise NotImplementedError('Estimator {} is not yet supported'.format(estimator.__class__.__name__))
 
@@ -268,7 +271,6 @@ action:
 
     # add model from scikit-learn
     pfa['cells']['classes']['init'] = list(estimator.classes_)
-    # NOTE: `model.neural.simpleLayers` accepts transposed matrices
     pfa['cells']['model']['init'] = [
         {'logLikelihoods': ll.tolist(), 'logPrior': log_prior.tolist()}
         for log_prior, ll in zip(estimator.class_log_prior_, np.exp(estimator.feature_log_prob_))
@@ -328,6 +330,78 @@ action:
     return pfa
 
 
+def _pfa_mixednb(estimator, types, featurizer):
+    input_record = _input_record(types)
+
+    # construct template
+    pretty_pfa = """
+types:
+    Query = record(Query,
+                   sql: string,
+                   variable: string,
+                   covariables: array(string));
+    GaussianDistribution = record(GaussianDistribution,
+                                  stats: array(record(M, mean: double, variance: double)));
+    MultinomialDistribution = record(MultinomialDistribution,
+                                     logLikelihoods: array(double));
+    Input = {input_record}
+input: Input
+output: string
+cells:
+    gaussModel(array(GaussianDistribution)) = [];
+    multinomialModel(array(MultinomialDistribution)) = [];
+    classes(array(string)) = [];
+    logPrior(array(double)) = [];
+fcns:
+{functions}
+action:
+    var x = {featurizer};
+
+    var gaussFeatures = if( a.len(gaussModel) > 0 ) a.len(gaussModel[0,"stats"]) else 0;
+
+    var gaussianLL = a.map(gaussModel, fcn(dist: GaussianDistribution -> double) {{
+        model.naive.gaussian(a.subseq(x, 0, gaussFeatures), dist.stats)
+    }});
+
+    var multinomialLL = a.map(multinomialModel, fcn(dist: MultinomialDistribution -> double) {{
+        model.naive.multinomial(a.subseq(x, gaussFeatures, a.len(x)), dist.logLikelihoods)
+    }});
+
+    var classLL = logPrior;
+    if (a.len(gaussianLL) > 0)
+        classLL = la.add(classLL, gaussianLL);
+    if (a.len(multinomialLL) > 0)
+        classLL = la.add(classLL, multinomialLL);
+
+    var norm = a.logsumexp(classLL);
+    var probs = a.map(classLL, fcn(x: double -> double) m.exp(x - norm));
+    classes[a.argmax(probs)]
+    """.format(
+        input_record=input_record, featurizer=featurizer, functions=_functions()
+    ).strip()
+
+    # compile
+    pfa = titus.prettypfa.jsonNode(pretty_pfa)
+
+    # add model from scikit-learn
+    pfa['cells']['classes']['init'] = list(estimator.classes_)
+    pfa['cells']['logPrior']['init'] = estimator.class_log_prior_.tolist()
+
+    # assumes that continuous features go before nominal ones
+    if hasattr(estimator.gauss_nb, 'theta_'):
+        pfa['cells']['gaussModel']['init'] = [
+            {'stats': [{'mean': m, 'variance': s} for m, s in zip(means, sigmas)]}
+            for means, sigmas in zip(estimator.gauss_nb.theta_, estimator.gauss_nb.sigma_)
+        ]
+    if hasattr(estimator.multi_nb, 'feature_log_prob_'):
+        pfa['cells']['multinomialModel']['init'] = [
+            {'logLikelihoods': ll.tolist()}
+            for ll in np.exp(estimator.multi_nb.feature_log_prob_)
+        ]
+
+    return pfa
+
+
 def _regression_formula(estimator, types):
     """
     Create regression formula from estimator's coefficients.
@@ -362,6 +436,8 @@ def _fix_types_compatibility(types):
     for name, typ in types:
         if typ == 'real':
             typ = 'double'
+        elif typ in ('polynominal', 'binominal'):
+            typ = 'string'
         new_types.append((name, typ))
     return new_types
 

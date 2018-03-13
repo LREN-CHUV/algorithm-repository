@@ -3,6 +3,7 @@
 from mip_helper import io_helper, shapes
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
 from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
+from sklearn_to_pfa.mixed_nb import MixedNB
 
 import logging
 import json
@@ -38,35 +39,10 @@ def main(job_id, generate_pfa):
         job_result = io_helper.get_results(job_id=str(job_id))
 
         logging.info('Loading existing estimator')
-        # reconstruct estimator from metadata in PFA
         estimator = deserialize_sklearn_estimator(job_result.data)
     else:
         logging.info('Creating new estimator')
-        # TODO: SGD-type algorithms require normalized data! how do we do that in incremental learning?
-        #   see http://dask-ml.readthedocs.io/en/latest/modules/generated/dask_ml.preprocessing.StandardScaler.html#dask_ml.preprocessing.StandardScaler.partial_fit
-        #   for inspiration
-        # TODO: add optional parameters to `SGDRegressor`
-        # TODO: add more estimators like NaiveBayes, MLPRegressor, etc.
-        model_parameters = {x['name']: x['value']for x in io_helper._get_parameters()}
-        model_type = model_parameters.pop('type', 'linear_model')
-
-        if job_type == 'regression':
-            if model_type == 'linear_model':
-                estimator = SGDRegressor(**model_parameters)
-            elif model_type == 'neural_network':
-                estimator = MLPRegressor(**model_parameters)
-            else:
-                raise ValueError('Unknown model type {}'.format(model_type))
-
-        elif job_type == 'classification':
-            if model_type == 'linear_model':
-                estimator = SGDClassifier(**model_parameters)
-            elif model_type == 'neural_network':
-                estimator = MLPClassifier(**model_parameters)
-            elif model_type == 'naive_bayes':
-                estimator = MixedNB(**model_parameters)
-            else:
-                raise ValueError('Unknown model type {}'.format(model_type))
+        estimator = _create_estimator(job_type)
 
     # featurization
     transforms = []
@@ -74,7 +50,18 @@ def main(job_id, generate_pfa):
         if var['type']['name'] in ('integer', 'real'):
             transforms.append(Standardize(var['name'], var['mean'], var['std']))
         elif var["type"]["name"] in ['polynominal', 'binominal']:
-            transforms.append(OneHotEncoding(var['name'], var['enumeration']))
+            transforms.append(OneHotEncoding(var['name'], var['type']['enumeration']))
+
+    # for NaiveBayes, continuous variables must go before nominal ones
+    if isinstance(estimator, MixedNB):
+        transforms = sorted(transforms, key=lambda x: not isinstance(x, Standardize))
+        is_nominal = []
+        for tf in transforms:
+            if isinstance(tf, Standardize):
+                is_nominal.append(False)
+            elif isinstance(tf, OneHotEncoding):
+                is_nominal += [True] * len(tf.enumerations)
+        estimator.is_nominal = is_nominal
 
     featurizer = Featurizer(transforms)
 
@@ -127,6 +114,31 @@ def serialize_sklearn_estimator(estimator):
 def deserialize_sklearn_estimator(js):
     """Deserialize model from JSON."""
     return jsonpickle.decode(js)
+
+
+def _create_estimator(job_type):
+    model_parameters = {x['name']: x['value']for x in io_helper._get_parameters()}
+    model_type = model_parameters.pop('type', 'linear_model')
+
+    if job_type == 'regression':
+        if model_type == 'linear_model':
+            estimator = SGDRegressor(**model_parameters)
+        elif model_type == 'neural_network':
+            estimator = MLPRegressor(**model_parameters)
+        else:
+            raise ValueError('Unknown model type {}'.format(model_type))
+
+    elif job_type == 'classification':
+        if model_type == 'linear_model':
+            estimator = SGDClassifier(**model_parameters)
+        elif model_type == 'neural_network':
+            estimator = MLPClassifier(**model_parameters)
+        elif model_type == 'naive_bayes':
+            estimator = MixedNB(**model_parameters)
+        else:
+            raise ValueError('Unknown model type {}'.format(model_type))
+
+    return estimator
 
 
 def get_Xy(dep_var, indep_vars):

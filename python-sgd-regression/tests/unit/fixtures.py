@@ -40,7 +40,7 @@ def independent(include_categorical=False):
 
 
 @pytest.fixture
-def inputs_regression():
+def inputs_regression(**kwargs):
     return {
         'data': {
             'dependent': [
@@ -54,14 +54,14 @@ def inputs_regression():
                     ]
                 }
             ],
-            'independent': independent()
+            'independent': independent(**kwargs)
         },
         'parameters': []
     }
 
 
 @pytest.fixture
-def inputs_classification():
+def inputs_classification(**kwargs):
     return {
         'data': {
             'dependent': [
@@ -76,7 +76,7 @@ def inputs_classification():
                     ]
                 }
             ],
-            'independent': independent()
+            'independent': independent(**kwargs)
         },
         'parameters': []
     }

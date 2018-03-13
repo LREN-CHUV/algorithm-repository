@@ -60,4 +60,5 @@ class OneHotEncoding(Transform):
         return Y
 
     def pfa(self):
-        return 'u.C(input.{col})'.format(col=self.col)
+        categories = ','.join(['"{}"'.format(x) for x in self.enumerations])
+        return 'u.C(input.{col}, new(array(string), {categories}))'.format(col=self.col, categories=categories)

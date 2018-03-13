@@ -1,5 +1,6 @@
 # TODO: run pytest command `python -m pytest tests/test_pfa_sklearn.py --capture=no` from docker
 
+import pytest
 import numpy as np
 import pandas as pd
 from titus.genpy import PFAEngine
@@ -9,6 +10,7 @@ from sklearn.naive_bayes import MultinomialNB, GaussianNB
 from sklearn import datasets
 
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
+from sklearn_to_pfa.mixed_nb import MixedNB
 
 
 def _sgd_regressor(X, y):
@@ -43,6 +45,12 @@ def _multinomialnb(X, y, **kwargs):
 
 def _gaussiannb(X, y, **kwargs):
     estimator = GaussianNB()
+    estimator.partial_fit(X, y, **kwargs)
+    return estimator
+
+
+def _mixednb(X, y, is_nominal, **kwargs):
+    estimator = MixedNB(is_nominal=is_nominal)
     estimator.partial_fit(X, y, **kwargs)
     return estimator
 
@@ -149,6 +157,24 @@ def test_estimator_to_pfa_gaussiannb():
     X, y, types = _classification_task()
 
     estimator = _gaussiannb(X, y, classes=['a', 'b', 'c'])
+
+    pfa = sklearn_to_pfa(estimator, types)
+
+    estimator_pred = estimator.predict(X)
+    pfa_pred = _predict_pfa(X, types, pfa)
+
+    assert all(estimator_pred == pfa_pred)
+
+
+@pytest.mark.parametrize('n_continuous', [0, 3, 5])
+def test_estimator_to_pfa_mixednb(n_continuous):
+    """Check that converted PFA is giving the same results as MixedNB"""
+    X, y, types = _classification_task()
+
+    # convert some features to nominal ones (one-hot encoded)
+    X[:, n_continuous:] = (X[:, n_continuous:] > 0).astype(int)
+
+    estimator = _mixednb(X, y, is_nominal=[False] * n_continuous + [True] * (5 - n_continuous), classes=['a', 'b', 'c'])
 
     pfa = sklearn_to_pfa(estimator, types)
 

@@ -70,6 +70,32 @@ def test_main_classification(mock_save_results, mock_get_results, mock_fetch_dat
     engine.action({'stress_before_test1': 10., 'iq': 10.})
 
 
+@mock.patch('sgd_regression.io_helper.fetch_data')
+@mock.patch('sgd_regression.io_helper.get_results')
+@mock.patch('sgd_regression.io_helper.save_results')
+@mock.patch('sgd_regression.io_helper._get_parameters')
+def test_main_classification_naive_bayes(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data):
+    # create mock objects from database
+    mock_parameters.return_value = [{'name': 'type', 'value': 'naive_bayes'}]
+    mock_fetch_data.return_value = fx.inputs_classification(include_categorical=True)
+    mock_get_results.return_value = None
+
+    main(job_id=None, generate_pfa=True)
+
+    pfa = mock_save_results.call_args[0][0]
+    # TODO: convert PFA first and check individual sections instead
+    pfa_dict = json.loads(pfa)
+
+    # deserialize model
+    estimator = deserialize_sklearn_estimator(pfa_dict['metadata']['estimator'])
+    assert estimator.__class__.__name__ == 'MixedNB'
+
+    # make some prediction with PFA
+    from titus.genpy import PFAEngine
+    engine, = PFAEngine.fromJson(pfa_dict)
+    engine.action({'stress_before_test1': 10., 'iq': 10., 'agegroup': '50-59y'})
+
+
 def test_deserialize_sklearn_estimator():
     X, y = datasets.make_regression(n_samples=100, n_features=10)
     estimator = SGDRegressor().fit(X, y)
