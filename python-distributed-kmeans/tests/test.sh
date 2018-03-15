@@ -46,13 +46,14 @@ echo "Initialise the databases..."
 $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
+
 echo
-echo "Run the sgd-regression-a algorithm..."
-$DOCKER_COMPOSE run sgd-regression-a compute partial
-echo "Run the sgd-regression-b algorithm..."
-$DOCKER_COMPOSE run sgd-regression-b compute partial --job-id 1
-echo "Run the sgd-regression-c algorithm..."
-$DOCKER_COMPOSE run sgd-regression-c compute final --job-id 2
+echo "Run the distributed-kmeans-a..."
+$DOCKER_COMPOSE run distributed-kmeans-a compute --mode intermediate
+echo "Run the distributed-kmeans-b..."
+$DOCKER_COMPOSE run distributed-kmeans-b compute --mode intermediate
+echo "Run the distributed-kmeans-agg..."
+$DOCKER_COMPOSE run distributed-kmeans-agg compute --mode aggregate --job-ids 1 2
 
 echo
 # Cleanup
