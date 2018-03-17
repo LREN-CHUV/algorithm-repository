@@ -6,9 +6,9 @@ ENV DOCKER_IMAGE=hbpmip/python-histograms:0.3.6 \
     FUNCTION=python-histograms
 
 COPY requirements.txt /requirements.txt
-COPY histograms.py /histograms.py
-
 RUN pip install -r /requirements.txt
+
+COPY histograms.py /histograms.py
 
 ENTRYPOINT ["python", "/histograms.py"]
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from io_helper import io_helper
+from mip_helper import io_helper
 
 import logging
 import json
@@ -15,29 +15,39 @@ BINS_PARAM = "bins"
 DEFAULT_BINS = 20
 
 
+class UserError(Exception):
+
+    pass
+
+
 def main():
     # Configure logging
     logging.basicConfig(level=logging.INFO)
 
-    # Read inputs
-    inputs = io_helper.fetch_data()
     try:
-        dep_var = inputs["data"]["dependent"][0]
-    except KeyError:
-        logging.warning("Cannot find dependent variables data")
-        dep_var = []
-    try:
-        indep_vars = inputs["data"]["independent"]
-    except KeyError:
-        logging.warning("Cannot find independent variables data")
-        indep_vars = []
-    nb_bins = get_bins_param(inputs["parameters"], BINS_PARAM)
+        # Read inputs
+        inputs = io_helper.fetch_data()
+        try:
+            dep_var = inputs["data"]["dependent"][0]
+        except KeyError:
+            logging.warning("Cannot find dependent variables data")
+            dep_var = []
+        try:
+            indep_vars = inputs["data"]["independent"]
+        except KeyError:
+            logging.warning("Cannot find independent variables data")
+            indep_vars = []
+        nb_bins = get_bins_param(inputs["parameters"], BINS_PARAM)
 
-    # Compute histograms (JSON formatted for HighCharts)
-    histograms_results = compute_histograms(dep_var, indep_vars, nb_bins)
+        # Compute histograms (JSON formatted for HighCharts)
+        histograms_results = compute_histograms(dep_var, indep_vars, nb_bins)
 
-    # Store results
-    io_helper.save_results(histograms_results, '', 'application/highcharts+json')
+        # Store results
+        io_helper.save_results(histograms_results, '', 'application/highcharts+json')
+    except UserError as e:
+        logging.error(e)
+        # Store error
+        io_helper.save_results('', str(e), 'application/highcharts+json')
 
 
 def compute_histograms(dep_var, indep_vars, nb_bins=DEFAULT_BINS):
@@ -76,6 +86,9 @@ def compute_histogram(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
 
 
 def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
+    if len(dep_var['series']) == 0:
+        raise UserError('Dependent variable {} is empty.'.format(dep_var['name']))
+
     if is_nominal(dep_var):
         categories = [str(c) for c in dep_var['type']['enumeration']]
         categories_labels = categories
