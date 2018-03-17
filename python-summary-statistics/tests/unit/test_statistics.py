@@ -16,6 +16,7 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
         {
             'index': 'agegroup',
             'group': ['-50y'],
+            'group_variables': ['agegroup'],
             'count': 3,
             'unique': 1,
             'top': '-50y',
@@ -28,6 +29,7 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
         }, {
             'index': 'iq',
             'group': ['-50y'],
+            'group_variables': ['agegroup'],
             'count': 3,
             'mean': 73.7882673088,
             'std': 0.2018918769,
@@ -41,23 +43,52 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
     ]
 
 
+@mock.patch('statistics.io_helper.fetch_data')
+@mock.patch('statistics.io_helper.save_results')
+def test_intermediate_stats_empty(mock_save_results, mock_fetch_data):
+    data = fx.inputs_regression(include_categorical=True)
+    data['data']['dependent'][0]['series'] = []
+    mock_fetch_data.return_value = data
+
+    intermediate_stats()
+    error = mock_save_results.call_args[0][1]
+    assert error == 'Dependent variable has no values, check your SQL query.'
+
+
 def intermediate_data_1():
-    return [{'index': 'iq', 'group': ['-50y'], 'count': 3, 'mean': 80, 'std': 10, 'min': 70, 'max': 120, 'EX^2': 8000}]
+    return {
+        'schema': {},
+        'data':
+        [{
+            'index': 'iq',
+            'group': ['-50y'],
+            'group_variables': ['agegroup'],
+            'count': 3,
+            'mean': 80,
+            'std': 10,
+            'min': 70,
+            'max': 120,
+            'EX^2': 8000
+        }]
+    }
 
 
 def intermediate_data_2():
-    return [
-        {
+    return {
+        'schema': {},
+        'data':
+        [{
             'index': 'iq',
             'group': ['-50y'],
+            'group_variables': ['agegroup'],
             'count': 5,
             'mean': 100,
             'std': 20,
             'min': 80,
             'max': 130,
             'EX^2': 12000
-        }
-    ]
+        }]
+    }
 
 
 @mock.patch('statistics.io_helper.get_results')
@@ -65,19 +96,20 @@ def intermediate_data_2():
 def test_aggregate_stats(mock_save_results, mock_get_results):
 
     def mock_results(job_id):
-        if job_id == 1:
-            return {'data': json.dumps(intermediate_data_1())}
-        elif job_id == 2:
-            return {'data': json.dumps(intermediate_data_2())}
+        if job_id == '1':
+            return mock.MagicMock(data=json.dumps(intermediate_data_1()))
+        elif job_id == '2':
+            return mock.MagicMock(data=json.dumps(intermediate_data_2()))
 
     mock_get_results.side_effect = mock_results
 
-    aggregate_stats([1, 2])
+    aggregate_stats(['1', '2'])
     results = json.loads(mock_save_results.call_args[0][0])
     assert results['data'] == [
         {
             'index': 'iq',
             'group': ['-50y'],
+            'group_variables': ['agegroup'],
             'mean': 92.5,
             'std': 44.0879802214,
             'min': 70,
@@ -86,6 +118,7 @@ def test_aggregate_stats(mock_save_results, mock_get_results):
         }, {
             'index': 'iq',
             'group': ['all'],
+            'group_variables': ['agegroup'],
             'mean': 92.5,
             'std': 44.0879802214,
             'min': 70,
