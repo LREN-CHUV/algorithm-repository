@@ -1,2 +1,4 @@
 pre-commit>=0.13
-nose
+mock
+pytest
+ipdb
