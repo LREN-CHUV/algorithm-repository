@@ -119,7 +119,7 @@ def intermediate_stats():
         logging.info("DONE")
     except UserError as e:
         logging.error(e)
-        io_helper.save_results('', str(e), shapes.Shapes.JSON)
+        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
 
 
 def _calc_stats(group, group_name, group_variables):
@@ -167,7 +167,7 @@ def aggregate_stats(job_ids):
         logging.info("DONE")
     except UserError as e:
         logging.error(e)
-        io_helper.save_results('', str(e), shapes.Shapes.JSON)
+        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
 
 
 def _load_intermediate_data(job_ids):
