@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from mip_helper import io_helper
+from mip_helper import io_helper, shapes
 
 import logging
 import json
@@ -52,7 +52,7 @@ def main():
         histograms_results = compute_histograms(dep_var, indep_vars, nb_bins)
 
         # Store results
-        io_helper.save_results(histograms_results, '', 'application/highcharts+json')
+        io_helper.save_results(histograms_results, '', shapes.Shapes.HIGHCHARTS)
     except UserError as e:
         try:
             logging.error(e)
@@ -103,7 +103,7 @@ def aggregate_histograms(job_ids):
         results.append(result)
 
     logging.info("Results:\n{}".format(results))
-    io_helper.save_results(pd.json.dumps(results), '', 'application/highcharts+json')
+    io_helper.save_results(pd.json.dumps(results), '', shapes.Shapes.HIGHCHARTS)
 
 
 def _load_intermediate_data(job_ids):

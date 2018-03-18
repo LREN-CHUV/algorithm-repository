@@ -23,6 +23,7 @@ RUN apt-get update
 RUN apt-get install -y git
 
 COPY requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt --upgrade
 
 COPY histograms.py /histograms.py
 
