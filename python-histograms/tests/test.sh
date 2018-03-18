@@ -46,9 +46,17 @@ echo "Initialise the databases..."
 $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
+# echo
+# echo "Run the Histograms algorithm..."
+# $DOCKER_COMPOSE run histograms compute
+
 echo
-echo "Run the Histograms algorithm..."
-$DOCKER_COMPOSE run histograms compute
+echo "Run the histograms-a..."
+$DOCKER_COMPOSE run histograms-a compute --mode intermediate
+echo "Run the histograms-b..."
+$DOCKER_COMPOSE run histograms-b compute --mode intermediate
+echo "Run the histograms-agg..."
+$DOCKER_COMPOSE run histograms-agg compute --mode aggregate --job-ids 1 2
 
 echo
 # Cleanup

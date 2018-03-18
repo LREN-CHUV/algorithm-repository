@@ -13,6 +13,8 @@ def independent(include_categorical=False):
             ],
             'mean': 55,
             'std': 20.,
+            'minValue': 35,
+            'maxValue': 75,
         }, {
             'name': 'iq',
             'type': {
@@ -23,6 +25,8 @@ def independent(include_categorical=False):
             ],
             'mean': 72,
             'std': 10.,
+            'minValue': 60,
+            'maxValue': 80,
         }
     ]
     if include_categorical:
@@ -51,7 +55,11 @@ def inputs_regression(**kwargs):
                     },
                     'series': [
                         846.2601464093, 1257.859885233, 1070.6406427181, 1040.8477167398, 1173.4546177907, 1189.9664245547
-                    ]
+                    ],
+                    'mean': 1000.,
+                    'std': 200.,
+                    'minValue': 700.,
+                    'maxValue': 1300.,
                 }
             ],
             'independent': independent(**kwargs)

@@ -19,8 +19,10 @@ MAINTAINER mirco.nasuti@chuv.ch
 ENV DOCKER_IMAGE=hbpmip/python-histograms:0.3.7 \
     FUNCTION=python-histograms
 
+RUN apt-get update
+RUN apt-get install -y git
+
 COPY requirements.txt /requirements.txt
-RUN pip install -r /requirements.txt
 
 COPY histograms.py /histograms.py
 
