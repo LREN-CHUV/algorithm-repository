@@ -40,6 +40,7 @@ OUTPUT_SCHEMA_INTERMEDIATE = {
             {'name': 'group', 'type': 'list'},
             {'name': 'index', 'type': 'string'},
             {'name': 'count', 'type': 'int'},
+            {'name': 'null_count', 'type': 'int'},
             {'name': 'unique', 'type': 'int'},
             {'name': 'top', 'type': 'string'},
             {'name': 'frequency', 'type': 'object'},
@@ -65,6 +66,7 @@ OUTPUT_SCHEMA_AGGREGATE = {
             {'name': 'group', 'type': 'list'},
             {'name': 'index', 'type': 'string'},
             {'name': 'count', 'type': 'int'},
+            {'name': 'null_count', 'type': 'int'},
             {'name': 'frequency', 'type': 'object'},
             {'name': 'mean', 'type': 'number'},
             {'name': 'std', 'type': 'number'},
@@ -127,7 +129,7 @@ def _calc_stats(group, group_name, group_variables):
     for name, x in group.items():
         result = {
             'index': name,
-            'group': map(str, group_name),
+            'group': list(map(str, group_name)),
             'group_variables': group_variables,
         }
 
@@ -141,6 +143,7 @@ def _calc_stats(group, group_name, group_variables):
             result['EX^2'] = np.mean(x**2)
 
         result['count'] = len(x)
+        result['null_count'] = pd.isnull(x).sum()
         results.append(result)
 
     return results
@@ -195,6 +198,7 @@ def _agg_stats(gf, group_name, index):
         'min': gf['min'].min(),
         'max': gf['max'].max(),
         'count': gf['count'].sum(),
+        'null_count': gf['null_count'].sum(),
     }
 
 
