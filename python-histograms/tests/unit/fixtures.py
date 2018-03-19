@@ -44,8 +44,8 @@ def independent(include_categorical=False):
 
 
 @pytest.fixture
-def inputs_regression(**kwargs):
-    return {
+def inputs_regression(add_null=False, **kwargs):
+    data = {
         'data': {
             'dependent': [
                 {
@@ -66,6 +66,9 @@ def inputs_regression(**kwargs):
         },
         'parameters': []
     }
+    if add_null:
+        data['data']['dependent'][0]['series'][0] = None
+    return data
 
 
 @pytest.fixture

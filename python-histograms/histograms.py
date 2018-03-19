@@ -196,23 +196,31 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
             categories.append('None')
             categories_labels.append('No data')
     else:
-        # calculate min and max if not available in variable
-        values = dep_var['series']
-        minimum = dep_var.get('minValue', min(values))
-        maximum = dep_var.get('maxValue', max(values))
+        # calculate min and max if not available in variable (ignore null values)
+        values = pd.Series(dep_var['series'])
+        minimum = dep_var.get('minValue', values.min())
+        maximum = dep_var.get('maxValue', values.max())
 
-        if is_integer(dep_var):
-            step = math.ceil((maximum - minimum) / nb_bins)
-            categories = list(arange(minimum, maximum, step).tolist())
-            categories_labels = ["%d - %d" % (v, v + step) for v in categories]
+        all_nulls = values.isnull().all()
+
+        if all_nulls:
+            categories = ['None']
+            categories_labels = ['No data']
         else:
-            step = (maximum - minimum) / nb_bins
-            categories = list(arange(minimum, maximum, step).tolist())
-            categories_labels = ["%s - %s" % ("{:.2f}".format(v), "{:.2f}".format(v + step)) for v in categories]
-            categories.append(categories[-1] + step)
+            if is_integer(dep_var):
+                step = math.ceil((maximum - minimum) / nb_bins)
+                categories = list(arange(minimum, maximum, step).tolist())
+                categories_labels = ["%d - %d" % (v, v + step) for v in categories]
+            else:
+                step = (maximum - minimum) / nb_bins
+                categories = list(arange(minimum, maximum, step).tolist())
+                categories_labels = ["%s - %s" % ("{:.2f}".format(v), "{:.2f}".format(v + step)) for v in categories]
+                categories.append(categories[-1] + step)
+
             if has_nulls:
                 categories.append('None')
                 categories_labels.append('No data')
+
     return categories, categories_labels
 
 
@@ -228,21 +236,26 @@ def compute_series(dep_var, categories, grouping_var=None):
                 series.append({"name": series_name, "data": count(filtered_data, categories)})
     else:
         if not grouping_var:
-            # remove NULL values
-            values = pd.Series(dep_var['series']).dropna()
-            series.append({"name": 'all', "data": [int(i) for i in histogram(values, categories)[0]]})
+            values = pd.Series(dep_var['series'])
+
+            if has_nulls:
+                data = [int(i) for i in histogram(values.dropna(), categories[:-1])[0]] + [int(values.isnull().sum())]
+            else:
+                data = [int(i) for i in histogram(values, categories)[0]]
+
+            series.append({"name": 'all', "data": data})
         else:
             values = pd.Series(dep_var['series'])
-            grouping_values = pd.Series(grouping_var['series']).fillna('NaN')
-
-            # remove NULL
-            ix = values.notnull()
-            values = values.loc[ix]
-            grouping_values = grouping_values.loc[ix]
+            grouping_values = pd.Series(grouping_var['series']).fillna('No data')
 
             for series_name in grouping_var['type']['enumeration']:
-                filtered_data = [v for v, d in zip(values, grouping_values) if d == series_name]
-                series.append({"name": series_name, "data": [int(i) for i in histogram(filtered_data, categories)[0]]})
+                filtered_data = pd.Series([v for v, d in zip(values, grouping_values) if d == series_name])
+                if has_nulls:
+                    data = [int(i) for i in histogram(filtered_data.dropna(), categories[:-1])[0]] + [int(filtered_data.isnull().sum())]
+                else:
+                    data = [int(i) for i in histogram(filtered_data, categories)[0]]
+
+                series.append({"name": series_name, "data": data})
     return series
 
 
@@ -270,6 +283,7 @@ def get_bins_param(params_list, param_name):
     logging.info("Using default number of bins: %s" % DEFAULT_BINS)
     return DEFAULT_BINS
 
+
 def get_boolean_param(params_list, param_name, default_value):
     for p in params_list:
         if p["name"] == param_name:
@@ -279,6 +293,7 @@ def get_boolean_param(params_list, param_name, default_value):
                 logging.warning("%s cannot be cast to boolean !")
     logging.info("Using default value: %s for %s" % (default_value, param_name))
     return default_value
+
 
 def is_nominal(var):
     return var['type']['name'] in ['binominal', 'polynominal']
