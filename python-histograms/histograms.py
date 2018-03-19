@@ -133,9 +133,13 @@ def error_histogram(dep_var, grouping_var=None):
 def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
     if len(dep_var['series']) == 0:
         raise UserError('Dependent variable {} is empty.'.format(dep_var['name']))
+    has_nulls = None in dep_var['series']
     if is_nominal(dep_var):
         categories = [str(c) for c in dep_var['type']['enumeration']]
         categories_labels = categories
+        if has_nulls:
+            categories.append('None')
+            categories_labels.append('No data')
     elif is_integer(dep_var):
         values = dep_var['series']
         minimum = min(values)
@@ -151,11 +155,15 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
         categories = list(arange(minimum, maximum, step).tolist())
         categories_labels = ["%s - %s" % ("{:.2f}".format(v), "{:.2f}".format(v + step)) for v in categories]
         categories.append(categories[-1] + step)
+        if has_nulls:
+            categories.append('None')
+            categories_labels.append('No data')
     return categories, categories_labels
 
 
 def compute_series(dep_var, categories, grouping_var=None):
     series = list()
+    has_nulls = None in dep_var['series']
     if is_nominal(dep_var):
         if not grouping_var:
             series.append({"name": "all", "data": count(dep_var['series'], categories)})
@@ -177,9 +185,13 @@ def count(data, categories):
     items_count = OrderedDict([(c, 0) for c in categories])
     for v in data:
         try:
-            items_count[str(v)] += 1
+            if v is None:
+                items_count['None'] += 1
+            else:
+                items_count[str(v)] += 1
         except KeyError:
             logging.warning("Unknown category %s" % str(v))
+            logging.warning("Data: %s" % data)
     return list(items_count.values())
 
 
