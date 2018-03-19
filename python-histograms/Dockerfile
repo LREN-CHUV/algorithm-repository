@@ -1,6 +1,10 @@
-FROM hbpmip/python-mip:0.2.6
+FROM hbpmip/python-mip:0.3.0
 
 MAINTAINER mirco.nasuti@chuv.ch
+
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
 
 ENV DOCKER_IMAGE=hbpmip/python-histograms:0.3.6 \
     FUNCTION=python-histograms
