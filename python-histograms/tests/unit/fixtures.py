@@ -80,3 +80,24 @@ def inputs_classification(**kwargs):
         },
         'parameters': []
     }
+
+@pytest.fixture
+def inputs_no_values(**kwargs):
+    return {
+        'data': {
+            'dependent': [
+                {
+                    'name': 'score_test1',
+                    'type': {
+                        'name': 'polynominal',
+                        'enumeration': ['AD', 'CN', 'Other']
+                    },
+                    'series': [
+                        'AD', 'CN', 'Other', 'AD', 'CN', 'Other'
+                    ]
+                }
+            ],
+            'independent': {'name': 'tiv', 'type': {'name': 'real'}, 'series': []}
+        },
+        'parameters': []
+    }
