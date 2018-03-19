@@ -87,17 +87,17 @@ def inputs_no_values(**kwargs):
         'data': {
             'dependent': [
                 {
-                    'name': 'score_test1',
-                    'type': {
-                        'name': 'polynominal',
-                        'enumeration': ['AD', 'CN', 'Other']
-                    },
-                    'series': [
-                        'AD', 'CN', 'Other', 'AD', 'CN', 'Other'
-                    ]
+                    'name': 'tiv',
+                    'type': {'name': 'real'},
+                    'series': []
                 }
             ],
-            'independent': {'name': 'tiv', 'type': {'name': 'real'}, 'series': []}
+            'independent': []
         },
-        'parameters': []
+        'parameters': [
+            {
+                'name': 'exit_on_error',
+                'value': 'no'
+            }
+        ]
     }

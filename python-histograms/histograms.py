@@ -5,6 +5,7 @@ from mip_helper import io_helper
 import logging
 import json
 import math
+import sys
 
 from collections import OrderedDict
 from numpy import arange
@@ -13,9 +14,10 @@ from numpy import histogram
 
 BINS_PARAM = "bins"
 STRICT_PARAM = "strict"
+EXIT_ON_ERROR_PARAM = "exit_on_error"
 DEFAULT_BINS = 20
 DEFAULT_STRICT = False
-
+DEFAULT_EXIT_ON_ERROR = True
 
 class UserError(Exception):
 
@@ -27,35 +29,41 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     try:
-    # Read inputs
-    inputs = io_helper.fetch_data()
-    try:
-        dep_var = inputs["data"]["dependent"][0]
-    except KeyError:
-        logging.warning("Cannot find dependent variables data")
-        dep_var = []
-    try:
-        indep_vars = inputs["data"]["independent"]
-    except KeyError:
-        logging.warning("Cannot find independent variables data")
-        indep_vars = []
-    nb_bins = get_bins_param(inputs["parameters"], BINS_PARAM)
+        # Read inputs
+        inputs = io_helper.fetch_data()
+        try:
+            dep_var = inputs["data"]["dependent"][0]
+        except KeyError:
+            logging.warning("Cannot find dependent variables data")
+            dep_var = []
+        try:
+            indep_vars = inputs["data"]["independent"]
+        except KeyError:
+            logging.warning("Cannot find independent variables data")
+            indep_vars = []
+        nb_bins = get_bins_param(inputs["parameters"], BINS_PARAM)
 
-    # Compute histograms (JSON formatted for HighCharts)
-    histograms_results = compute_histograms(dep_var, indep_vars, nb_bins)
+        # Compute histograms (JSON formatted for HighCharts)
+        histograms_results = compute_histograms(dep_var, indep_vars, nb_bins)
 
-    # Store results
-    io_helper.save_results(histograms_results, '', 'application/highcharts+json')
+        # Store results
+        io_helper.save_results(histograms_results, '', 'application/highcharts+json')
     except UserError as e:
-        logging.error(e)
-        strict = get_strict_param(inputs["parameters"], STRICT_PARAM)
-        if (strict):
-            # Store error
-            io_helper.save_results('', str(e), 'text/plain+error')
-        else:
-            # Display something to the user
-            histograms_results = error_histograms(dep_var, indep_vars, nb_bins)
-            io_helper.save_results(histograms_results, '', 'application/highcharts+json')
+        try:
+            logging.error(e)
+            strict = get_boolean_param(inputs["parameters"], STRICT_PARAM, DEFAULT_STRICT)
+            if (strict):
+                # Store error
+                io_helper.save_results('', str(e), 'text/plain+error')
+            else:
+                # Display something to the user
+                histograms_results = error_histograms(dep_var, indep_vars)
+                io_helper.save_results(histograms_results, '', 'application/highcharts+json')
+            exit_on_error = get_boolean_param(inputs["parameters"], EXIT_ON_ERROR_PARAM, DEFAULT_EXIT_ON_ERROR)
+            if exit_on_error:
+                sys.exit(1)
+        except Exception as e:
+            logging.error(e, exc_info=True)
 
 
 def compute_histograms(dep_var, indep_vars, nb_bins=DEFAULT_BINS):
@@ -66,7 +74,6 @@ def compute_histograms(dep_var, indep_vars, nb_bins=DEFAULT_BINS):
         for grouping_var in grouping_vars:
             histograms.append(compute_histogram(dep_var, grouping_var, nb_bins))
     return json.dumps(histograms)
-
 
 def compute_histogram(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
     label = "Histogram"
@@ -92,19 +99,26 @@ def compute_histogram(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
     }
     return histo
 
-def error_histograms(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
+def error_histograms(dep_var, indep_vars):
+    histograms = list()
+    if len(dep_var) > 0:
+        histograms.append(error_histogram(dep_var))
+        grouping_vars = [indep_var for indep_var in indep_vars if is_nominal(indep_var)]
+        for grouping_var in grouping_vars:
+            histograms.append(error_histogram(dep_var, grouping_var))
+    return json.dumps(histograms)
+
+def error_histogram(dep_var, grouping_var=None):
     label = "Histogram"
     title = '%s histogram (no data or error)' % dep_var['name']
     if grouping_var:
         label += " - %s" % grouping_var["name"]
         title += " by %s" % grouping_var["name"]
-    categories, categories_labels = compute_categories(dep_var, nb_bins)
-    series = []
     histo = {
         "chart": {"type": 'column'},
         "label": label,
         "title": {"text": title},
-        "xAxis": {"categories": categories_labels},
+        "xAxis": {"categories": []},
         "yAxis": {
             "allowDecimals": False,
             "min": 0,
@@ -112,7 +126,7 @@ def error_histograms(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
                 "text": 'Number of participants'
             }
         },
-        "series": series
+        "series": []
     }
     return histo
 
@@ -179,15 +193,15 @@ def get_bins_param(params_list, param_name):
     logging.info("Using default number of bins: %s" % DEFAULT_BINS)
     return DEFAULT_BINS
 
-def get_strict_param(params_list, param_name):
+def get_boolean_param(params_list, param_name, default_value):
     for p in params_list:
         if p["name"] == param_name:
             try:
-                return boolean(p["value"])
+                return p["value"].lower() in ("yes", "true", "t", "1")
             except ValueError:
                 logging.warning("%s cannot be cast to boolean !")
-    logging.info("Using default number of bins: %s" % DEFAULT_BINS)
-    return DEFAULT_BINS
+    logging.info("Using default value: %s for %s" % (default_value, param_name))
+    return default_value
 
 def is_nominal(var):
     return var['type']['name'] in ['binominal', 'polynominal']

@@ -1,6 +1,4 @@
-FROM hbpmip/python-mip:0.3.0
-
-RUN pip install -U pytest
+FROM hbpmip/python-base-build:0.4.2
 
 COPY requirements-dev.txt /requirements-dev.txt
 RUN pip install -r /requirements-dev.txt

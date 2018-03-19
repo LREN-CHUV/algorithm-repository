@@ -157,11 +157,23 @@ def test_compute_categories_empty():
 def test_main_categories_empty(mock_save_results, mock_get_results, mock_fetch_data):
 
     # create mock objects from database
-    mock_fetch_data.return_value = fx.inputs_no_values(include_categorical=True)
+    mock_fetch_data.return_value = fx.inputs_no_values()
     mock_get_results.return_value = None
 
     main()
 
     js = json.loads(mock_save_results.call_args[0][0])
-    print(js)
-    #assert js == [
+    assert js == [
+        {
+            'chart': {'type': 'column'},
+            'label': 'Histogram',
+            'title': {'text': 'tiv histogram (no data or error)'},
+            'xAxis': {'categories': []},
+            'yAxis': {
+                'allowDecimals': False,
+                'min': 0,
+                'title': {'text': 'Number of participants'}
+            },
+            'series': []
+        }
+    ]
