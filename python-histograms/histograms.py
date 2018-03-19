@@ -191,7 +191,11 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
     has_nulls = None in dep_var['series']
     if is_nominal(dep_var):
         categories = [str(c) for c in dep_var['type']['enumeration']]
-        categories_labels = categories
+        if 'enumeration_labels' in dep_var['type']:
+            categories_labels = [str(c) for c in dep_var['type']['enumeration_labels']]
+        else:
+            categories_labels = categories
+
         if has_nulls:
             categories.append('None')
             categories_labels.append('No data')

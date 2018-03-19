@@ -95,7 +95,7 @@ OUTPUT_NOMINAL = [
             'text': 'score_test1 histogram'
         },
         'xAxis': {
-            'categories': ['AD', 'CN', 'Other']
+            'categories': ['Alzheimers disease', 'Cognitively Normal', 'Other']
         },
         'yAxis': {
             'allowDecimals': False,
@@ -117,7 +117,7 @@ OUTPUT_NOMINAL = [
             'text': 'score_test1 histogram by agegroup'
         },
         'xAxis': {
-            'categories': ['AD', 'CN', 'Other']
+            'categories': ['Alzheimers disease', 'Cognitively Normal', 'Other']
         },
         'yAxis': {
             'allowDecimals': False,

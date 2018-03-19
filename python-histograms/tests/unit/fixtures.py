@@ -80,7 +80,8 @@ def inputs_classification(**kwargs):
                     'name': 'score_test1',
                     'type': {
                         'name': 'polynominal',
-                        'enumeration': ['AD', 'CN', 'Other']
+                        'enumeration': ['AD', 'CN', 'Other'],
+                        'enumeration_labels': ["Alzheimers disease", 'Cognitively Normal', 'Other']
                     },
                     'series': [
                         'AD', 'CN', 'Other', 'AD', 'CN', 'Other'
