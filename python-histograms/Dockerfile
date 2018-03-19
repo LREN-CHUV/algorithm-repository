@@ -16,7 +16,7 @@ FROM hbpmip/python-mip:0.3.2
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-histograms:0.3.6 \
+ENV DOCKER_IMAGE=hbpmip/python-histograms:0.3.7 \
     FUNCTION=python-histograms
 
 COPY requirements.txt /requirements.txt
