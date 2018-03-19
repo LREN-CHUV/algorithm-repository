@@ -12,7 +12,9 @@ from numpy import histogram
 
 
 BINS_PARAM = "bins"
+STRICT_PARAM = "strict"
 DEFAULT_BINS = 20
+DEFAULT_STRICT = False
 
 
 class UserError(Exception):
@@ -46,8 +48,14 @@ def main():
         io_helper.save_results(histograms_results, '', 'application/highcharts+json')
     except UserError as e:
         logging.error(e)
-        # Store error
-        io_helper.save_results('', str(e), 'application/highcharts+json')
+        strict = get_strict_param(inputs["parameters"], STRICT_PARAM)
+        if (strict):
+            # Store error
+            io_helper.save_results('', str(e), 'text/plain+error')
+        else:
+            # Display something to the user
+            histograms_results = error_histograms(dep_var, indep_vars, nb_bins)
+            io_helper.save_results(histograms_results, '', 'application/highcharts+json')
 
 
 def compute_histograms(dep_var, indep_vars, nb_bins=DEFAULT_BINS):
@@ -84,6 +92,29 @@ def compute_histogram(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
     }
     return histo
 
+def error_histograms(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
+    label = "Histogram"
+    title = '%s histogram (no data or error)' % dep_var['name']
+    if grouping_var:
+        label += " - %s" % grouping_var["name"]
+        title += " by %s" % grouping_var["name"]
+    categories, categories_labels = compute_categories(dep_var, nb_bins)
+    series = []
+    histo = {
+        "chart": {"type": 'column'},
+        "label": label,
+        "title": {"text": title},
+        "xAxis": {"categories": categories_labels},
+        "yAxis": {
+            "allowDecimals": False,
+            "min": 0,
+            "title": {
+                "text": 'Number of participants'
+            }
+        },
+        "series": series
+    }
+    return histo
 
 def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
     if len(dep_var['series']) == 0:
@@ -149,6 +180,15 @@ def get_bins_param(params_list, param_name):
     logging.info("Using default number of bins: %s" % DEFAULT_BINS)
     return DEFAULT_BINS
 
+def get_strict_param(params_list, param_name):
+    for p in params_list:
+        if p["name"] == param_name:
+            try:
+                return boolean(p["value"])
+            except ValueError:
+                logging.warning("%s cannot be cast to boolean !")
+    logging.info("Using default number of bins: %s" % DEFAULT_BINS)
+    return DEFAULT_BINS
 
 def is_nominal(var):
     return var['type']['name'] in ['binominal', 'polynominal']

@@ -150,3 +150,18 @@ def test_compute_categories_empty():
     nb_bins = 20
     with pytest.raises(UserError):
         compute_categories(dep_var, nb_bins)
+
+@mock.patch('histograms.io_helper.fetch_data')
+@mock.patch('histograms.io_helper.get_results')
+@mock.patch('histograms.io_helper.save_results')
+def test_main_categories_empty(mock_save_results, mock_get_results, mock_fetch_data):
+
+    # create mock objects from database
+    mock_fetch_data.return_value = fx.inputs_no_values(include_categorical=True)
+    mock_get_results.return_value = None
+
+    main()
+
+    js = json.loads(mock_save_results.call_args[0][0])
+    print(js)
+    #assert js == [
