@@ -1,4 +1,4 @@
-FROM hbpmip/python-base-build:0.4.3
+FROM hbpmip/python-base-build:0.4.4
 
 COPY requirements-dev.txt /requirements-dev.txt
 RUN pip install -r /requirements-dev.txt
@@ -12,7 +12,7 @@ COPY tests/unit /src/tests/
 WORKDIR /src
 RUN pytest tests/
 
-FROM hbpmip/python-mip:0.3.2
+FROM hbpmip/python-mip:0.4.0
 
 MAINTAINER mirco.nasuti@chuv.ch
 

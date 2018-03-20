@@ -1,4 +1,4 @@
 # git+https://github.com/LREN-CHUV/python-base-docker-images.git#egg=io_helper&subdirectory=python-mip/mip_helper
-mip_helper==0.3.2
+mip_helper==0.4.0
 numpy==1.14.2
 pandas==0.22.0

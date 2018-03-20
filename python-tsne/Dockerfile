@@ -1,4 +1,4 @@
-FROM hbpmip/python-mip:0.3.2
+FROM hbpmip/python-mip:0.4.0
 
 MAINTAINER b.van_lew@lumc.nl
 
