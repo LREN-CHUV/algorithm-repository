@@ -188,7 +188,9 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
     if len(values) == 0:
         raise UserError('Dependent variable {} is empty.'.format(dep_var['name']))
 
-    has_nulls = None in dep_var['series']
+    # TODO: dep_var['series'] can contain both np.nan (in numerical variables) and None (in nominal), pd.isnull
+    # can handle them both
+    has_nulls = pd.isnull(dep_var['series']).any()
     if is_nominal(dep_var):
         categories = [str(c) for c in dep_var['type']['enumeration']]
         if 'enumeration_labels' in dep_var['type']:
@@ -230,7 +232,7 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
 
 def compute_series(dep_var, categories, grouping_var=None):
     series = list()
-    has_nulls = None in dep_var['series']
+    has_nulls = pd.isnull(dep_var['series']).any()
     if is_nominal(dep_var):
         if not grouping_var:
             series.append({"name": "all", "data": count(dep_var['series'], categories)})
