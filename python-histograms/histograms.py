@@ -6,6 +6,7 @@ import logging
 import json
 import math
 import sys
+import copy
 import argparse
 import itertools
 
@@ -85,21 +86,24 @@ def aggregate_histograms(job_ids):
     for key, hists in itertools.groupby(data, key=lambda d: d['label']):
         hists = list(hists)
 
-        # use pandas for easier manipulation
-        series = {s['name']: np.array(s['data']) for s in hists[0]['series']}
-
         # add data from other histograms
         result = hists[0]
         for hist in hists[1:]:
+            hist, result = _align_categories(hist, result)
             assert hist['xAxis']['categories'] == result['xAxis']['categories']
+
+            # use pandas for easier manipulation
+            series = {s['name']: np.array(s['data']) for s in result['series']}
+
             for s in hist['series']:
                 if s['name'] not in series:
                     series[s['name']] = s['data']
                 else:
                     series[s['name']] += s['data']
 
-        # turn series into original form
-        result['series'] = [{'name': k, 'data': list(v)} for k, v in series.items()]
+            # turn series into original form
+            result['series'] = [{'name': k, 'data': list(v)} for k, v in series.items()]
+
         results.append(result)
 
     logging.info("Results:\n{}".format(results))
@@ -311,6 +315,34 @@ def is_nominal(var):
 
 def is_integer(var):
     return var['type']['name'] in ['integer']
+
+
+def _align_categories(ha, hb):
+    """Align categories of two results from different nodes in case one contains null values."""
+    ha = copy.deepcopy(ha)
+    hb = copy.deepcopy(hb)
+
+    if ha['xAxis']['categories'][-1] == 'No data' and hb['xAxis']['categories'][-1] != 'No data':
+        hb['xAxis']['categories'].append('No data')
+        for s in hb['series']:
+            s['data'].append(0)
+
+    elif ha['xAxis']['categories'][-1] != 'No data' and hb['xAxis']['categories'][-1] == 'No data':
+        ha['xAxis']['categories'].append('No data')
+        for s in ha['series']:
+            s['data'].append(0)
+
+    # edge case when one has only NULL values
+    if ha['xAxis']['categories'] == ['No data']:
+        ha['xAxis']['categories'] = hb['xAxis']['categories']
+        for s in ha['series']:
+            s['data'] = [0] * (len(ha['xAxis']['categories']) - 1) + s['data']
+    if hb['xAxis']['categories'] == ['No data']:
+        hb['xAxis']['categories'] = ha['xAxis']['categories']
+        for s in hb['series']:
+            s['data'] = [0] * (len(hb['xAxis']['categories']) - 1) + s['data']
+
+    return ha, hb
 
 
 if __name__ == '__main__':
