@@ -1,0 +1,9 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/python-sgd-regression
+  pre:
+    - echo "Preparing python-sgd-regression"
+  post:
+    - echo "Finished python-sgd-regression"
+  test:
+    - ./tests/test.sh
