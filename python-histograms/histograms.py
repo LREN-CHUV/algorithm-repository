@@ -103,7 +103,7 @@ def aggregate_histograms(job_ids):
         results.append(result)
 
     logging.info("Results:\n{}".format(results))
-    io_helper.save_results(pd.json.dumps(results), '', shapes.Shapes.HIGHCHARTS)
+    io_helper.save_results(pd.io.json.dumps(results), '', shapes.Shapes.HIGHCHARTS)
 
 
 def _load_intermediate_data(job_ids):
