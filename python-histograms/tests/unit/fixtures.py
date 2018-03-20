@@ -36,6 +36,7 @@ def independent(include_categorical=False):
                 'name': 'polynominal',
                 'enumeration': ['-50y', '50-59y']
             },
+            'label': 'Age Group',
             'series': [
                 '-50y', '50-59y', '-50y', '50-59y', '-50y', '50-59y'
             ]
@@ -50,6 +51,7 @@ def inputs_regression(add_null=False, **kwargs):
             'dependent': [
                 {
                     'name': 'score_test1',
+                    'label': 'Score test 1',
                     'type': {
                         'name': 'real'
                     },
@@ -77,7 +79,8 @@ def inputs_classification(**kwargs):
         'data': {
             'dependent': [
                 {
-                    'name': 'score_test1',
+                    'name': 'adnicategory',
+                    'label': 'ADNI category',
                     'type': {
                         'name': 'polynominal',
                         'enumeration': ['AD', 'CN', 'Other'],

@@ -12,7 +12,7 @@ OUTPUT_REAL = [
         },
         'label': 'Histogram',
         'title': {
-            'text': 'score_test1 histogram'
+            'text': 'Score test 1 histogram'
         },
         'xAxis': {
             'categories': [
@@ -38,9 +38,9 @@ OUTPUT_REAL = [
         'chart': {
             'type': 'column'
         },
-        'label': 'Histogram - agegroup',
+        'label': 'Histogram - Age Group',
         'title': {
-            'text': 'score_test1 histogram by agegroup'
+            'text': 'Score test 1 histogram by Age Group'
         },
         'xAxis': {
             'categories': [
@@ -92,7 +92,7 @@ OUTPUT_NOMINAL = [
         },
         'label': 'Histogram',
         'title': {
-            'text': 'score_test1 histogram'
+            'text': 'ADNI category histogram'
         },
         'xAxis': {
             'categories': ['Alzheimers disease', 'Cognitively Normal', 'Other']
@@ -112,9 +112,9 @@ OUTPUT_NOMINAL = [
         'chart': {
             'type': 'column'
         },
-        'label': 'Histogram - agegroup',
+        'label': 'Histogram - Age Group',
         'title': {
-            'text': 'score_test1 histogram by agegroup'
+            'text': 'ADNI category histogram by Age Group'
         },
         'xAxis': {
             'categories': ['Alzheimers disease', 'Cognitively Normal', 'Other']
@@ -158,7 +158,7 @@ OUTPUT_AGGREGATE = [
         },
         'label': 'Histogram',
         'title': {
-            'text': 'score_test1 histogram'
+            'text': 'Score test 1 histogram'
         },
         'xAxis': {
             'categories': [
@@ -184,9 +184,9 @@ OUTPUT_AGGREGATE = [
         'chart': {
             'type': 'column'
         },
-        'label': 'Histogram - agegroup',
+        'label': 'Histogram - Age Group',
         'title': {
-            'text': 'score_test1 histogram by agegroup'
+            'text': 'Score test 1 histogram by Age Group'
         },
         'xAxis': {
             'categories': [

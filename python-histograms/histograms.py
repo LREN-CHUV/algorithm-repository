@@ -128,10 +128,10 @@ def compute_histograms(dep_var, indep_vars, nb_bins=DEFAULT_BINS):
 
 def compute_histogram(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
     label = "Histogram"
-    title = '%s histogram' % dep_var['name']
+    title = '%s histogram' % get_var_label(dep_var)
     if grouping_var:
-        label += " - %s" % grouping_var["name"]
-        title += " by %s" % grouping_var["name"]
+        label += " - %s" % get_var_label(grouping_var)
+        title += " by %s" % get_var_label(grouping_var)
     categories, categories_labels = compute_categories(dep_var, nb_bins)
     series = compute_series(dep_var, categories, grouping_var)
     histo = {
@@ -163,8 +163,8 @@ def error_histogram(dep_var, grouping_var=None):
     label = "Histogram"
     title = '%s histogram (no data or error)' % dep_var['name']
     if grouping_var:
-        label += " - %s" % grouping_var["name"]
-        title += " by %s" % grouping_var["name"]
+        label += " - %s" % get_var_label(grouping_var)
+        title += " by %s" % get_var_label(grouping_var)
     histo = {
         "chart": {"type": 'column'},
         "label": label,
@@ -299,6 +299,10 @@ def get_boolean_param(params_list, param_name, default_value):
                 logging.warning("%s cannot be cast to boolean !")
     logging.info("Using default value: %s for %s" % (default_value, param_name))
     return default_value
+
+
+def get_var_label(var):
+    return var.get('label', var['name'])
 
 
 def is_nominal(var):
