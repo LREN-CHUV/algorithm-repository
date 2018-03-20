@@ -68,13 +68,13 @@ services:
     environment:
       NODE: job_test
       JOB_ID: 1
-      IN_DBAPI: postgresql
+      IN_DBAPI_DRIVER: postgresql
       IN_USER: features
       IN_PASSWORD: featurespwd
       IN_HOST: db
       IN_PORT: 5432
       IN_DATABASE: features
-      OUT_DBAPI: postgresql
+      OUT_DBAPI_DRIVER: postgresql
       OUT_USER: woken
       OUT_PASSWORD: wokenpwd
       OUT_HOST: db
