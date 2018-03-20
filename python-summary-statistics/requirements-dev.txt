@@ -1,3 +1,4 @@
+pre-commit>=0.13
 mock
 pytest
 ipdb

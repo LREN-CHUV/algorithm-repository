@@ -117,7 +117,7 @@ def intermediate_stats():
         results['data'] += _calc_stats(df, ('all',), [])
 
         logging.info("Results:\n{}".format(results))
-        io_helper.save_results(pd.json.dumps(results), '', shapes.Shapes.JSON)
+        io_helper.save_results(pd.io.json.dumps(results), '', shapes.Shapes.JSON)
         logging.info("DONE")
     except UserError as e:
         logging.error(e)
@@ -166,7 +166,7 @@ def aggregate_stats(job_ids):
             results['data'].append(_agg_stats(gf, group_name, index))
 
         logging.info("Results:\n{}".format(results))
-        io_helper.save_results(pd.json.dumps(results), '', shapes.Shapes.JSON)
+        io_helper.save_results(pd.io.json.dumps(results), '', shapes.Shapes.JSON)
         logging.info("DONE")
     except UserError as e:
         logging.error(e)
