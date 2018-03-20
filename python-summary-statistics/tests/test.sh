@@ -47,8 +47,12 @@ $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
 echo
-echo "Run the Statistics algorithm..."
-$DOCKER_COMPOSE run statistics compute
+echo "Run the statistics-a..."
+$DOCKER_COMPOSE run statistics-a compute --mode intermediate
+echo "Run the statistics-b..."
+$DOCKER_COMPOSE run statistics-b compute --mode intermediate
+echo "Run the statistics-agg..."
+$DOCKER_COMPOSE run statistics-agg compute --mode aggregate --job-ids 1 2
 
 echo
 # Cleanup
