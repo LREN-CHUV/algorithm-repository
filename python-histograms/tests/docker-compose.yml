@@ -61,7 +61,7 @@ services:
     depends_on:
       - db
 
-  histograms:
+  histograms-base:
     image: "hbpmip/python-histograms:latest"
     container_name: "histograms"
     restart: "no"
@@ -80,12 +80,38 @@ services:
       OUT_HOST: db
       OUT_PORT: 5432
       OUT_DATABASE: woken
-      MODEL_PARAM_design: "factorial"
-      PARAM_variables: "rs17125944_c"
+      PARAM_variables: "lefthippocampus"
       PARAM_covariables: "minimentalstate,opticchiasm,subjectage,adnicategory"
       PARAM_grouping: ""
       PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectage, adnicategory, rs17125944_c FROM cde_features_a LIMIT 100"
-      PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0}, \"rs17125944_c\": {\"code\": \"rs17125944_c\",\"enumerations\": [{\"code\": 0,\"label\": 0},{\"code\": 1,\"label\": 1},{\"code\": 2,\"label\": 2}],\"sql_type\": \"int\",\"type\": \"polynominal\"}, \"adnicategory\": {\"code\": \"adnicategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's Disease\"}, {\"code\": \"MCI\", \"label\": \"Mild Cognitive Impairment\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}], \"type\": \"polynominal\"}, \"alzheimerbroadcategory\": {\"code\": \"alzheimerbroadcategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's disease\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}, {\"code\": \"Other\", \"label\": \"Other\"}], \"type\": \"polynominal\"}}"
+      PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35,\"minValue\":0.1,\"maxValue\":5.0},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0}, \"rs17125944_c\": {\"code\": \"rs17125944_c\",\"enumerations\": [{\"code\": 0,\"label\": 0},{\"code\": 1,\"label\": 1},{\"code\": 2,\"label\": 2}],\"sql_type\": \"int\",\"type\": \"polynominal\"}, \"adnicategory\": {\"code\": \"adnicategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's Disease\"}, {\"code\": \"MCI\", \"label\": \"Mild Cognitive Impairment\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}], \"type\": \"polynominal\"}, \"alzheimerbroadcategory\": {\"code\": \"alzheimerbroadcategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's disease\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}, {\"code\": \"Other\", \"label\": \"Other\"}], \"type\": \"polynominal\"}}"
+      MODEL_PARAM_design: "factorial"
+    volumes:
+      - ../mip_helper:/mip_helper
+
+  histograms-a:
+    extends: histograms-base
+    container_name: "histograms-a"
+    environment:
+      JOB_ID: '1'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectage, adnicategory FROM cde_features_a LIMIT 100"
+    links:
+      - "db:db"
+
+  histograms-b:
+    extends: histograms-base
+    container_name: "histograms-b"
+    environment:
+      JOB_ID: '2'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectage, adnicategory FROM cde_features_b LIMIT 100"
+    links:
+      - "db:db"
+
+  histograms-agg:
+    extends: histograms-base
+    container_name: "histograms-agg"
+    environment:
+      JOB_ID: '3'
     links:
       - "db:db"
 

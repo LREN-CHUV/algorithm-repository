@@ -4,7 +4,17 @@
 
 # Python Histograms
 
-This is a Python implementation of Histograms.
+Calculates histogram of nominal or real variable grouped by nominal variables in independent variables. It ignores
+null values. Histogram edges are taken from `minValue` and `maxValue` property of dependent variable. If not avaiable,
+then these values are calculated dynamically from dependent values (this won't work in distributed mode though).
+
+It has two modes
+
+1. `compute --mode intermediate`
+2. `compute --mode aggregate --job-ids 1 2 3`
+
+Intermediate mode calculates histograms from a single node, while aggregate mode is used after intermediate to
+combine histograms from multiple jobs. Intermediate mode can be also used to calculate histograms from single node.
 
 
 ## Build (for contributors)
@@ -12,11 +22,24 @@ This is a Python implementation of Histograms.
 Run: `./build.sh`
 
 
-## Test (for contributors)
+## Integration Test (for contributors)
 
-Run: `./tests/test.sh`
+Run: `captain test`
 
 
 ## Publish (for contributors)
 
 Run: `./publish.sh`
+
+
+## Unit tests (for contributors)
+
+Create symlink from `python-histograms` to `mip_helper` module from `python-mip`
+```
+ln -s ~/projects/python-base-docker-images/python-mip/mip_helper/mip_helper mip_helper
+```
+Run unit tests
+```
+find . -name \*.pyc -delete
+(cd tests; docker-compose run test_suite -x --ff --capture=no)
+```

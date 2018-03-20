@@ -13,6 +13,8 @@ def independent(include_categorical=False):
             ],
             'mean': 55,
             'std': 20.,
+            'minValue': 35,
+            'maxValue': 75,
         }, {
             'name': 'iq',
             'type': {
@@ -23,6 +25,8 @@ def independent(include_categorical=False):
             ],
             'mean': 72,
             'std': 10.,
+            'minValue': 60,
+            'maxValue': 80,
         }
     ]
     if include_categorical:
@@ -32,6 +36,7 @@ def independent(include_categorical=False):
                 'name': 'polynominal',
                 'enumeration': ['-50y', '50-59y']
             },
+            'label': 'Age Group',
             'series': [
                 '-50y', '50-59y', '-50y', '50-59y', '-50y', '50-59y'
             ]
@@ -40,24 +45,32 @@ def independent(include_categorical=False):
 
 
 @pytest.fixture
-def inputs_regression(**kwargs):
-    return {
+def inputs_regression(add_null=False, **kwargs):
+    data = {
         'data': {
             'dependent': [
                 {
                     'name': 'score_test1',
+                    'label': 'Score test 1',
                     'type': {
                         'name': 'real'
                     },
                     'series': [
                         846.2601464093, 1257.859885233, 1070.6406427181, 1040.8477167398, 1173.4546177907, 1189.9664245547
-                    ]
+                    ],
+                    'mean': 1000.,
+                    'std': 200.,
+                    'minValue': 700.,
+                    'maxValue': 1300.,
                 }
             ],
             'independent': independent(**kwargs)
         },
         'parameters': []
     }
+    if add_null:
+        data['data']['dependent'][0]['series'][0] = None
+    return data
 
 
 @pytest.fixture
@@ -66,10 +79,12 @@ def inputs_classification(**kwargs):
         'data': {
             'dependent': [
                 {
-                    'name': 'score_test1',
+                    'name': 'adnicategory',
+                    'label': 'ADNI category',
                     'type': {
                         'name': 'polynominal',
-                        'enumeration': ['AD', 'CN', 'Other']
+                        'enumeration': ['AD', 'CN', 'Other'],
+                        'enumeration_labels': ["Alzheimers disease", 'Cognitively Normal', 'Other']
                     },
                     'series': [
                         'AD', 'CN', 'Other', 'AD', 'CN', 'Other'
