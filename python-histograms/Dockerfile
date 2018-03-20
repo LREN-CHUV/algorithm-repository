@@ -16,7 +16,7 @@ FROM hbpmip/python-mip:0.4.0
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-histograms:0.3.7 \
+ENV DOCKER_IMAGE=hbpmip/python-histograms:0.4.0 \
     FUNCTION=python-histograms
 
 RUN apt-get update
