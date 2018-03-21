@@ -72,24 +72,28 @@ services:
       FUNCTION: python-tsne
       NODE: job_test
       JOB_ID: 2
-      IN_JDBC_DRIVER: org.postgresql.Driver
-      IN_JDBC_URL: jdbc:postgresql://db:5432/features
-      IN_JDBC_USER: features
-      IN_JDBC_PASSWORD: featurespwd
-      OUT_JDBC_DRIVER: org.postgresql.Driver
-      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
-      OUT_JDBC_USER: woken
-      OUT_JDBC_PASSWORD: wokenpwd
+      IN_DBAPI_DRIVER: postgresql
+      IN_USER: features
+      IN_PASSWORD: featurespwd
+      IN_HOST: db
+      IN_PORT: 5432
+      IN_DATABASE: features
+      OUT_DBAPI_DRIVER: postgresql
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
       PARAM_variables: "name"
       PARAM_covariables: "sepal_length,sepal_width,petal_length,petal_width"
       PARAM_grouping: ""
       PARAM_query: "SELECT name,sepal_length,sepal_width,petal_length,petal_width FROM iris"
       PARAM_meta: "{\"name\":{\"code\":\"name\",\"type\":\"string\"},\"sepal_length\":{\"code\":\"sepal_length\",\"type\":\"real\"},\"sepal_width\":{\"code\":\"sepal_width\",\"type\":\"real\"},\"petal_length\":{\"code\":\"petal_length\",\"type\":\"real\"}, \"petal_width\":{\"code\":\"petal_width\",\"type\":\"real\"}}"
-      PARAM_MODEL_dependent_is_label: "True"
-      PARAM_MODEL_perplexity: 30
-      PARAM_MODEL_do_zscore: "True"
-      PARAM_MODEL_iterations: 1000
-      PARAM_MODEL_theta: 0.5
-      PARAM_MODEL_target_dimensions: 2
+      MODEL_PARAM_dependent_is_label: "True"
+      MODEL_PARAM_perplexity: 30
+      MODEL_PARAM_do_zscore: "True"
+      MODEL_PARAM_iterations: 1000
+      MODEL_PARAM_theta: 0.5
+      MODEL_PARAM_target_dimensions: 2
     links:
       - "db:db"
