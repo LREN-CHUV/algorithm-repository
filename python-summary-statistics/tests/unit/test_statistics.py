@@ -8,7 +8,7 @@ from statistics import intermediate_stats, aggregate_stats, get_X
 @mock.patch('statistics.io_helper.save_results')
 def test_intermediate_stats_real(mock_save_results, mock_fetch_data):
     # input data with some null values
-    data = fx.inputs_regression(include_categorical=True)
+    data = fx.inputs_regression(include_categorical=True, add_null=True)
     data['data']['dependent'][0]['series'][0] = None
     data['data']['independent'][1]['series'][0] = None
 
@@ -101,7 +101,7 @@ def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
 @mock.patch('statistics.io_helper.fetch_data')
 @mock.patch('statistics.io_helper.save_results')
 def test_intermediate_stats_empty(mock_save_results, mock_fetch_data):
-    data = fx.inputs_regression(include_categorical=True)
+    data = fx.inputs_regression(include_categorical=True, add_null=True)
     data['data']['dependent'][0]['series'] = []
     mock_fetch_data.return_value = data
 
