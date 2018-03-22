@@ -33,7 +33,7 @@ def independent(include_categorical=False, include_real=True):
                 'maxValue': 80,
             }
         ]
-        
+
     if include_categorical:
         ret.append({
             'name': 'agegroup',
@@ -92,7 +92,6 @@ def inputs_classification(**kwargs):
                         'enumeration': ['AD', 'CN', 'Other'],
                         'enumeration_labels': ["Alzheimers disease", 'Cognitively Normal', 'Other']
                     },
-                    'label': 'Score test',
                     'series': [
                         'AD', 'CN', 'Other', 'AD', 'CN', 'Other'
                     ]

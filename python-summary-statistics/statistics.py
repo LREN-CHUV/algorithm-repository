@@ -23,7 +23,7 @@ import json
 import copy
 import numpy as np
 import pandas as pd
-from tableschema import Table, validate
+from tableschema import Table, validate, exceptions
 
 
 class UserError(Exception):
@@ -33,32 +33,38 @@ class UserError(Exception):
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
+
+def _validate_schema(schema):
+    try:
+        validate(schema)
+    except exceptions.ValidationError as exception:
+        for error in exception.errors:
+            raise error
+
+
 # TODO: use something more fancy like schematics instead of dict?
 OUTPUT_SCHEMA_INTERMEDIATE = {
-    'schema': {
-        'field': [
-            {'name': 'group_variables', 'type': 'array'},
-            {'name': 'group', 'type': 'array'},
-            {'name': 'index', 'type': 'string'},
-            {'name': 'label', 'type': 'string'},
-            {'name': 'count', 'type': 'integer'},
-            {'name': 'null_count', 'type': 'integer'},
-            {'name': 'unique', 'type': 'integer'},
-            {'name': 'top', 'type': 'string'},
-            {'name': 'frequency', 'type': 'any'},
-            {'name': 'mean', 'type': 'number'},
-            {'name': 'std', 'type': 'number'},
-            {'name': 'EX^2', 'type': 'number'},
-            {'name': 'min', 'type': 'number'},
-            {'name': 'max', 'type': 'number'},
-            {'name': '25%', 'type': 'number'},
-            {'name': '50%', 'type': 'number'},
-            {'name': '75%', 'type': 'number'},
-        ]
-    },
-    'data': []
+    'fields': [
+        {'name': 'group_variables', 'type': 'array'},
+        {'name': 'group', 'type': 'array'},
+        {'name': 'index', 'type': 'string'},
+        {'name': 'label', 'type': 'string'},
+        {'name': 'count', 'type': 'integer'},
+        {'name': 'null_count', 'type': 'integer'},
+        {'name': 'unique', 'type': 'integer'},
+        {'name': 'top', 'type': 'string'},
+        {'name': 'frequency', 'type': 'any'},
+        {'name': 'mean', 'type': 'number'},
+        {'name': 'std', 'type': 'number'},
+        {'name': 'EX^2', 'type': 'number'},
+        {'name': 'min', 'type': 'number'},
+        {'name': 'max', 'type': 'number'},
+        {'name': '25%', 'type': 'number'},
+        {'name': '50%', 'type': 'number'},
+        {'name': '75%', 'type': 'number'},
+    ]
 }
-assert validate(OUTPUT_SCHEMA_INTERMEDIATE)
+_validate_schema(OUTPUT_SCHEMA_INTERMEDIATE)
 
 
 # TODO: for distributed case calculate percentiles using Q-Digest or T-Digest algorithm
@@ -76,7 +82,7 @@ OUTPUT_SCHEMA_AGGREGATE = {
         {'name': 'max', 'type': 'number'}
     ]
 }
-assert validate(OUTPUT_SCHEMA_AGGREGATE)
+_validate_schema(OUTPUT_SCHEMA_AGGREGATE)
 
 
 def intermediate_stats():
@@ -98,22 +104,21 @@ def intermediate_stats():
 
         # Generate results
         logging.info("Generating results...")
-        results = copy.deepcopy(OUTPUT_SCHEMA_INTERMEDIATE)
 
-        nominal_cols = df.dtypes == 'category'
         group_variables = [var['name'] for var in indep_vars if is_nominal(var['type']['name'])]
 
         # grouped statistics
+        data = []
         if group_variables:
             for group_name, group in df.groupby(group_variables):
                 # if there's only one nominal column
                 if not isinstance(group_name, tuple):
                     group_name = (group_name,)
 
-                results['data'] += _calc_stats(group, group_name, group_variables, labels)
+                data += _calc_stats(group, group_name, group_variables, labels)
 
         # overall statistics
-        results['data'] += _calc_stats(df, ('all',), [], labels)
+        data += _calc_stats(df, ('all',), [], labels)
 
         logging.info("Results:\n{}".format(data))
         table = {
