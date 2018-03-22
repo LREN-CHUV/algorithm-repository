@@ -118,7 +118,7 @@ def intermediate_stats():
             'schema': OUTPUT_SCHEMA_INTERMEDIATE,
             'data': data,
         }
-        io_helper.save_results(pd.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
+        io_helper.save_results(pd.io.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
         logging.info("DONE")
     except UserError as e:
         logging.error(e)
@@ -170,7 +170,7 @@ def aggregate_stats(job_ids):
             'schema': OUTPUT_SCHEMA_AGGREGATE,
             'data': data,
         }
-        io_helper.save_results(pd.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
+        io_helper.save_results(pd.io.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
         logging.info("DONE")
     except UserError as e:
         logging.error(e)
