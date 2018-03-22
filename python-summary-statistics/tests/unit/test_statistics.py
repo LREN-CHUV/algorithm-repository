@@ -66,6 +66,20 @@ def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
     assert len(results['data']) == 16
     assert results['data'][:2] == [
         {
+            'index': 'adnicategory',
+            'label': 'ADNI category',
+            'group': ['-50y'],
+            'group_variables': ['Age group'],
+            'count': 3,
+            'unique': 3,
+            'top': 'Other',
+            'frequency': {
+                'Other': 1,
+                'CN': 1,
+                'AD': 1
+            },
+            'null_count': 0
+        }, {
             'index': 'agegroup',
             'label': 'Age group',
             'group': ['-50y'],
@@ -78,21 +92,6 @@ def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
                 '59y-': 0,
                 '50-59y': 0
             },
-            'null_count': 0
-        }, {
-            'index': 'iq',
-            'label': 'IQ',
-            'group': ['-50y'],
-            'group_variables': ['Age group'],
-            'count': 3,
-            'mean': 73.7882673088,
-            'std': 0.2018918769,
-            'min': 73.5856470359,
-            '25%': 73.6876895535,
-            '50%': 73.7897320711,
-            '75%': 73.8895774452,
-            'max': 73.9894228193,
-            'EX^2': 5444.7355659833,
             'null_count': 0
         }
     ]
