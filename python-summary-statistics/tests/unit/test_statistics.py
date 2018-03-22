@@ -6,7 +6,7 @@ from statistics import intermediate_stats, aggregate_stats, get_X
 
 @mock.patch('statistics.io_helper.fetch_data')
 @mock.patch('statistics.io_helper.save_results')
-def test_intermediate_stats(mock_save_results, mock_fetch_data):
+def test_intermediate_stats_real(mock_save_results, mock_fetch_data):
     # input data with some null values
     data = fx.inputs_regression(include_categorical=True, add_null=True)
     data['data']['dependent'][0]['series'][0] = None
@@ -20,12 +20,12 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
     assert results['data'][:2] == [
         {
             'index': 'agegroup',
+            'label': 'Age group',
             'group': ['-50y'],
-            'group_variables': ['agegroup'],
+            'group_variables': ['Age group'],
             'count': 3,
             'unique': 1,
             'top': '-50y',
-            'freq': 3,
             'frequency': {
                 '-50y': 3,
                 '59y-': 0,
@@ -34,8 +34,9 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
             'null_count': 0
         }, {
             'index': 'iq',
+            'label': 'IQ',
             'group': ['-50y'],
-            'group_variables': ['agegroup'],
+            'group_variables': ['Age group'],
             'count': 3,
             'mean': 73.8895774452,
             'std': 0.1412026822,
@@ -46,6 +47,53 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
             'max': 73.9894228193,
             'EX^2': 5459.6796241289,
             'null_count': 1
+        }
+    ]
+
+
+@mock.patch('statistics.io_helper.fetch_data')
+@mock.patch('statistics.io_helper.save_results')
+def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
+    # input data with some null values
+    data = fx.inputs_classification(include_categorical=True)
+    # data['data']['dependent'][0]['series'][0] = None
+    # data['data']['independent'][1]['series'][0] = None
+
+    mock_fetch_data.return_value = data
+
+    intermediate_stats()
+    results = json.loads(mock_save_results.call_args[0][0])
+    assert len(results['data']) == 16
+    assert results['data'][:2] == [
+        {
+            'index': 'agegroup',
+            'label': 'Age group',
+            'group': ['-50y'],
+            'group_variables': ['Age group'],
+            'count': 3,
+            'unique': 1,
+            'top': '-50y',
+            'frequency': {
+                '-50y': 3,
+                '59y-': 0,
+                '50-59y': 0
+            },
+            'null_count': 0
+        }, {
+            'index': 'iq',
+            'label': 'IQ',
+            'group': ['-50y'],
+            'group_variables': ['Age group'],
+            'count': 3,
+            'mean': 73.7882673088,
+            'std': 0.2018918769,
+            'min': 73.5856470359,
+            '25%': 73.6876895535,
+            '50%': 73.7897320711,
+            '75%': 73.8895774452,
+            'max': 73.9894228193,
+            'EX^2': 5444.7355659833,
+            'null_count': 0
         }
     ]
 
@@ -68,6 +116,7 @@ def intermediate_data_1():
         'data': [
             {
                 'index': 'iq',
+                'label': 'IQ',
                 'group': ['all'],
                 'group_variables': [],
                 'count': 3,
@@ -88,6 +137,7 @@ def intermediate_data_2():
         'data': [
             {
                 'index': 'iq',
+                'label': 'IQ',
                 'group': ['all'],
                 'group_variables': [],
                 'count': 5,
@@ -104,7 +154,7 @@ def intermediate_data_2():
 
 @mock.patch('statistics.io_helper.get_results')
 @mock.patch('statistics.io_helper.save_results')
-def test_aggregate_stats(mock_save_results, mock_get_results):
+def test_aggregate_stats_real(mock_save_results, mock_get_results):
 
     def mock_results(job_id):
         if job_id == '1':
@@ -119,6 +169,7 @@ def test_aggregate_stats(mock_save_results, mock_get_results):
     assert results['data'] == [
         {
             'index': 'iq',
+            'label': 'IQ',
             'group': ['all'],
             'group_variables': [],
             'mean': 92.5,
@@ -127,6 +178,59 @@ def test_aggregate_stats(mock_save_results, mock_get_results):
             'max': 130,
             'count': 8,
             'null_count': 1
+        }
+    ]
+
+
+def intermediate_data_1_nominal():
+    return {
+        'schema': {},
+        'data': [
+            {
+                'count': 6,
+                'frequency': {
+                    'AD': 1,
+                    'CN': 2,
+                    'Other': 3
+                },
+                'label': 'Score test',
+                'group': ['59y-'],
+                'group_variables': ['Age group'],
+                'index': 'score_test1',
+                'null_count': 2,
+                'unique': 3
+            }
+        ]
+    }
+
+
+@mock.patch('statistics.io_helper.get_results')
+@mock.patch('statistics.io_helper.save_results')
+def test_aggregate_stats_nominal(mock_save_results, mock_get_results):
+
+    def mock_results(job_id):
+        if job_id == '1':
+            return mock.MagicMock(data=json.dumps(intermediate_data_1_nominal()))
+        elif job_id == '2':
+            return mock.MagicMock(data=json.dumps(intermediate_data_1_nominal()))
+
+    mock_get_results.side_effect = mock_results
+
+    aggregate_stats(['1', '2'])
+    results = json.loads(mock_save_results.call_args[0][0])
+    assert results['data'] == [
+        {
+            'index': 'score_test1',
+            'label': 'Score test',
+            'group': ['59y-'],
+            'group_variables': ['Age group'],
+            'count': 12,
+            'null_count': 4,
+            'frequency': {
+                'AD': 2,
+                'CN': 4,
+                'Other': 6
+            }
         }
     ]
 
