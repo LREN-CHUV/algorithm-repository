@@ -75,6 +75,12 @@ Create symlink from `python-sgd-regression` to `mip_helper` module from `python-
 ```
 ln -s ~/projects/python-base-docker-images/python-mip/mip_helper/mip_helper mip_helper
 ```
+and symlink from `python-sgd-regression` to `sklearn_to_pfa` module from `python-mip-sklearn` and
+```
+ln -s ~/projects/python-base-docker-images/python-mip-sklearn/sklearn_to_pfa/sklearn_to_pfa sklearn_to_pfa
+```
+
+
 Run unit tests
 ```
 find . -name \*.pyc -delete
