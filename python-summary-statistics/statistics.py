@@ -23,6 +23,7 @@ import json
 import copy
 import numpy as np
 import pandas as pd
+from tableschema import Table, validate
 
 
 class UserError(Exception):
@@ -34,48 +35,44 @@ logging.basicConfig(level=logging.INFO)
 
 # TODO: use something more fancy like schematics instead of dict?
 OUTPUT_SCHEMA_INTERMEDIATE = {
-    'schema': {
-        'field': [
-            {'name': 'group_variables', 'type': 'list'},
-            {'name': 'group', 'type': 'list'},
-            {'name': 'index', 'type': 'string'},
-            {'name': 'count', 'type': 'int'},
-            {'name': 'null_count', 'type': 'int'},
-            {'name': 'unique', 'type': 'int'},
-            {'name': 'top', 'type': 'string'},
-            {'name': 'frequency', 'type': 'object'},
-            {'name': 'mean', 'type': 'number'},
-            {'name': 'std', 'type': 'number'},
-            {'name': 'EX^2', 'type': 'number'},
-            {'name': 'min', 'type': 'number'},
-            {'name': 'max', 'type': 'number'},
-            {'name': '25%', 'type': 'number'},
-            {'name': '50%', 'type': 'number'},
-            {'name': '75%', 'type': 'number'},
-        ]
-    },
-    'data': []
+    'fields': [
+        {'name': 'group_variables', 'type': 'array'},
+        {'name': 'group', 'type': 'array'},
+        {'name': 'index', 'type': 'string'},
+        {'name': 'count', 'type': 'integer'},
+        {'name': 'null_count', 'type': 'integer'},
+        {'name': 'unique', 'type': 'integer'},
+        {'name': 'top', 'type': 'string'},
+        {'name': 'frequency', 'type': 'any'},
+        {'name': 'mean', 'type': 'number'},
+        {'name': 'std', 'type': 'number'},
+        {'name': 'EX^2', 'type': 'number'},
+        {'name': 'min', 'type': 'number'},
+        {'name': 'max', 'type': 'number'},
+        {'name': '25%', 'type': 'number'},
+        {'name': '50%', 'type': 'number'},
+        {'name': '75%', 'type': 'number'},
+    ]
 }
+assert validate(OUTPUT_SCHEMA_INTERMEDIATE)
 
 
 # TODO: for distributed case calculate percentiles using Q-Digest or T-Digest algorithm
 OUTPUT_SCHEMA_AGGREGATE = {
-    'schema': {
-        'field': [
-            {'name': 'group_variables', 'type': 'list'},
-            {'name': 'group', 'type': 'list'},
-            {'name': 'index', 'type': 'string'},
-            {'name': 'count', 'type': 'int'},
-            {'name': 'null_count', 'type': 'int'},
-            {'name': 'frequency', 'type': 'object'},
-            {'name': 'mean', 'type': 'number'},
-            {'name': 'std', 'type': 'number'},
-            {'name': 'min', 'type': 'number'},
-            {'name': 'max', 'type': 'number'}
-        ]
-    },
-    'data': []
+    'fields': [
+        {'name': 'group_variables', 'type': 'array'},
+        {'name': 'group', 'type': 'array'},
+        {'name': 'index', 'type': 'string'},
+        {'name': 'count', 'type': 'integer'},
+        {'name': 'null_count', 'type': 'integer'},
+        {'name': 'frequency', 'type': 'any'},
+        {'name': 'mean', 'type': 'number'},
+        {'name': 'std', 'type': 'number'},
+        {'name': 'min', 'type': 'number'},
+        {'name': 'max', 'type': 'number'}
+    ]
 }
+assert validate(OUTPUT_SCHEMA_AGGREGATE)
 
 
 def intermediate_stats():
@@ -100,10 +97,10 @@ def intermediate_stats():
 
         # Generate results
         logging.info("Generating results...")
-        results = copy.deepcopy(OUTPUT_SCHEMA_INTERMEDIATE)
         nominal_cols = df.dtypes == 'category'
 
         # grouped statistics
+        data = []
         if nominal_cols.any():
             group_variables = list(df.columns[nominal_cols])
             for group_name, group in df.groupby(group_variables):
@@ -111,13 +108,17 @@ def intermediate_stats():
                 if not isinstance(group_name, tuple):
                     group_name = (group_name,)
 
-                results['data'] += _calc_stats(group, group_name, group_variables)
+                data += _calc_stats(group, group_name, group_variables)
 
         # overall statistics
-        results['data'] += _calc_stats(df, ('all',), [])
+        data += _calc_stats(df, ('all',), [])
 
-        logging.info("Results:\n{}".format(results))
-        io_helper.save_results(pd.io.json.dumps(results), '', shapes.Shapes.JSON)
+        logging.info("Results:\n{}".format(data))
+        table = {
+            'schema': OUTPUT_SCHEMA_INTERMEDIATE,
+            'data': data,
+        }
+        io_helper.save_results(pd.io.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
         logging.info("DONE")
     except UserError as e:
         logging.error(e)
@@ -160,13 +161,16 @@ def aggregate_stats(job_ids):
 
         # Aggregate summary statistics
         logging.info("Aggregating results...")
-        results = copy.deepcopy(OUTPUT_SCHEMA_AGGREGATE)
-
+        data = []
         for (group_name, index), gf in df.groupby(['group', 'index']):
-            results['data'].append(_agg_stats(gf, group_name, index))
+            data.append(_agg_stats(gf, group_name, index))
 
-        logging.info("Results:\n{}".format(results))
-        io_helper.save_results(pd.io.json.dumps(results), '', shapes.Shapes.JSON)
+        logging.info("Results:\n{}".format(data))
+        table = {
+            'schema': OUTPUT_SCHEMA_AGGREGATE,
+            'data': data,
+        }
+        io_helper.save_results(pd.io.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
         logging.info("DONE")
     except UserError as e:
         logging.error(e)
