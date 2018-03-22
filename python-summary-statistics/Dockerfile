@@ -11,6 +11,8 @@ COPY tests/unit /src/tests/
 
 WORKDIR /src
 RUN pytest tests/
+
+
 FROM hbpmip/python-mip:0.4.0
 
 MAINTAINER mirco.nasuti@chuv.ch

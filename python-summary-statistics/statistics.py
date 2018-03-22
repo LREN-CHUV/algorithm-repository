@@ -90,10 +90,6 @@ def intermediate_stats():
         if len(dep_var['series']) == 0:
             raise UserError('Dependent variable has no values, check your SQL query.')
 
-        # Check that dependent variable is numeric
-        if is_nominal(dep_var['type']['name']):
-            raise UserError('Dependent variable needs to be numeric')
-
         # Load data into a Pandas dataframe
         logging.info("Loading data...")
         df = get_X(dep_var, indep_vars)
@@ -101,11 +97,11 @@ def intermediate_stats():
         # Generate results
         logging.info("Generating results...")
         results = copy.deepcopy(OUTPUT_SCHEMA_INTERMEDIATE)
-        nominal_cols = df.dtypes == 'category'
+
+        group_variables = [var['name'] for var in indep_vars if is_nominal(var['type']['name'])]
 
         # grouped statistics
-        if nominal_cols.any():
-            group_variables = list(df.columns[nominal_cols])
+        if group_variables:
             for group_name, group in df.groupby(group_variables):
                 # if there's only one nominal column
                 if not isinstance(group_name, tuple):
@@ -134,7 +130,7 @@ def _calc_stats(group, group_name, group_variables):
         }
 
         # add all stats from pandas
-        result.update(x.describe())
+        result.update(x.describe().drop('freq', errors='ignore'))
 
         if x.dtype.name == 'category':
             result['frequency'] = dict(x.value_counts())
@@ -187,19 +183,29 @@ def _load_intermediate_data(job_ids):
 
 
 def _agg_stats(gf, group_name, index):
-    mean = (gf['mean'] * gf['count']).sum() / gf['count'].sum()
-    return {
+    ret = {
         'index': index,
         'group': group_name,
         'group_variables': gf.group_variables.iloc[0],
-        'mean': mean,
-        # std = EX^2 - (EX)^2
-        'std': np.sqrt((gf['EX^2'] * gf['count']).sum() / gf['count'].sum() - mean**2),
-        'min': gf['min'].min(),
-        'max': gf['max'].max(),
         'count': gf['count'].sum(),
         'null_count': gf['null_count'].sum(),
     }
+    # nominal
+    if 'frequency' in gf.columns:
+        total_freq = pd.DataFrame(list(gf.frequency)).sum()
+        ret.update({'frequency': total_freq.to_dict()})
+
+    # real variable
+    else:
+        mean = (gf['mean'] * gf['count']).sum() / gf['count'].sum()
+        ret.update({
+            'mean': mean,
+            # std = EX^2 - (EX)^2
+            'std': np.sqrt((gf['EX^2'] * gf['count']).sum() / gf['count'].sum() - mean**2),
+            'min': gf['min'].min(),
+            'max': gf['max'].max(),
+        })
+    return ret
 
 
 def is_nominal(var_type):
