@@ -18,3 +18,7 @@ Methods for learning decision rules are being successfully applied to many probl
 * Number of decision trees in the initial ensemble: Rule ensembles start by generating an ensemble of (predictive clustering) trees - this is the size of the ensemble. Increasing the number increases the variance of the candidate rules, but also increases the computational complexity (run time).
 
 * Maximum number of trees: The maximum number of trees the method returns. The parameter can be used to prevent overly long run times on hard to model or noisy data.
+
+
+Reference: 
+Aho, T., Ženko, B., Džeroski, S., & Elomaa, T. (2012). Multi-target regression with rule ensembles. Journal of Machine Learning Research, 13(Aug), 2367-2407. [PDF](http://www.jmlr.org/papers/volume13/aho12a/aho12a.pdf)
