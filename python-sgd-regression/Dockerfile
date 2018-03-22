@@ -1,4 +1,22 @@
-FROM hbpmip/python-mip:0.2.4
+FROM hbpmip/python-base-build:0.4.4
+
+COPY requirements-dev.txt /requirements-dev.txt
+RUN pip install -r /requirements-dev.txt
+
+COPY requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
+
+# TODO: put these dependencies out of /python-sgd-regression
+COPY sklearn_to_pfa /src/sklearn_to_pfa
+
+COPY sgd_regression.py /src/sgd_regression.py
+COPY tests/unit /src/tests/
+
+WORKDIR /src
+RUN pytest tests/
+
+
+FROM hbpmip/python-mip:0.4.0
 
 MAINTAINER mirco.nasuti@chuv.ch
 
