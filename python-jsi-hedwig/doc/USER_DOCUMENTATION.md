@@ -16,3 +16,6 @@ The algorithm works by first discretizing the data set. Each numeric feature is 
 * beam: The size of the beam to be used in the search. Larger values of this variable cause the search of the algorithm to take longer and return more high quality rules.
 
 * support: The minimum relative support of the rules, discovered by Hedwig. The value of this parameter must be between 0 and 1 as the parameter represents the ration of the covered examples in the entire data set.
+
+Reference:
+Vavpetič, A., Novak, P. K., Grčar, M., Mozetič, I., & Lavrač, N. (2013, October). Semantic data mining of financial news articles. In International Conference on Discovery Science (pp. 294-307). Springer, Berlin, Heidelberg. [URL](https://link.springer.com/chapter/10.1007/978-3-642-40897-7_20)
