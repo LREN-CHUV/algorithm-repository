@@ -39,6 +39,7 @@ OUTPUT_SCHEMA_INTERMEDIATE = {
             {'name': 'group_variables', 'type': 'list'},
             {'name': 'group', 'type': 'list'},
             {'name': 'index', 'type': 'string'},
+            {'name': 'label', 'type': 'string'},
             {'name': 'count', 'type': 'int'},
             {'name': 'null_count', 'type': 'int'},
             {'name': 'unique', 'type': 'int'},
@@ -86,6 +87,7 @@ def intermediate_stats():
         inputs = io_helper.fetch_data()
         dep_var = inputs["data"]["dependent"][0]
         indep_vars = inputs["data"]["independent"]
+        labels = _get_labels(indep_vars + [dep_var])
 
         if len(dep_var['series']) == 0:
             raise UserError('Dependent variable has no values, check your SQL query.')
@@ -107,10 +109,10 @@ def intermediate_stats():
                 if not isinstance(group_name, tuple):
                     group_name = (group_name,)
 
-                results['data'] += _calc_stats(group, group_name, group_variables)
+                results['data'] += _calc_stats(group, group_name, group_variables, labels)
 
         # overall statistics
-        results['data'] += _calc_stats(df, ('all',), [])
+        results['data'] += _calc_stats(df, ('all',), [], labels)
 
         logging.info("Results:\n{}".format(results))
         io_helper.save_results(pd.io.json.dumps(results), '', shapes.Shapes.JSON)
@@ -120,13 +122,14 @@ def intermediate_stats():
         io_helper.save_results('', str(e), shapes.Shapes.ERROR)
 
 
-def _calc_stats(group, group_name, group_variables):
+def _calc_stats(group, group_name, group_variables, labels):
     results = []
     for name, x in group.items():
         result = {
             'index': name,
+            'label': labels[name],
             'group': list(map(str, group_name)),
-            'group_variables': group_variables,
+            'group_variables': [labels[g] for g in group_variables],
         }
 
         # add all stats from pandas
@@ -185,6 +188,7 @@ def _load_intermediate_data(job_ids):
 def _agg_stats(gf, group_name, index):
     ret = {
         'index': index,
+        'label': gf.label.iloc[0],
         'group': group_name,
         'group_variables': gf.group_variables.iloc[0],
         'count': gf['count'].sum(),
@@ -230,6 +234,10 @@ def get_X(dep_var, indep_vars):
             df[var['name']] = var['series']
     X = pd.DataFrame(df)
     return X
+
+
+def _get_labels(variables):
+    return {var['name']: var.get('label', var['name']) for var in variables}
 
 
 if __name__ == '__main__':

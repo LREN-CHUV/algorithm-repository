@@ -11,6 +11,7 @@ def independent(include_categorical=False, include_real=True):
                 'type': {
                     'name': 'real'
                 },
+                'label': 'Stress before test',
                 'series': [
                     61.4698271904, 53.7560829699, 43.7334060431, 57.978654924, 51.4467006894, 49.1931665942
                 ],
@@ -21,6 +22,7 @@ def independent(include_categorical=False, include_real=True):
                 'type': {
                     'name': 'real'
                 },
+                'label': 'IQ',
                 'series': [
                     73.5856470359, 73.6181456345, 73.7897320711, 73.8623274925, 73.9894228193, 74.4441778038
                 ],
@@ -35,6 +37,7 @@ def independent(include_categorical=False, include_real=True):
                 'name': 'polynominal',
                 'enumeration': ['-50y', '50-59y', '59y-']
             },
+            'label': 'Age group',
             'series': [
                 '-50y', '50-59y', '-50y', '50-59y', '-50y', '50-59y'
             ]
@@ -52,6 +55,7 @@ def inputs_regression(**kwargs):
                     'type': {
                         'name': 'real'
                     },
+                    'label': 'Score test',
                     'series': [
                         846.2601464093, 1257.859885233, 1070.6406427181, 1040.8477167398, 1173.4546177907, 1189.9664245547
                     ]
@@ -74,6 +78,7 @@ def inputs_classification(**kwargs):
                         'name': 'polynominal',
                         'enumeration': ['AD', 'CN', 'Other']
                     },
+                    'label': 'Score test',
                     'series': [
                         'AD', 'CN', 'Other', 'AD', 'CN', 'Other'
                     ]

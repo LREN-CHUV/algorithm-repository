@@ -20,8 +20,9 @@ def test_intermediate_stats_real(mock_save_results, mock_fetch_data):
     assert results['data'][:2] == [
         {
             'index': 'agegroup',
+            'label': 'Age group',
             'group': ['-50y'],
-            'group_variables': ['agegroup'],
+            'group_variables': ['Age group'],
             'count': 3,
             'unique': 1,
             'top': '-50y',
@@ -33,8 +34,9 @@ def test_intermediate_stats_real(mock_save_results, mock_fetch_data):
             'null_count': 0
         }, {
             'index': 'iq',
+            'label': 'IQ',
             'group': ['-50y'],
-            'group_variables': ['agegroup'],
+            'group_variables': ['Age group'],
             'count': 3,
             'mean': 73.8895774452,
             'std': 0.1412026822,
@@ -65,8 +67,9 @@ def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
     assert results['data'][:2] == [
         {
             'index': 'agegroup',
+            'label': 'Age group',
             'group': ['-50y'],
-            'group_variables': ['agegroup'],
+            'group_variables': ['Age group'],
             'count': 3,
             'unique': 1,
             'top': '-50y',
@@ -78,8 +81,9 @@ def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
             'null_count': 0
         }, {
             'index': 'iq',
+            'label': 'IQ',
             'group': ['-50y'],
-            'group_variables': ['agegroup'],
+            'group_variables': ['Age group'],
             'count': 3,
             'mean': 73.7882673088,
             'std': 0.2018918769,
@@ -112,6 +116,7 @@ def intermediate_data_1():
         'data': [
             {
                 'index': 'iq',
+                'label': 'IQ',
                 'group': ['all'],
                 'group_variables': [],
                 'count': 3,
@@ -132,6 +137,7 @@ def intermediate_data_2():
         'data': [
             {
                 'index': 'iq',
+                'label': 'IQ',
                 'group': ['all'],
                 'group_variables': [],
                 'count': 5,
@@ -163,6 +169,7 @@ def test_aggregate_stats_real(mock_save_results, mock_get_results):
     assert results['data'] == [
         {
             'index': 'iq',
+            'label': 'IQ',
             'group': ['all'],
             'group_variables': [],
             'mean': 92.5,
@@ -186,8 +193,9 @@ def intermediate_data_1_nominal():
                     'CN': 2,
                     'Other': 3
                 },
+                'label': 'Score test',
                 'group': ['59y-'],
-                'group_variables': ['agegroup'],
+                'group_variables': ['Age group'],
                 'index': 'score_test1',
                 'null_count': 2,
                 'unique': 3
@@ -213,8 +221,9 @@ def test_aggregate_stats_nominal(mock_save_results, mock_get_results):
     assert results['data'] == [
         {
             'index': 'score_test1',
+            'label': 'Score test',
             'group': ['59y-'],
-            'group_variables': ['agegroup'],
+            'group_variables': ['Age group'],
             'count': 12,
             'null_count': 4,
             'frequency': {
