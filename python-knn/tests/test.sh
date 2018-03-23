@@ -48,12 +48,8 @@ $DOCKER_COMPOSE run woken_db_setup
 
 
 echo
-echo "Run the distributed-kmeans-a..."
-$DOCKER_COMPOSE run distributed-kmeans-a compute --mode intermediate
-echo "Run the distributed-kmeans-b..."
-$DOCKER_COMPOSE run distributed-kmeans-b compute --mode intermediate
-echo "Run the distributed-kmeans-agg..."
-$DOCKER_COMPOSE run distributed-kmeans-agg compute --mode aggregate --job-ids 1 2
+echo "Run the distributed-knn..."
+$DOCKER_COMPOSE run distributed-knn compute
 
 echo
 # Cleanup

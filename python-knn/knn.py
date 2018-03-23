@@ -39,6 +39,7 @@ def compute():
     inputs = io_helper.fetch_data()
     dep_var = inputs["data"]["dependent"][0]
     indep_vars = inputs["data"]["independent"]
+    parameters = {x['name']: x['value'] for x in inputs['parameters']}
 
     if dep_var['type']['name'] in ('polynominal', 'binominal'):
         job_type = 'classification'
@@ -46,7 +47,7 @@ def compute():
         job_type = 'regression'
 
     logging.info('Creating new estimator')
-    estimator = _create_estimator(job_type)
+    estimator = _create_estimator(job_type, parameters)
     featurizer = _create_featurizer(indep_vars)
 
     # convert variables into dataframe
@@ -74,9 +75,8 @@ def compute():
     io_helper.save_results(pfa, '', shapes.Shapes.PFA)
 
 
-def _create_estimator(job_type):
-    model_parameters = {x['name']: x['value'] for x in io_helper._get_parameters()}
-    n_neighbors = model_parameters.get('n_neighbors', 5)
+def _create_estimator(job_type, parameters):
+    n_neighbors = int(parameters.get('n_neighbors', 5))
 
     if job_type == 'regression':
         return KNeighborsRegressor(n_neighbors=n_neighbors)
@@ -108,7 +108,12 @@ def _create_featurizer(indep_vars):
     transforms = []
     for var in indep_vars:
         if var['type']['name'] in ('integer', 'real'):
-            transforms.append(Standardize(var['name'], var['mean'], var['std']))
+            if 'mean' not in var:
+                logging.warning('Mean not available for variable {}, using default value 0.'.format(var['name']))
+            if 'std' not in var:
+                logging.warning('Standard deviation not available for variable {}, using default value 1.'.format(var['name']))
+
+            transforms.append(Standardize(var['name'], var.get('mean', 0), var.get('std', 1)))
         elif var["type"]["name"] in ['polynominal', 'binominal']:
             transforms.append(OneHotEncoding(var['name'], var['type']['enumeration']))
     return Featurizer(transforms)

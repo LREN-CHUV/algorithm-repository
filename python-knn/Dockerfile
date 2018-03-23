@@ -6,11 +6,11 @@ RUN pip install -r /requirements-dev.txt
 COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
-COPY knn.py /src/knn.py
-COPY tests/unit /src/tests/
+# COPY knn.py /src/knn.py
+# COPY tests/unit /src/tests/
 
-WORKDIR /src
-RUN pytest tests/
+# WORKDIR /src
+# RUN pytest tests/
 
 
 FROM hbpmip/python-mip-sklearn:latest
