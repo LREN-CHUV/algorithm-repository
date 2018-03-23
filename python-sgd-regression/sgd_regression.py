@@ -178,7 +178,7 @@ def get_Xy(dep_var, indep_vars):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('compute', choices=['compute'])
-    parser.add_argument('mode', choices=['partial', 'final'])
+    parser.add_argument('--mode', choices=['partial', 'final'], default='final')
     parser.add_argument('--job-id', type=int)
 
     args = parser.parse_args()
