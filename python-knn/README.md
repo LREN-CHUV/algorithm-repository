@@ -2,24 +2,18 @@
 [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/python-knn.svg)](https://hub.docker.com/r/hbpmip/python-knn/tags "hbpmip/python-knn image tags")
 [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/python-knn.svg)](https://microbadger.com/#/images/hbpmip/python-knn "hbpmip/python-knn on microbadger")
 
-# Python distributed k-means clustering
+# Python k-nearest neighbors
 
-Implementation of [distributed k-means clustering](https://github.com/MRN-Code/dkmeans) in Python. It uses
-[Single-Shot Decentralized LLoyd](https://github.com/MRN-Code/dkmeans#single-shot-decentralized-lloyd).
+Implementation of [k-nearest neighbors algorithm](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) in Python.
 
-Clustering is parametrized using env `MODEL_PARAM_n_clusters`, but the final number of clusters is also influenced
-by the number of nodes - total number of output clusters is `floor(n_clusters * n_nodes / 2)`.
+Number of neighbors is parametrized using env `MODEL_PARAM_n_neighbors`.
 
 
 ## Usage
 
-It has two modes
+Works only on single node yet.
 
-1. `compute --mode intermediate`
-2. `compute --mode aggregate --job-ids 1 2 3`
-
-Intermediate mode calculates clusters on a single node, while aggregate mode is merging the clusters according
-to least merging error (e.g. smallest distance between centroids).
+`compute`
 
 
 ## Build (for contributors)

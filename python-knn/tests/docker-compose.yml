@@ -61,7 +61,7 @@ services:
     depends_on:
       - db
 
-  distributed-kmeans-base:
+  distributed-knn-base:
     image: "hbpmip/python-knn:latest"
     restart: "no"
     environment:
@@ -78,35 +78,35 @@ services:
       OUT_HOST: db
       OUT_PORT: 5432
       OUT_DATABASE: woken
-      # PARAM_covariables: "minimentalstate,opticchiasm,subjectage,adnicategory"
-      PARAM_covariables: "minimentalstate,adnicategory"
+      PARAM_variables: "minimentalstate"
+      PARAM_covariables: "lefthippocampus,alzheimerbroadcategory"
       PARAM_grouping: ""
-      PARAM_meta: "{\"lefthippocampus\": {\"code\": \"lefthippocampus\", \"type\": \"real\", \"mean\": 3.0, \"std\": 0.35}, \"minimentalstate\": {\"code\": \"minimentalstate\", \"type\": \"real\", \"mean\": 24.0, \"std\": 5.0}, \"opticchiasm\": {\"code\": \"opticchiasm\", \"type\": \"real\", \"mean\": 0.08, \"std\": 0.009}, \"subjectage\": {\"code\": \"subjectage\", \"type\": \"real\", \"mean\": 71.0, \"std\": 8.0}, \"adnicategory\": {\"code\": \"adnicategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's Disease\"}, {\"code\": \"MCI\", \"label\": \"Mild Cognitive Impairment\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}], \"type\": \"polynominal\"}, \"alzheimerbroadcategory\": {\"code\": \"alzheimerbroadcategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's disease\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}, {\"code\": \"Other\", \"label\": \"Other\"}], \"type\": \"polynominal\"}}"
-      MODEL_PARAM_n_clusters: 2
-    volumes:
-      - ../mip_helper:/mip_helper
+      PARAM_query: "SELECT alzheimerbroadcategory, lefthippocampus, minimentalstate, opticchiasm, subjectage, adnicategory FROM cde_features_a LIMIT 100"
+      PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35,\"minValue\":0.1,\"maxValue\":5.0},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0}, \"rs17125944_c\": {\"code\": \"rs17125944_c\",\"enumerations\": [{\"code\": 0,\"label\": 0},{\"code\": 1,\"label\": 1},{\"code\": 2,\"label\": 2}],\"sql_type\": \"int\",\"type\": \"polynominal\"}, \"adnicategory\": {\"code\": \"adnicategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's Disease\"}, {\"code\": \"MCI\", \"label\": \"Mild Cognitive Impairment\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}], \"type\": \"polynominal\"}, \"alzheimerbroadcategory\": {\"code\": \"alzheimerbroadcategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's disease\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}, {\"code\": \"Other\", \"label\": \"Other\"}], \"type\": \"polynominal\"}}"
+      MODEL_PARAM_design: "factorial"
+      MODEL_PARAM_n_neighbors: 2
 
-  distributed-kmeans-a:
-    extends: distributed-kmeans-base
-    container_name: "distributed-kmeans-a"
+  distributed-knn-a:
+    extends: distributed-knn-base
+    container_name: "distributed-knn-a"
     environment:
       JOB_ID: '1'
-      PARAM_query: "SELECT minimentalstate, opticchiasm, subjectage, adnicategory FROM cde_features_a LIMIT 100"
+      PARAM_query: "SELECT alzheimerbroadcategory, minimentalstate, adnicategory, lefthippocampus FROM cde_features_a LIMIT 100"
     links:
       - "db:db"
 
-  distributed-kmeans-b:
-    extends: distributed-kmeans-base
-    container_name: "distributed-kmeans-b"
+  distributed-knn-b:
+    extends: distributed-knn-base
+    container_name: "distributed-knn-b"
     environment:
       JOB_ID: '2'
-      PARAM_query: "SELECT minimentalstate, opticchiasm, subjectage, adnicategory FROM cde_features_b LIMIT 100"
+      PARAM_query: "SELECT alzheimerbroadcategory, minimentalstate, adnicategory, lefthippocampus FROM cde_features_b LIMIT 100"
     links:
       - "db:db"
 
-  distributed-kmeans-agg:
-    extends: distributed-kmeans-base
-    container_name: "distributed-kmeans-agg"
+  distributed-knn-agg:
+    extends: distributed-knn-base
+    container_name: "distributed-knn-agg"
     environment:
       JOB_ID: '3'
     links:

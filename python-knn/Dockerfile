@@ -1,5 +1,20 @@
 FROM hbpmip/python-mip-sklearn:latest
 
+COPY requirements-dev.txt /requirements-dev.txt
+RUN pip install -r /requirements-dev.txt
+
+COPY requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
+
+COPY knn.py /src/knn.py
+COPY tests/unit /src/tests/
+
+WORKDIR /src
+RUN pytest tests/
+
+
+FROM hbpmip/python-mip-sklearn:latest
+
 MAINTAINER mirco.nasuti@chuv.ch
 
 ENV DOCKER_IMAGE=hbpmip/python-knn:0.0.1 \
@@ -12,9 +27,6 @@ COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
 COPY knn.py /knn.py
-
-# TODO: put these dependencies out of /python-knn
-COPY sklearn_to_pfa /sklearn_to_pfa
 
 ENTRYPOINT ["python", "/knn.py"]
 
