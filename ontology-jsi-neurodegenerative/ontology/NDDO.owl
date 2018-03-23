@@ -1,0 +1,1500 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.ontodm.com/OntoND#"
+     xml:base="http://www.ontodm.com/OntoND"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:NDDO="http://www.purl.org/NDDO/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <owl:Ontology rdf:about="http://www.purl.org/NDDO/">
+        <owl:versionIRI rdf:resource="http://www.purl.org/NDDO/1.0"/>
+        <owl:imports rdf:resource="http://www.purl.org/NDDO/ppmi/"/>
+        <owl:imports rdf:resource="http://www.purl.org/NDDO/adni/"/>
+        <owl:imports rdf:resource="http://www.purl.org/NDDO/external/"/>
+        <dc:format>OWL</dc:format>
+        <dc:contributor>Pance Panov</dc:contributor>
+        <dc:contributor>Ilin Tolovski</dc:contributor>
+        <dc:contributor>Ana Kostovska</dc:contributor>
+        <dc:creator>Pance Panov</dc:creator>
+        <dc:title>Ontology for describing data on neurodegenerative diseases in patients</dc:title>
+        <dc:type>Ontology</dc:type>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000040 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000040">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>hasAgent</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000041 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000041">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>expressedIn</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000042 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000042">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>extractedFrom</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000043 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000043">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>hasDatatype</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000044 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000044">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>hasID</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000045 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000045">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>hasInformation</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000046 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000046">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>hasInput</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000047 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000047">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>hasOutput</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000050 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000050">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>isOfGender</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000051 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000051">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>isOutputOf</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000053 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000053">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>isPreceededBy</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000054 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000054">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>occuresAt</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000055 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000055">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>originatesFrom</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000057 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000057">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:label>roleOf</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000048 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000048">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:label>hasDate</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000049 -->
+
+    <rdf:Description rdf:about="http://www.purl.org/NDDO/NDDO_00000049">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    </rdf:Description>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://ontodm.com/OntoDT#OntoDT_0000023 -->
+
+    <owl:Class rdf:about="http://ontodm.com/OntoDT#OntoDT_0000023">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_487147"/>
+        <rdfs:label>StringDatatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontodm.com/OntoDT#OntoDT_059114 -->
+
+    <owl:Class rdf:about="http://ontodm.com/OntoDT#OntoDT_059114">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000098"/>
+        <rdfs:label>field component</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontodm.com/OntoDT#OntoDT_150012 -->
+
+    <owl:Class rdf:about="http://ontodm.com/OntoDT#OntoDT_150012">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_487147"/>
+        <rdfs:label>RealDatatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontodm.com/OntoDT#OntoDT_459594 -->
+
+    <owl:Class rdf:about="http://ontodm.com/OntoDT#OntoDT_459594">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_487147"/>
+        <rdfs:label>DateAndTimeDatatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontodm.com/OntoDT#OntoDT_487147 -->
+
+    <owl:Class rdf:about="http://ontodm.com/OntoDT#OntoDT_487147">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000098"/>
+        <rdfs:label>datatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontodm.com/OntoDT#OntoDT_608148 -->
+
+    <owl:Class rdf:about="http://ontodm.com/OntoDT#OntoDT_608148">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_487147"/>
+        <rdfs:label>DiscreteDatatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontodm.com/OntoDT#OntoDT_950419 -->
+
+    <owl:Class rdf:about="http://ontodm.com/OntoDT#OntoDT_950419">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_487147"/>
+        <rdfs:label>RecordDatatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontodm.com/OntoDT#OntoDT_inst_507131 -->
+
+    <owl:Class rdf:about="http://ontodm.com/OntoDT#OntoDT_inst_507131">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000098"/>
+        <rdfs:label>field identifier</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://ontodm.com/OntoDT#OntoDT_inst_674431 -->
+
+    <owl:Class rdf:about="http://ontodm.com/OntoDT#OntoDT_inst_674431">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000098"/>
+        <rdfs:label>field list</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ontodm.com/OntoDM-core/OntoDM_000144 -->
+
+    <owl:Class rdf:about="http://www.ontodm.com/OntoDM-core/OntoDM_000144">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000100"/>
+        <rdfs:label>DM-dataset</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ontodm.com/OntoDM-core/OntoDM_892395 -->
+
+    <owl:Class rdf:about="http://www.ontodm.com/OntoDM-core/OntoDM_892395">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
+        <rdfs:label>data example</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ontodm.com/OntoDT#OntoDT_UC_0000030 -->
+
+    <owl:Class rdf:about="http://www.ontodm.com/OntoDT#OntoDT_UC_0000030">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_487147"/>
+        <rdfs:label>PositiveIntegerDatatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000001 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000001">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:label xml:lang="en">examination</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000002 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000002">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000001"/>
+        <rdfs:label xml:lang="en">diagnostic procedure</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000003 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000003">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000001"/>
+        <rdfs:label xml:lang="en">biomarker assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000004 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000004">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000002"/>
+        <rdfs:label xml:lang="en">clinical assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000005 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000005">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000002"/>
+        <rdfs:label xml:lang="en">imaging assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000006 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000006">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000001"/>
+        <rdfs:label xml:lang="en">biospecimen collection</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000007 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000007">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000006"/>
+        <rdfs:label xml:lang="en">blood sampling</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000008 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000008">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000006"/>
+        <rdfs:label xml:lang="en">lumbar puncture sampling</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000011 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000011">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000001"/>
+        <rdfs:label xml:lang="en">vital signs assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000012 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000012">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000001"/>
+        <rdfs:label xml:lang="en">screening labs assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000013 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000013">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000001"/>
+        <rdfs:label xml:lang="en">neurological assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000014 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000014">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000001"/>
+        <rdfs:label xml:lang="en">social and personal history assesment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000015 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000015">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000004"/>
+        <rdfs:label xml:lang="en">clinical assessment of study partner</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000016 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000016">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000004"/>
+        <rdfs:label xml:lang="en">clinical assessment of study subject</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000017 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000017">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000004"/>
+        <rdfs:label xml:lang="en">clinical assessment of study subject and partner</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000018 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000018">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:label xml:lang="en">study</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000020 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000020">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:label xml:lang="en">telephone check assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000021 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000021">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:label xml:lang="en">visit</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000022 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000022">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000072"/>
+        <rdfs:label xml:lang="en">diagnostic data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000023 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000023">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000101"/>
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000022"/>
+        <rdfs:label xml:lang="en">MRI image</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000024 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000024">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000022"/>
+        <rdfs:label xml:lang="en">clinical data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000025 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000025">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000072"/>
+        <rdfs:label xml:lang="en">biomarker data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000027 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000027">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000101"/>
+        <rdfs:label>PET image</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000028 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000028">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000072"/>
+        <rdfs:label xml:lang="en">personal and social history data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000029 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000029">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000072"/>
+        <rdfs:label xml:lang="en">protocol data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000030 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000030">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000022"/>
+        <rdfs:label xml:lang="en">image data score</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000031 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000031">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000031"/>
+        <rdfs:label xml:lang="en">observable entity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000032 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000032">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000031"/>
+        <rdfs:label xml:lang="en">interpretation of findings</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000033 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000033">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000032"/>
+        <rdfs:label xml:lang="en">diagnosis</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000034 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000034">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+        <rdfs:label xml:lang="en">identifier</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000035 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000035">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000072"/>
+        <rdfs:label xml:lang="en">biospecimen collection data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000036 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000036">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000021"/>
+        <rdfs:label>Telephone visit</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000037 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000037">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000021"/>
+        <rdfs:label>Physical visit</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000052 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000052">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000310"/>
+        <rdfs:label>clinical assessment questionnaire</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000056 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000056">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000052"/>
+        <rdfs:label>Geriatric Depression Scale Assessment Questionnaire</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000058 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000058">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000062"/>
+        <rdfs:label>Symbol Digit Modalities Test (SDMT)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000059 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000059">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000062"/>
+        <rdfs:label>Montreal Cognitive Assessment  (MoCA)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000060 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000060">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000062"/>
+        <rdfs:label>Semantic Fluency Assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000061 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000061">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000016"/>
+        <rdfs:label>Geriatric Depression Scale Assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000062 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000062">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000016"/>
+        <rdfs:label>cognitive assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000063 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000063">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000005"/>
+        <rdfs:label>Magnetic Resonance Imaging (MRI)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000064 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000064">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000005"/>
+        <rdfs:label>Positron Emission Tomography (PET)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000065 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000065">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000014"/>
+        <rdfs:label>demographic assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000066 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000066">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000014"/>
+        <rdfs:label>education asessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000067 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000067">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000014"/>
+        <rdfs:label>personal history assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000068 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000068">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000001"/>
+        <rdfs:label>adverse events assessment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000069 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000069">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000072"/>
+        <rdfs:label>adverse events data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000070 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000070">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000072"/>
+        <rdfs:label>neurological examination data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000071 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000071">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000024"/>
+        <rdfs:label>cognitive assessment data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000072 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000072">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
+        <rdfs:label xml:lang="en">examination data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000073 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000073">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000035"/>
+        <rdfs:label>blood sample data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000074 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000074">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000035"/>
+        <rdfs:label>lumbar puncture data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000075 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000075">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000025"/>
+        <rdfs:label>DNA data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000076 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000076">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000077"/>
+        <rdfs:label>study subject</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000077 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000077">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000023"/>
+        <rdfs:label>study participant</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000078 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000078">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000030"/>
+        <rdfs:label>MRI image data score</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000079 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000079">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000030"/>
+        <rdfs:label>PET image data score</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000080 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000080">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:label>medical device</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000081 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000081">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000080"/>
+        <rdfs:label>medical image device</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000082 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000082">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000081"/>
+        <rdfs:label>MRI scanner</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000083 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000083">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000081"/>
+        <rdfs:label>PET scanner</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000085 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000085">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000023"/>
+        <rdfs:label>image provider role</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000086 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000086">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000071"/>
+        <rdfs:label>Semantic Fluency Assessment Score</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000087 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000087">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000071"/>
+        <rdfs:label>Montreal Cognitive Assessment (MoCA) Score</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000088 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000088">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000071"/>
+        <rdfs:label>Symbol Digit Modalities Test Score</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000090 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000090">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000103"/>
+        <rdfs:label>Geriatric Depression Scale (GDS-15)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000091 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000091">
+        <rdfs:subClassOf rdf:resource="http://www.ontodm.com/OntoDT#OntoDT_UC_0000030"/>
+        <rdfs:label>Geriatric Depression Scale (GDS-15) Datatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000092 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000092">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000103"/>
+        <rdfs:label>Montreal Cognitive Assessment scale (MoCA scale)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000093 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000093">
+        <rdfs:subClassOf rdf:resource="http://www.ontodm.com/OntoDT#OntoDT_UC_0000030"/>
+        <rdfs:label>Montreal Cognitive Assessment Datatype (MoCA Datatype)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000094 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000094">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000103"/>
+        <rdfs:label>Symbol Digit Modalities Test Scale</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000095 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000095">
+        <rdfs:subClassOf rdf:resource="http://www.ontodm.com/OntoDT#OntoDT_UC_0000030"/>
+        <rdfs:label>Symbol Digit Modalities Datatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000096 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000096">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000103"/>
+        <rdfs:label>Semantic Fluency Assessment Scale</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000097 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000097">
+        <rdfs:subClassOf rdf:resource="http://www.ontodm.com/OntoDT#OntoDT_UC_0000030"/>
+        <rdfs:label>Semantic Fluency Datatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000098 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000098">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+        <rdfs:label>data model</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000099 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000099">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000034"/>
+        <rdfs:label>participant ID</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000100 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000100">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000034"/>
+        <rdfs:label>participant rooster ID</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000101 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000101">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000034"/>
+        <rdfs:label>site ID</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000102 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000102">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+        <rdfs:label>specification entity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000103 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000103">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000102"/>
+        <rdfs:label>assessment scale</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000104 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000104">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000102"/>
+        <rdfs:label>study specification</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000105 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000105">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000102"/>
+        <rdfs:label>visit specification</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000106 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000106">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
+        <rdfs:label>person</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000107 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000107">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:label>cohort</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000108 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000108">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000052"/>
+        <rdfs:label>Montreal Cognitive Assessment Questionnaire</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000109 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000109">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000052"/>
+        <rdfs:label>Semantic Fluency Assessment Questionnaire</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000110 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000110">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000052"/>
+        <rdfs:label>Symbol Digit Modalities Assessment Questionnaire</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000114 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000114">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000102"/>
+        <rdfs:label>study participant specification</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000115 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000115">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000102"/>
+        <rdfs:label>study participant occurence specification</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000116 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000116">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000115"/>
+        <rdfs:label>new study participant</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000117 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000117">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_150012"/>
+        <rdfs:label>Age Datatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000118 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000118">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_608148"/>
+        <rdfs:label>Marital Status Datatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000119 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000119">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_608148"/>
+        <rdfs:label>Origin Protocol Datatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000120 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000120">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_608148"/>
+        <rdfs:label>Race Datatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00000121 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00000121">
+        <rdfs:subClassOf rdf:resource="http://ontodm.com/OntoDT#OntoDT_608148"/>
+        <rdfs:label>Sex Datatype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003000 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003000">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000072"/>
+        <rdfs:label>vital signs data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003001 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003001">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000028"/>
+        <rdfs:label>demographics data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003002 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003002">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00003001"/>
+        <rdfs:label>age data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003003 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003003">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00003001"/>
+        <rdfs:label>ethnicity data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003004 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003004">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00003001"/>
+        <rdfs:label>race data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003005 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003005">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00003001"/>
+        <rdfs:label>sex data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003006 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003006">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000028"/>
+        <rdfs:label>education data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003007 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003007">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000028"/>
+        <rdfs:label>personal history data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003008 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003008">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00003007"/>
+        <rdfs:label>marital status data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003014 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003014">
+        <rdfs:subClassOf rdf:resource="http://www.purl.org/NDDO/NDDO_00000102"/>
+        <rdfs:label>cohort specification</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_00003015 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_00003015">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000023"/>
+        <rdfs:label>doctor</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NDDO_20005873 -->
+
+    <owl:Class rdf:about="http://www.purl.org/NDDO/NDDO_20005873"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de1">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de1</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de10 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de10">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de10</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de11 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de11">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de11</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de2">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de2</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de3">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de3</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de4 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de4">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de4</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de5 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de5">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de5</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de6 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de6">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de6</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de7 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de7">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de7</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de8 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de8">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de8</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/NP3SPCH_de9 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/NP3SPCH_de9">
+        <rdf:type rdf:resource="http://www.purl.org/NDDO/NDDO_20005873"/>
+        <NDDO:NDDO_00000049 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</NDDO:NDDO_00000049>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NP3SPCH_de9</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_1">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de1"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_1</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_10 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_10">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de10"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_10</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_11 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_11">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de11"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_11</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_2">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de2"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_2</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_3">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de3"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_3</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_4 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_4">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de4"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_4</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_5 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_5">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de5"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_5</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_6 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_6">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de6"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_6</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_7 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_7">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de7"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_7</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_8 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_8">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de8"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_8</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.purl.org/NDDO/data_example_9 -->
+
+    <owl:NamedIndividual rdf:about="http://www.purl.org/NDDO/data_example_9">
+        <rdf:type rdf:resource="http://www.ontodm.com/OntoDM-core/OntoDM_892395"/>
+        <obo:BFO_0000051 rdf:resource="http://www.purl.org/NDDO/NP3SPCH_de9"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">data_example_9</rdfs:label>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
+
