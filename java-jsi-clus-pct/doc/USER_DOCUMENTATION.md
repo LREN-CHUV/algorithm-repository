@@ -18,3 +18,8 @@ Predictive Clustering Trees (PCTs) are decision trees that can be used for model
 * Minimum number of examples in a decision tree leaf: This parameter influences the size of the learned tree (post-pruning parameter), the larger the number, the smaller the learned tree.
 
 * Pruning (Yes/No): The parameter defines whether a post-pruning procedure is applied after the initial decision tree learning. Pruning reduces the size of the tree and such a tree tends to overfit data less.
+
+References:
+
+1. Levatić, J., Kocev, D., Ceci, M., & Džeroski, S. (2018). Semi-supervised trees for multi-target regression. Information Sciences. [URL](https://www.sciencedirect.com/science/article/pii/S002002551830210X)
+2. Osojnik, A., Džeroski, S., & Kocev, D. (2016, October). Option predictive clustering trees for multi-target regression. In International Conference on Discovery Science (pp. 118-133). Springer, Cham. [URL](https://link.springer.com/chapter/10.1007/978-3-319-46307-0_8)

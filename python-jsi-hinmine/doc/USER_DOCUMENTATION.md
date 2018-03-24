@@ -16,3 +16,6 @@ The algorithm works in two steps. In the first step, a network is constructed ou
 * damping: The variable *p* used in the construction of the P-PR vectors during propositionalization. The value of this variable can be any real number between *0* and *1*. Smaller values of the damping factor ensure faster calculation of the feature vectors, however larger values of *p* mean that the algorithm is capable of performing longer walks, exploring more of the structure of the data.
 
 * normalize (True/False): This variable determines whether the feature values of the input data instances should be normalized or not. If True, then the values of each feature are normalized to be between 0 and 1. This allows the algorithm to fairly compare two features measured with incomparable units. The value of this variable should be False if the difference in the size of the features carries inherent meaning.
+
+Reference: 
+Kralj, J., Robnik-Šikonja, M., & Lavrač, N. (2018). HINMINE: heterogeneous information network mining with information retrieval heuristics. Journal of Intelligent Information Systems, 50(1), 29-61. [URL](https://link.springer.com/article/10.1007/s10844-017-0444-9)

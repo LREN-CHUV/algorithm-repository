@@ -16,3 +16,6 @@ Methods for feature ranking are used in many domains with many descriptive varia
 * Target variables: A set of one or more (dependent) variables in relation to which we are estimating the importance of descriptive variables. They can either be all numeric or all categoric.
 
 * Number of decision trees in ensemble: In general, more trees in the ensemble improves the accuracy, but at the expense of a higher computational cost.
+
+Reference: 
+Petković, M., Džeroski, S., & Kocev, D. (2017, October). Feature Ranking for Multi-target Regression with Tree Ensemble Methods. In International Conference on Discovery Science (pp. 171-185). Springer, Cham. [URL](https://link.springer.com/chapter/10.1007/978-3-319-67786-6_13)
