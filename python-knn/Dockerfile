@@ -13,15 +13,10 @@ RUN pip install -r /requirements.txt
 # RUN pytest tests/
 
 
-FROM hbpmip/python-mip-sklearn:latest
-
-MAINTAINER mirco.nasuti@chuv.ch
+FROM hbpmip/python-mip-sklearn:0.1.1
 
 ENV DOCKER_IMAGE=hbpmip/python-knn:0.0.1 \
     FUNCTION=python-knn
-
-RUN apt-get update
-RUN apt-get install -y git
 
 COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
