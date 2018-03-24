@@ -1,0 +1,105 @@
+---
+
+version: '2'
+services:
+
+  db:
+    image: postgres:9.6.5-alpine
+    hostname: db
+    environment:
+      POSTGRES_PASSWORD: test
+
+  wait_dbs:
+    image: "waisbrot/wait"
+    restart: "no"
+    environment:
+      TARGETS: "db:5432"
+      TIMEOUT: 60
+
+  create_dbs:
+    image: "hbpmip/create-databases:1.0.0"
+    restart: "no"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_ADMIN_USER: postgres
+      DB_ADMIN_PASSWORD: test
+      DB1: features
+      USER1: features
+      PASSWORD1: featurespwd
+      DB2: woken
+      USER2: woken
+      PASSWORD2: wokenpwd
+    depends_on:
+      - db
+
+  sample_data_db_setup:
+    image: "hbpmip/sample-data-db-setup:0.5.0"
+    container_name: "data-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: features
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: test
+    depends_on:
+      - db
+
+  woken_db_setup:
+    image: "hbpmip/woken-db-setup:1.0.2"
+    container_name: "woken-db-setup"
+    restart: "no"
+    environment:
+      FLYWAY_DBMS: postgresql
+      FLYWAY_HOST: db
+      FLYWAY_PORT: 5432
+      FLYWAY_DATABASE_NAME: woken
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: test
+    depends_on:
+      - db
+
+  distributed-knn-base:
+    image: "hbpmip/python-knn:latest"
+    restart: "no"
+    environment:
+      NODE: job_test
+      IN_DBAPI_DRIVER: postgresql
+      IN_USER: features
+      IN_PASSWORD: featurespwd
+      IN_HOST: db
+      IN_PORT: 5432
+      IN_DATABASE: features
+      OUT_DBAPI_DRIVER: postgresql
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
+      PARAM_variables: "minimentalstate"
+      PARAM_covariables: "lefthippocampus,alzheimerbroadcategory"
+      PARAM_grouping: ""
+      PARAM_query: "SELECT alzheimerbroadcategory, lefthippocampus, minimentalstate, opticchiasm, subjectage, adnicategory FROM cde_features_a LIMIT 100"
+      PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35,\"minValue\":0.1,\"maxValue\":5.0},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0}, \"rs17125944_c\": {\"code\": \"rs17125944_c\",\"enumerations\": [{\"code\": 0,\"label\": 0},{\"code\": 1,\"label\": 1},{\"code\": 2,\"label\": 2}],\"sql_type\": \"int\",\"type\": \"polynominal\"}, \"adnicategory\": {\"code\": \"adnicategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's Disease\"}, {\"code\": \"MCI\", \"label\": \"Mild Cognitive Impairment\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}], \"type\": \"polynominal\"}, \"alzheimerbroadcategory\": {\"code\": \"alzheimerbroadcategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's disease\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}, {\"code\": \"Other\", \"label\": \"Other\"}], \"type\": \"polynominal\"}}"
+      MODEL_PARAM_k: 2
+
+  distributed-knn:
+    extends: distributed-knn-base
+    container_name: "distributed-knn"
+    environment:
+      JOB_ID: '1'
+      PARAM_query: "SELECT alzheimerbroadcategory, minimentalstate, adnicategory, lefthippocampus FROM cde_features_a LIMIT 100"
+    links:
+      - "db:db"
+
+  test_suite:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    volumes:
+      - ../tests:/tests
+      - ../knn.py:/knn.py
+      - ../mip_helper:/mip_helper
+      - ../sklearn_to_pfa:/sklearn_to_pfa

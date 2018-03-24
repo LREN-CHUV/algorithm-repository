@@ -1,0 +1,9 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/python-knn
+  pre:
+    - echo "Preparing python-knn"
+  post:
+    - echo "Finished python-knn"
+  test:
+    - ./tests/test.sh
