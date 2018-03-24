@@ -20,5 +20,5 @@ Methods for learning decision rules are being successfully applied to many probl
 * Maximum number of trees: The maximum number of trees the method returns. The parameter can be used to prevent overly long run times on hard to model or noisy data.
 
 
-Reference: 
+Reference:
 Aho, T., Ženko, B., Džeroski, S., & Elomaa, T. (2012). Multi-target regression with rule ensembles. Journal of Machine Learning Research, 13(Aug), 2367-2407. [PDF](http://www.jmlr.org/papers/volume13/aho12a/aho12a.pdf)

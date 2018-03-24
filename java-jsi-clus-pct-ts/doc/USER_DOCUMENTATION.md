@@ -19,5 +19,5 @@ Predictive Clustering Trees (PCTs) are decision trees that can be used for model
 
 * Pruning (Yes/No): The parameter defines whether a post-pruning procedure is applied after the initial decision tree learning. Pruning reduces the size of the tree and such a tree tends to overfit data less.
 
-Reference: 
+Reference:
 Gjorgjioski, V., Kocev, D., Bončina, A., Džeroski, S., & Debeljak, M. (2017, September). Predictive Clustering of Multi-dimensional Time Series Applied to Forest Growing Stock Data for Different Tree Sizes. In International Conference on ICT Innovations (pp. 186-195). Springer, Cham. [URL](https://link.springer.com/chapter/10.1007/978-3-319-67597-8_18)

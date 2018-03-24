@@ -17,5 +17,5 @@ The algorithm works in two steps. In the first step, a network is constructed ou
 
 * normalize (True/False): This variable determines whether the feature values of the input data instances should be normalized or not. If True, then the values of each feature are normalized to be between 0 and 1. This allows the algorithm to fairly compare two features measured with incomparable units. The value of this variable should be False if the difference in the size of the features carries inherent meaning.
 
-Reference: 
+Reference:
 Kralj, J., Robnik-Šikonja, M., & Lavrač, N. (2018). HINMINE: heterogeneous information network mining with information retrieval heuristics. Journal of Intelligent Information Systems, 50(1), 29-61. [URL](https://link.springer.com/article/10.1007/s10844-017-0444-9)
