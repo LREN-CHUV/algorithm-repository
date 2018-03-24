@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import logging
-import json
+from pandas.io import json
 import pandas as pd
 
 from mip_helper import io_helper, shapes
@@ -76,7 +76,7 @@ def compute():
 
 
 def _create_estimator(job_type, parameters):
-    n_neighbors = int(parameters.get('n_neighbors', 5))
+    n_neighbors = int(parameters.get('k', 5))
 
     if job_type == 'regression':
         return KNeighborsRegressor(n_neighbors=n_neighbors)

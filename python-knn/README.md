@@ -6,7 +6,7 @@
 
 Implementation of [k-nearest neighbors algorithm](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) in Python.
 
-Number of neighbors is parametrized using env `MODEL_PARAM_n_neighbors`.
+Number of neighbors is parametrized using env `MODEL_PARAM_k`.
 
 
 ## Usage
