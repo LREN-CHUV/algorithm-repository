@@ -15,7 +15,7 @@ RUN pip install -r /requirements.txt
 
 FROM hbpmip/python-mip-sklearn:0.1.3
 
-ENV DOCKER_IMAGE=hbpmip/python-knn:0.0.1 \
+ENV DOCKER_IMAGE=hbpmip/python-knn:0.1.0 \
     FUNCTION=python-knn
 
 COPY requirements.txt /requirements.txt
