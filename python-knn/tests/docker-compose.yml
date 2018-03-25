@@ -94,6 +94,28 @@ services:
     links:
       - "db:db"
 
+  pfa_validator:
+    image: "hbpmip/pfa-validator:0.10.1-2"
+    container_name: "pfa-validator"
+    environment:
+      INPUT_METHOD: POSTGRESQL
+      JOB_ID: 1
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: woken
+      DB_USER: woken
+      DB_PASSWORD: wokenpwd
+      DB_TABLE: job_result
+      DB_COLUMN: data
+      FEATURES_DB_HOST: db
+      FEATURES_DB_PORT: 5432
+      FEATURES_DB_NAME: features
+      FEATURES_DB_USER: features
+      FEATURES_DB_PASSWORD: featurespwd
+      FEATURES_DB_TABLE: cde_features_a
+    links:
+      - "db:db"
+
   test_suite:
     build:
       context: ..
