@@ -96,6 +96,30 @@ def test_main_classification_naive_bayes(mock_parameters, mock_save_results, moc
     engine.action({'stress_before_test1': 10., 'iq': 10., 'agegroup': '50-59y'})
 
 
+@mock.patch('sgd_regression.io_helper.fetch_data')
+@mock.patch('sgd_regression.io_helper.get_results')
+@mock.patch('sgd_regression.io_helper.save_results')
+@mock.patch('sgd_regression.io_helper._get_parameters')
+@mock.patch('sys.exit')
+def test_main_classification_naive_bayes_empty(mock_exit, mock_parameters, mock_save_results, mock_get_results, mock_fetch_data):
+    # create mock objects from database
+    mock_parameters.return_value = [{'name': 'type', 'value': 'naive_bayes'}]
+
+    # one column has all NULL values
+    data = fx.inputs_classification(include_categorical=True)
+    data['data']['independent'][0]['series'] = [None] * len(data['data']['independent'][0]['series'])
+
+    mock_fetch_data.return_value = data
+    mock_get_results.return_value = None
+
+    main(job_id=None, generate_pfa=True)
+
+    mock_exit.assert_called_once_with(1)
+    assert mock_save_results.call_args[0] == (
+        '', 'Model was not fitted on any data, cannot generate PFA.', 'text/plain+error'
+    )
+
+
 def test_deserialize_sklearn_estimator():
     X, y = datasets.make_regression(n_samples=100, n_features=10)
     estimator = SGDRegressor().fit(X, y)

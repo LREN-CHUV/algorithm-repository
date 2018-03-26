@@ -57,6 +57,6 @@ def test_compute_empty(mock_exit, mock_save_results, mock_fetch_data):
     compute()
 
     mock_exit.assert_called_once_with(1)
-    mock_save_results.call_args[0][0] == (
+    assert mock_save_results.call_args[0][0] == (
         '', 'No data left after removing NULL values, cannot fit model.', 'text/plain+error'
     )
