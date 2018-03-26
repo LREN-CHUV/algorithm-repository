@@ -13,7 +13,7 @@ WORKDIR /src
 RUN pytest tests/
 
 
-FROM hbpmip/python-mip-sklearn:0.1.4
+FROM hbpmip/python-mip-sklearn:latest
 
 ENV DOCKER_IMAGE=hbpmip/python-sgd-regression:0.0.8 \
     FUNCTION=python-sgd-regression
