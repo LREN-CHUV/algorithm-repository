@@ -18,7 +18,7 @@ from mip_helper import io_helper, shapes
 
 import argparse
 import logging
-import json
+from pandas.io import json
 import plotly.graph_objs as go
 import numpy as np
 import pandas as pd
@@ -68,7 +68,7 @@ def intermediate_stats():
             'count': 0,
         }
 
-    io_helper.save_results(pd.json.dumps(result), '', shapes.Shapes.JSON)
+    io_helper.save_results(json.dumps(result), '', shapes.Shapes.JSON)
     logging.info("DONE")
 
 
