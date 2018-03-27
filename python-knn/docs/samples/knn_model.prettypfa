@@ -1,0 +1,36 @@
+root:types:
+    Query = record(Query,
+                   sql: string,
+                   variable: string,
+                   covariables: array(string));
+    Point = record(Point,
+                   x: array(double),
+                   y: double);
+    Codebook = array(Point);
+    Input = record(Input,
+        subjectageyears: int,
+        rightsogsuperioroccipitalgyrus: double
+    );
+input: Input
+output: double
+cells:
+    codebook(Codebook) = [];
+    nNeighbors(int) = 5;
+fcns:
+    arr = fcn(x: double -> array(double))
+        new(array(double), x);
+
+    C = fcn(x: string, categories: array(string) -> array(double))
+        a.map(categories, fcn(cat: string -> double) if(cat == x) 1 else 0);
+
+    standardize = fcn(x: double, mu: double, sigma: double -> double)
+        (x - mu) / sigma;
+action:
+    var x = a.flatten(new(array(array(double)),
+        u.arr((cast.double(input.subjectageyears) - 0.0) / 1.0),
+        u.arr((cast.double(input.rightsogsuperioroccipitalgyrus) - 0.0) / 1.0)
+    ));
+    var neighbors = model.neighbor.nearestK(nNeighbors, x, codebook, fcn(x: array(double), p: Point -> double) {
+        metric.simpleEuclidean(x, p.x)
+    });
+    a.mean(a.map(neighbors, fcn(p: Point -> double) p.y))
