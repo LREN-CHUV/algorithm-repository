@@ -13,7 +13,7 @@ RUN pip install -r /requirements.txt
 # RUN pytest tests/
 
 
-FROM hbpmip/python-mip-sklearn:0.1.2
+FROM hbpmip/python-mip-sklearn:latest
 
 ENV DOCKER_IMAGE=hbpmip/python-knn:0.0.1 \
     FUNCTION=python-knn

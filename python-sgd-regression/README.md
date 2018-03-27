@@ -17,14 +17,14 @@ Implemented methods:
 It has two modes
 
 ```sh
-docker run --rm --env [list of environment variables] hbpmip/python-sgd-regression:VERSION compute partial --job-id 12
+docker run --rm --env [list of environment variables] hbpmip/python-sgd-regression:VERSION compute --mode partial --job-id 12
 ```
 
 which calls `partial_fit` of scikit-learn estimator and saves intermediate results into `job_results` table. If
 `--job-id` is specified, it will first load the estimator and continue its training. If not, it will start from scratch.
 
 ```sh
-docker run --rm --env [list of environment variables] hbpmip/python-sgd-regression:VERSION compute final --job-id 13
+docker run --rm --env [list of environment variables] hbpmip/python-sgd-regression:VERSION compute --mode final --job-id 13
 ```
 
 this mode in addition converts estimator into PFA. If you have only one node, calling `naive_bayes` with `compute final`
@@ -75,6 +75,12 @@ Create symlink from `python-sgd-regression` to `mip_helper` module from `python-
 ```
 ln -s ~/projects/python-base-docker-images/python-mip/mip_helper/mip_helper mip_helper
 ```
+and symlink from `python-sgd-regression` to `sklearn_to_pfa` module from `python-mip-sklearn` and
+```
+ln -s ~/projects/python-base-docker-images/python-mip-sklearn/sklearn_to_pfa/sklearn_to_pfa sklearn_to_pfa
+```
+
+
 Run unit tests
 ```
 find . -name \*.pyc -delete
