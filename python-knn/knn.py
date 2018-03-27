@@ -75,7 +75,7 @@ def compute():
         pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
 
         # Save or update job_result
-        logging.info('Saving PFA to job_results table')
+        logging.info('Saving PFA to job_results table...')
         pfa = json.dumps(pfa)
         io_helper.save_results(pfa, '', shapes.Shapes.PFA)
     except UserError as e:

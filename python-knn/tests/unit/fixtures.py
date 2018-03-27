@@ -1,7 +1,7 @@
 import pytest
 
 
-def independent(include_categorical=False):
+def independent(include_categorical=False, include_integer=False):
     ret = [
         {
             'name': 'stress_before_test1',
@@ -39,6 +39,17 @@ def independent(include_categorical=False):
             'label': 'Age Group',
             'series': [
                 '-50y', '50-59y', '-50y', '50-59y', '-50y', '50-59y'
+            ]
+        })
+    if include_integer:
+        ret.append({
+            'name': 'subjectageyears',
+            'type': {
+                'name': 'integer',
+            },
+            'label': 'Subject Age Years',
+            'series': [
+                61, 64, 42, 78, 94, 66,
             ]
         })
     return ret

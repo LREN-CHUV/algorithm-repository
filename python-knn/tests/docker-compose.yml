@@ -78,19 +78,25 @@ services:
       OUT_HOST: db
       OUT_PORT: 5432
       OUT_DATABASE: woken
+      # PARAM_variables: "minimentalstate"
+      # PARAM_covariables: "lefthippocampus,alzheimerbroadcategory"
+      # PARAM_grouping: ""
+      # PARAM_query: "SELECT alzheimerbroadcategory, lefthippocampus, minimentalstate, opticchiasm, subjectage, adnicategory FROM cde_features_a LIMIT 100"
+      # PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35,\"minValue\":0.1,\"maxValue\":5.0},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0}, \"rs17125944_c\": {\"code\": \"rs17125944_c\",\"enumerations\": [{\"code\": 0,\"label\": 0},{\"code\": 1,\"label\": 1},{\"code\": 2,\"label\": 2}],\"sql_type\": \"int\",\"type\": \"polynominal\"}, \"adnicategory\": {\"code\": \"adnicategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's Disease\"}, {\"code\": \"MCI\", \"label\": \"Mild Cognitive Impairment\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}], \"type\": \"polynominal\"}, \"alzheimerbroadcategory\": {\"code\": \"alzheimerbroadcategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's disease\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}, {\"code\": \"Other\", \"label\": \"Other\"}], \"type\": \"polynominal\"}}"
+      # MODEL_PARAM_k: 2
+
       PARAM_variables: "minimentalstate"
-      PARAM_covariables: "lefthippocampus,alzheimerbroadcategory"
-      PARAM_grouping: ""
-      PARAM_query: "SELECT alzheimerbroadcategory, lefthippocampus, minimentalstate, opticchiasm, subjectage, adnicategory FROM cde_features_a LIMIT 100"
-      PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35,\"minValue\":0.1,\"maxValue\":5.0},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0}, \"rs17125944_c\": {\"code\": \"rs17125944_c\",\"enumerations\": [{\"code\": 0,\"label\": 0},{\"code\": 1,\"label\": 1},{\"code\": 2,\"label\": 2}],\"sql_type\": \"int\",\"type\": \"polynominal\"}, \"adnicategory\": {\"code\": \"adnicategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's Disease\"}, {\"code\": \"MCI\", \"label\": \"Mild Cognitive Impairment\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}], \"type\": \"polynominal\"}, \"alzheimerbroadcategory\": {\"code\": \"alzheimerbroadcategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's disease\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}, {\"code\": \"Other\", \"label\": \"Other\"}], \"type\": \"polynominal\"}}"
-      MODEL_PARAM_k: 2
+      PARAM_covariables: "subjectageyears,rightsogsuperioroccipitalgyrus"
+      MODEL_PARAM_k: 5
+      PARAM_query: "SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') EXCEPT ALL (SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') OFFSET 349 LIMIT 349)"
+      PARAM_meta: "{\"rightsogsuperioroccipitalgyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right superior occipital gyrus\",\"code\":\"rightsogsuperioroccipitalgyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"},\"minimentalstate\":{\"description\":\"The Mini–Mental State Examination (MMSE) or Folstein test is a 30-point questionnaire that is used extensively in clinical and research settings to measure cognitive impairment. It is commonly used to screen for dementia.\",\"methodology\":\"mip-cde\",\"label\":\"MMSE - Mini Mental State Examination\",\"minValue\":0,\"code\":\"minimentalstate\",\"maxValue\":30.0,\"type\":\"integer\"}}"
 
   distributed-knn:
     extends: distributed-knn-base
     container_name: "distributed-knn"
     environment:
       JOB_ID: '1'
-      PARAM_query: "SELECT alzheimerbroadcategory, minimentalstate, adnicategory, lefthippocampus FROM cde_features_a LIMIT 100"
+      PARAM_query: "SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') EXCEPT ALL (SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') OFFSET 349 LIMIT 349)"
     links:
       - "db:db"
 
