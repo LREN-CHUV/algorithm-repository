@@ -112,13 +112,3 @@ services:
       PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears, alzheimerbroadcategory, adnicategory FROM cde_features_c LIMIT 100"
     links:
       - "db:db"
-
-  test_suite:
-    build:
-      context: ..
-      dockerfile: tests/Dockerfile
-    volumes:
-      - ../tests:/tests
-      - ../sgd_regression.py:/sgd_regression.py
-      - ../mip_helper:/mip_helper
-      - ../sklearn_to_pfa:/sklearn_to_pfa

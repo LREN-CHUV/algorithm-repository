@@ -9,10 +9,10 @@ COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
 COPY knn.py /src/knn.py
-COPY tests/unit /src/tests/
+COPY tests/unit/ /src/tests/
 
 WORKDIR /src
-RUN pytest tests/
+RUN pytest tests/ -x --ff --capture=no
 
 ## Build target image
 
