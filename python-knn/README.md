@@ -11,9 +11,13 @@ Number of neighbors is parametrized using env `MODEL_PARAM_k`.
 
 ## Usage
 
-Works only on single node yet.
+It has two modes
 
-`compute`
+1. `compute --mode intermediate`
+2. `compute --mode aggregate --job-ids 1 2 3`
+
+Intermediate mode calculates knn from a single node, while aggregate mode is used after intermediate to
+combine knn from multiple jobs. Intermediate mode can be also used to calculate knn from single node.
 
 
 ## Build (for contributors)

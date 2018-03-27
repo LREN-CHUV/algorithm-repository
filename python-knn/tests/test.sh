@@ -58,10 +58,18 @@ echo "Initialise the databases..."
 $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
+# single-node case
+# echo
+# echo "Run the distributed-knn-single..."
+# $DOCKER_COMPOSE run distributed-knn-single compute
 
 echo
-echo "Run the distributed-knn..."
-$DOCKER_COMPOSE run distributed-knn compute
+echo "Run the distributed-knn-a..."
+$DOCKER_COMPOSE run distributed-knn-a compute --mode intermediate
+echo "Run the distributed-knn-b..."
+$DOCKER_COMPOSE run distributed-knn-b compute --mode intermediate
+echo "Run the distributed-knn-agg..."
+$DOCKER_COMPOSE run distributed-knn-agg compute --mode aggregate --job-ids 1 2
 
 echo
 echo "Run PFA validator (skipped)..."

@@ -91,12 +91,35 @@ services:
       PARAM_query: "SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') EXCEPT ALL (SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') OFFSET 349 LIMIT 349)"
       PARAM_meta: "{\"rightsogsuperioroccipitalgyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right superior occipital gyrus\",\"code\":\"rightsogsuperioroccipitalgyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"},\"minimentalstate\":{\"description\":\"The Mini–Mental State Examination (MMSE) or Folstein test is a 30-point questionnaire that is used extensively in clinical and research settings to measure cognitive impairment. It is commonly used to screen for dementia.\",\"methodology\":\"mip-cde\",\"label\":\"MMSE - Mini Mental State Examination\",\"minValue\":0,\"code\":\"minimentalstate\",\"maxValue\":30.0,\"type\":\"integer\"}}"
 
-  distributed-knn:
+  distributed-knn-single:
     extends: distributed-knn-base
-    container_name: "distributed-knn"
+    container_name: "distributed-knn-single"
     environment:
       JOB_ID: '1'
-      PARAM_query: "SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') EXCEPT ALL (SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') OFFSET 349 LIMIT 349)"
+    links:
+      - "db:db"
+
+  distributed-knn-a:
+    extends: distributed-knn-base
+    container_name: "distributed-knn-a"
+    environment:
+      JOB_ID: '1'
+    links:
+      - "db:db"
+
+  distributed-knn-b:
+    extends: distributed-knn-base
+    container_name: "distributed-knn-b"
+    environment:
+      JOB_ID: '2'
+    links:
+      - "db:db"
+
+  distributed-knn-agg:
+    extends: distributed-knn-base
+    container_name: "distributed-knn-agg"
+    environment:
+      JOB_ID: '3'
     links:
       - "db:db"
 
