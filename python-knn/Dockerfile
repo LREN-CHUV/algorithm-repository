@@ -1,4 +1,6 @@
-FROM hbpmip/python-mip-sklearn:latest
+## Run unit tests
+
+FROM hbpmip/python-base-build:0.4.5
 
 COPY requirements-dev.txt /requirements-dev.txt
 RUN pip install -r /requirements-dev.txt
@@ -6,14 +8,15 @@ RUN pip install -r /requirements-dev.txt
 COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
-# COPY knn.py /src/knn.py
-# COPY tests/unit /src/tests/
+COPY knn.py /src/knn.py
+COPY tests/unit /src/tests/
 
-# WORKDIR /src
-# RUN pytest tests/
+WORKDIR /src
+RUN pytest tests/
 
+## Build target image
 
-FROM hbpmip/python-mip-sklearn:0.1.4
+FROM hbpmip/python-mip-sklearn:0.2.0
 
 ENV DOCKER_IMAGE=hbpmip/python-knn:0.1.1 \
     FUNCTION=python-knn

@@ -1,4 +1,6 @@
-FROM hbpmip/python-mip-sklearn:latest
+## Run unit tests
+
+FROM hbpmip/python-base-build:0.4.5
 
 COPY requirements-dev.txt /requirements-dev.txt
 RUN pip install -r /requirements-dev.txt
@@ -12,8 +14,9 @@ COPY tests/unit /src/tests/
 WORKDIR /src
 RUN pytest tests/
 
+## Build target image
 
-FROM hbpmip/python-mip-sklearn:latest
+FROM hbpmip/python-mip-sklearn:0.2.0
 
 ENV DOCKER_IMAGE=hbpmip/python-sgd-regression:0.0.8 \
     FUNCTION=python-sgd-regression
