@@ -1,0 +1,9 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/python-correlation-heatmap
+  pre:
+    - echo "Preparing python-correlation-heatmap"
+  post:
+    - echo "Finished python-correlation-heatmap"
+  test:
+    - ./tests/test.sh
