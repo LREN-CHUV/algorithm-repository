@@ -7,3 +7,27 @@ target_image:
     - echo "Finished python-sgd-regression"
   test:
     - ./tests/test.sh
+
+lm_image:
+  build: Dockerfile.lm
+  image: hbpmip/python-sgd-linear-model
+  pre:
+    - echo "Preparing python-sgd-linear-model"
+  post:
+    - echo "Finished python-sgd-linear-model"
+
+nb_image:
+  build: Dockerfile.nb
+  image: hbpmip/python-sgd-naive-bayes
+  pre:
+    - echo "Preparing python-sgd-naive-bayes"
+  post:
+    - echo "Finished python-sgd-naive-bayes"
+
+nn_image:
+  build: Dockerfile.nn
+  image: hbpmip/python-sgd-neural-network
+  pre:
+    - echo "Preparing python-sgd-neural-network"
+  post:
+    - echo "Finished python-sgd-neural-network"
