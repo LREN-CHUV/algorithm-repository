@@ -1,4 +1,4 @@
-root:types:
+types:
     Query = record(Query,
                    sql: string,
                    variable: string,

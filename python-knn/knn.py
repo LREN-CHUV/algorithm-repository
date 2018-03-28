@@ -73,6 +73,7 @@ def compute():
         # Create PFA from the estimator
         types = [(var['name'], var['type']['name']) for var in indep_vars]
         pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
+        pfa['name'] = "kNN"
 
         # Save or update job_result
         logging.info('Saving PFA to job_results table...')

@@ -18,6 +18,15 @@ get_script_dir () {
 
 cd "$(get_script_dir)"
 
+cleanup=1
+for param in "$@"
+do
+  if [ "--no-cleanup" == "$param" ]; then
+    cleanup=0
+    echo "INFO: --no-cleanup option detected !"
+  fi
+done
+
 if [[ $NO_SUDO || -n "$CIRCLECI" ]]; then
   DOCKER_COMPOSE="docker-compose"
 elif groups $USER | grep &>/dev/null '\bdocker\b'; then
@@ -34,7 +43,10 @@ function _cleanup() {
   $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null | true
   exit $error_code
 }
-trap _cleanup EXIT INT TERM
+
+if [[ "$cleanup" == 1 ]]; then
+  trap _cleanup EXIT INT TERM
+fi
 
 echo "Starting the databases..."
 $DOCKER_COMPOSE up -d --remove-orphans db
@@ -57,4 +69,6 @@ $DOCKER_COMPOSE run pfa_validator
 
 echo
 # Cleanup
-_cleanup
+if [[ "$cleanup" == 1 ]]; then
+  _cleanup
+fi
