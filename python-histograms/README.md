@@ -34,9 +34,6 @@ Run: `./publish.sh`
 
 ## Unit tests (for contributors)
 
-Create symlink from `python-histograms` to `mip_helper` module from `python-mip`
-```
-ln -s ~/projects/python-base-docker-images/python-mip/mip_helper/mip_helper mip_helper
 ```
 Run unit tests
 ```
