@@ -18,6 +18,7 @@ from mip_helper import io_helper, shapes
 
 import argparse
 import logging
+import sys
 from pandas.io import json
 import plotly.graph_objs as go
 import numpy as np
@@ -26,21 +27,67 @@ import pandas as pd
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-# TODO: do I need schema like in the case of python-summary-statistics?
+
+class UserError(Exception):
+
+    pass
+
+
+EXIT_ON_ERROR_PARAM = "exit_on_error"
+DEFAULT_EXIT_ON_ERROR = True
+
+
+def compute():
+    """Perform both intermediate step and aggregation at once."""
+    try:
+        # Read inputs
+        logging.info("Fetching data...")
+        inputs = io_helper.fetch_data()
+
+        result = _compute_intermediate_result(inputs)
+        corr, columns = _aggregate_results([result])
+        _save_corr_heatmap(corr, columns)
+    except UserError as e:
+        # TODO: put into mip_helper/utils as a decorator
+        logging.error(e)
+        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
+
+        exit_on_error = get_boolean_param(inputs["parameters"], EXIT_ON_ERROR_PARAM, DEFAULT_EXIT_ON_ERROR)
+        if exit_on_error:
+            sys.exit(1)
 
 
 def intermediate_stats():
     """Calculate X*X^T, means and count for single node that will be later used to construct covariance matrix."""
-    # Read inputs
-    logging.info("Fetching data...")
-    inputs = io_helper.fetch_data()
-    # TODO: it does work with independent variables only
-    # dep_var = inputs["data"]["dependent"][0]
+    try:
+        # Read inputs
+        logging.info("Fetching data...")
+        inputs = io_helper.fetch_data()
+
+        result = _compute_intermediate_result(inputs)
+        io_helper.save_results(json.dumps(result), '', shapes.Shapes.JSON)
+        logging.info("DONE")
+    except UserError as e:
+        # TODO: put into mip_helper/utils as a decorator
+        logging.error(e)
+        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
+
+        exit_on_error = get_boolean_param(inputs["parameters"], EXIT_ON_ERROR_PARAM, DEFAULT_EXIT_ON_ERROR)
+        if exit_on_error:
+            sys.exit(1)
+
+
+def _compute_intermediate_result(inputs):
     indep_vars = inputs["data"]["independent"]
+
+    # it works with independent variables only
+    if inputs["data"]["dependent"]:
+        logging.warning('Correlation heatmap does not use dependent variable.')
 
     # Check that all independent variables are numeric
     for var in indep_vars:
-        assert ~is_nominal(var['type']['name']), 'Independent variables needs to be numeric ({} is {})'.format(var['name'], var['type']['name'])
+        if is_nominal(var['type']['name']):
+            raise UserError('Independent variables needs to be numeric ({} is {})'.format(var['name'], var['type']['name']))
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
@@ -53,7 +100,7 @@ def intermediate_stats():
     logging.info("Generating results...")
     if len(X):
         result = {
-            'columns': X.columns,
+            'columns': list(X.columns),
             'means': X.mean().values,
             'X^T * X': X.T.dot(X.values).values,
             'count': len(X),
@@ -62,24 +109,41 @@ def intermediate_stats():
         logging.warning('All values are NAN, returning zero values')
         k = X.shape[1]
         result = {
-            'columns': X.columns,
+            'columns': list(X.columns),
             'means': np.zeros(k),
             'X^T * X': np.zeros((k, k)),
             'count': 0,
         }
-
-    io_helper.save_results(json.dumps(result), '', shapes.Shapes.JSON)
-    logging.info("DONE")
+    return result
 
 
 def aggregate_stats(job_ids):
     """Get all partial statistics from all nodes and aggregate them.
     :input job_ids: list of job_ids with intermediate results
     """
-    # Read intermediate inputs from jobs
-    logging.info("Fetching intermediate data...")
-    results = [json.loads(io_helper.get_results(str(job_id)).data) for job_id in job_ids]
+    try:
+        # Read inputs
+        logging.info("Fetching data...")
+        inputs = io_helper.fetch_data()
 
+        # Read intermediate inputs from jobs
+        logging.info("Fetching intermediate data...")
+        results = [json.loads(io_helper.get_results(str(job_id)).data) for job_id in job_ids]
+
+        corr, columns = _aggregate_results(results)
+
+        _save_corr_heatmap(corr, columns)
+    except UserError as e:
+        # TODO: put into mip_helper/utils as a decorator
+        logging.error(e)
+        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
+
+        exit_on_error = get_boolean_param(inputs["parameters"], EXIT_ON_ERROR_PARAM, DEFAULT_EXIT_ON_ERROR)
+        if exit_on_error:
+            sys.exit(1)
+
+
+def _aggregate_results(results):
     logging.info("Aggregating results...")
     XXT = 0
     n = 0
@@ -100,15 +164,18 @@ def aggregate_stats(job_ids):
     # create correlation matrix
     sigma = np.sqrt(np.diag(cov))
     corr = np.diag(1 / sigma) @ cov @ np.diag(1 / sigma)
+    return corr, columns
 
-    # generate heatmap from correlation matrix and return it in plotly format
+
+def _save_corr_heatmap(corr, columns):
+    """Generate heatmap from correlation matrix and return it in plotly format"""
     trace = go.Heatmap(z=corr,
                        x=columns,
                        y=columns)
     data = [trace]
 
     logging.info("Results:\n{}".format(data))
-    io_helper.save_results(pd.json.dumps(data), '', shapes.Shapes.PLOTLY)
+    io_helper.save_results(json.dumps(data), '', shapes.Shapes.PLOTLY)
     logging.info("DONE")
 
 
@@ -135,18 +202,33 @@ def get_X(indep_vars):
     return X
 
 
+# TODO: put into mip_helper/io_helper
+def get_boolean_param(params_list, param_name, default_value):
+    for p in params_list:
+        if p["name"] == param_name:
+            try:
+                return p["value"].lower() in ("yes", "true", "t", "1")
+            except ValueError:
+                logging.warning("%s cannot be cast to boolean !")
+    logging.info("Using default value: %s for %s" % (default_value, param_name))
+    return default_value
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('compute', choices=['compute'])
-    parser.add_argument('--mode', choices=['intermediate', 'aggregate'], default='intermediate')
+    parser.add_argument('--mode', choices=['single', 'intermediate', 'aggregate'], default='single')
     # QUESTION: (job_id, node) is a primary key of `job_result` table. Does it mean I'll need node ids as well in order
     # to query unique job?
     parser.add_argument('--job-ids', type=str, nargs="*", default=[])
 
     args = parser.parse_args()
 
+    # > compute
+    if args.mode == 'single':
+        compute()
     # > compute --mode intermediate
-    if args.mode == 'intermediate':
+    elif args.mode == 'intermediate':
         intermediate_stats()
     # > compute --mode aggregate --job-ids 12 13 14
     elif args.mode == 'aggregate':

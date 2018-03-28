@@ -4,9 +4,9 @@
 
 # Python Correlation Heatmap
 
-Calculate correlation heatmap, only works for real variables.
+Calculate correlation heatmap, only works for **real variables**.
 
-It has two modes
+You can run it on single node with `compute` or in a distributed way with
 
 1. `compute --mode intermediate`
 2. `compute --mode aggregate --job-ids 1 2 3`
