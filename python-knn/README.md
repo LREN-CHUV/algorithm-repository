@@ -36,10 +36,6 @@ Run: `./publish.sh`
 WARNING: unit tests can fail nondeterministically on `AttributeError: can't set attribute` because of some error
 in Titus port to Python 3
 
-Create symlink from `python-knn` to `mip_helper` module from `python-mip`
-```
-ln -s ~/projects/python-base-docker-images/python-mip/mip_helper/mip_helper mip_helper
-```
 Run unit tests
 ```
 find . -name \*.pyc -delete

@@ -114,12 +114,3 @@ services:
       JOB_ID: '3'
     links:
       - "db:db"
-
-  test_suite:
-    build:
-      context: ..
-      dockerfile: tests/Dockerfile
-    volumes:
-      - ../tests:/tests
-      - ../correlation_heatmap.py:/correlation_heatmap.py
-      - ../mip_helper:/mip_helper

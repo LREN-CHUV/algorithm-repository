@@ -1,3 +1,21 @@
+## Run unit tests
+
+FROM hbpmip/python-base-build:0.4.5
+
+COPY requirements-dev.txt /requirements-dev.txt
+RUN pip install -r /requirements-dev.txt
+
+COPY requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
+
+COPY correlation_heatmap.py /src/correlation_heatmap.py
+COPY tests/unit/ /src/tests/
+
+WORKDIR /src
+RUN pytest tests/ -x --ff --capture=no
+
+## Build target image
+
 FROM hbpmip/python-mip:0.4.0
 
 MAINTAINER mirco.nasuti@chuv.ch
@@ -8,9 +26,9 @@ ENV DOCKER_IMAGE=hbpmip/python-correlation-heatmap:0.0.1 \
 COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
-COPY correlation_heatmap.py /correlation_heatmap.py
+COPY correlation_heatmap.py /src/correlation_heatmap.py
 
-ENTRYPOINT ["python", "/correlation_heatmap.py"]
+ENTRYPOINT ["python", "/src/correlation_heatmap.py"]
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.name="hbpmip/python-correlation-heatmap" \
