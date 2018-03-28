@@ -1,3 +1,21 @@
+## Run unit tests
+
+FROM hbpmip/python-base-build:0.4.5
+
+COPY requirements-dev.txt /requirements-dev.txt
+RUN pip install -r /requirements-dev.txt
+
+COPY requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
+
+COPY linear_regression.py /src/linear_regression.py
+COPY tests/unit/ /src/tests/
+
+WORKDIR /src
+RUN pytest tests/ -x --ff --capture=no
+
+## Build target image
+
 FROM hbpmip/python-mip:0.4.0
 
 MAINTAINER mirco.nasuti@chuv.ch
@@ -6,15 +24,15 @@ ENV DOCKER_IMAGE=hbpmip/python-linear-regression:0.0.7 \
     FUNCTION=python-linear-regression
 
 COPY requirements.txt /requirements.txt
-COPY linear_regression.py /linear_regression.py
+COPY linear_regression.py /src/linear_regression.py
 
 RUN pip install -r /requirements.txt
 
-ENTRYPOINT ["python", "/linear_regression.py"]
+ENTRYPOINT ["python", "/src/linear_regression.py"]
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.name="hbpmip/python-linear-regression" \
-      org.label-schema.description="Python implementation of linear-regression" \
+      org.label-schema.description="Python implementation of linear regression" \
       org.label-schema.url="https://github.com/LREN-CHUV/algorithm-repository" \
       org.label-schema.vcs-type="git" \
       org.label-schema.vcs-url="https://github.com/LREN-CHUV/algorithm-repository.git" \

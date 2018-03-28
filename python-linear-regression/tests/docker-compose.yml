@@ -68,14 +68,18 @@ services:
     environment:
       NODE: job_test
       JOB_ID: 1
-      IN_JDBC_DRIVER: org.postgresql.Driver
-      IN_JDBC_URL: jdbc:postgresql://db:5432/features
-      IN_JDBC_USER: features
-      IN_JDBC_PASSWORD: featurespwd
-      OUT_JDBC_DRIVER: org.postgresql.Driver
-      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
-      OUT_JDBC_USER: woken
-      OUT_JDBC_PASSWORD: wokenpwd
+      IN_DBAPI_DRIVER: postgresql
+      IN_USER: features
+      IN_PASSWORD: featurespwd
+      IN_HOST: db
+      IN_PORT: 5432
+      IN_DATABASE: features
+      OUT_DBAPI_DRIVER: postgresql
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
       PARAM_variables: "score_test1"
       PARAM_covariables: "stress_before_test1,iq"
       PARAM_grouping: ""
