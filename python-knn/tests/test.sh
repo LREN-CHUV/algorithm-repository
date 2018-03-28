@@ -64,8 +64,8 @@ echo "Run the distributed-knn..."
 $DOCKER_COMPOSE run distributed-knn compute
 
 echo
-echo "Run PFA validator..."
-$DOCKER_COMPOSE run pfa_validator
+echo "Run PFA validator (skipped)..."
+# $DOCKER_COMPOSE run pfa_validator
 
 echo
 # Cleanup
