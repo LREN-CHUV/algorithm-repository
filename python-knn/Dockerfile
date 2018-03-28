@@ -16,7 +16,7 @@ RUN pytest tests/ -x --ff --capture=no
 
 ## Build target image
 
-FROM hbpmip/python-mip-sklearn:0.2.1
+FROM hbpmip/python-mip-sklearn:0.2.2
 
 ENV DOCKER_IMAGE=hbpmip/python-knn:0.2.0 \
     FUNCTION=python-knn
