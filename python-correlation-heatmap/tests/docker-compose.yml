@@ -86,8 +86,6 @@ services:
       PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_a LIMIT 100"
       PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"}}"
       MODEL_PARAM_design: "factorial"
-    volumes:
-      - ../mip_helper:/mip_helper
 
   correlation-heatmap-a:
     extends: correlation-heatmap-base
