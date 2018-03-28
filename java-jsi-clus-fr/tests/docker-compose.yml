@@ -34,7 +34,7 @@ services:
       - db
 
   sample_data_db_setup:
-    image: "hbpmip/sample-data-db-setup:0.5.1"
+    image: "hbpmip/sample-data-db-setup:0.6.0"
     container_name: "data-db-setup"
     restart: "no"
     environment:
