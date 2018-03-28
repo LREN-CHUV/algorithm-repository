@@ -18,7 +18,7 @@ RUN pytest tests/ -x --ff --capture=no
 
 FROM hbpmip/python-mip-sklearn:0.2.2
 
-ENV DOCKER_IMAGE=hbpmip/python-sgd-regression:0.0.8 \
+ENV DOCKER_IMAGE=hbpmip/python-sgd-regression:0.1.0 \
     FUNCTION=python-sgd-regression
 
 COPY requirements.txt /requirements.txt
