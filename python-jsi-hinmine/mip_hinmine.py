@@ -7,7 +7,7 @@ HINMine wrapper for the HBP medical platform.
 '''
 
 import logging
-from io_helper import io_helper
+from mip_helper import io_helper
 
 import numpy as np
 import scipy.sparse as sp
