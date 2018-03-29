@@ -47,8 +47,21 @@ Environment variables are:
 * PARAM_query: Query selecting the variables and covariables to feed into the algorithm for training.
 * MODEL_PARAM_type: Type of model to use, could be `linear_model`, `neural_network` or `naive_bayes`
 
-Use additional `MODEL_PARAM_[sklearn_parameter]` envs to specify scikit-learn model parameters (e.g. `MODEL_PARAM_alpha`
-  for Naive Bayes).
+
+## Model parameters
+
+`MODEL_PARAM_type` specifies type of model to use, could be `linear_model`, `neural_network` or `naive_bayes`. Use additional `MODEL_PARAM_[sklearn_parameter]` envs to specify scikit-learn model parameters (e.g. `MODEL_PARAM_alpha` for Naive Bayes or `MODEL_PARAM_learning_rate` for SGDRegressor).
+
+
+## Convergence
+
+### Naive bayes
+
+For Naive bayes it is enough to go over all data points once (call `--mode partial` on all nodes).
+
+### SGDRegression, SGDClassifier, MLPRegressor and MLPClassifier
+
+These methods are trained using [Stochastic Gradient Descent](http://scikit-learn.org/stable/modules/sgd.html#id1) and require several passes over training data in random order until convergence.
 
 
 ## Build (for contributors)
