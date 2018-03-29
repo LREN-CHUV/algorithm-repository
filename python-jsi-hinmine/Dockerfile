@@ -13,7 +13,7 @@ RUN apt-get update \
 # Install hinmine and its requirements
 COPY netSDM/ /src/netSDM
 COPY mip_hinmine.py /src/mip_hinmine.py
-COPY requirements_mip.txt /src/requirements_mip.txt
+COPY requirements.txt /src/requirements.txt
 COPY doc/ /src/doc/
 
 WORKDIR /src/netSDM
@@ -23,7 +23,7 @@ RUN python3.6 setup.py install
 WORKDIR /src
 
 RUN pip install -r /src/netSDM/requirements.txt \
-  && pip install -r /src/requirements_mip.txt \
+  && pip install -r /src/requirements.txt \
   && rm -rf /src/netSDM
 
 ENTRYPOINT ["python3.6", "/src/mip_hinmine.py"]
