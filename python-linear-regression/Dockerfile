@@ -20,7 +20,7 @@ FROM hbpmip/python-mip:0.4.0
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-linear-regression:0.0.7 \
+ENV DOCKER_IMAGE=hbpmip/python-linear-regression:0.1.0 \
     FUNCTION=python-linear-regression
 
 COPY requirements.txt /requirements.txt
