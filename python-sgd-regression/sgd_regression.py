@@ -154,7 +154,7 @@ def deserialize_sklearn_estimator(js):
 def _create_estimator(job_type):
     # TODO: create util fn in mip_helper
     model_parameters = {x['name']: x['value']for x in io_helper._get_parameters()}
-    model_type = model_parameters.get('type', 'linear_model')
+    model_type = model_parameters.pop('type', 'linear_model')
 
     if job_type == 'regression':
         if model_type == 'linear_model':
