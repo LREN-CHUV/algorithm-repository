@@ -105,14 +105,19 @@ def main(job_id, generate_pfa):
                 'estimator': serialized_estimator
             }
 
+            # TODO: create util fn in mip_helper
+            model_parameters = {x['name']: x['value']for x in io_helper._get_parameters()}
+            model_type = model_parameters.get('type', 'linear_model')
+
+            pfa.name = model_type
+
             # Save or update job_result
             logging.info('Saving PFA to job_results table')
-            pfa = json.dumps(pfa)
-            io_helper.save_results(pfa, '', shapes.Shapes.PFA)
+            io_helper.save_results(json.dumps(pfa), model_type, shapes.Shapes.PFA)
         else:
             # Save or update job_result
             logging.info('Saving serialized estimator into job_results table')
-            io_helper.save_results(serialized_estimator, '', shapes.Shapes.JSON)
+            io_helper.save_results(serialized_estimator, 'estimator', shapes.Shapes.JSON)
 
     except UserError as e:
         # TODO: put into mip_helper/utils as a decorator
@@ -147,8 +152,9 @@ def deserialize_sklearn_estimator(js):
 
 
 def _create_estimator(job_type):
+    # TODO: create util fn in mip_helper
     model_parameters = {x['name']: x['value']for x in io_helper._get_parameters()}
-    model_type = model_parameters.pop('type', 'linear_model')
+    model_type = model_parameters.get('type', 'linear_model')
 
     if job_type == 'regression':
         if model_type == 'linear_model':
