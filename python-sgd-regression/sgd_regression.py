@@ -109,7 +109,7 @@ def main(job_id, generate_pfa):
             model_parameters = {x['name']: x['value']for x in io_helper._get_parameters()}
             model_type = model_parameters.get('type', 'linear_model')
 
-            pfa.name = model_type
+            pfa['name'] = model_type
 
             # Save or update job_result
             logging.info('Saving PFA to job_results table')
