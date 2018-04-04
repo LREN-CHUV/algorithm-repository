@@ -1,28 +1,37 @@
 from sklearn.linear_model import SGDRegressor
 import json
 import mock
+import pytest
 from . import fixtures as fx
 from sgd_regression import main, serialize_sklearn_estimator, deserialize_sklearn_estimator
 from sklearn import datasets
 
 
+@pytest.mark.parametrize(
+    "method,name", [
+        # ("linear_model", "SGDRegressor"),
+        # ("neural_network", "MLPRegressor"),
+        ("gradient_boosting", "GradientBoostingRegressor"),
+    ]
+)
 @mock.patch('sgd_regression.io_helper.fetch_data')
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
-def test_main_regression(mock_save_results, mock_get_results, mock_fetch_data):
+@mock.patch('sgd_regression.io_helper._get_parameters')
+def test_main_regression(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data, method, name):
     # create mock objects from database
+    mock_parameters.return_value = [{'name': 'type', 'value': method}]
     mock_fetch_data.return_value = fx.inputs_regression(include_categorical=True)
     mock_get_results.return_value = None
 
     main(job_id=None, generate_pfa=True)
 
     pfa = mock_save_results.call_args[0][0]
-    # TODO: convert PFA first and check individual sections instead
     pfa_dict = json.loads(pfa)
 
     # deserialize model
     estimator = deserialize_sklearn_estimator(pfa_dict['metadata']['estimator'])
-    assert estimator.__class__.__name__ == 'SGDRegressor'
+    assert estimator.__class__.__name__ == name
 
     # make some prediction with PFA
     from titus.genpy import PFAEngine
@@ -30,11 +39,17 @@ def test_main_regression(mock_save_results, mock_get_results, mock_fetch_data):
     engine.action({'stress_before_test1': 10., 'iq': 10., 'agegroup': '-50y'})
 
 
+@pytest.mark.parametrize("method,name", [
+    ("linear_model", "SGDRegressor"),
+    ("neural_network", "MLPRegressor"),
+])
 @mock.patch('sgd_regression.io_helper.fetch_data')
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
-def test_main_partial(mock_save_results, mock_get_results, mock_fetch_data):
+@mock.patch('sgd_regression.io_helper._get_parameters')
+def test_main_partial(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data, method, name):
     # create mock objects from database
+    mock_parameters.return_value = [{'name': 'type', 'value': method}]
     mock_fetch_data.return_value = fx.inputs_regression()
     mock_get_results.return_value = None
 
@@ -70,25 +85,30 @@ def test_main_classification(mock_save_results, mock_get_results, mock_fetch_dat
     engine.action({'stress_before_test1': 10., 'iq': 10.})
 
 
+@pytest.mark.parametrize(
+    "method,name", [
+        ("linear_model", "SGDClassifier"), ("neural_network", "MLPClassifier"),
+        ("gradient_boosting", "GradientBoostingClassifier"), ('naive_bayes', 'MixedNB')
+    ]
+)
 @mock.patch('sgd_regression.io_helper.fetch_data')
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
 @mock.patch('sgd_regression.parameters.fetch_parameters')
 def test_main_classification_naive_bayes(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data):
     # create mock objects from database
-    mock_parameters.return_value = {'type': 'naive_bayes'}
+    mock_parameters.return_value = {'type': method}
     mock_fetch_data.return_value = fx.inputs_classification(include_categorical=True)
     mock_get_results.return_value = None
 
     main(job_id=None, generate_pfa=True)
 
     pfa = mock_save_results.call_args[0][0]
-    # TODO: convert PFA first and check individual sections instead
     pfa_dict = json.loads(pfa)
 
     # deserialize model
     estimator = deserialize_sklearn_estimator(pfa_dict['metadata']['estimator'])
-    assert estimator.__class__.__name__ == 'MixedNB'
+    assert estimator.__class__.__name__ == name
 
     # make some prediction with PFA
     from titus.genpy import PFAEngine

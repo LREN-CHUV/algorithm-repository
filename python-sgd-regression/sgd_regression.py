@@ -25,6 +25,7 @@ import argparse
 
 from sklearn.linear_model import SGDRegressor, SGDClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
+from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier
 import jsonpickle
 import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
@@ -73,10 +74,15 @@ def main(job_id, generate_pfa):
         logging.warning("All data are NULL, cannot fit model")
     else:
         # Train single step
-        if job_type == 'classification':
-            estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
+        if hasattr(estimator, 'partial_fit'):
+            if job_type == 'classification':
+                estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
+            else:
+                estimator.partial_fit(X, y)
         else:
-            estimator.partial_fit(X, y)
+            if not generate_pfa:
+                logging.warning('{} does not support partial fit.'.format(estimator))
+            estimator.fit(X, y)
 
     serialized_estimator = serialize_sklearn_estimator(estimator)
 
@@ -137,6 +143,8 @@ def _create_estimator(job_type):
             estimator = SGDRegressor(**model_parameters)
         elif model_type == 'neural_network':
             estimator = MLPRegressor(**model_parameters)
+        elif model_type == 'gradient_boosting':
+            estimator = GradientBoostingRegressor(**model_parameters)
         else:
             raise errors.UserError('Unknown model type {} for regression'.format(model_type))
 
@@ -147,6 +155,8 @@ def _create_estimator(job_type):
             estimator = MLPClassifier(**model_parameters)
         elif model_type == 'naive_bayes':
             estimator = MixedNB(**model_parameters)
+        elif model_type == 'gradient_boosting':
+            estimator = GradientBoostingClassifier(**model_parameters)
         else:
             raise errors.UserError('Unknown model type {} for classification'.format(model_type))
 
@@ -158,8 +168,12 @@ def _is_fitted(estimator):
     # TODO: put to utils
     if isinstance(estimator, MixedNB):
         return hasattr(estimator.multi_nb, 'classes_') or hasattr(estimator.gauss_nb, 'classes_')
-    elif isinstance(estimator, (SGDRegressor, SGDClassifier, MLPRegressor, MLPClassifier)):
+    elif isinstance(estimator, (SGDRegressor, SGDClassifier)):
         return hasattr(estimator, 'coef_')
+    elif isinstance(estimator, (MLPRegressor, MLPClassifier)):
+        return hasattr(estimator, 'coefs_')
+    elif isinstance(estimator, (GradientBoostingRegressor, GradientBoostingClassifier)):
+        return estimator._is_initialized()
     else:
         raise NotImplementedError('_is_fitted method is not implemented for {}'.format(estimator))
 
