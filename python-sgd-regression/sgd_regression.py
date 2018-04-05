@@ -97,7 +97,7 @@ def main(job_id, generate_pfa):
         pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
 
         # Add serialized model as metadata
-        pfa['metadata'] = _estimator_metadata(estimator, X, y)
+        pfa['metadata'] = _estimator_metadata(estimator, X, y, featurizer)
 
         # Save or update job_result
         logging.info('Saving PFA to job_results table')
@@ -106,10 +106,10 @@ def main(job_id, generate_pfa):
     else:
         # Save or update job_result
         logging.info('Saving serialized estimator into job_results table')
-        io_helper.save_results(_estimator_metadata(estimator, X, y), '', shapes.Shapes.JSON)
+        io_helper.save_results(_estimator_metadata(estimator, X, y, featurizer), '', shapes.Shapes.JSON)
 
 
-def _estimator_metadata(estimator, X, y):
+def _estimator_metadata(estimator, X, y, featurizer):
     """Serialize estimator and add score and other metadata."""
     meta = {
         'estimator': serialize_sklearn_estimator(estimator),
@@ -120,6 +120,8 @@ def _estimator_metadata(estimator, X, y):
         meta['coef_'] = str(estimator.coef_)
     if hasattr(estimator, 'intercept_'):
         meta['intercept_'] = str(estimator.intercept_)
+    if hasattr(estimator, 'feature_importances_') and hasattr(featurizer, 'columns'):
+        meta['feature_importances_'] = str(dict(zip(featurizer.columns, estimator.feature_importances_)))
 
     return meta
 
