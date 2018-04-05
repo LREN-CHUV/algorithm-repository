@@ -3,7 +3,7 @@
 from mip_helper import io_helper, shapes
 
 import logging
-import json
+from pandas.io import json
 import math
 import sys
 import copy
@@ -25,6 +25,8 @@ EXIT_ON_ERROR_PARAM = "exit_on_error"
 DEFAULT_BINS = 20
 DEFAULT_STRICT = False
 DEFAULT_EXIT_ON_ERROR = True
+# include `No data` column in histogram for null values
+INCLUDE_NO_DATA = False
 
 
 class UserError(Exception):
@@ -52,8 +54,11 @@ def main():
         # Compute histograms (JSON formatted for HighCharts)
         histograms_results = compute_histograms(dep_var, indep_vars, nb_bins)
 
+        if not INCLUDE_NO_DATA:
+            histograms_results = [_remove_no_data(hist) for hist in histograms_results]
+
         # Store results
-        io_helper.save_results(histograms_results, '', shapes.Shapes.HIGHCHARTS)
+        io_helper.save_results(json.dumps(histograms_results), '', shapes.Shapes.HIGHCHARTS)
     except UserError as e:
         try:
             logging.error(e)
@@ -104,10 +109,13 @@ def aggregate_histograms(job_ids):
             # turn series into original form
             result['series'] = [{'name': k, 'data': list(v)} for k, v in series.items()]
 
+        if not INCLUDE_NO_DATA:
+            result = _remove_no_data(result)
+
         results.append(result)
 
     logging.info("Results:\n{}".format(results))
-    io_helper.save_results(pd.io.json.dumps(results), '', shapes.Shapes.HIGHCHARTS)
+    io_helper.save_results(json.dumps(results), '', shapes.Shapes.HIGHCHARTS)
 
 
 def _load_intermediate_data(job_ids):
@@ -128,7 +136,8 @@ def compute_histograms(dep_var, indep_vars, nb_bins=DEFAULT_BINS):
         grouping_vars = [indep_var for indep_var in indep_vars if is_nominal(indep_var)]
         for grouping_var in grouping_vars:
             histograms.append(compute_histogram(dep_var, grouping_var, nb_bins))
-    return json.dumps(histograms)
+    return histograms
+
 
 def compute_histogram(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
     label = "Histogram"
@@ -154,6 +163,7 @@ def compute_histogram(dep_var, grouping_var=None, nb_bins=DEFAULT_BINS):
     }
     return histo
 
+
 def error_histograms(dep_var, indep_vars):
     histograms = list()
     if len(dep_var) > 0:
@@ -162,6 +172,7 @@ def error_histograms(dep_var, indep_vars):
         for grouping_var in grouping_vars:
             histograms.append(error_histogram(dep_var, grouping_var))
     return json.dumps(histograms)
+
 
 def error_histogram(dep_var, grouping_var=None):
     label = "Histogram"
@@ -269,6 +280,15 @@ def compute_series(dep_var, categories, grouping_var=None):
     return series
 
 
+def _remove_no_data(chart):
+    """Remove `No data` column from highcharts chart."""
+    if chart['xAxis']['categories'] and chart['xAxis']['categories'][-1] == 'No data':
+        chart['xAxis']['categories'] = chart['xAxis']['categories'][:-1]
+        for serie in chart['series']:
+            serie['data'] = serie['data'][:-1]
+    return chart
+
+
 def count(data, categories):
     items_count = OrderedDict([(c, 0) for c in categories])
     for v in data:
@@ -322,25 +342,25 @@ def _align_categories(ha, hb):
     ha = copy.deepcopy(ha)
     hb = copy.deepcopy(hb)
 
-    if ha['xAxis']['categories'][-1] == 'No data' and hb['xAxis']['categories'][-1] != 'No data':
+    if ha['xAxis']['categories'] and ha['xAxis']['categories'][-1] == 'No data' and hb['xAxis']['categories'][-1] != 'No data':
         hb['xAxis']['categories'].append('No data')
         for s in hb['series']:
             s['data'].append(0)
 
-    elif ha['xAxis']['categories'][-1] != 'No data' and hb['xAxis']['categories'][-1] == 'No data':
+    elif hb['xAxis']['categories'] and hb['xAxis']['categories'][-1] == 'No data' and ha['xAxis']['categories'][-1] != 'No data':
         ha['xAxis']['categories'].append('No data')
         for s in ha['series']:
             s['data'].append(0)
 
     # edge case when one has only NULL values
-    if ha['xAxis']['categories'] == ['No data']:
+    if ha['xAxis']['categories'] in (['No data'], []):
         ha['xAxis']['categories'] = hb['xAxis']['categories']
         for s in ha['series']:
-            s['data'] = [0] * (len(ha['xAxis']['categories']) - 1) + s['data']
-    if hb['xAxis']['categories'] == ['No data']:
+            s['data'] = [0] * (len(ha['xAxis']['categories']) - len(s['data'])) + s['data']
+    if hb['xAxis']['categories'] in (['No data'], []):
         hb['xAxis']['categories'] = ha['xAxis']['categories']
         for s in hb['series']:
-            s['data'] = [0] * (len(hb['xAxis']['categories']) - 1) + s['data']
+            s['data'] = [0] * (len(hb['xAxis']['categories']) - len(s['data'])) + s['data']
 
     return ha, hb
 
