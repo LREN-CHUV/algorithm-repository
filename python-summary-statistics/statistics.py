@@ -95,12 +95,12 @@ def intermediate_stats():
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
-    df = get_X(dep_var, indep_vars)
+    df = utils.create_dataframe([dep_var] + indep_vars)
 
     # Generate results
     logging.info("Generating results...")
 
-    group_variables = [var['name'] for var in indep_vars if utils.is_nominal(var['type']['name'])]
+    group_variables = [var['name'] for var in indep_vars if utils.is_nominal(var)]
 
     # grouped statistics
     data = []
@@ -212,26 +212,6 @@ def _agg_stats(gf, group_name, index):
             'max': gf['max'].max(),
         })
     return ret
-
-
-def get_X(dep_var, indep_vars):
-    """Create dataframe from input data.
-    :param dep_var:
-    :param indep_vars:
-    :return: dataframe with data from all variables
-
-    TODO: move this function to `io_helper` and reuse it in python-sgd-regressor
-    """
-    df = {}
-    for var in [dep_var] + indep_vars:
-        # categorical variable - we need to add all categories to make one-hot encoding work right
-        if utils.is_nominal(var['type']['name']):
-            df[var['name']] = pd.Categorical(var['series'], categories=var['type']['enumeration'])
-        else:
-            # infer type automatically
-            df[var['name']] = var['series']
-    X = pd.DataFrame(df)
-    return X
 
 
 def _get_labels(variables):

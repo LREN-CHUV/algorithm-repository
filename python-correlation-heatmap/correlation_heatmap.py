@@ -21,7 +21,6 @@ import logging
 from pandas.io import json
 import plotly.graph_objs as go
 import numpy as np
-import pandas as pd
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -60,15 +59,15 @@ def _compute_intermediate_result(inputs):
 
     # Check that all independent variables are numeric
     for var in indep_vars:
-        if utils.is_nominal(var['type']['name']):
+        if utils.is_nominal(var):
             raise errors.UserError('Independent variables needs to be numeric ({} is {})'.format(var['name'], var['type']['name']))
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
-    X = get_X(indep_vars)
+    X = utils.create_dataframe(indep_vars)
 
     logging.info('Dropping NULL values')
-    X = X.dropna()
+    X = utils.remove_nulls(X, errors='ignore')
 
     # Generate results
     logging.info("Generating results...")
@@ -139,25 +138,6 @@ def _save_corr_heatmap(corr, columns):
     logging.info("Results:\n{}".format(data))
     io_helper.save_results(json.dumps(data), '', shapes.Shapes.PLOTLY)
     logging.info("DONE")
-
-
-def get_X(indep_vars):
-    """Create dataframe from input data.
-    :param indep_vars:
-    :return: dataframe with data from all variables
-
-    TODO: move this function to `io_helper` and reuse it in python-sgd-regressor
-    """
-    df = {}
-    for var in indep_vars:
-        # categorical variable - we need to add all categories to make one-hot encoding work right
-        if utils.is_nominal(var['type']['name']):
-            df[var['name']] = pd.Categorical(var['series'], categories=var['type']['enumeration'])
-        else:
-            # infer type automatically
-            df[var['name']] = var['series']
-    X = pd.DataFrame(df)
-    return X
 
 
 if __name__ == '__main__':

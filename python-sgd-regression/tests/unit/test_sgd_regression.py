@@ -2,7 +2,7 @@ from sklearn.linear_model import SGDRegressor
 import json
 import mock
 from . import fixtures as fx
-from sgd_regression import main, serialize_sklearn_estimator, deserialize_sklearn_estimator, get_Xy
+from sgd_regression import main, serialize_sklearn_estimator, deserialize_sklearn_estimator
 from sklearn import datasets
 
 
@@ -130,10 +130,3 @@ def test_deserialize_sklearn_estimator():
         del original.__dict__[col]
         del estimator.__dict__[col]
     assert original.__dict__ == estimator.__dict__
-
-
-def test_get_Xy():
-    inputs = fx.inputs_regression()
-    X, y = get_Xy(inputs['data']['dependent'][0], inputs['data']['independent'])
-    assert list(X.columns) == ['iq', 'stress_before_test1']
-    assert len(X) == len(y) == 6

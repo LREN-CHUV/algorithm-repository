@@ -23,7 +23,6 @@ import logging
 import json
 import argparse
 
-import pandas as pd
 from sklearn.linear_model import SGDRegressor, SGDClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 import jsonpickle
@@ -63,8 +62,10 @@ def main(job_id, generate_pfa):
     featurizer = _create_featurizer(indep_vars, estimator)
 
     # convert variables into dataframe
-    X, y = get_Xy(dep_var, indep_vars)
-    X, y = _remove_nulls(X, y, errors='ignore')
+    X = utils.create_dataframe([dep_var] + indep_vars)
+    X = utils.remove_nulls(X, errors='ignore')
+    y = X.pop(dep_var['name'])
+
     X = featurizer.transform(X)
 
     if len(X) == 0:
@@ -137,37 +138,6 @@ def _create_estimator(job_type):
             raise errors.UserError('Unknown model type {} for classification'.format(model_type))
 
     return estimator
-
-
-def get_Xy(dep_var, indep_vars):
-    """Create dataframe from input data.
-    :param dep_var:
-    :param indep_vars:
-    :return: dataframe with data from all variables
-    """
-    df = {}
-    for var in [dep_var] + indep_vars:
-        # categorical variable - we need to add all categories to make one-hot encoding work right
-        if 'enumeration' in var['type']:
-            df[var['name']] = pd.Categorical(var['series'], categories=var['type']['enumeration'])
-        else:
-            # infer type automatically
-            df[var['name']] = var['series']
-    X = pd.DataFrame(df)
-    y = X[dep_var['name']]
-    del X[dep_var['name']]
-    return X, y
-
-
-def _remove_nulls(X, y, errors='raise'):
-    # TODO: put into sklearn/utils.py to avoid duplication
-    is_null = (pd.isnull(X).any(1) | pd.isnull(y)).values
-    X = X.loc[~is_null, :]
-    y = y.loc[~is_null]
-
-    if errors == 'raise' and len(X) == 0:
-        raise errors.UserError('No data left after removing NULL values, cannot fit model.')
-    return X, y
 
 
 def _is_fitted(estimator):

@@ -22,9 +22,8 @@
 
 import logging
 from pandas.io import json
-import pandas as pd
 
-from mip_helper import io_helper, shapes, errors, utils
+from mip_helper import io_helper, shapes, utils
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
 from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
@@ -52,8 +51,9 @@ def compute():
     featurizer = _create_featurizer(indep_vars)
 
     # convert variables into dataframe
-    X, y = get_Xy(dep_var, indep_vars)
-    X, y = _remove_nulls(X, y)
+    X = utils.create_dataframe([dep_var] + indep_vars)
+    X = utils.remove_nulls(X)
+    y = X.pop(dep_var['name'])
     X = featurizer.transform(X)
 
     # Drop NaN values
@@ -79,35 +79,6 @@ def _create_estimator(job_type, parameters):
         return KNeighborsClassifier(n_neighbors=n_neighbors)
 
 
-def _remove_nulls(X, y):
-    is_null = (pd.isnull(X).any(1) | pd.isnull(y)).values
-    X = X.loc[~is_null, :]
-    y = y.loc[~is_null]
-    if len(X) == 0:
-        raise errors.UserError('No data left after removing NULL values, cannot fit model.')
-    return X, y
-
-
-def get_Xy(dep_var, indep_vars):
-    """Create dataframe from input data.
-    :param dep_var:
-    :param indep_vars:
-    :return: dataframe with data from all variables
-    """
-    df = {}
-    for var in [dep_var] + indep_vars:
-        # categorical variable - we need to add all categories to make one-hot encoding work right
-        if 'enumeration' in var['type']:
-            df[var['name']] = pd.Categorical(var['series'], categories=var['type']['enumeration'])
-        else:
-            # infer type automatically
-            df[var['name']] = var['series']
-    X = pd.DataFrame(df)
-    y = X[dep_var['name']]
-    del X[dep_var['name']]
-    return X, y
-
-
 def _create_featurizer(indep_vars):
     transforms = []
     for var in indep_vars:
@@ -121,18 +92,6 @@ def _create_featurizer(indep_vars):
         elif var["type"]["name"] in ['polynominal', 'binominal']:
             transforms.append(OneHotEncoding(var['name'], var['type']['enumeration']))
     return Featurizer(transforms)
-
-
-# TODO: put into mip_helper/io_helper
-def get_boolean_param(params_list, param_name, default_value):
-    for p in params_list:
-        if p["name"] == param_name:
-            try:
-                return p["value"].lower() in ("yes", "true", "t", "1")
-            except ValueError:
-                logging.warning("%s cannot be cast to boolean !")
-    logging.info("Using default value: %s for %s" % (default_value, param_name))
-    return default_value
 
 
 if __name__ == '__main__':
