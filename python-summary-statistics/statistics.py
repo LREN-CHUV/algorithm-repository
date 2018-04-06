@@ -20,10 +20,9 @@ import argparse
 import itertools
 import logging
 import json
-import copy
 import numpy as np
 import pandas as pd
-from tableschema import Table, validate, exceptions
+from tableschema import validate, exceptions
 
 
 # Configure logging
@@ -101,7 +100,7 @@ def intermediate_stats():
     # Generate results
     logging.info("Generating results...")
 
-    group_variables = [var['name'] for var in indep_vars if is_nominal(var['type']['name'])]
+    group_variables = [var['name'] for var in indep_vars if utils.is_nominal(var['type']['name'])]
 
     # grouped statistics
     data = []
@@ -215,10 +214,6 @@ def _agg_stats(gf, group_name, index):
     return ret
 
 
-def is_nominal(var_type):
-    return var_type in ['binominal', 'polynominal']
-
-
 def get_X(dep_var, indep_vars):
     """Create dataframe from input data.
     :param dep_var:
@@ -230,7 +225,7 @@ def get_X(dep_var, indep_vars):
     df = {}
     for var in [dep_var] + indep_vars:
         # categorical variable - we need to add all categories to make one-hot encoding work right
-        if is_nominal(var['type']['name']):
+        if utils.is_nominal(var['type']['name']):
             df[var['name']] = pd.Categorical(var['series'], categories=var['type']['enumeration'])
         else:
             # infer type automatically

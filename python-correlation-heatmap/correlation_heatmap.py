@@ -60,7 +60,7 @@ def _compute_intermediate_result(inputs):
 
     # Check that all independent variables are numeric
     for var in indep_vars:
-        if is_nominal(var['type']['name']):
+        if utils.is_nominal(var['type']['name']):
             raise errors.UserError('Independent variables needs to be numeric ({} is {})'.format(var['name'], var['type']['name']))
 
     # Load data into a Pandas dataframe
@@ -141,10 +141,6 @@ def _save_corr_heatmap(corr, columns):
     logging.info("DONE")
 
 
-def is_nominal(var_type):
-    return var_type in ['binominal', 'polynominal']
-
-
 def get_X(indep_vars):
     """Create dataframe from input data.
     :param indep_vars:
@@ -155,7 +151,7 @@ def get_X(indep_vars):
     df = {}
     for var in indep_vars:
         # categorical variable - we need to add all categories to make one-hot encoding work right
-        if is_nominal(var['type']['name']):
+        if utils.is_nominal(var['type']['name']):
             df[var['name']] = pd.Categorical(var['series'], categories=var['type']['enumeration'])
         else:
             # infer type automatically
