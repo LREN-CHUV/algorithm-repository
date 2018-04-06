@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from mip_helper import io_helper, shapes
+from mip_helper import io_helper, shapes, errors, utils
 
 import logging
 from pandas.io import json
@@ -29,11 +29,7 @@ DEFAULT_EXIT_ON_ERROR = True
 INCLUDE_NO_DATA = False
 
 
-class UserError(Exception):
-
-    pass
-
-
+@utils.catch_user_error
 def main():
     """Calculate histogram of dependent variable in a single-node mode and return output in highcharts JSON."""
     try:
@@ -59,24 +55,20 @@ def main():
 
         # Store results
         io_helper.save_results(json.dumps(histograms_results), '', shapes.Shapes.HIGHCHARTS)
-    except UserError as e:
-        try:
-            logging.error(e)
-            strict = get_boolean_param(inputs["parameters"], STRICT_PARAM, DEFAULT_STRICT)
-            if (strict):
-                # Store error
-                io_helper.save_results('', str(e), 'text/plain+error')
-            else:
-                # Display something to the user
-                histograms_results = error_histograms(dep_var, indep_vars)
-                io_helper.save_results(histograms_results, '', 'application/highcharts+json')
-            exit_on_error = get_boolean_param(inputs["parameters"], EXIT_ON_ERROR_PARAM, DEFAULT_EXIT_ON_ERROR)
-            if exit_on_error:
-                sys.exit(1)
-        except Exception as e:
-            logging.error(e, exc_info=True)
+    except errors.UserError as e:
+        logging.error(e)
+        strict = io_helper.get_boolean_param(inputs["parameters"], STRICT_PARAM, DEFAULT_STRICT)
+        if strict:
+            # Will be handled by catch_user_error
+            raise e
+        else:
+            # Display something to the user and then exit
+            histograms_results = error_histograms(dep_var, indep_vars)
+            io_helper.save_results(histograms_results, '', 'application/highcharts+json')
+            utils.exit_on_error()
 
 
+@utils.catch_user_error
 def aggregate_histograms(job_ids):
     """Get all histograms from all nodes and sum them together.
     :input job_ids: list of job_ids with intermediate results
@@ -124,7 +116,7 @@ def _load_intermediate_data(job_ids):
     data = list(itertools.chain(*[json.loads(d) for d in jobs_data if d]))
 
     if not data:
-        raise UserError('Intermediate jobs {} do not have any data.'.format(job_ids))
+        raise errors.UserError('Intermediate jobs {} do not have any data.'.format(job_ids))
 
     return data
 
@@ -201,7 +193,7 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
     values = pd.Series(dep_var['series'])
 
     if len(values) == 0:
-        raise UserError('Dependent variable {} is empty.'.format(dep_var['name']))
+        raise errors.UserError('Dependent variable {} is empty.'.format(dep_var['name']))
 
     # TODO: dep_var['series'] can contain both np.nan (in numerical variables) and None (in nominal), pd.isnull
     # can handle them both
@@ -312,17 +304,6 @@ def get_bins_param(params_list, param_name):
                 logging.warning("%s cannot be cast to integer !")
     logging.info("Using default number of bins: %s" % DEFAULT_BINS)
     return DEFAULT_BINS
-
-
-def get_boolean_param(params_list, param_name, default_value):
-    for p in params_list:
-        if p["name"] == param_name:
-            try:
-                return p["value"].lower() in ("yes", "true", "t", "1")
-            except ValueError:
-                logging.warning("%s cannot be cast to boolean !")
-    logging.info("Using default value: %s for %s" % (default_value, param_name))
-    return default_value
 
 
 def get_var_label(var):

@@ -16,6 +16,7 @@ import json
 
 import cf_netSDM
 
+
 def adjacency_distance(vector_1, vector_2):
     v = vector_1 - vector_2
     return np.exp(-np.dot(v, v))
@@ -50,8 +51,8 @@ def main():
     # Read inputs
     inputs = io_helper.fetch_data()
     data = inputs['data']
-    normalize = get_param(inputs['parameters'], 'normalize', bool, 'True')
-    damping = get_param(inputs['parameters'], 'damping', float, '0.85')
+    normalize = io_helper.get_param(inputs['parameters'], 'normalize', bool, 'True')
+    damping = io_helper.get_param(inputs['parameters'], 'damping', float, '0.85')
     data_array = np.zeros((len(data['independent'][0]['series']), len(data['independent'])))
     col_number = 0
     row_number = 0
@@ -85,16 +86,6 @@ def main():
         results_dict['schema']['fields'].append({'name': 'feature_%i' % (col_index + 1), 'type': 'float'})
     io_helper.save_results(json.dumps(results_dict), '', 'text/plain')
 
-
-def get_param(params_list, param_name, type, default_value):
-    for p in params_list:
-        if p["name"] == param_name:
-            try:
-                return type(p["value"])
-            except ValueError:
-                logging.info('%s cannot be caset as %s' % (p['value'], str(type)))
-    logging.info("Using default value of parameter %s: %s" % (param_name, default_value))
-    return type(default_value)
 
 if __name__ == '__main__':
     main()

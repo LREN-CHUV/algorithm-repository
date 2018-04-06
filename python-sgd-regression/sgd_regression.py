@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from mip_helper import io_helper, shapes
+from mip_helper import io_helper, shapes, errors, utils
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
 from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
 from sklearn_to_pfa.mixed_nb import MixedNB
@@ -22,7 +22,6 @@ from sklearn_to_pfa.mixed_nb import MixedNB
 import logging
 import json
 import argparse
-import sys
 
 import pandas as pd
 from sklearn.linear_model import SGDRegressor, SGDClassifier
@@ -39,101 +38,70 @@ logging.basicConfig(level=logging.INFO)
 DEFAULT_DOCKER_IMAGE = "python-sgd-regression"
 
 
-# TODO: put into mip_helper/utils.py
-class UserError(Exception):
-
-    pass
-
-
-EXIT_ON_ERROR_PARAM = "exit_on_error"
-DEFAULT_EXIT_ON_ERROR = True
-
-
+@utils.catch_user_error
 def main(job_id, generate_pfa):
-    try:
-        inputs = io_helper.fetch_data()
-        dep_var = inputs["data"]["dependent"][0]
-        indep_vars = inputs["data"]["independent"]
+    inputs = io_helper.fetch_data()
+    dep_var = inputs["data"]["dependent"][0]
+    indep_vars = inputs["data"]["independent"]
 
-        if dep_var['type']['name'] in ('polynominal', 'binominal'):
-            job_type = 'classification'
+    if dep_var['type']['name'] in ('polynominal', 'binominal'):
+        job_type = 'classification'
+    else:
+        job_type = 'regression'
+
+    # Get existing results with partial model if they exist
+    if job_id:
+        job_result = io_helper.get_results(job_id=str(job_id))
+
+        logging.info('Loading existing estimator')
+        estimator = deserialize_sklearn_estimator(job_result.data)
+    else:
+        logging.info('Creating new estimator')
+        estimator = _create_estimator(job_type)
+
+    # featurization
+    featurizer = _create_featurizer(indep_vars, estimator)
+
+    # convert variables into dataframe
+    X, y = get_Xy(dep_var, indep_vars)
+    X, y = _remove_nulls(X, y, errors='ignore')
+    X = featurizer.transform(X)
+
+    if len(X) == 0:
+        # log error, but still save the estimator
+        logging.warning("All data are NULL, cannot fit model")
+    else:
+        # Train single step
+        if job_type == 'classification':
+            estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
         else:
-            job_type = 'regression'
+            estimator.partial_fit(X, y)
 
-        # Get existing results with partial model if they exist
-        if job_id:
-            job_result = io_helper.get_results(job_id=str(job_id))
+    serialized_estimator = serialize_sklearn_estimator(estimator)
 
-            logging.info('Loading existing estimator')
-            estimator = deserialize_sklearn_estimator(job_result.data)
-        else:
-            logging.info('Creating new estimator')
-            estimator = _create_estimator(job_type)
+    if generate_pfa:
+        # Create PFA from the estimator
+        types = [(var['name'], var['type']['name']) for var in indep_vars]
 
-        # featurization
-        featurizer = _create_featurizer(indep_vars, estimator)
+        # Estimator was not trained on any data
+        if not _is_fitted(estimator):
+            raise errors.UserError('Model was not fitted on any data, cannot generate PFA.')
 
-        # convert variables into dataframe
-        X, y = get_Xy(dep_var, indep_vars)
-        X, y = _remove_nulls(X, y, errors='ignore')
-        X = featurizer.transform(X)
+        pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
 
-        if len(X) == 0:
-            # log error, but still save the estimator
-            logging.warning("All data are NULL, cannot fit model")
-        else:
-            # Train single step
-            if job_type == 'classification':
-                estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
-            else:
-                estimator.partial_fit(X, y)
+        # Add serialized model as metadata
+        pfa['metadata'] = {
+            'estimator': serialized_estimator
+        }
 
-        serialized_estimator = serialize_sklearn_estimator(estimator)
-
-        if generate_pfa:
-            # Create PFA from the estimator
-            types = [(var['name'], var['type']['name']) for var in indep_vars]
-
-            # Estimator was not trained on any data
-            if not _is_fitted(estimator):
-                raise UserError('Model was not fitted on any data, cannot generate PFA.')
-
-            pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
-
-            # Add serialized model as metadata
-            pfa['metadata'] = {
-                'estimator': serialized_estimator
-            }
-
-            # Save or update job_result
-            logging.info('Saving PFA to job_results table')
-            pfa = json.dumps(pfa)
-            io_helper.save_results(pfa, '', shapes.Shapes.PFA)
-        else:
-            # Save or update job_result
-            logging.info('Saving serialized estimator into job_results table')
-            io_helper.save_results(serialized_estimator, '', shapes.Shapes.JSON)
-
-    except UserError as e:
-        # TODO: put into mip_helper/utils as a decorator
-        logging.error(e)
-        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
-
-        exit_on_error = get_boolean_param(inputs["parameters"], EXIT_ON_ERROR_PARAM, DEFAULT_EXIT_ON_ERROR)
-        if exit_on_error:
-            sys.exit(1)
-
-
-# TODO: put into mip_helper/io_helper
-def get_boolean_param(params_list, param_name, default_value):
-    for p in params_list:
-        if p["name"] == param_name:
-            try:
-                return p["value"].lower() in ("yes", "true", "t", "1")
-            except ValueError:
-                logging.warning("%s cannot be cast to boolean !")
-    logging.info("Using default value: %s for %s" % (default_value, param_name))
-    return default_value
+        # Save or update job_result
+        logging.info('Saving PFA to job_results table')
+        pfa = json.dumps(pfa)
+        io_helper.save_results(pfa, '', shapes.Shapes.PFA)
+    else:
+        # Save or update job_result
+        logging.info('Saving serialized estimator into job_results table')
+        io_helper.save_results(serialized_estimator, '', shapes.Shapes.JSON)
 
 
 def serialize_sklearn_estimator(estimator):
@@ -156,7 +124,7 @@ def _create_estimator(job_type):
         elif model_type == 'neural_network':
             estimator = MLPRegressor(**model_parameters)
         else:
-            raise UserError('Unknown model type {} for regression'.format(model_type))
+            raise errors.UserError('Unknown model type {} for regression'.format(model_type))
 
     elif job_type == 'classification':
         if model_type == 'linear_model':
@@ -166,7 +134,7 @@ def _create_estimator(job_type):
         elif model_type == 'naive_bayes':
             estimator = MixedNB(**model_parameters)
         else:
-            raise UserError('Unknown model type {} for classification'.format(model_type))
+            raise errors.UserError('Unknown model type {} for classification'.format(model_type))
 
     return estimator
 
@@ -198,7 +166,7 @@ def _remove_nulls(X, y, errors='raise'):
     y = y.loc[~is_null]
 
     if errors == 'raise' and len(X) == 0:
-        raise UserError('No data left after removing NULL values, cannot fit model.')
+        raise errors.UserError('No data left after removing NULL values, cannot fit model.')
     return X, y
 
 

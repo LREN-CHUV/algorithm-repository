@@ -14,11 +14,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from mip_helper import io_helper, shapes
+from mip_helper import io_helper, shapes, utils, errors
 
 import argparse
 import logging
-import sys
 from pandas.io import json
 import plotly.graph_objs as go
 import numpy as np
@@ -28,53 +27,28 @@ import pandas as pd
 logging.basicConfig(level=logging.INFO)
 
 
-class UserError(Exception):
-
-    pass
-
-
-EXIT_ON_ERROR_PARAM = "exit_on_error"
-DEFAULT_EXIT_ON_ERROR = True
-
-
+@utils.catch_user_error
 def compute():
     """Perform both intermediate step and aggregation at once."""
-    try:
-        # Read inputs
-        logging.info("Fetching data...")
-        inputs = io_helper.fetch_data()
+    # Read inputs
+    logging.info("Fetching data...")
+    inputs = io_helper.fetch_data()
 
-        result = _compute_intermediate_result(inputs)
-        corr, columns = _aggregate_results([result])
-        _save_corr_heatmap(corr, columns)
-    except UserError as e:
-        # TODO: put into mip_helper/utils as a decorator
-        logging.error(e)
-        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
-
-        exit_on_error = get_boolean_param(inputs["parameters"], EXIT_ON_ERROR_PARAM, DEFAULT_EXIT_ON_ERROR)
-        if exit_on_error:
-            sys.exit(1)
+    result = _compute_intermediate_result(inputs)
+    corr, columns = _aggregate_results([result])
+    _save_corr_heatmap(corr, columns)
 
 
+@utils.catch_user_error
 def intermediate_stats():
     """Calculate X*X^T, means and count for single node that will be later used to construct covariance matrix."""
-    try:
-        # Read inputs
-        logging.info("Fetching data...")
-        inputs = io_helper.fetch_data()
+    # Read inputs
+    logging.info("Fetching data...")
+    inputs = io_helper.fetch_data()
 
-        result = _compute_intermediate_result(inputs)
-        io_helper.save_results(json.dumps(result), '', shapes.Shapes.JSON)
-        logging.info("DONE")
-    except UserError as e:
-        # TODO: put into mip_helper/utils as a decorator
-        logging.error(e)
-        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
-
-        exit_on_error = get_boolean_param(inputs["parameters"], EXIT_ON_ERROR_PARAM, DEFAULT_EXIT_ON_ERROR)
-        if exit_on_error:
-            sys.exit(1)
+    result = _compute_intermediate_result(inputs)
+    io_helper.save_results(json.dumps(result), '', shapes.Shapes.JSON)
+    logging.info("DONE")
 
 
 def _compute_intermediate_result(inputs):
@@ -87,7 +61,7 @@ def _compute_intermediate_result(inputs):
     # Check that all independent variables are numeric
     for var in indep_vars:
         if is_nominal(var['type']['name']):
-            raise UserError('Independent variables needs to be numeric ({} is {})'.format(var['name'], var['type']['name']))
+            raise errors.UserError('Independent variables needs to be numeric ({} is {})'.format(var['name'], var['type']['name']))
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
@@ -117,30 +91,18 @@ def _compute_intermediate_result(inputs):
     return result
 
 
+@utils.catch_user_error
 def aggregate_stats(job_ids):
     """Get all partial statistics from all nodes and aggregate them.
     :input job_ids: list of job_ids with intermediate results
     """
-    try:
-        # Read inputs
-        logging.info("Fetching data...")
-        inputs = io_helper.fetch_data()
+    # Read intermediate inputs from jobs
+    logging.info("Fetching intermediate data...")
+    results = [json.loads(io_helper.get_results(str(job_id)).data) for job_id in job_ids]
 
-        # Read intermediate inputs from jobs
-        logging.info("Fetching intermediate data...")
-        results = [json.loads(io_helper.get_results(str(job_id)).data) for job_id in job_ids]
+    corr, columns = _aggregate_results(results)
 
-        corr, columns = _aggregate_results(results)
-
-        _save_corr_heatmap(corr, columns)
-    except UserError as e:
-        # TODO: put into mip_helper/utils as a decorator
-        logging.error(e)
-        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
-
-        exit_on_error = get_boolean_param(inputs["parameters"], EXIT_ON_ERROR_PARAM, DEFAULT_EXIT_ON_ERROR)
-        if exit_on_error:
-            sys.exit(1)
+    _save_corr_heatmap(corr, columns)
 
 
 def _aggregate_results(results):
@@ -200,18 +162,6 @@ def get_X(indep_vars):
             df[var['name']] = var['series']
     X = pd.DataFrame(df)
     return X
-
-
-# TODO: put into mip_helper/io_helper
-def get_boolean_param(params_list, param_name, default_value):
-    for p in params_list:
-        if p["name"] == param_name:
-            try:
-                return p["value"].lower() in ("yes", "true", "t", "1")
-            except ValueError:
-                logging.warning("%s cannot be cast to boolean !")
-    logging.info("Using default value: %s for %s" % (default_value, param_name))
-    return default_value
 
 
 if __name__ == '__main__':
