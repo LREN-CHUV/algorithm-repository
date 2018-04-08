@@ -20,7 +20,7 @@ from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
 from sklearn_to_pfa.mixed_nb import MixedNB
 
 import logging
-import json
+from pandas.io import json
 import argparse
 
 from sklearn.linear_model import SGDRegressor, SGDClassifier
@@ -53,7 +53,7 @@ def main(job_id, generate_pfa):
         job_result = io_helper.get_results(job_id=str(job_id))
 
         logging.info('Loading existing estimator')
-        estimator = deserialize_sklearn_estimator(job_result.data)
+        estimator = deserialize_sklearn_estimator(job_result.data['estimator'])
     else:
         logging.info('Creating new estimator')
         estimator = _create_estimator(job_type)
@@ -91,9 +91,7 @@ def main(job_id, generate_pfa):
         pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
 
         # Add serialized model as metadata
-        pfa['metadata'] = {
-            'estimator': serialized_estimator
-        }
+        pfa['metadata'] = _estimator_metadata(estimator, X, y)
 
         # Save or update job_result
         logging.info('Saving PFA to job_results table')
@@ -102,7 +100,22 @@ def main(job_id, generate_pfa):
     else:
         # Save or update job_result
         logging.info('Saving serialized estimator into job_results table')
-        io_helper.save_results(serialized_estimator, '', shapes.Shapes.JSON)
+        io_helper.save_results(_estimator_metadata(estimator, X, y), '', shapes.Shapes.JSON)
+
+
+def _estimator_metadata(estimator, X, y):
+    """Serialize estimator and add score and other metadata."""
+    meta = {
+        'estimator': serialize_sklearn_estimator(estimator),
+    }
+    if len(X) and hasattr(estimator, 'score'):
+        meta['score'] = str(estimator.score(X, y))
+    if hasattr(estimator, 'coef_'):
+        meta['coef_'] = str(estimator.coef_)
+    if hasattr(estimator, 'intercept_'):
+        meta['intercept_'] = str(estimator.intercept_)
+
+    return meta
 
 
 def serialize_sklearn_estimator(estimator):
