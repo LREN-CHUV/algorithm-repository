@@ -14,20 +14,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from mip_helper import io_helper, shapes
+from mip_helper import io_helper, shapes, errors, utils
 
 import argparse
 import itertools
 import logging
 import json
-import copy
 import numpy as np
 import pandas as pd
-from tableschema import Table, validate, exceptions
-
-
-class UserError(Exception):
-    pass
+from tableschema import validate, exceptions
 
 
 # Configure logging
@@ -85,51 +80,48 @@ OUTPUT_SCHEMA_AGGREGATE = {
 _validate_schema(OUTPUT_SCHEMA_AGGREGATE)
 
 
+@utils.catch_user_error
 def intermediate_stats():
     """Calculate summary statistics for single node."""
-    try:
-        # Read inputs
-        logging.info("Fetching data...")
-        inputs = io_helper.fetch_data()
-        dep_var = inputs["data"]["dependent"][0]
-        indep_vars = inputs["data"]["independent"]
-        labels = _get_labels(indep_vars + [dep_var])
+    # Read inputs
+    logging.info("Fetching data...")
+    inputs = io_helper.fetch_data()
+    dep_var = inputs["data"]["dependent"][0]
+    indep_vars = inputs["data"]["independent"]
+    labels = _get_labels(indep_vars + [dep_var])
 
-        if len(dep_var['series']) == 0:
-            raise UserError('Dependent variable has no values, check your SQL query.')
+    if len(dep_var['series']) == 0:
+        raise errors.UserError('Dependent variable has no values, check your SQL query.')
 
-        # Load data into a Pandas dataframe
-        logging.info("Loading data...")
-        df = get_X(dep_var, indep_vars)
+    # Load data into a Pandas dataframe
+    logging.info("Loading data...")
+    df = utils.fetch_dataframe(variables=[dep_var] + indep_vars)
 
-        # Generate results
-        logging.info("Generating results...")
+    # Generate results
+    logging.info("Generating results...")
 
-        group_variables = [var['name'] for var in indep_vars if is_nominal(var['type']['name'])]
+    group_variables = [var['name'] for var in indep_vars if utils.is_nominal(var)]
 
-        # grouped statistics
-        data = []
-        if group_variables:
-            for group_name, group in df.groupby(group_variables):
-                # if there's only one nominal column
-                if not isinstance(group_name, tuple):
-                    group_name = (group_name,)
+    # grouped statistics
+    data = []
+    if group_variables:
+        for group_name, group in df.groupby(group_variables):
+            # if there's only one nominal column
+            if not isinstance(group_name, tuple):
+                group_name = (group_name,)
 
-                data += _calc_stats(group, group_name, group_variables, labels)
+            data += _calc_stats(group, group_name, group_variables, labels)
 
-        # overall statistics
-        data += _calc_stats(df, ('all',), [], labels)
+    # overall statistics
+    data += _calc_stats(df, ('all',), [], labels)
 
-        logging.info("Results:\n{}".format(data))
-        table = {
-            'schema': OUTPUT_SCHEMA_INTERMEDIATE,
-            'data': data,
-        }
-        io_helper.save_results(pd.io.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
-        logging.info("DONE")
-    except UserError as e:
-        logging.error(e)
-        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
+    logging.info("Results:\n{}".format(data))
+    table = {
+        'schema': OUTPUT_SCHEMA_INTERMEDIATE,
+        'data': data,
+    }
+    io_helper.save_results(pd.io.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
+    logging.info("DONE")
 
 
 def _calc_stats(group, group_name, group_variables, labels):
@@ -158,31 +150,28 @@ def _calc_stats(group, group_name, group_variables, labels):
     return results
 
 
+@utils.catch_user_error
 def aggregate_stats(job_ids):
     """Get all partial statistics from all nodes and aggregate them.
     :input job_ids: list of job_ids with intermediate results
     """
-    try:
-        # Read intermediate inputs from jobs
-        logging.info("Fetching intermediate data...")
-        df = _load_intermediate_data(job_ids)
+    # Read intermediate inputs from jobs
+    logging.info("Fetching intermediate data...")
+    df = _load_intermediate_data(job_ids)
 
-        # Aggregate summary statistics
-        logging.info("Aggregating results...")
-        data = []
-        for (group_name, index), gf in df.groupby(['group', 'index']):
-            data.append(_agg_stats(gf, group_name, index))
+    # Aggregate summary statistics
+    logging.info("Aggregating results...")
+    data = []
+    for (group_name, index), gf in df.groupby(['group', 'index']):
+        data.append(_agg_stats(gf, group_name, index))
 
-        logging.info("Results:\n{}".format(data))
-        table = {
-            'schema': OUTPUT_SCHEMA_AGGREGATE,
-            'data': data,
-        }
-        io_helper.save_results(pd.io.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
-        logging.info("DONE")
-    except UserError as e:
-        logging.error(e)
-        io_helper.save_results('', str(e), shapes.Shapes.ERROR)
+    logging.info("Results:\n{}".format(data))
+    table = {
+        'schema': OUTPUT_SCHEMA_AGGREGATE,
+        'data': data,
+    }
+    io_helper.save_results(pd.io.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
+    logging.info("DONE")
 
 
 def _load_intermediate_data(job_ids):
@@ -191,7 +180,7 @@ def _load_intermediate_data(job_ids):
     data = list(itertools.chain(*[json.loads(d)['data'] for d in jobs_data if d]))
 
     if not data:
-        raise UserError('Intermediate jobs {} do not have any data.'.format(job_ids))
+        raise errors.UserError('Intermediate jobs {} do not have any data.'.format(job_ids))
 
     df = pd.DataFrame(data)
     df['group'] = df['group'].map(tuple)
@@ -223,30 +212,6 @@ def _agg_stats(gf, group_name, index):
             'max': gf['max'].max(),
         })
     return ret
-
-
-def is_nominal(var_type):
-    return var_type in ['binominal', 'polynominal']
-
-
-def get_X(dep_var, indep_vars):
-    """Create dataframe from input data.
-    :param dep_var:
-    :param indep_vars:
-    :return: dataframe with data from all variables
-
-    TODO: move this function to `io_helper` and reuse it in python-sgd-regressor
-    """
-    df = {}
-    for var in [dep_var] + indep_vars:
-        # categorical variable - we need to add all categories to make one-hot encoding work right
-        if is_nominal(var['type']['name']):
-            df[var['name']] = pd.Categorical(var['series'], categories=var['type']['enumeration'])
-        else:
-            # infer type automatically
-            df[var['name']] = var['series']
-    X = pd.DataFrame(df)
-    return X
 
 
 def _get_labels(variables):

@@ -7,23 +7,12 @@ Hedwig wrapper for the HBP medical platform.
 import tempfile
 import logging
 from subprocess import call
-from mip_helper import io_helper
+from mip_helper import io_helper, parameters
 
 
 import preprocess
 
 DEFAULT_DOCKER_IMAGE = 'python-jsi-hedwig'
-
-
-def get_param(params_list, param_name, type, default_value):
-    for p in params_list:
-        if p["name"] == param_name:
-            try:
-                return type(p["value"])
-            except ValueError:
-                logging.info('%s cannot be caset as %s' % (p['value'], str(type)))
-    logging.info("Using default value of parameter %s: %s" % (param_name, default_value))
-    return type(default_value)
 
 
 if __name__ == '__main__':
@@ -34,8 +23,8 @@ if __name__ == '__main__':
     inputs = io_helper.fetch_data()
     data = inputs["data"]
 
-    beam = get_param(inputs['parameters'], 'beam', int, 10)
-    support = get_param(inputs['parameters'], 'support', float, '0.00001')
+    beam = parameters.get_param('beam', int, 10)
+    support = parameters.get_param('support', float, '0.00001')
     out_file = 'input.csv'
     rules_out_file = 'rules.txt'
 

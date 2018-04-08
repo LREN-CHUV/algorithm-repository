@@ -1,7 +1,7 @@
 import mock
 import json
 from . import fixtures as fx
-from statistics import intermediate_stats, aggregate_stats, get_X
+from statistics import intermediate_stats, aggregate_stats
 
 
 @mock.patch('statistics.io_helper.fetch_data')
@@ -104,7 +104,9 @@ def test_intermediate_stats_empty(mock_save_results, mock_fetch_data):
     data['data']['dependent'][0]['series'] = []
     mock_fetch_data.return_value = data
 
-    intermediate_stats()
+    with mock.patch('sys.exit'):
+        intermediate_stats()
+
     error = mock_save_results.call_args[0][1]
     assert error == 'Dependent variable has no values, check your SQL query.'
 
@@ -232,14 +234,3 @@ def test_aggregate_stats_nominal(mock_save_results, mock_get_results):
             }
         }
     ]
-
-
-def test_get_X():
-    inputs = fx.inputs_regression(include_categorical=True)
-    dep_var = inputs["data"]["dependent"][0]
-    indep_vars = inputs["data"]["independent"]
-    X = get_X(dep_var, indep_vars)
-
-    assert list(X.columns) == ['agegroup', 'iq', 'score_test1', 'stress_before_test1']
-    assert list(X.agegroup.cat.categories) == ['-50y', '50-59y', '59y-']
-    assert X.shape == (6, 4)
