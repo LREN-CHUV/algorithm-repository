@@ -22,15 +22,9 @@
 
 import logging
 from pandas.io import json
-<<<<<<< HEAD
-=======
-import pandas as pd
-import sys
 import argparse
-import itertools
->>>>>>> distributed mode for kNN
 
-from mip_helper import io_helper, shapes, utils
+from mip_helper import io_helper, shapes, utils, parameters, errors
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
 from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
@@ -46,7 +40,7 @@ def compute():
     inputs = io_helper.fetch_data()
     dep_var = inputs["data"]["dependent"][0]
     indep_vars = inputs["data"]["independent"]
-    parameters = {x['name']: x['value'] for x in inputs['parameters']}
+    params = parameters.fetch_parameters()
 
     if dep_var['type']['name'] in ('polynominal', 'binominal'):
         job_type = 'classification'
@@ -54,7 +48,7 @@ def compute():
         job_type = 'regression'
 
     logging.info('Creating new estimator')
-    estimator = _create_estimator(job_type, parameters)
+    estimator = _create_estimator(job_type, params)
     featurizer = _create_featurizer(indep_vars)
 
     # convert variables into dataframe
@@ -116,7 +110,7 @@ def _load_intermediate_data(job_ids):
             data.append(pfa)
 
     if not data:
-        raise UserError('All jobs {} returned an error.'.format(job_ids))
+        raise errors.UserError('All jobs {} returned an error.'.format(job_ids))
 
     return data
 
