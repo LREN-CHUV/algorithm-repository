@@ -17,10 +17,10 @@ from sklearn import datasets
 @mock.patch('sgd_regression.io_helper.fetch_data')
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
-@mock.patch('sgd_regression.io_helper._get_parameters')
+@mock.patch('sgd_regression.parameters.fetch_parameters')
 def test_main_regression(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data, method, name):
     # create mock objects from database
-    mock_parameters.return_value = [{'name': 'type', 'value': method}]
+    mock_parameters.return_value = {'type': method}
     mock_fetch_data.return_value = fx.inputs_regression(include_categorical=True)
     mock_get_results.return_value = None
 
@@ -47,10 +47,10 @@ def test_main_regression(mock_parameters, mock_save_results, mock_get_results, m
 @mock.patch('sgd_regression.io_helper.fetch_data')
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
-@mock.patch('sgd_regression.io_helper._get_parameters')
+@mock.patch('sgd_regression.parameters.fetch_parameters')
 def test_main_partial(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data, method, name):
     # create mock objects from database
-    mock_parameters.return_value = [{'name': 'type', 'value': method}]
+    mock_parameters.return_value = {'type': method}
     mock_fetch_data.return_value = fx.inputs_regression()
     mock_get_results.return_value = None
 
@@ -71,7 +71,7 @@ def test_main_partial(mock_parameters, mock_save_results, mock_get_results, mock
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
 @mock.patch('sgd_regression.parameters.fetch_parameters')
-def test_main_classification_naive_bayes(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data):
+def test_main_classification_naive_bayes(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data, method, name):
     # create mock objects from database
     mock_parameters.return_value = {'type': method}
     mock_fetch_data.return_value = fx.inputs_classification(include_categorical=True)
@@ -106,7 +106,7 @@ def test_main_classification_naive_bayes(mock_parameters, mock_save_results, moc
 @mock.patch('sys.exit')
 def test_main_classification_empty(mock_exit, mock_parameters, mock_save_results, mock_get_results, mock_fetch_data, method, name):
     # create mock objects from database
-    mock_parameters.return_value = [{'name': 'type', 'value': method}]
+    mock_parameters.return_value = {'type': method}
 
     # one column has all NULL values
     data = fx.inputs_classification(include_categorical=True)
