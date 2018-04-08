@@ -1,1 +1,2 @@
 mip_helper==0.4.0
+pandas==0.22.0

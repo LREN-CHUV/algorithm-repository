@@ -3,7 +3,8 @@ import mock
 import json
 import numpy as np
 from . import fixtures as fx
-from histograms import main, compute_categories, UserError, aggregate_histograms, _align_categories, INCLUDE_NO_DATA
+from histograms import main, compute_categories, aggregate_histograms, _align_categories, INCLUDE_NO_DATA
+from mip_helper.utils import UserError
 
 
 def get_output_real(add_null=True):
@@ -290,7 +291,8 @@ def test_main_categories_empty(mock_save_results, mock_get_results, mock_fetch_d
     mock_fetch_data.return_value = fx.inputs_no_values()
     mock_get_results.return_value = None
 
-    main()
+    with mock.patch('sys.exit'):
+        main()
 
     js = json.loads(mock_save_results.call_args[0][0])
     assert js == [

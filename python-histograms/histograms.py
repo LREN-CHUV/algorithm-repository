@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-from mip_helper import io_helper, shapes
+from mip_helper import io_helper, shapes, errors, utils, parameters
 
 import logging
 from pandas.io import json
 import math
-import sys
 import copy
 import argparse
 import itertools
@@ -21,19 +20,13 @@ logging.basicConfig(level=logging.INFO)
 
 BINS_PARAM = "bins"
 STRICT_PARAM = "strict"
-EXIT_ON_ERROR_PARAM = "exit_on_error"
 DEFAULT_BINS = 20
 DEFAULT_STRICT = False
-DEFAULT_EXIT_ON_ERROR = True
 # include `No data` column in histogram for null values
 INCLUDE_NO_DATA = False
 
 
-class UserError(Exception):
-
-    pass
-
-
+@utils.catch_user_error
 def main():
     """Calculate histogram of dependent variable in a single-node mode and return output in highcharts JSON."""
     try:
@@ -49,7 +42,7 @@ def main():
         except KeyError:
             logging.warning("Cannot find independent variables data")
             indep_vars = []
-        nb_bins = get_bins_param(inputs["parameters"], BINS_PARAM)
+        nb_bins = parameters.get_param(BINS_PARAM, int, DEFAULT_BINS)
 
         # Compute histograms (JSON formatted for HighCharts)
         histograms_results = compute_histograms(dep_var, indep_vars, nb_bins)
@@ -59,24 +52,20 @@ def main():
 
         # Store results
         io_helper.save_results(json.dumps(histograms_results), '', shapes.Shapes.HIGHCHARTS)
-    except UserError as e:
-        try:
-            logging.error(e)
-            strict = get_boolean_param(inputs["parameters"], STRICT_PARAM, DEFAULT_STRICT)
-            if (strict):
-                # Store error
-                io_helper.save_results('', str(e), 'text/plain+error')
-            else:
-                # Display something to the user
-                histograms_results = error_histograms(dep_var, indep_vars)
-                io_helper.save_results(histograms_results, '', 'application/highcharts+json')
-            exit_on_error = get_boolean_param(inputs["parameters"], EXIT_ON_ERROR_PARAM, DEFAULT_EXIT_ON_ERROR)
-            if exit_on_error:
-                sys.exit(1)
-        except Exception as e:
-            logging.error(e, exc_info=True)
+    except errors.UserError as e:
+        logging.error(e)
+        strict = io_helper.get_boolean_param(STRICT_PARAM, DEFAULT_STRICT)
+        if strict:
+            # Will be handled by catch_user_error
+            raise e
+        else:
+            # Display something to the user and then exit
+            histograms_results = error_histograms(dep_var, indep_vars)
+            io_helper.save_results(histograms_results, '', 'application/highcharts+json')
+            utils.exit_on_error()
 
 
+@utils.catch_user_error
 def aggregate_histograms(job_ids):
     """Get all histograms from all nodes and sum them together.
     :input job_ids: list of job_ids with intermediate results
@@ -124,7 +113,7 @@ def _load_intermediate_data(job_ids):
     data = list(itertools.chain(*[json.loads(d) for d in jobs_data if d]))
 
     if not data:
-        raise UserError('Intermediate jobs {} do not have any data.'.format(job_ids))
+        raise errors.UserError('Intermediate jobs {} do not have any data.'.format(job_ids))
 
     return data
 
@@ -133,7 +122,7 @@ def compute_histograms(dep_var, indep_vars, nb_bins=DEFAULT_BINS):
     histograms = list()
     if len(dep_var) > 0:
         histograms.append(compute_histogram(dep_var, nb_bins=nb_bins))
-        grouping_vars = [indep_var for indep_var in indep_vars if is_nominal(indep_var)]
+        grouping_vars = [indep_var for indep_var in indep_vars if utils.is_nominal(indep_var)]
         for grouping_var in grouping_vars:
             histograms.append(compute_histogram(dep_var, grouping_var, nb_bins))
     return histograms
@@ -168,7 +157,7 @@ def error_histograms(dep_var, indep_vars):
     histograms = list()
     if len(dep_var) > 0:
         histograms.append(error_histogram(dep_var))
-        grouping_vars = [indep_var for indep_var in indep_vars if is_nominal(indep_var)]
+        grouping_vars = [indep_var for indep_var in indep_vars if utils.is_nominal(indep_var)]
         for grouping_var in grouping_vars:
             histograms.append(error_histogram(dep_var, grouping_var))
     return json.dumps(histograms)
@@ -201,12 +190,12 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
     values = pd.Series(dep_var['series'])
 
     if len(values) == 0:
-        raise UserError('Dependent variable {} is empty.'.format(dep_var['name']))
+        raise errors.UserError('Dependent variable {} is empty.'.format(dep_var['name']))
 
     # TODO: dep_var['series'] can contain both np.nan (in numerical variables) and None (in nominal), pd.isnull
     # can handle them both
     has_nulls = pd.isnull(dep_var['series']).any()
-    if is_nominal(dep_var):
+    if utils.is_nominal(dep_var):
         categories = [str(c) for c in dep_var['type']['enumeration']]
         if 'enumeration_labels' in dep_var['type']:
             categories_labels = [str(c) for c in dep_var['type']['enumeration_labels']]
@@ -228,7 +217,7 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
             categories = ['None']
             categories_labels = ['No data']
         else:
-            if is_integer(dep_var):
+            if utils.is_integer(dep_var):
                 step = math.ceil((maximum - minimum) / nb_bins)
                 categories = list(arange(minimum, maximum, step).tolist())
                 categories_labels = ["%d - %d" % (v, v + step) for v in categories]
@@ -248,7 +237,7 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
 def compute_series(dep_var, categories, grouping_var=None):
     series = list()
     has_nulls = pd.isnull(dep_var['series']).any()
-    if is_nominal(dep_var):
+    if utils.is_nominal(dep_var):
         if not grouping_var:
             series.append({"name": "all", "data": count(dep_var['series'], categories)})
         else:
@@ -303,38 +292,8 @@ def count(data, categories):
     return list(items_count.values())
 
 
-def get_bins_param(params_list, param_name):
-    for p in params_list:
-        if p["name"] == param_name:
-            try:
-                return int(p["value"])
-            except ValueError:
-                logging.warning("%s cannot be cast to integer !")
-    logging.info("Using default number of bins: %s" % DEFAULT_BINS)
-    return DEFAULT_BINS
-
-
-def get_boolean_param(params_list, param_name, default_value):
-    for p in params_list:
-        if p["name"] == param_name:
-            try:
-                return p["value"].lower() in ("yes", "true", "t", "1")
-            except ValueError:
-                logging.warning("%s cannot be cast to boolean !")
-    logging.info("Using default value: %s for %s" % (default_value, param_name))
-    return default_value
-
-
 def get_var_label(var):
     return var.get('label', var['name'])
-
-
-def is_nominal(var):
-    return var['type']['name'] in ['binominal', 'polynominal']
-
-
-def is_integer(var):
-    return var['type']['name'] in ['integer']
 
 
 def _align_categories(ha, hb):

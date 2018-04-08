@@ -2,7 +2,7 @@ from sklearn.linear_model import SGDRegressor
 import json
 import mock
 from . import fixtures as fx
-from sgd_regression import main, serialize_sklearn_estimator, deserialize_sklearn_estimator, get_Xy
+from sgd_regression import main, serialize_sklearn_estimator, deserialize_sklearn_estimator
 from sklearn import datasets
 
 
@@ -41,7 +41,7 @@ def test_main_partial(mock_save_results, mock_get_results, mock_fetch_data):
     main(job_id=None, generate_pfa=False)
 
     js = mock_save_results.call_args[0][0]
-    estimator = deserialize_sklearn_estimator(js)
+    estimator = deserialize_sklearn_estimator(js['estimator'])
     assert estimator.__class__.__name__ == 'SGDRegressor'
 
 
@@ -73,10 +73,10 @@ def test_main_classification(mock_save_results, mock_get_results, mock_fetch_dat
 @mock.patch('sgd_regression.io_helper.fetch_data')
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
-@mock.patch('sgd_regression.io_helper._get_parameters')
+@mock.patch('sgd_regression.parameters.fetch_parameters')
 def test_main_classification_naive_bayes(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data):
     # create mock objects from database
-    mock_parameters.return_value = [{'name': 'type', 'value': 'naive_bayes'}]
+    mock_parameters.return_value = {'type': 'naive_bayes'}
     mock_fetch_data.return_value = fx.inputs_classification(include_categorical=True)
     mock_get_results.return_value = None
 
@@ -99,11 +99,11 @@ def test_main_classification_naive_bayes(mock_parameters, mock_save_results, moc
 @mock.patch('sgd_regression.io_helper.fetch_data')
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
-@mock.patch('sgd_regression.io_helper._get_parameters')
+@mock.patch('sgd_regression.parameters.fetch_parameters')
 @mock.patch('sys.exit')
 def test_main_classification_naive_bayes_empty(mock_exit, mock_parameters, mock_save_results, mock_get_results, mock_fetch_data):
     # create mock objects from database
-    mock_parameters.return_value = [{'name': 'type', 'value': 'naive_bayes'}]
+    mock_parameters.return_value = {'type': 'naive_bayes'}
 
     # one column has all NULL values
     data = fx.inputs_classification(include_categorical=True)
@@ -130,10 +130,3 @@ def test_deserialize_sklearn_estimator():
         del original.__dict__[col]
         del estimator.__dict__[col]
     assert original.__dict__ == estimator.__dict__
-
-
-def test_get_Xy():
-    inputs = fx.inputs_regression()
-    X, y = get_Xy(inputs['data']['dependent'][0], inputs['data']['independent'])
-    assert list(X.columns) == ['iq', 'stress_before_test1']
-    assert len(X) == len(y) == 6
