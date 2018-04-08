@@ -7,7 +7,7 @@ HINMine wrapper for the HBP medical platform.
 '''
 
 import logging
-from mip_helper import io_helper
+from mip_helper import io_helper, parameters
 
 import numpy as np
 import scipy.sparse as sp
@@ -51,8 +51,8 @@ def main():
     # Read inputs
     inputs = io_helper.fetch_data()
     data = inputs['data']
-    normalize = io_helper.get_param(inputs['parameters'], 'normalize', bool, 'True')
-    damping = io_helper.get_param(inputs['parameters'], 'damping', float, '0.85')
+    normalize = parameters.get_param('normalize', bool, 'True')
+    damping = parameters.get_param('damping', float, '0.85')
     data_array = np.zeros((len(data['independent'][0]['series']), len(data['independent'])))
     col_number = 0
     row_number = 0

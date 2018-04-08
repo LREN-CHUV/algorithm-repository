@@ -95,7 +95,7 @@ def intermediate_stats():
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
-    df = utils.create_dataframe([dep_var] + indep_vars)
+    df = utils.fetch_dataframe(variables=[dep_var] + indep_vars)
 
     # Generate results
     logging.info("Generating results...")

@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from mip_helper import io_helper, shapes, errors, utils
+from mip_helper import io_helper, shapes, errors, utils, parameters
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
 from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
 from sklearn_to_pfa.mixed_nb import MixedNB
@@ -62,7 +62,7 @@ def main(job_id, generate_pfa):
     featurizer = _create_featurizer(indep_vars, estimator)
 
     # convert variables into dataframe
-    X = utils.create_dataframe([dep_var] + indep_vars)
+    X = io_helper.fetch_dataframe(variables=[dep_var] + indep_vars)
     X = utils.remove_nulls(X, errors='ignore')
     y = X.pop(dep_var['name'])
 
@@ -116,7 +116,7 @@ def deserialize_sklearn_estimator(js):
 
 
 def _create_estimator(job_type):
-    model_parameters = {x['name']: x['value']for x in io_helper._get_parameters()}
+    model_parameters = parameters.fetch_parameters()
     model_type = model_parameters.pop('type', 'linear_model')
 
     if job_type == 'regression':

@@ -7,7 +7,7 @@ Hedwig wrapper for the HBP medical platform.
 import tempfile
 import logging
 from subprocess import call
-from mip_helper import io_helper
+from mip_helper import io_helper, parameters
 
 
 import preprocess
@@ -23,8 +23,8 @@ if __name__ == '__main__':
     inputs = io_helper.fetch_data()
     data = inputs["data"]
 
-    beam = io_helper.get_param(inputs['parameters'], 'beam', int, 10)
-    support = io_helper.get_param(inputs['parameters'], 'support', float, '0.00001')
+    beam = parameters.get_param('beam', int, 10)
+    support = parameters.get_param('support', float, '0.00001')
     out_file = 'input.csv'
     rules_out_file = 'rules.txt'
 

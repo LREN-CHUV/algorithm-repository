@@ -51,7 +51,7 @@ def compute():
     featurizer = _create_featurizer(indep_vars)
 
     # convert variables into dataframe
-    X = utils.create_dataframe([dep_var] + indep_vars)
+    X = utils.fetch_dataframe(variables=[dep_var] + indep_vars)
     X = utils.remove_nulls(X)
     y = X.pop(dep_var['name'])
     X = featurizer.transform(X)
