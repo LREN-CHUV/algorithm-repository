@@ -54,7 +54,7 @@ def main():
         io_helper.save_results(json.dumps(histograms_results), '', shapes.Shapes.HIGHCHARTS)
     except errors.UserError as e:
         logging.error(e)
-        strict = io_helper.get_boolean_param(STRICT_PARAM, DEFAULT_STRICT)
+        strict = parameters.get_boolean_param(STRICT_PARAM, DEFAULT_STRICT)
         if strict:
             # Will be handled by catch_user_error
             raise e
