@@ -102,11 +102,11 @@ def main(job_id, generate_pfa):
         # Save or update job_result
         logging.info('Saving PFA to job_results table')
         pfa = json.dumps(pfa)
-        io_helper.save_results(pfa, '', shapes.Shapes.PFA)
+        io_helper.save_results(pfa, shapes.Shapes.PFA)
     else:
         # Save or update job_result
         logging.info('Saving serialized estimator into job_results table')
-        io_helper.save_results(_estimator_metadata(estimator, X, y, featurizer), '', shapes.Shapes.JSON)
+        io_helper.save_results(_estimator_metadata(estimator, X, y, featurizer), shapes.Shapes.JSON)
 
 
 def _estimator_metadata(estimator, X, y, featurizer):
