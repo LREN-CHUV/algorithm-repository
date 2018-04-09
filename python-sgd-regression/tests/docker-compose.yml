@@ -82,7 +82,7 @@ services:
       PARAM_covariables: "minimentalstate,opticchiasm,subjectageyears"
       PARAM_grouping: ""
       PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35,\"minValue\":0.1,\"maxValue\":5.0},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0}, \"rs17125944_c\": {\"code\": \"rs17125944_c\",\"enumerations\": [{\"code\": 0,\"label\": 0},{\"code\": 1,\"label\": 1},{\"code\": 2,\"label\": 2}],\"sql_type\": \"int\",\"type\": \"polynominal\"}, \"adnicategory\": {\"code\": \"adnicategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's Disease\"}, {\"code\": \"MCI\", \"label\": \"Mild Cognitive Impairment\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}], \"type\": \"polynominal\"}, \"alzheimerbroadcategory\": {\"code\": \"alzheimerbroadcategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's disease\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}, {\"code\": \"Other\", \"label\": \"Other\"}], \"type\": \"polynominal\"}, \"subjectageyears\": {\"code\": \"subjectageyears\", \"label\": \"Age Years\", \"maxValue\": 130, \"minValue\": 0, \"type\": \"integer\"}}"
-      MODEL_PARAM_type: "naive_bayes"
+      MODEL_PARAM_type: "gradient_boosting"
 
   sgd-regression-a:
     extends: sgd-regression-base

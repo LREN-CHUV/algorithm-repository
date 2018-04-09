@@ -31,3 +31,11 @@ nn_image:
     - echo "Preparing python-sgd-neural-network"
   post:
     - echo "Finished python-sgd-neural-network"
+
+gb_image:
+  build: Dockerfile.gb
+  image: hbpmip/python-gradient-boosting
+  pre:
+    - echo "Preparing python-gradient-boosting"
+  post:
+    - echo "Finished python-gradient-boosting"

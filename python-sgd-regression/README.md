@@ -10,6 +10,8 @@ Implemented methods:
 - `linear_model` - calls `SGDRegressor` or `SGDClassifier`
 - `neural_network` - calls `MLPRegressor` or `MLPClassifier`
 - `naive_bayes` - calls `MixedNB` (mix of `GaussianNB` and `MultinomialNB`), only works for classification tasks
+- `gradient_boosting` - calls `GradientBoostingRegressor` or `GradientBoostingClassifier`, does not support distributed
+  training
 
 
 ## Usage
@@ -62,6 +64,10 @@ For Naive bayes it is enough to go over all data points once (call `--mode parti
 ### SGDRegression, SGDClassifier, MLPRegressor and MLPClassifier
 
 These methods are trained using [Stochastic Gradient Descent](http://scikit-learn.org/stable/modules/sgd.html#id1) and require several passes over training data in random order until convergence.
+
+### GradientBoostingRegressor, GradientBoostingClassifier
+
+Does not support distributed training, calling it once on single node is enough.
 
 
 ## Build (for contributors)
