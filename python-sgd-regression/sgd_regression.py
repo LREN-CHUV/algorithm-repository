@@ -98,6 +98,9 @@ def main(job_id, generate_pfa):
 
         # Add serialized model as metadata
         pfa['metadata'] = _estimator_metadata(estimator, X, y, featurizer)
+        
+        model_type = parameters.get_parameter('type', 'str', 'linear_model')
+        pfa['name'] = model_type        
 
         # Save or update job_result
         logging.info('Saving PFA to job_results table')
