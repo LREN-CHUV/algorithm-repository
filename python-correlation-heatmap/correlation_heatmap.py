@@ -46,7 +46,7 @@ def intermediate_stats():
     inputs = io_helper.fetch_data()
 
     result = _compute_intermediate_result(inputs)
-    io_helper.save_results(json.dumps(result), '', shapes.Shapes.JSON)
+    io_helper.save_results(json.dumps(result), shapes.Shapes.JSON)
     logging.info("DONE")
 
 
