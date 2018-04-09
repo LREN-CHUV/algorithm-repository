@@ -51,7 +51,7 @@ def main():
             histograms_results = [_remove_no_data(hist) for hist in histograms_results]
 
         # Store results
-        io_helper.save_results(json.dumps(histograms_results), '', shapes.Shapes.HIGHCHARTS)
+        io_helper.save_results(json.dumps(histograms_results), shapes.Shapes.HIGHCHARTS)
     except errors.UserError as e:
         logging.error(e)
         strict = parameters.get_boolean_param(STRICT_PARAM, DEFAULT_STRICT)
@@ -61,7 +61,7 @@ def main():
         else:
             # Display something to the user and then exit
             histograms_results = error_histograms(dep_var, indep_vars)
-            io_helper.save_results(histograms_results, '', 'application/highcharts+json')
+            io_helper.save_results(histograms_results, shapes.Shapes.HIGHCHARTS)
             utils.exit_on_error()
 
 
@@ -104,7 +104,7 @@ def aggregate_histograms(job_ids):
         results.append(result)
 
     logging.info("Results:\n{}".format(results))
-    io_helper.save_results(json.dumps(results), '', shapes.Shapes.HIGHCHARTS)
+    io_helper.save_results(json.dumps(results), shapes.Shapes.HIGHCHARTS)
 
 
 def _load_intermediate_data(job_ids):

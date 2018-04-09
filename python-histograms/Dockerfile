@@ -12,7 +12,7 @@ COPY tests/unit /src/tests/
 WORKDIR /src
 RUN pytest tests/
 
-FROM hbpmip/python-mip:0.4.0
+FROM hbpmip/python-mip:0.5.3
 
 MAINTAINER mirco.nasuti@chuv.ch
 
