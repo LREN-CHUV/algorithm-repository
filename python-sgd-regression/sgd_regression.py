@@ -211,7 +211,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('compute', choices=['compute'])
     parser.add_argument('--mode', choices=['partial', 'final'], default='final')
-    parser.add_argument('--job-id', type=int)
+    parser.add_argument('--job-id', type=str)
 
     args = parser.parse_args()
 

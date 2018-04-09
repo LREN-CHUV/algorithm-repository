@@ -64,7 +64,7 @@ def _compute_intermediate_result(inputs):
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
-    X = utils.fetch_dataframe(variables=indep_vars)
+    X = io_helper.fetch_dataframe(variables=indep_vars)
 
     logging.info('Dropping NULL values')
     X = utils.remove_nulls(X, errors='ignore')
