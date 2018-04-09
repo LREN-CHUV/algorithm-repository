@@ -71,7 +71,7 @@ def test_main_partial(mock_parameters, mock_save_results, mock_get_results, mock
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
 @mock.patch('sgd_regression.parameters.fetch_parameters')
-def test_main_classification_naive_bayes(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data, method, name):
+def test_main_classification(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data, method, name):
     # create mock objects from database
     mock_parameters.return_value = {'type': method}
     mock_fetch_data.return_value = fx.inputs_classification(include_categorical=True)
