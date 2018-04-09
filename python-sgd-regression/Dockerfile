@@ -1,22 +1,5 @@
-## Run unit tests
 
-FROM hbpmip/python-base-build:0.4.5
-
-COPY requirements-dev.txt /requirements-dev.txt
-RUN pip install -r /requirements-dev.txt
-
-COPY requirements.txt /requirements.txt
-RUN pip install -r /requirements.txt
-
-COPY sgd_regression.py /src/sgd_regression.py
-COPY tests/unit/ /src/tests/
-
-WORKDIR /src
-RUN pytest tests/ -x --ff --capture=no
-
-## Build target image
-
-FROM hbpmip/python-mip-sklearn:0.2.3
+FROM hbpmip/python-mip-sklearn:latest
 
 ENV DOCKER_IMAGE=hbpmip/python-sgd-regression:0.1.3 \
     FUNCTION=python-sgd-regression
