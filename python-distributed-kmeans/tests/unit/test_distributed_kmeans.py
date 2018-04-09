@@ -1,5 +1,6 @@
 import mock
 import json
+import numpy as np
 from . import fixtures as fx
 from distributed_kmeans import intermediate_kmeans, aggregate_kmeans
 
@@ -72,10 +73,16 @@ def test_aggregate_kmeans(mock_save_results, mock_get_results, mock_fetch_data):
 
     aggregate_kmeans([1, 2])
     pfa_dict = json.loads(mock_save_results.call_args[0][0])
-    assert pfa_dict['metadata'] == {
-        'centroids':
-        '[[-0.12348661147125002, 0.20922071836500003, 0.0, 1.0], [-0.1852486658437501, 0.09447887226000021, 0.5, 0.0]]'
-    }
+
+    np.testing.assert_allclose(
+        json.loads(pfa_dict['metadata']['centroids']),
+        np.array(
+            [
+                [-0.12348661147125002, 0.20922071836500003, 0.0, 1.0],
+                [-0.1852486658437501, 0.09447887226000021, 0.5, 0.0]
+            ]
+        ), 1e-5
+    )
 
     # make some prediction with PFA
     from titus.genpy import PFAEngine

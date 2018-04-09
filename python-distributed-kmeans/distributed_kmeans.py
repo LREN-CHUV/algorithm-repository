@@ -42,12 +42,12 @@ Algorithm Flow -
 """
 
 import logging
-import json
+from pandas.io import json
 import argparse
 import numpy as np
 import pandas as pd
 
-from mip_helper import io_helper, shapes
+from mip_helper import io_helper, shapes, parameters, utils
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
 from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
 import dkmeans.local_computations as local
@@ -65,6 +65,7 @@ EPSILON = 0.00001
 LR = 0.01  # learning rate for gradient descent, not used for Lloyd version
 
 
+@utils.catch_user_error
 def intermediate_kmeans():
     """Calculate kNN locally."""
     # Read inputs
@@ -73,12 +74,11 @@ def intermediate_kmeans():
     indep_vars = inputs["data"]["independent"]
 
     # Extract hyperparameters from ENV variables
-    params = {x['name']: x['value'] for x in inputs['parameters']}
-    k = int(params.get('n_clusters', 8))
+    k = parameters.get_param('n_clusters', int, 8)
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
-    X = get_X(indep_vars)
+    X = io_helper.fetch_dataframe(variables=indep_vars)
 
     # Return variables info, but remove actual data points
     results = {'indep_vars': []}
@@ -87,12 +87,11 @@ def intermediate_kmeans():
         results['indep_vars'].append(iv)
 
     # Drop NaN values
-    # TODO: how should we treat NaNs?
-    X = X.dropna()
+    X = utils.remove_nulls(X, errors='ignore')
     if len(X) == 0:
         logging.warning("All data are NULL, returning empty centroids.")
         results['centroids'] = []
-        io_helper.save_results(pd.json.dumps(results), '', shapes.Shapes.JSON)
+        io_helper.save_results(json.dumps(results), '', shapes.Shapes.JSON)
         return
 
     # Generate results
@@ -132,7 +131,7 @@ def intermediate_kmeans():
     results['centroids'] = [lc.tolist() for lc in local_centroids]
 
     logging.info("Results:\n{}".format(results))
-    io_helper.save_results(pd.json.dumps(results), '', shapes.Shapes.JSON)
+    io_helper.save_results(json.dumps(results), '', shapes.Shapes.JSON)
     logging.info("DONE")
 
 
@@ -168,26 +167,6 @@ def aggregate_kmeans(job_ids):
     pfa = json.dumps(pfa)
     io_helper.save_results(pfa, '', shapes.Shapes.PFA)
     logging.info("DONE")
-
-
-def get_X(indep_vars):
-    """Create dataframe from input data.
-    :param dep_var:
-    :param indep_vars:
-    :return: dataframe with data from all variables
-
-    TODO: move this function to `io_helper` and reuse it in python-sgd-regressor
-    """
-    df = {}
-    for var in indep_vars:
-        # categorical variable - we need to add all categories to make one-hot encoding work right
-        if 'enumeration' in var['type']:
-            df[var['name']] = pd.Categorical(var['series'], categories=var['type']['enumeration'])
-        else:
-            # infer type automatically
-            df[var['name']] = var['series']
-    X = pd.DataFrame(df)
-    return X
 
 
 def _create_featurizer(indep_vars):
