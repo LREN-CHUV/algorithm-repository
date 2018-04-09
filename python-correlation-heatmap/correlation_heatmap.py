@@ -136,7 +136,7 @@ def _save_corr_heatmap(corr, columns):
     data = [trace]
 
     logging.info("Results:\n{}".format(data))
-    io_helper.save_results(json.dumps(data), '', shapes.Shapes.PLOTLY)
+    io_helper.save_results(json.dumps(data), shapes.Shapes.PLOTLY)
     logging.info("DONE")
 
 

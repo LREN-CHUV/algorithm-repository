@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from mip_helper import io_helper
+from mip_helper.shapes import Shapes
 
 import logging
 import json
@@ -37,7 +38,7 @@ def main():
     anova_results = format_output(compute_anova(dep_var, inped_vars, data, design).to_dict())
 
     # Store results
-    io_helper.save_results(anova_results, '', 'application/json')
+    io_helper.save_results(anova_results, Shapes.JSON)
 
 
 def format_data(input_data):
