@@ -84,7 +84,7 @@ def main():
         results_dict['data'].append(instance)
     for col_index in range(n):
         results_dict['schema']['fields'].append({'name': 'feature_%i' % (col_index + 1), 'type': 'float'})
-    io_helper.save_results(json.dumps(results_dict), '', 'text/plain')
+    io_helper.save_results(json.dumps(results_dict), 'text/plain')
 
 
 if __name__ == '__main__':
