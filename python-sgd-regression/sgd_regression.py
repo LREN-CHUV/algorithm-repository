@@ -25,6 +25,7 @@ import argparse
 
 from sklearn.linear_model import SGDRegressor, SGDClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
+from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier
 import jsonpickle
 import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
@@ -73,10 +74,15 @@ def main(job_id, generate_pfa):
         logging.warning("All data are NULL, cannot fit model")
     else:
         # Train single step
-        if job_type == 'classification':
-            estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
+        if hasattr(estimator, 'partial_fit'):
+            if job_type == 'classification':
+                estimator.partial_fit(X, y, classes=dep_var['type']['enumeration'])
+            else:
+                estimator.partial_fit(X, y)
         else:
-            estimator.partial_fit(X, y)
+            if not generate_pfa:
+                logging.warning('{} does not support partial fit.'.format(estimator))
+            estimator.fit(X, y)
 
     serialized_estimator = serialize_sklearn_estimator(estimator)
 
@@ -91,7 +97,7 @@ def main(job_id, generate_pfa):
         pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
 
         # Add serialized model as metadata
-        pfa['metadata'] = _estimator_metadata(estimator, X, y)
+        pfa['metadata'] = _estimator_metadata(estimator, X, y, featurizer)
 
         # Save or update job_result
         logging.info('Saving PFA to job_results table')
@@ -100,10 +106,10 @@ def main(job_id, generate_pfa):
     else:
         # Save or update job_result
         logging.info('Saving serialized estimator into job_results table')
-        io_helper.save_results(_estimator_metadata(estimator, X, y), '', shapes.Shapes.JSON)
+        io_helper.save_results(_estimator_metadata(estimator, X, y, featurizer), '', shapes.Shapes.JSON)
 
 
-def _estimator_metadata(estimator, X, y):
+def _estimator_metadata(estimator, X, y, featurizer):
     """Serialize estimator and add score and other metadata."""
     meta = {
         'estimator': serialize_sklearn_estimator(estimator),
@@ -114,6 +120,8 @@ def _estimator_metadata(estimator, X, y):
         meta['coef_'] = str(estimator.coef_)
     if hasattr(estimator, 'intercept_'):
         meta['intercept_'] = str(estimator.intercept_)
+    if hasattr(estimator, 'feature_importances_') and hasattr(featurizer, 'columns'):
+        meta['feature_importances_'] = str(dict(zip(featurizer.columns, estimator.feature_importances_)))
 
     return meta
 
@@ -137,6 +145,8 @@ def _create_estimator(job_type):
             estimator = SGDRegressor(**model_parameters)
         elif model_type == 'neural_network':
             estimator = MLPRegressor(**model_parameters)
+        elif model_type == 'gradient_boosting':
+            estimator = GradientBoostingRegressor(**model_parameters)
         else:
             raise errors.UserError('Unknown model type {} for regression'.format(model_type))
 
@@ -147,6 +157,8 @@ def _create_estimator(job_type):
             estimator = MLPClassifier(**model_parameters)
         elif model_type == 'naive_bayes':
             estimator = MixedNB(**model_parameters)
+        elif model_type == 'gradient_boosting':
+            estimator = GradientBoostingClassifier(**model_parameters)
         else:
             raise errors.UserError('Unknown model type {} for classification'.format(model_type))
 
@@ -158,8 +170,12 @@ def _is_fitted(estimator):
     # TODO: put to utils
     if isinstance(estimator, MixedNB):
         return hasattr(estimator.multi_nb, 'classes_') or hasattr(estimator.gauss_nb, 'classes_')
-    elif isinstance(estimator, (SGDRegressor, SGDClassifier, MLPRegressor, MLPClassifier)):
+    elif isinstance(estimator, (SGDRegressor, SGDClassifier)):
         return hasattr(estimator, 'coef_')
+    elif isinstance(estimator, (MLPRegressor, MLPClassifier)):
+        return hasattr(estimator, 'coefs_')
+    elif isinstance(estimator, (GradientBoostingRegressor, GradientBoostingClassifier)):
+        return estimator._is_initialized()
     else:
         raise NotImplementedError('_is_fitted method is not implemented for {}'.format(estimator))
 
@@ -195,7 +211,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('compute', choices=['compute'])
     parser.add_argument('--mode', choices=['partial', 'final'], default='final')
-    parser.add_argument('--job-id', type=int)
+    parser.add_argument('--job-id', type=str)
 
     args = parser.parse_args()
 
