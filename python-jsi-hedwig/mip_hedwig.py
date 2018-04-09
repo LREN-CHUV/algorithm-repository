@@ -50,4 +50,4 @@ if __name__ == '__main__':
     with open(rules_out_file) as f:
         results = f.read()
     # TODO: add text/plain to mime types in shapes.Shapes
-    io_helper.save_results(results.replace('less_than', '<'), text/plain')
+    io_helper.save_results(results.replace('less_than', '<'), 'text/plain')
