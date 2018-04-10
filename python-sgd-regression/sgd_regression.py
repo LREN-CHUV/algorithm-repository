@@ -84,8 +84,6 @@ def main(job_id, generate_pfa):
                 logging.warning('{} does not support partial fit.'.format(estimator))
             estimator.fit(X, y)
 
-    serialized_estimator = serialize_sklearn_estimator(estimator)
-
     if generate_pfa:
         # Create PFA from the estimator
         types = [(var['name'], var['type']['name']) for var in indep_vars]
@@ -98,9 +96,9 @@ def main(job_id, generate_pfa):
 
         # Add serialized model as metadata
         pfa['metadata'] = _estimator_metadata(estimator, X, y, featurizer)
-        
-        model_type = parameters.get_parameter('type', 'str', 'linear_model')
-        pfa['name'] = model_type        
+
+        model_type = parameters.get_parameter('type', str, 'linear_model')
+        pfa['name'] = model_type
 
         # Save or update job_result
         logging.info('Saving PFA to job_results table')
