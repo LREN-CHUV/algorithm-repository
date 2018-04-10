@@ -71,6 +71,7 @@ def compute():
     io_helper.save_results(pfa, '', shapes.Shapes.PFA)
 
 
+@utils.catch_user_error
 def aggregate_knn(job_ids):
     """Get all kNN from all nodes and create one model from them.
     :input job_ids: list of job_ids with intermediate results
