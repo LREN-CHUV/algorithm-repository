@@ -67,7 +67,7 @@ def compute():
     # Save or update job_result
     logging.info('Saving PFA to job_results table...')
     pfa = json.dumps(pfa)
-    io_helper.save_results(pfa, '', shapes.Shapes.PFA)
+    io_helper.save_results(pfa, shapes.Shapes.PFA)
 
 
 def _create_estimator(job_type, parameters):
