@@ -6,10 +6,6 @@ ENV DOCKER_IMAGE=hbpmip/python-jsi-hedwig:1.0.3 \
     FUNCTION=python-jsi-hedwig
 
 COPY requirements.txt /src/requirements.txt
-COPY hedwig/ /src/hedwig
-COPY preprocess.py /src/hedwig/
-COPY mip_hedwig.py /src/hedwig/
-COPY doc/ /src/doc/
 
 # Install system packages
 RUN apt-get update \
@@ -17,9 +13,15 @@ RUN apt-get update \
     && python -m pip install --upgrade pip \
     && pip install -r /src/requirements.txt
 
+COPY hedwig/ /src/hedwig
+COPY doc/ /src/doc/
+
 WORKDIR /src/hedwig
-RUN pip install -r requirements.txt \
-    && python setup.py install
+RUN pip install -r requirements.txt
+
+COPY preprocess.py /src/hedwig/
+COPY mip_hedwig.py /src/hedwig/
+RUN python setup.py install
 
 ENTRYPOINT ["python", "/src/hedwig/mip_hedwig.py"]
 
