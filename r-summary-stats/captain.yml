@@ -1,9 +1,0 @@
-r-summary-stats:
-  build: Dockerfile
-  image: hbpmip/r-summary-stats
-  pre:
-    - echo "Preparing r-summary-stats"
-  post:
-    - echo "Finished r-summary-stats"
-  test:
-    - tests/test.sh
