@@ -21,6 +21,7 @@ def test_compute_regression(mock_save_results, mock_get_results, mock_fetch_data
     from titus.genpy import PFAEngine
     engine, = PFAEngine.fromJson(pfa_dict)
     engine.action({'stress_before_test1': 10., 'iq': 10., 'subjectageyears': 70})
+    # TODO: test the prediction
 
 
 @mock.patch('knn.io_helper.fetch_data')
@@ -40,6 +41,7 @@ def test_compute_classification(mock_save_results, mock_get_results, mock_fetch_
     from titus.genpy import PFAEngine
     engine, = PFAEngine.fromJson(pfa_dict)
     engine.action({'stress_before_test1': 10., 'iq': 10., 'subjectageyears': 70})
+    # TODO: test the prediction
 
 
 @mock.patch('knn.io_helper.fetch_data')
