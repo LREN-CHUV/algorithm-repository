@@ -16,11 +16,11 @@ RUN pytest tests/ -x --ff --capture=no
 
 ## Build target image
 
-FROM hbpmip/python-mip:0.4.0
+FROM hbpmip/python-mip:0.5.4
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-linear-regression:0.1.0 \
+ENV DOCKER_IMAGE=hbpmip/python-linear-regression:0.1.1 \
     FUNCTION=python-linear-regression
 
 COPY requirements.txt /requirements.txt
