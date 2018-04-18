@@ -46,9 +46,18 @@ echo "Initialise the databases..."
 $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
-echo
-echo "Run the linear-regression algorithm..."
-$DOCKER_COMPOSE run linear-regression compute
+# single-node mode
+# echo
+# echo "Run the linear-regression algorithm..."
+# $DOCKER_COMPOSE run linear-regression compute
+
+# distributed mode
+echo "Run the linear-regression-a..."
+$DOCKER_COMPOSE run linear-regression-a compute --mode intermediate
+echo "Run the linear-regression-b..."
+$DOCKER_COMPOSE run linear-regression-b compute --mode intermediate
+echo "Run the linear-regression-agg..."
+$DOCKER_COMPOSE run linear-regression-agg compute --mode aggregate --job-ids 1 2
 
 echo
 # Cleanup

@@ -16,7 +16,7 @@ RUN pytest tests/ -x --ff --capture=no
 
 ## Build target image
 
-FROM hbpmip/python-mip:0.5.5
+FROM hbpmip/python-mip-sklearn:0.3.5
 
 MAINTAINER mirco.nasuti@chuv.ch
 
@@ -24,9 +24,9 @@ ENV DOCKER_IMAGE=hbpmip/python-linear-regression:0.1.1 \
     FUNCTION=python-linear-regression
 
 COPY requirements.txt /requirements.txt
-COPY linear_regression.py /src/linear_regression.py
-
 RUN pip install -r /requirements.txt
+
+COPY linear_regression.py /src/linear_regression.py
 
 ENTRYPOINT ["python", "/src/linear_regression.py"]
 
