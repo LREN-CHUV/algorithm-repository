@@ -51,20 +51,20 @@ def intermediate_stats():
 
 
 def _compute_intermediate_result(inputs):
+    dep_var = inputs["data"]["dependent"][0]
     indep_vars = inputs["data"]["independent"]
 
-    # it works with independent variables only
-    if inputs["data"]["dependent"]:
-        logging.warning('Correlation heatmap does not use dependent variable.')
-
-    # Check that all independent variables are numeric
-    for var in indep_vars:
+    # Use only numeric variables
+    variables = []
+    for var in [dep_var] + indep_vars:
         if utils.is_nominal(var):
-            raise errors.UserError('Independent variables needs to be numeric ({} is {})'.format(var['name'], var['type']['name']))
+            logging.warning('Correlation heatmap works only with numerical types ({} is {})'.format(var['name'], var['type']['name']))
+        else:
+            variables.append(var)
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
-    X = io_helper.fetch_dataframe(variables=indep_vars)
+    X = io_helper.fetch_dataframe(variables=variables)
 
     logging.info('Dropping NULL values')
     X = utils.remove_nulls(X, errors='ignore')
