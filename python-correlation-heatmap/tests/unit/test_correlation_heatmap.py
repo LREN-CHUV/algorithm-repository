@@ -15,10 +15,14 @@ def test_compute(mock_save_results, mock_fetch_data):
     results = json.loads(mock_save_results.call_args[0][0])
     assert results == [
         {
-            'type': 'heatmap',
-            'z': [[1.0, -0.4287450417], [-0.4287450417, 1.0]],
-            'x': ['iq', 'stress_before_test1'],
-            'y': ['iq', 'stress_before_test1']
+            'type':
+            'heatmap',
+            'x': ['iq', 'score_test1', 'stress_before_test1'],
+            'y': ['iq', 'score_test1', 'stress_before_test1'],
+            'z': [
+                [1.0, 0.4168913285, -0.4287450417], [0.4168913285, 1.0, -0.5426534614],
+                [-0.4287450417, -0.5426534614, 1.0]
+            ]
         }
     ]
 
@@ -34,7 +38,7 @@ def test_compute_empty(mock_save_results, mock_fetch_data):
 
     compute()
     results = json.loads(mock_save_results.call_args[0][0])
-    assert np.array(results[0]['z']).shape == (2, 2)
+    assert np.array(results[0]['z']).shape == (3, 3)
     assert pd.isnull(results[0]['z']).all()
 
 
@@ -46,10 +50,15 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
     intermediate_stats()
     results = json.loads(mock_save_results.call_args[0][0])
     assert results == {
-        'columns': ['iq', 'stress_before_test1'],
-        'means': [73.8815754762, 52.9296397352],
-        'X^T * X': [[32751.4170961055, 23458.8913944936], [23458.8913944936, 17009.1219934008]],
-        'count': 6
+        'columns': ['iq', 'score_test1', 'stress_before_test1'],
+        'means': [73.8815754762, 1096.5049055743, 52.9296397352],
+        'X^T * X': [
+            [32751.4170961055, 486164.9357124355, 23458.8913944936],
+            [486164.9357124355, 7321018.913143162, 345715.382923219],
+            [23458.8913944936, 345715.382923219, 17009.1219934008]
+        ],
+        'count':
+        6
     }
 
 
