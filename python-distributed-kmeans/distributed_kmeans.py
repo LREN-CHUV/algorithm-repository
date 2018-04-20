@@ -45,7 +45,6 @@ import logging
 from pandas.io import json
 import argparse
 import numpy as np
-import pandas as pd
 
 from mip_helper import io_helper, shapes, parameters, utils
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
@@ -91,7 +90,7 @@ def intermediate_kmeans():
     if len(X) == 0:
         logging.warning("All data are NULL, returning empty centroids.")
         results['centroids'] = []
-        io_helper.save_results(json.dumps(results), '', shapes.Shapes.JSON)
+        io_helper.save_results(json.dumps(results), shapes.Shapes.JSON)
         return
 
     # Generate results
@@ -131,7 +130,7 @@ def intermediate_kmeans():
     results['centroids'] = [lc.tolist() for lc in local_centroids]
 
     logging.info("Results:\n{}".format(results))
-    io_helper.save_results(json.dumps(results), '', shapes.Shapes.JSON)
+    io_helper.save_results(json.dumps(results), shapes.Shapes.JSON)
     logging.info("DONE")
 
 
@@ -165,7 +164,7 @@ def aggregate_kmeans(job_ids):
     # Save or update job_result
     logging.info('Saving PFA to job_results table')
     pfa = json.dumps(pfa)
-    io_helper.save_results(pfa, '', shapes.Shapes.PFA)
+    io_helper.save_results(pfa, shapes.Shapes.PFA)
     logging.info("DONE")
 
 
