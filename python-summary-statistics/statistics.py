@@ -44,6 +44,7 @@ OUTPUT_SCHEMA_INTERMEDIATE = {
         {'name': 'group', 'type': 'array'},
         {'name': 'index', 'type': 'string'},
         {'name': 'label', 'type': 'string'},
+        {'name': 'type', 'type': 'string'},
         {'name': 'count', 'type': 'integer'},
         {'name': 'null_count', 'type': 'integer'},
         {'name': 'unique', 'type': 'integer'},
@@ -68,6 +69,8 @@ OUTPUT_SCHEMA_AGGREGATE = {
         {'name': 'group_variables', 'type': 'array'},
         {'name': 'group', 'type': 'array'},
         {'name': 'index', 'type': 'string'},
+        {'name': 'label', 'type': 'string'},
+        {'name': 'type', 'type': 'string'},
         {'name': 'count', 'type': 'integer'},
         {'name': 'null_count', 'type': 'integer'},
         {'name': 'frequency', 'type': 'any'},
@@ -89,6 +92,7 @@ def intermediate_stats():
     dep_var = inputs["data"]["dependent"][0]
     indep_vars = inputs["data"]["independent"]
     labels = _get_labels(indep_vars + [dep_var])
+    types = _get_types(indep_vars + [dep_var])
 
     if len(dep_var['series']) == 0:
         raise errors.UserError('Dependent variable has no values, check your SQL query.')
@@ -110,26 +114,27 @@ def intermediate_stats():
             if not isinstance(group_name, tuple):
                 group_name = (group_name,)
 
-            data += _calc_stats(group, group_name, group_variables, labels)
+            data += _calc_stats(group, group_name, group_variables, labels, types)
 
     # overall statistics
-    data += _calc_stats(df, ('all',), [], labels)
+    data += _calc_stats(df, ('all',), [], labels, types)
 
     logging.info("Results:\n{}".format(data))
     table = {
         'schema': OUTPUT_SCHEMA_INTERMEDIATE,
         'data': data,
     }
-    io_helper.save_results(pd.io.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
+    io_helper.save_results(pd.io.json.dumps(table), shapes.Shapes.TABULAR_DATA_RESOURCE)
     logging.info("DONE")
 
 
-def _calc_stats(group, group_name, group_variables, labels):
+def _calc_stats(group, group_name, group_variables, labels, types):
     results = []
     for name, x in group.items():
         result = {
             'index': name,
             'label': labels[name],
+            'type': types[name],
             'group': list(map(str, group_name)),
             'group_variables': [labels[g] for g in group_variables],
         }
@@ -170,7 +175,7 @@ def aggregate_stats(job_ids):
         'schema': OUTPUT_SCHEMA_AGGREGATE,
         'data': data,
     }
-    io_helper.save_results(pd.io.json.dumps(table), '', shapes.Shapes.TABULAR_DATA_RESOURCE)
+    io_helper.save_results(pd.io.json.dumps(table), shapes.Shapes.TABULAR_DATA_RESOURCE)
     logging.info("DONE")
 
 
@@ -191,6 +196,7 @@ def _agg_stats(gf, group_name, index):
     ret = {
         'index': index,
         'label': gf.label.iloc[0],
+        'type': gf.type.iloc[0],
         'group': group_name,
         'group_variables': gf.group_variables.iloc[0],
         'count': gf['count'].sum(),
@@ -216,6 +222,10 @@ def _agg_stats(gf, group_name, index):
 
 def _get_labels(variables):
     return {var['name']: var.get('label', var['name']) for var in variables}
+
+
+def _get_types(variables):
+    return {var['name']: var.get('type', {}).get('name') for var in variables}
 
 
 if __name__ == '__main__':
