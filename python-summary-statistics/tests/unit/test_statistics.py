@@ -21,6 +21,7 @@ def test_intermediate_stats_real(mock_save_results, mock_fetch_data):
         {
             'index': 'agegroup',
             'label': 'Age group',
+            'type': 'polynominal',
             'group': ['-50y'],
             'group_variables': ['Age group'],
             'count': 3,
@@ -35,6 +36,7 @@ def test_intermediate_stats_real(mock_save_results, mock_fetch_data):
         }, {
             'index': 'iq',
             'label': 'IQ',
+            'type': 'real',
             'group': ['-50y'],
             'group_variables': ['Age group'],
             'count': 3,
@@ -68,6 +70,7 @@ def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
         {
             'index': 'adnicategory',
             'label': 'ADNI category',
+            'type': 'polynominal',
             'group': ['-50y'],
             'group_variables': ['Age group'],
             'count': 3,
@@ -82,6 +85,7 @@ def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
         }, {
             'index': 'agegroup',
             'label': 'Age group',
+            'type': 'polynominal',
             'group': ['-50y'],
             'group_variables': ['Age group'],
             'count': 3,
@@ -99,7 +103,8 @@ def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
 
 @mock.patch('statistics.io_helper.fetch_data')
 @mock.patch('statistics.io_helper.save_results')
-def test_intermediate_stats_empty(mock_save_results, mock_fetch_data):
+@mock.patch('statistics.io_helper.save_error')
+def test_intermediate_stats_empty(mock_save_error, mock_save_results, mock_fetch_data):
     data = fx.inputs_regression(include_categorical=True, add_null=True)
     data['data']['dependent'][0]['series'] = []
     mock_fetch_data.return_value = data
@@ -118,6 +123,7 @@ def intermediate_data_1():
             {
                 'index': 'iq',
                 'label': 'IQ',
+                'type': 'real',
                 'group': ['all'],
                 'group_variables': [],
                 'count': 3,
@@ -139,6 +145,7 @@ def intermediate_data_2():
             {
                 'index': 'iq',
                 'label': 'IQ',
+                'type': 'real',
                 'group': ['all'],
                 'group_variables': [],
                 'count': 5,
@@ -171,6 +178,7 @@ def test_aggregate_stats_real(mock_save_results, mock_get_results):
         {
             'index': 'iq',
             'label': 'IQ',
+            'type': 'real',
             'group': ['all'],
             'group_variables': [],
             'mean': 92.5,
@@ -195,6 +203,7 @@ def intermediate_data_1_nominal():
                     'Other': 3
                 },
                 'label': 'Score test',
+                'type': 'polynominal',
                 'group': ['59y-'],
                 'group_variables': ['Age group'],
                 'index': 'score_test1',
@@ -223,6 +232,7 @@ def test_aggregate_stats_nominal(mock_save_results, mock_get_results):
         {
             'index': 'score_test1',
             'label': 'Score test',
+            'type': 'polynominal',
             'group': ['59y-'],
             'group_variables': ['Age group'],
             'count': 12,
