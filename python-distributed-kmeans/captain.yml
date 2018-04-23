@@ -1,0 +1,9 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/python-distributed-kmeans
+  pre:
+    - echo "Preparing python-distributed-kmeans"
+  post:
+    - echo "Finished python-distributed-kmeans"
+  test:
+    - ./tests/test.sh
