@@ -22,8 +22,9 @@
 
 import logging
 from pandas.io import json
+import argparse
 
-from mip_helper import io_helper, shapes, utils
+from mip_helper import io_helper, shapes, utils, parameters, errors
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
 from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
@@ -39,7 +40,7 @@ def compute():
     inputs = io_helper.fetch_data()
     dep_var = inputs["data"]["dependent"][0]
     indep_vars = inputs["data"]["independent"]
-    parameters = {x['name']: x['value'] for x in inputs['parameters']}
+    params = parameters.fetch_parameters()
 
     if dep_var['type']['name'] in ('polynominal', 'binominal'):
         job_type = 'classification'
@@ -47,7 +48,7 @@ def compute():
         job_type = 'regression'
 
     logging.info('Creating new estimator')
-    estimator = _create_estimator(job_type, parameters)
+    estimator = _create_estimator(job_type, params)
     featurizer = _create_featurizer(indep_vars)
 
     # convert variables into dataframe
@@ -68,6 +69,51 @@ def compute():
     logging.info('Saving PFA to job_results table...')
     pfa = json.dumps(pfa)
     io_helper.save_results(pfa, shapes.Shapes.PFA)
+
+
+@utils.catch_user_error
+def aggregate_knn(job_ids):
+    """Get all kNN from all nodes and create one model from them.
+    :input job_ids: list of job_ids with intermediate results
+    """
+    # Read intermediate inputs from jobs
+    logging.info("Fetching intermediate data...")
+    pfas = _load_intermediate_data(job_ids)
+
+    # Put all PFAs together by combining `points`
+    pfa = _combine_knn_pfas(pfas)
+
+    # Save job_result
+    logging.info('Saving PFA to job_results table...')
+    pfa = json.dumps(pfa)
+    logging.info("Results:\n{}".format(pfa))
+    io_helper.save_results(pfa, '', shapes.Shapes.PFA)
+
+
+def _combine_knn_pfas(pfas):
+    # assume that all PFAs are the same except of codebook
+    combined_pfa = pfas[0]
+    for pfa in pfas[1:]:
+        combined_pfa['cells']['codebook']['init'] += pfa['cells']['codebook']['init']
+    return combined_pfa
+
+
+def _load_intermediate_data(job_ids):
+    data = []
+    for job_id in job_ids:
+        job_result = io_helper.get_results(job_id)
+
+        # log errors (e.g. about missing data), but do not reraise them
+        if job_result.error:
+            logging.warning(job_result.error)
+        else:
+            pfa = json.loads(job_result.data)
+            data.append(pfa)
+
+    if not data:
+        raise errors.UserError('All jobs {} returned an error.'.format(job_ids))
+
+    return data
 
 
 def _create_estimator(job_type, parameters):
@@ -95,4 +141,18 @@ def _create_featurizer(indep_vars):
 
 
 if __name__ == '__main__':
-    compute()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('compute', choices=['compute'])
+    parser.add_argument('--mode', choices=['intermediate', 'aggregate'], default='intermediate')
+    # QUESTION: (job_id, node) is a primary key of `job_result` table. Does it mean I'll need node ids as well in order
+    # to query unique job?
+    parser.add_argument('--job-ids', type=str, nargs="*", default=[])
+
+    args = parser.parse_args()
+
+    # > compute --mode intermediate
+    if args.mode == 'intermediate':
+        compute()
+    # > compute --mode aggregate --job-ids 12 13 14
+    elif args.mode == 'aggregate':
+        aggregate_knn(args.job_ids)
