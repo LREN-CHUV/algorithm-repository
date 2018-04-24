@@ -18,15 +18,6 @@ get_script_dir () {
 
 cd "$(get_script_dir)"
 
-cleanup=1
-for param in "$@"
-do
-  if [ "--no-cleanup" == "$param" ]; then
-    cleanup=0
-    echo "INFO: --no-cleanup option detected !"
-  fi
-done
-
 if [[ $NO_SUDO || -n "$CIRCLECI" ]]; then
   DOCKER_COMPOSE="docker-compose"
 elif groups $USER | grep &>/dev/null '\bdocker\b'; then
@@ -43,10 +34,7 @@ function _cleanup() {
   $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null | true
   exit $error_code
 }
-
-if [[ "$cleanup" == 1 ]]; then
-  trap _cleanup EXIT INT TERM
-fi
+trap _cleanup EXIT INT TERM
 
 echo "Starting the databases..."
 $DOCKER_COMPOSE up -d --remove-orphans db
@@ -58,25 +46,15 @@ echo "Initialise the databases..."
 $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
-# single-node case
-# echo
-# echo "Run the distributed-knn-single..."
-# $DOCKER_COMPOSE run distributed-knn-single compute
 
 echo
-echo "Run the distributed-knn-a..."
-$DOCKER_COMPOSE run distributed-knn-a compute --mode intermediate
-echo "Run the distributed-knn-b..."
-$DOCKER_COMPOSE run distributed-knn-b compute --mode intermediate
-echo "Run the distributed-knn-agg..."
-$DOCKER_COMPOSE run distributed-knn-agg compute --mode aggregate --job-ids 1 2
-
-echo
-echo "Run PFA validator (skipped)..."
-# $DOCKER_COMPOSE run pfa_validator
+echo "Run the distributed-kmeans-a..."
+$DOCKER_COMPOSE run distributed-kmeans-a compute --mode intermediate
+echo "Run the distributed-kmeans-b..."
+$DOCKER_COMPOSE run distributed-kmeans-b compute --mode intermediate
+echo "Run the distributed-kmeans-agg..."
+$DOCKER_COMPOSE run distributed-kmeans-agg compute --mode aggregate --job-ids 1 2
 
 echo
 # Cleanup
-if [[ "$cleanup" == 1 ]]; then
-  _cleanup
-fi
+_cleanup

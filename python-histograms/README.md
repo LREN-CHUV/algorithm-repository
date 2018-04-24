@@ -8,6 +8,9 @@ Calculates histogram of nominal or real variable grouped by nominal variables in
 null values. Histogram edges are taken from `minValue` and `maxValue` property of dependent variable. If not avaiable,
 then these values are calculated dynamically from dependent values (this won't work in distributed mode though).
 
+
+## Usage
+
 It has two modes
 
 1. `compute --mode intermediate`

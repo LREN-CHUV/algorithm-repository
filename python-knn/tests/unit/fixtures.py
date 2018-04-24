@@ -8,9 +8,7 @@ def independent(include_categorical=False, include_integer=False):
             'type': {
                 'name': 'real'
             },
-            'series': [
-                61.4698271904, 53.7560829699, 43.7334060431, 57.978654924, 51.4467006894, 49.1931665942
-            ],
+            'series': [61.4698271904, 53.7560829699, 43.7334060431, 57.978654924, 51.4467006894, 49.1931665942],
             'mean': 55,
             'std': 20.,
             'minValue': 35,
@@ -20,9 +18,7 @@ def independent(include_categorical=False, include_integer=False):
             'type': {
                 'name': 'real'
             },
-            'series': [
-                73.5856470359, 73.6181456345, 73.7897320711, 73.8623274925, 73.9894228193, 74.4441778038
-            ],
+            'series': [73.5856470359, 73.6181456345, 73.7897320711, 73.8623274925, 73.9894228193, 74.4441778038],
             'mean': 72,
             'std': 10.,
             'minValue': 60,
@@ -30,28 +26,35 @@ def independent(include_categorical=False, include_integer=False):
         }
     ]
     if include_categorical:
-        ret.append({
-            'name': 'agegroup',
-            'type': {
-                'name': 'polynominal',
-                'enumeration': ['-50y', '50-59y']
-            },
-            'label': 'Age Group',
-            'series': [
-                '-50y', '50-59y', '-50y', '50-59y', '-50y', '50-59y'
-            ]
-        })
+        ret.append(
+            {
+                'name': 'agegroup',
+                'type': {
+                    'name': 'polynominal',
+                    'enumeration': ['-50y', '50-59y']
+                },
+                'label': 'Age Group',
+                'series': ['-50y', '50-59y', '-50y', '50-59y', '-50y', '50-59y']
+            }
+        )
     if include_integer:
-        ret.append({
-            'name': 'subjectageyears',
-            'type': {
-                'name': 'integer',
-            },
-            'label': 'Subject Age Years',
-            'series': [
-                61, 64, 42, 78, 94, 66,
-            ]
-        })
+        ret.append(
+            {
+                'name': 'subjectageyears',
+                'type': {
+                    'name': 'integer',
+                },
+                'label': 'Subject Age Years',
+                'series': [
+                    61,
+                    64,
+                    42,
+                    78,
+                    94,
+                    66,
+                ]
+            }
+        )
     return ret
 
 
@@ -67,7 +70,8 @@ def inputs_regression(add_null=False, **kwargs):
                         'name': 'real'
                     },
                     'series': [
-                        846.2601464093, 1257.859885233, 1070.6406427181, 1040.8477167398, 1173.4546177907, 1189.9664245547
+                        846.2601464093, 1257.859885233, 1070.6406427181, 1040.8477167398, 1173.4546177907,
+                        1189.9664245547
                     ],
                     'mean': 1000.,
                     'std': 200.,
@@ -97,9 +101,7 @@ def inputs_classification(**kwargs):
                         'enumeration': ['AD', 'CN', 'Other'],
                         'enumeration_labels': ["Alzheimers disease", 'Cognitively Normal', 'Other']
                     },
-                    'series': [
-                        'AD', 'CN', 'Other', 'AD', 'CN', 'Other'
-                    ]
+                    'series': ['AD', 'CN', 'Other', 'AD', 'CN', 'Other']
                 }
             ],
             'independent': independent(**kwargs)
@@ -107,23 +109,22 @@ def inputs_classification(**kwargs):
         'parameters': []
     }
 
+
 @pytest.fixture
 def inputs_no_values(**kwargs):
     return {
         'data': {
-            'dependent': [
-                {
-                    'name': 'tiv',
-                    'type': {'name': 'real'},
-                    'series': []
-                }
-            ],
+            'dependent': [{
+                'name': 'tiv',
+                'type': {
+                    'name': 'real'
+                },
+                'series': []
+            }],
             'independent': []
         },
-        'parameters': [
-            {
-                'name': 'exit_on_error',
-                'value': 'no'
-            }
-        ]
+        'parameters': [{
+            'name': 'exit_on_error',
+            'value': 'no'
+        }]
     }

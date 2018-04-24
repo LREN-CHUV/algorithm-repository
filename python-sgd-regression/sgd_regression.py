@@ -116,13 +116,13 @@ def _estimator_metadata(estimator, X, y, featurizer):
         'estimator': serialize_sklearn_estimator(estimator),
     }
     if len(X) and hasattr(estimator, 'score'):
-        meta['score'] = str(estimator.score(X, y))
+        meta['score'] = json.dumps(estimator.score(X, y))
     if hasattr(estimator, 'coef_'):
-        meta['coef_'] = str(estimator.coef_)
+        meta['coef_'] = json.dumps(estimator.coef_.tolist())
     if hasattr(estimator, 'intercept_'):
-        meta['intercept_'] = str(estimator.intercept_)
+        meta['intercept_'] = json.dumps(estimator.intercept_.tolist())
     if hasattr(estimator, 'feature_importances_') and hasattr(featurizer, 'columns'):
-        meta['feature_importances_'] = str(dict(zip(featurizer.columns, estimator.feature_importances_)))
+        meta['feature_importances_'] = json.dumps(dict(zip(featurizer.columns, estimator.feature_importances_)))
 
     return meta
 
@@ -140,6 +140,8 @@ def deserialize_sklearn_estimator(js):
 def _create_estimator(job_type):
     model_parameters = parameters.fetch_parameters()
     model_type = model_parameters.pop('type', 'linear_model')
+
+    model_parameters = _parse_parameters(model_parameters)
 
     if job_type == 'regression':
         if model_type == 'linear_model':
@@ -164,6 +166,28 @@ def _create_estimator(job_type):
             raise errors.UserError('Unknown model type {} for classification'.format(model_type))
 
     return estimator
+
+
+def _parse_parameters(parameters):
+    """Parse parameters for scikit-learn model, e.g. construct lists from strings."""
+    for name, value in parameters.items():
+        if name == 'class_prior':
+            try:
+                values = [float(v) for v in value.replace(' ', '').split(',')]
+            except ValueError:
+                raise errors.UserError('Wrong format {} for class_prior'.format(value))
+            if sum(values) != 1:
+                raise errors.UserError('Values in class_prior must sum to 1 ({} given)'.format(values))
+            parameters[name] = values
+
+        elif name == 'hidden_layer_sizes':
+            try:
+                values = [int(v) for v in value.replace(' ', '').split(',')]
+            except ValueError:
+                raise errors.UserError('Wrong format {} for hidden_layer_sizes'.format(value))
+            parameters[name] = values
+
+    return parameters
 
 
 def _is_fitted(estimator):
