@@ -9,7 +9,6 @@ from scipy import stats
 import argparse
 import pandas as pd
 from statsmodels.api import OLS
-from statsmodels.formula.api import ols
 
 from sklearn.linear_model import SGDRegressor
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
