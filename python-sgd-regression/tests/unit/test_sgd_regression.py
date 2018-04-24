@@ -3,7 +3,7 @@ from pandas.io import json
 import mock
 import pytest
 from . import fixtures as fx
-from sgd_regression import main, serialize_sklearn_estimator, deserialize_sklearn_estimator
+from sgd_regression import main, serialize_sklearn_estimator, deserialize_sklearn_estimator, _parse_parameters
 from sklearn import datasets
 
 
@@ -102,9 +102,12 @@ def test_main_classification(mock_parameters, mock_save_results, mock_get_result
 @mock.patch('sgd_regression.io_helper.fetch_data')
 @mock.patch('sgd_regression.io_helper.get_results')
 @mock.patch('sgd_regression.io_helper.save_results')
+@mock.patch('sgd_regression.io_helper.save_error')
 @mock.patch('sgd_regression.parameters.fetch_parameters')
 @mock.patch('sys.exit')
-def test_main_classification_empty(mock_exit, mock_parameters, mock_save_results, mock_get_results, mock_fetch_data, method, name):
+def test_main_classification_empty(
+    mock_exit, mock_parameters, mock_save_error, mock_save_results, mock_get_results, mock_fetch_data, method, name
+):
     # create mock objects from database
     mock_parameters.return_value = {'type': method}
 
@@ -118,9 +121,7 @@ def test_main_classification_empty(mock_exit, mock_parameters, mock_save_results
     main(job_id=None, generate_pfa=True)
 
     mock_exit.assert_called_once_with(1)
-    assert mock_save_results.call_args[0] == (
-        '', 'Model was not fitted on any data, cannot generate PFA.', 'text/plain+error'
-    )
+    assert mock_save_error.call_args[0] == ('Model was not fitted on any data, cannot generate PFA.', )
 
 
 def test_deserialize_sklearn_estimator():
@@ -133,3 +134,8 @@ def test_deserialize_sklearn_estimator():
         del original.__dict__[col]
         del estimator.__dict__[col]
     assert original.__dict__ == estimator.__dict__
+
+
+def test_parse_parameters():
+    assert _parse_parameters({'class_prior': '0.5, 0.5'}) == {'class_prior': [0.5, 0.5]}
+    assert _parse_parameters({'hidden_layer_sizes': '10, 50, 10'}) == {'hidden_layer_sizes': [10, 50, 10]}
