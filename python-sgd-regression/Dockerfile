@@ -16,7 +16,7 @@ RUN pytest tests/ -x --ff --capture=no
 
 ## Build target image
 
-FROM hbpmip/python-mip-sklearn:0.3.4
+FROM hbpmip/python-mip-sklearn:0.3.5
 
 ENV DOCKER_IMAGE=hbpmip/python-sgd-regression:0.1.4 \
     FUNCTION=python-sgd-regression
