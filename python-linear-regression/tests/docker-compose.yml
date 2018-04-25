@@ -61,13 +61,12 @@ services:
     depends_on:
       - db
 
-  linear-regression:
+  linear-regression-base:
     image: "hbpmip/python-linear-regression:latest"
-    container_name: "linear-regression"
+    container_name: "linear-regression-single"
     restart: "no"
     environment:
       NODE: job_test
-      JOB_ID: 1
       IN_DBAPI_DRIVER: postgresql
       IN_USER: features
       IN_PASSWORD: featurespwd
@@ -80,11 +79,43 @@ services:
       OUT_HOST: db
       OUT_PORT: 5432
       OUT_DATABASE: woken
-      PARAM_variables: "score_test1"
-      PARAM_covariables: "stress_before_test1,iq"
+      PARAM_variables: "lefthippocampus"
+      PARAM_covariables: "minimentalstate,opticchiasm,subjectageyears"
       PARAM_grouping: ""
-      PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
-      PARAM_meta: "{\"score_test1\":{\"code\":\"score_test1\",\"type\":\"real\"},\"stress_before_test1\":{\"code\":\"stress_before_test1\",\"type\":\"real\"},\"iq\":{\"code\":\"iq\",\"type\":\"real\"},\"cognitive_task2\":{\"code\":\"cognitive_task2\",\"type\":\"real\"},\"practice_task2\":{\"code\":\"practice_task2\",\"type\":\"real\"},\"response_time_task2\":{\"code\":\"response_time_task2\",\"type\":\"real\"},\"college_math\":{\"code\":\"college_math\",\"type\":\"real\"},\"score_math_course1\":{\"code\":\"score_math_course1\",\"type\":\"real\"},\"score_math_course2\":{\"code\":\"score_math_course2\",\"type\":\"real\"}}"
-      MODEL_PARAM_design: "factorial"
+      PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35,\"minValue\":0.1,\"maxValue\":5.0},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0}, \"rs17125944_c\": {\"code\": \"rs17125944_c\",\"enumerations\": [{\"code\": 0,\"label\": 0},{\"code\": 1,\"label\": 1},{\"code\": 2,\"label\": 2}],\"sql_type\": \"int\",\"type\": \"polynominal\"}, \"adnicategory\": {\"code\": \"adnicategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's Disease\"}, {\"code\": \"MCI\", \"label\": \"Mild Cognitive Impairment\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}], \"type\": \"polynominal\"}, \"alzheimerbroadcategory\": {\"code\": \"alzheimerbroadcategory\", \"enumerations\": [{\"code\": \"AD\", \"label\": \"Alzheimer's disease\"}, {\"code\": \"CN\", \"label\": \"Cognitively Normal\"}, {\"code\": \"Other\", \"label\": \"Other\"}], \"type\": \"polynominal\"}, \"subjectageyears\": {\"code\": \"subjectageyears\", \"label\": \"Age Years\", \"maxValue\": 130, \"minValue\": 0, \"type\": \"integer\"}}"
+
+  linear-regression-single:
+    extends: linear-regression-base
+    container_name: "linear-regression-single"
+    environment:
+      JOB_ID: '1'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears, alzheimerbroadcategory, adnicategory FROM cde_features_a LIMIT 100"
+    links:
+      - "db:db"
+
+  linear-regression-a:
+    extends: linear-regression-base
+    container_name: "linear-regression-a"
+    environment:
+      JOB_ID: '1'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears, alzheimerbroadcategory, adnicategory FROM cde_features_a LIMIT 100"
+    links:
+      - "db:db"
+
+  linear-regression-b:
+    extends: linear-regression-base
+    container_name: "linear-regression-b"
+    environment:
+      JOB_ID: '2'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears, alzheimerbroadcategory, adnicategory FROM cde_features_b LIMIT 100"
+    links:
+      - "db:db"
+
+  linear-regression-agg:
+    extends: linear-regression-base
+    container_name: "linear-regression-agg"
+    environment:
+      JOB_ID: '3'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears, alzheimerbroadcategory, adnicategory FROM cde_features_a LIMIT 100"
     links:
       - "db:db"
