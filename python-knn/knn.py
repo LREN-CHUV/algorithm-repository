@@ -87,7 +87,7 @@ def aggregate_knn(job_ids):
     logging.info('Saving PFA to job_results table...')
     pfa = json.dumps(pfa)
     logging.info("Results:\n{}".format(pfa))
-    io_helper.save_results(pfa, '', shapes.Shapes.PFA)
+    io_helper.save_results(pfa, shapes.Shapes.PFA)
 
 
 def _combine_knn_pfas(pfas):
