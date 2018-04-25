@@ -45,9 +45,9 @@ def test_compute_classification(mock_save_results, mock_get_results, mock_fetch_
 
 
 @mock.patch('knn.io_helper.fetch_data')
-@mock.patch('knn.io_helper.save_results')
+@mock.patch('knn.io_helper.save_error')
 @mock.patch('sys.exit')
-def test_compute_empty(mock_exit, mock_save_results, mock_fetch_data):
+def test_compute_empty(mock_exit, mock_save_error, mock_fetch_data):
     # create mock objects from database
     data = fx.inputs_classification()
 
@@ -59,9 +59,7 @@ def test_compute_empty(mock_exit, mock_save_results, mock_fetch_data):
     compute()
 
     mock_exit.assert_called_once_with(1)
-    assert mock_save_results.call_args[0] == (
-        '', 'No data left after removing NULL values, cannot fit model.', 'text/plain+error'
-    )
+    assert mock_save_error.call_args[0] == ('No data left after removing NULL values, cannot fit model.',)
 
 
 @mock.patch('knn.io_helper.fetch_data')
