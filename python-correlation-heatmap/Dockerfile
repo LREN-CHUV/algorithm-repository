@@ -20,7 +20,7 @@ FROM hbpmip/python-mip:0.5.6
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-correlation-heatmap:0.1.3 \
+ENV DOCKER_IMAGE=hbpmip/python-correlation-heatmap:0.1.4 \
     FUNCTION=python-correlation-heatmap
 
 COPY requirements.txt /requirements.txt
