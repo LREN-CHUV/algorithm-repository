@@ -133,6 +133,9 @@ def intermediate():
     featurizer = _create_featurizer(indep_vars)
     X = pd.DataFrame(featurizer.transform(data), columns=featurizer.columns, index=data.index)
 
+    if not inped_vars:
+        raise errors.UserError('No covariables selected.')
+
     # Check dependent variable type (should be continuous)
     if utils.is_nominal(dep_var):
         raise errors.UserError('Dependent variable should be continuous!')
