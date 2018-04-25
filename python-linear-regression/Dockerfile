@@ -16,7 +16,7 @@ RUN pytest tests/ -x --ff --capture=no
 
 ## Build target image
 
-FROM hbpmip/python-mip-sklearn:0.3.5
+FROM hbpmip/python-mip-sklearn:0.3.6
 
 MAINTAINER mirco.nasuti@chuv.ch
 
