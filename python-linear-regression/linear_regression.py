@@ -133,7 +133,7 @@ def intermediate():
     featurizer = _create_featurizer(indep_vars)
     X = pd.DataFrame(featurizer.transform(data), columns=featurizer.columns, index=data.index)
 
-    if not inped_vars:
+    if not indep_vars:
         raise errors.UserError('No covariables selected.')
 
     # Check dependent variable type (should be continuous)

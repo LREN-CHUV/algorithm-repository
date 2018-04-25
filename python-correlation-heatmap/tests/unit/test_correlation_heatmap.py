@@ -1,9 +1,30 @@
 import mock
 import json
+import copy
 import numpy as np
 import pandas as pd
 from . import fixtures as fx
 from correlation_heatmap import intermediate_stats, aggregate_stats, compute
+
+
+def round_dict(d, precision=3):
+    """Round all numerical values in a dictionary recursively."""
+    d = copy.deepcopy(d)
+    if isinstance(d, dict):
+        for k, v in d.items():
+            try:
+                d[k] = round(v, precision)
+            except TypeError:
+                d[k] = round_dict(v)
+        return d
+    elif isinstance(d, list):
+        return [round_dict(v) for v in d]
+    elif isinstance(d, tuple):
+        return tuple([round_dict(v) for v in d])
+    elif isinstance(d, float):
+        return round(d, precision)
+
+    return d
 
 
 @mock.patch('correlation_heatmap.io_helper.fetch_data')
@@ -13,7 +34,7 @@ def test_compute(mock_save_results, mock_fetch_data):
 
     compute()
     results = json.loads(mock_save_results.call_args[0][0])
-    assert results == [
+    assert round_dict(results) == round_dict([
         {
             'type':
             'heatmap',
@@ -24,7 +45,7 @@ def test_compute(mock_save_results, mock_fetch_data):
                 [-0.4287450417, -0.5426534614, 1.0]
             ]
         }
-    ]
+    ])
 
 
 @mock.patch('correlation_heatmap.io_helper.fetch_data')
@@ -49,7 +70,7 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
 
     intermediate_stats()
     results = json.loads(mock_save_results.call_args[0][0])
-    assert results == {
+    assert round_dict(results) == round_dict({
         'columns': ['iq', 'score_test1', 'stress_before_test1'],
         'means': [73.8815754762, 1096.5049055743, 52.9296397352],
         'X^T * X': [
@@ -59,7 +80,7 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
         ],
         'count':
         6
-    }
+    })
 
 
 def intermediate_data_1():
