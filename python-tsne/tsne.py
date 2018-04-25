@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from mip_helper import io_helper, shapes  # Library coming from the parent Docker image and used to manage I/O data
+from mip_helper import io_helper, shapes, utils  # Library coming from the parent Docker image and used to manage I/O data
 
 import logging
 import subprocess
@@ -13,6 +13,7 @@ import json
 import colorsys
 
 
+@utils.catch_user_error
 def main():
     logging.basicConfig(level=logging.INFO)
 
@@ -97,7 +98,7 @@ def main():
     chart = generate_scatterchart(output, indep_vars, labels, perplexity, theta, iterations)
 
     logging.debug("Highchart: %s", chart)
-    io_helper.save_results(chart, '', shapes.Shapes.HIGHCHARTS)
+    io_helper.save_results(chart, shapes.Shapes.HIGHCHARTS)
     logging.info("Highchart output saved to database.")
 
     # print("Chart is ", chart)
