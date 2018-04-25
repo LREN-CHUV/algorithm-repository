@@ -8,12 +8,16 @@ import numpy as np
 from scipy import stats
 import argparse
 import pandas as pd
-from statsmodels.api import OLS
+from statsmodels.api import OLS, Logit
+from statsmodels.tools.sm_exceptions import PerfectSeparationError
 
-from sklearn.linear_model import SGDRegressor
+from sklearn.linear_model import SGDRegressor, SGDClassifier
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
-from sklearn_to_pfa.featurizer import Featurizer, OneHotEncoding, Transform, DummyTransform
+from sklearn_to_pfa.featurizer import Featurizer, OneHotEncoding, DummyTransform
 
+# BUG: workaround from https://github.com/statsmodels/statsmodels/issues/3931 before new version of statsmodels get
+# released
+stats.chisqprob = lambda chisq, df: stats.chi2.sf(chisq, df)
 
 DEFAULT_DOCKER_IMAGE = "python-linear-regression"
 
@@ -28,12 +32,13 @@ def main():
     dep_var = inputs["data"]["dependent"][0]
     indep_vars = inputs["data"]["independent"]
 
-    # Check dependent variable type (should be continuous)
-    if utils.is_nominal(dep_var):
-        raise errors.UserError('Dependent variable should be continuous!')
-
     if not indep_vars:
         raise errors.UserError('No covariables selected.')
+
+    if utils.is_nominal(dep_var):
+        job_type = 'classification'
+    else:
+        job_type = 'regression'
 
     data = io_helper.fetch_dataframe(variables=[dep_var] + indep_vars)
     data = utils.remove_nulls(data, errors='ignore')
@@ -55,16 +60,52 @@ def main():
         X = X.iloc[:, _independent_columns(X)]
 
         # Fit regresssion
-        lm = OLS(y, X)
-        flm = lm.fit()
-        logging.info(flm.summary())
-        result = format_output(flm)
+        if job_type == 'regression':
+            result = _fit_regression(X, y)
 
-        # Generate PFA for predictions
-        pfa = _generate_pfa(result, indep_vars, featurizer)
+            # Generate PFA for predictions
+            pfa = _generate_pfa_regressor(result, indep_vars, featurizer)
+
+        elif job_type == 'classification':
+            # Run one-vs-others for each class
+            result = {}
+            for cat in y.cat.categories:
+                result[cat] = _fit_logit(X, y == cat)
+
+            if all(result[cat]['intercept']['coef'] is None for cat in y.cat.categories):
+                raise errors.UserError('Not enough data to apply logistic regression.')
+
+            # Generate PFA for predictions
+            pfa = _generate_pfa_classifier(result, indep_vars, featurizer, y.cat.categories)
 
     # Store results
     io_helper.save_results(json.dumps(result), 'application/json')
+
+
+def _fit_regression(X, y):
+    lm = OLS(y, X)
+    flm = lm.fit()
+    logging.info(flm.summary())
+    return format_output(flm)
+
+
+def _fit_logit(X, y):
+    lm = Logit(y, X)
+    try:
+        flm = lm.fit(method='bfgs')
+        logging.info(flm.summary())
+        output = format_output(flm)
+    except (np.linalg.linalg.LinAlgError, PerfectSeparationError, ValueError) as e:
+        # Perfect separation or singular matrix - use NaN
+        logging.warning(e)
+        output = {col: {
+            "coef": None,
+            "std_err": None,
+            "t_values": None,
+            "p_values": None,
+        } for col in X.columns}
+
+    return output
 
 
 def _independent_columns(X):
@@ -77,14 +118,27 @@ def _independent_columns(X):
     return indep
 
 
-def _generate_pfa(result, indep_vars, featurizer):
+def _generate_pfa_regressor(result, indep_vars, featurizer):
     # Create mock SGDRegressor for sklearn_to_pfa
     estimator = SGDRegressor()
     estimator.intercept_ = [result['intercept']]
     # NOTE: linearly dependent columns will be assigned 0
     estimator.coef_ = [result.get(c, {'coef': 0.})['coef'] for c in featurizer.columns if c != 'intercept']
 
-    # Create PFA from coefficients
+    types = [(var['name'], var['type']['name']) for var in indep_vars]
+    return sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
+
+
+def _generate_pfa_classifier(result, indep_vars, featurizer, classes):
+    # Create mock SGDRegressor for sklearn_to_pfa
+    estimator = SGDClassifier()
+    estimator.classes_ = classes
+    estimator.intercept_ = [result[cat]['intercept'] for cat in classes]
+    # NOTE: linearly dependent columns will be assigned 0
+    estimator.coef_ = [
+        [result[cat].get(c, {'coef': 0.})['coef'] for c in featurizer.columns if c != 'intercept'] for cat in classes
+    ]
+
     types = [(var['name'], var['type']['name']) for var in indep_vars]
     return sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
 
@@ -116,9 +170,12 @@ def intermediate():
     if not indep_vars:
         raise errors.UserError('No covariables selected.')
 
-    # Check dependent variable type (should be continuous)
+    # Distributed linear regression only works for continuous variables
     if utils.is_nominal(dep_var):
-        raise errors.UserError('Dependent variable should be continuous!')
+        raise errors.UserError(
+            'Dependent variable must be continuous in distributed mode. Use SGD Regression for '
+            'nominal variables instead.'
+        )
 
     if data.empty:
         logging.warning('All values are NAN, returning zero values')
@@ -182,7 +239,7 @@ def aggregate(job_ids):
 
     # Generate PFA from coefficients
     featurizer = _create_featurizer(indep_vars)
-    pfa = _generate_pfa(result, indep_vars, featurizer)
+    pfa = _generate_pfa_regressor(result, indep_vars, featurizer)
 
     # Save job_result
     logging.info('Saving PFA to job_results table...')
