@@ -52,6 +52,9 @@ def main():
     if utils.is_nominal(dep_var):
         raise errors.UserError('Dependent variable should be continuous!')
 
+    if not indep_vars:
+        raise errors.UserError('No covariables selected.')
+
     data = io_helper.fetch_dataframe(variables=[dep_var] + indep_vars)
     data = utils.remove_nulls(data, errors='ignore')
     y = data.pop(dep_var['name'])
