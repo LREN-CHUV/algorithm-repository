@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from mip_helper import io_helper
+from mip_helper import io_helper, errors, utils
 
 import logging
 import json
@@ -11,6 +11,7 @@ from statsmodels.formula.api import ols
 DEFAULT_DOCKER_IMAGE = "python-linear-regression"
 
 
+@utils.catch_user_error
 def main():
     # Configure logging
     logging.basicConfig(level=logging.INFO)
@@ -19,6 +20,9 @@ def main():
     inputs = io_helper.fetch_data()
     dep_var = inputs["data"]["dependent"][0]
     inped_vars = inputs["data"]["independent"]
+
+    if not inped_vars:
+        raise errors.UserError('No covariables selected.')
 
     # Check dependent variable type (should be continuous)
     if dep_var["type"]["name"] not in ["integer", "real"]:
