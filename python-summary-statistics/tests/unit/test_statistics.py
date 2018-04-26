@@ -112,8 +112,8 @@ def test_intermediate_stats_empty(mock_save_error, mock_save_results, mock_fetch
     with mock.patch('sys.exit'):
         intermediate_stats()
 
-    error = mock_save_results.call_args[0][1]
-    assert error == 'Dependent variable has no values, check your SQL query.'
+    error = mock_save_error.call_args[0]
+    assert error == ('Dependent variable has no values, check your SQL query.',)
 
 
 def intermediate_data_1():
