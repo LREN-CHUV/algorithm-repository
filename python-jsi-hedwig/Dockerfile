@@ -2,7 +2,7 @@ FROM hbpmip/python-mip:0.5.6
 
 MAINTAINER anze.vavpetic@ijs.si
 
-ENV DOCKER_IMAGE=hbpmip/python-jsi-hedwig:1.0.4 \
+ENV DOCKER_IMAGE=hbpmip/python-jsi-hedwig:1.0.5 \
     FUNCTION=python-jsi-hedwig
 
 COPY requirements.txt /src/requirements.txt
