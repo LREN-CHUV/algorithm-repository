@@ -130,9 +130,13 @@ def _aggregate_results(results):
 
 def _save_corr_heatmap(corr, columns):
     """Generate heatmap from correlation matrix and return it in plotly format"""
-    trace = go.Heatmap(z=corr,
+    # revert y-axis so that diagonal goes from top left to bottom right
+    trace = go.Heatmap(z=corr[::-1, :],
                        x=columns,
-                       y=columns)
+                       y=columns[::-1],
+                       zmin=-1,
+                       zmax=1,
+                       )
     data = [trace]
 
     logging.info("Results:\n{}".format(data))

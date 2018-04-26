@@ -7,6 +7,7 @@ from . import fixtures as fx
 from correlation_heatmap import intermediate_stats, aggregate_stats, compute
 
 
+# TODO: put into io_helper.testing when convenient
 def round_dict(d, precision=3):
     """Round all numerical values in a dictionary recursively."""
     d = copy.deepcopy(d)
@@ -34,18 +35,16 @@ def test_compute(mock_save_results, mock_fetch_data):
 
     compute()
     results = json.loads(mock_save_results.call_args[0][0])
-    assert round_dict(results) == round_dict([
+    assert round_dict(results) == [
         {
-            'type':
-            'heatmap',
+            'type': 'heatmap',
+            'z': [[-0.429, -0.543, 1.0], [0.417, 1.0, -0.543], [1.0, 0.417, -0.429]],
             'x': ['iq', 'score_test1', 'stress_before_test1'],
-            'y': ['iq', 'score_test1', 'stress_before_test1'],
-            'z': [
-                [1.0, 0.4168913285, -0.4287450417], [0.4168913285, 1.0, -0.5426534614],
-                [-0.4287450417, -0.5426534614, 1.0]
-            ]
+            'y': ['stress_before_test1', 'score_test1', 'iq'],
+            'zmin': -1,
+            'zmax': 1
         }
-    ])
+    ]
 
 
 @mock.patch('correlation_heatmap.io_helper.fetch_data')
@@ -70,17 +69,14 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
 
     intermediate_stats()
     results = json.loads(mock_save_results.call_args[0][0])
-    assert round_dict(results) == round_dict({
+    assert round_dict(results) == {
         'columns': ['iq', 'score_test1', 'stress_before_test1'],
-        'means': [73.8815754762, 1096.5049055743, 52.9296397352],
-        'X^T * X': [
-            [32751.4170961055, 486164.9357124355, 23458.8913944936],
-            [486164.9357124355, 7321018.913143162, 345715.382923219],
-            [23458.8913944936, 345715.382923219, 17009.1219934008]
-        ],
+        'means': [73.882, 1096.505, 52.93],
+        'X^T * X':
+        [[32751.417, 486164.936, 23458.891], [486164.936, 7321018.913, 345715.383], [23458.891, 345715.383, 17009.122]],
         'count':
         6
-    })
+    }
 
 
 def intermediate_data_1():
@@ -112,11 +108,13 @@ def test_aggregate_stats(mock_save_results, mock_get_results, mock_fetch):
 
     aggregate_stats([1, 2])
     results = json.loads(mock_save_results.call_args[0][0])
-    assert results == [
+    assert round_dict(results) == [
         {
             'type': 'heatmap',
+            'z': [[-0.429, 1.0], [1.0, -0.429]],
             'x': ['iq', 'stress_before_test1'],
-            'y': ['iq', 'stress_before_test1'],
-            'z': [[1.0, -0.4287450502], [-0.4287450502, 1.0]]
+            'y': ['stress_before_test1', 'iq'],
+            'zmin': -1,
+            'zmax': 1
         }
     ]
