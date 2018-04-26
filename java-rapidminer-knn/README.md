@@ -27,7 +27,7 @@ where the environment variables are:
 * PARAM_variables: Name of the target variable (only one variable is supported for KNN)
 * PARAM_covariables: List of covariables
 * PARAM_query: Query selecting the variables and covariables to feed into the algorithm for training.
-* MODEL_PARAM_k (or PARAM_MODEL_k for compatibility): Number of class labels to search for.
+* MODEL_PARAM_k: Number of class labels to search for.
 
 ## Development process
 

@@ -18,5 +18,5 @@ Run: `./dev.sh`
 
 ## Method specific parameters
 
-If any parameter is needed, it will be provided through the `PARAM_MODEL_parameter` environment variable
+If any parameter is needed, it will be provided through the `MODEL_PARAM_parameter` environment variable
 where <parameter> is the actual name of the parameter.

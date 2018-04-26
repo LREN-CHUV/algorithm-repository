@@ -80,8 +80,8 @@ services:
       PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
       FUNCTION: java-jsi-clus-pct
-      PARAM_MODEL_pruned: "yes"
-      PARAM_MODEL_minobj: 4
+      MODEL_PARAM_pruned: "yes"
+      MODEL_PARAM_minobj: 4
     links:
       - "db:db"
 
@@ -104,8 +104,8 @@ services:
       PARAM_covariables: "sepal_length,sepal_width,petal_length,petal_width"
       PARAM_query: "SELECT * FROM iris"
       FUNCTION: java-jsi-clus-pct
-      PARAM_MODEL_pruned: "yes"
-      PARAM_MODEL_minobj: 4
+      MODEL_PARAM_pruned: "yes"
+      MODEL_PARAM_minobj: 4
     links:
       - "db:db"
 
@@ -128,8 +128,8 @@ services:
       PARAM_covariables: "cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
       FUNCTION: java-jsi-clus-pct
-      PARAM_MODEL_pruned: "yes"
-      PARAM_MODEL_minobj: 2
+      MODEL_PARAM_pruned: "yes"
+      MODEL_PARAM_minobj: 2
     links:
       - "db:db"
 
@@ -152,8 +152,8 @@ services:
       PARAM_covariables: "vmail_plan,day_mins,night_charge"
       PARAM_query: "SELECT area_code,intl_plan,vmail_plan,day_mins,night_charge FROM churn LIMIT 50"
       FUNCTION: java-jsi-clus-pct
-      PARAM_MODEL_pruned: "yes"
-      PARAM_MODEL_minobj: 4
+      MODEL_PARAM_pruned: "yes"
+      MODEL_PARAM_minobj: 4
     links:
       - "db:db"
 

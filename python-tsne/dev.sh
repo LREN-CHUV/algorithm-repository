@@ -13,9 +13,9 @@ docker run \
 -e "OUT_JDBC_URL=jdbc:postgresql://172.18.0.1:5432/woken" \
 -e "OUT_JDBC_USER=woken" \
 -e "OUT_JDBC_PASSWORD=wokenpwd" \
--e "PARAM_MODEL_perplexity=30" \
--e "PARAM_MODEL_theta=0.5" \
--e "PARAM_MODEL_iterations=1000" \
--e "PARAM_MODEL_target_dimensions=2" \
--e "PARAM_MODEL_do_zscore=True" \
+-e "MODEL_PARAM_perplexity=30" \
+-e "MODEL_PARAM_theta=0.5" \
+-e "MODEL_PARAM_iterations=1000" \
+-e "MODEL_PARAM_target_dimensions=2" \
+-e "MODEL_PARAM_do_zscore=True" \
 hbpmip/python-tsne compute

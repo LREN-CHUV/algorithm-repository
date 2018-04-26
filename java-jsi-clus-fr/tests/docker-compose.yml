@@ -80,7 +80,7 @@ services:
       PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
       FUNCTION: java-jsi-clus-fr
-      PARAM_MODEL_size: 100
+      MODEL_PARAM_size: 100
     links:
       - "db:db"
 
@@ -103,6 +103,6 @@ services:
       PARAM_covariables: "practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
       PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
       FUNCTION: java-jsi-clus-fr
-      PARAM_MODEL_size: 100
+      MODEL_PARAM_size: 100
     links:
       - "db:db"

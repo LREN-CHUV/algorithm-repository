@@ -28,5 +28,5 @@ where the environment variables are:
 * PARAM_variables: List of target variables
 * PARAM_covariables: List of input variables
 * PARAM_query: Query selecting the data to feed into the algorithm for training
-* PARAM_MODEL_pruned: PCTs can be pruned or not. Use PARAM_MODEL_pruned=yes to prune and PARAM_MODEL_pruned=no otherwise (default is PARAM_MODEL_pruned=yes)
-* PARAM_MODEL_minobj: Specify minimal number of examples in leaf nodes of the PCT (default is PARAM_MODEL_minobj=2)
+* MODEL_PARAM_pruned: PCTs can be pruned or not. Use MODEL_PARAM_pruned=yes to prune and MODEL_PARAM_pruned=no otherwise (default is MODEL_PARAM_pruned=yes)
+* MODEL_PARAM_minobj: Specify minimal number of examples in leaf nodes of the PCT (default is MODEL_PARAM_minobj=2)

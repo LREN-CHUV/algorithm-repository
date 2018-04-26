@@ -14,5 +14,5 @@ docker run \
 -e "OUT_JDBC_URL=jdbc:postgresql://172.18.0.1:5432/woken" \
 -e "OUT_JDBC_USER=woken" \
 -e "OUT_JDBC_PASSWORD=wokenpwd" \
--e "PARAM_MODEL_design=factorial" \
+-e "MODEL_PARAM_design=factorial" \
 hbpmip/python-example compute
