@@ -20,8 +20,9 @@ def test_compute_regression(mock_save_results, mock_get_results, mock_fetch_data
     # make some prediction with PFA
     from titus.genpy import PFAEngine
     engine, = PFAEngine.fromJson(pfa_dict)
-    engine.action({'stress_before_test1': 10., 'iq': 10., 'subjectageyears': 70})
-    # TODO: test the prediction
+    # try prediction (PFA correctness is tested in sklearn_to_pfa)
+    pred = engine.action({'stress_before_test1': 10., 'iq': 10., 'subjectageyears': 70})
+    assert round(pred) == 1102
 
 
 @mock.patch('knn.io_helper.fetch_data')
@@ -40,8 +41,9 @@ def test_compute_classification(mock_save_results, mock_get_results, mock_fetch_
     # make some prediction with PFA
     from titus.genpy import PFAEngine
     engine, = PFAEngine.fromJson(pfa_dict)
-    engine.action({'stress_before_test1': 10., 'iq': 10., 'subjectageyears': 70})
-    # TODO: test the prediction
+    # try prediction (PFA correctness is tested in sklearn_to_pfa)
+    pred = engine.action({'stress_before_test1': 10., 'iq': 10., 'subjectageyears': 70})
+    assert pred == 'AD'
 
 
 @mock.patch('knn.io_helper.fetch_data')

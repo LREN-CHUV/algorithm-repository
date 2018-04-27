@@ -61,7 +61,7 @@ def main():
 
         # Fit regresssion
         if job_type == 'regression':
-            result = _fit_regression(X, y)
+            result, metadata = _fit_regression(X, y)
 
             # Generate PFA for predictions
             pfa = _generate_pfa_regressor(result, indep_vars, featurizer)
@@ -69,14 +69,22 @@ def main():
         elif job_type == 'classification':
             # Run one-vs-others for each class
             result = {}
+            metadata = {}
             for cat in y.cat.categories:
-                result[cat] = _fit_logit(X, y == cat)
+                r, m = _fit_logit(X, y == cat)
+                result[cat] = r
+                metadata[cat] = m
 
             if all(result[cat]['intercept']['coef'] is None for cat in y.cat.categories):
                 raise errors.UserError('Not enough data to apply logistic regression.')
 
             # Generate PFA for predictions
             pfa = _generate_pfa_classifier(result, indep_vars, featurizer, y.cat.categories)
+
+        # Add metadata from model
+        pfa['metadata'] = metadata
+
+        # TODO: save multiple outputs - PFA and coeficients
 
     # Store results
     io_helper.save_results(json.dumps(result), 'application/json')
@@ -86,15 +94,24 @@ def _fit_regression(X, y):
     lm = OLS(y, X)
     flm = lm.fit()
     logging.info(flm.summary())
-    return format_output(flm)
+    metadata = {
+        'summary': str(flm.summary()),
+        'summary2': str(flm.summary2())
+    }
+    return format_output(flm), metadata
 
 
 def _fit_logit(X, y):
+    metadata = {}
     lm = Logit(y, X)
     try:
         flm = lm.fit(method='bfgs')
         logging.info(flm.summary())
         output = format_output(flm)
+        metadata = {
+            'summary': str(flm.summary()),
+            'summary2': str(flm.summary2())
+        }
     except (np.linalg.linalg.LinAlgError, PerfectSeparationError, ValueError) as e:
         # Perfect separation or singular matrix - use NaN
         logging.warning(e)
@@ -105,7 +122,7 @@ def _fit_logit(X, y):
             "p_values": None,
         } for col in X.columns}
 
-    return output
+    return output, metadata
 
 
 def _independent_columns(X):
