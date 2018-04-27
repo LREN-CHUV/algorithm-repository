@@ -10,7 +10,7 @@ COPY distributed_kmeans.py /src/distributed_kmeans.py
 COPY tests/unit /src/tests/
 
 WORKDIR /src
-RUN pytest tests/
+RUN pytest tests/ -x --ff --capture=no
 
 
 FROM hbpmip/python-mip-sklearn:latest

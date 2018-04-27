@@ -66,7 +66,7 @@ LR = 0.01  # learning rate for gradient descent, not used for Lloyd version
 
 @utils.catch_user_error
 def intermediate_kmeans():
-    """Calculate kNN locally."""
+    """Calculate k-Means locally."""
     # Read inputs
     logging.info("Fetching data...")
     inputs = io_helper.fetch_data()
@@ -104,7 +104,7 @@ def intermediate_kmeans():
     num_iter = 0
     not_converged = True
 
-    # Run kNN locally
+    # Run k-Means locally
     # Have each site compute k initial clusters locally
     local_centroids = local.initialize_own_centroids(X, k)
 
