@@ -1,3 +1,22 @@
+## Run unit tests
+
+FROM hbpmip/python-base-build:0.4.5
+
+COPY requirements-dev.txt /requirements-dev.txt
+RUN pip install -r /requirements-dev.txt
+
+COPY requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
+
+COPY anova.py /src/anova.py
+COPY tests/unit/ /src/tests/
+
+WORKDIR /src
+RUN python -m pytest tests/ -x --ff --capture=no
+
+
+## Build target image
+
 FROM hbpmip/python-mip:0.5.6
 
 MAINTAINER mirco.nasuti@chuv.ch
@@ -6,9 +25,9 @@ ENV DOCKER_IMAGE=hbpmip/python-anova:0.4.1 \
     FUNCTION=python-anova
 
 COPY requirements.txt /requirements.txt
-COPY anova.py /anova.py
-
 RUN pip install -r /requirements.txt
+
+COPY anova.py /anova.py
 
 ENTRYPOINT ["python", "/anova.py"]
 
