@@ -50,7 +50,7 @@ COPY main.R /src/
 COPY tests/testthat.R /src/tests/
 COPY tests/testthat/ /src/tests/testthat/
 
-ENV DOCKER_IMAGE=hbpmip/r-ggparci:0.2.0 \
+ENV DOCKER_IMAGE=hbpmip/r-ggparci:0.2.1 \
     FUNCTION=r-ggparci
 
 RUN chown -R compute:compute /src/ \
