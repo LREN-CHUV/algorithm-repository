@@ -21,7 +21,7 @@ FROM hbpmip/python-mip:0.5.6
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-anova:0.4.1 \
+ENV DOCKER_IMAGE=hbpmip/python-anova:0.4.2 \
     FUNCTION=python-anova
 
 COPY requirements.txt /requirements.txt
