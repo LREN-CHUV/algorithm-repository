@@ -187,6 +187,16 @@ def _parse_parameters(parameters):
                 raise errors.UserError('Wrong format {} for hidden_layer_sizes'.format(value))
             parameters[name] = values
 
+        else:
+            # try converting it to float or integer if possible
+            try:
+                value = float(value)
+                if value == round(value):
+                    value = int(value)
+                parameters[name] = value
+            except ValueError:
+                pass
+
     return parameters
 
 

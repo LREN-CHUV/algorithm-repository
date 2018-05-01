@@ -139,3 +139,12 @@ def test_deserialize_sklearn_estimator():
 def test_parse_parameters():
     assert _parse_parameters({'class_prior': '0.5, 0.5'}) == {'class_prior': [0.5, 0.5]}
     assert _parse_parameters({'hidden_layer_sizes': '10, 50, 10'}) == {'hidden_layer_sizes': [10, 50, 10]}
+    assert _parse_parameters({
+        'alpha': '0.05',
+        'max_depth': '3',
+        'penalty': 'l1'
+    }) == {
+        'alpha': 0.05,
+        'max_depth': 3,
+        'penalty': 'l1'
+    }
