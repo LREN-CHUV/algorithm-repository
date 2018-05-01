@@ -47,12 +47,16 @@ $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
 echo
-echo "Run the correlation-heatmap-a..."
-$DOCKER_COMPOSE run correlation-heatmap-a compute --mode intermediate
-echo "Run the correlation-heatmap-b..."
-$DOCKER_COMPOSE run correlation-heatmap-b compute --mode intermediate
-echo "Run the correlation-heatmap-agg..."
-$DOCKER_COMPOSE run correlation-heatmap-agg compute --mode aggregate --job-ids 1 2
+echo "Run the distributed-pca algorithm..."
+$DOCKER_COMPOSE run distributed-pca compute
+
+# echo
+# echo "Run the correlation-heatmap-a..."
+# $DOCKER_COMPOSE run correlation-heatmap-a compute --mode intermediate
+# echo "Run the correlation-heatmap-b..."
+# $DOCKER_COMPOSE run correlation-heatmap-b compute --mode intermediate
+# echo "Run the correlation-heatmap-agg..."
+# $DOCKER_COMPOSE run correlation-heatmap-agg compute --mode aggregate --job-ids 1 2
 
 echo
 # Cleanup

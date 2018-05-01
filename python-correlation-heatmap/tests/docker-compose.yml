@@ -86,6 +86,7 @@ services:
       PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_a LIMIT 100"
       PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"}}"
       MODEL_PARAM_design: "factorial"
+      MODEL_PARAM_graph: "correlation_heatmap"
 
   correlation-heatmap-a:
     extends: correlation-heatmap-base
@@ -110,5 +111,34 @@ services:
     container_name: "correlation-heatmap-agg"
     environment:
       JOB_ID: '3'
+    links:
+      - "db:db"
+
+  distributed-pca:
+    image: "hbpmip/python-distributed-pca:latest"
+    container_name: "distributed-pca"
+    restart: "no"
+    environment:
+      NODE: job_test
+      JOB_ID: 1
+      IN_DBAPI_DRIVER: postgresql
+      IN_USER: features
+      IN_PASSWORD: featurespwd
+      IN_HOST: db
+      IN_PORT: 5432
+      IN_DATABASE: features
+      OUT_DBAPI_DRIVER: postgresql
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
+      PARAM_variables: "lefthippocampus"
+      PARAM_covariables: "minimentalstate,opticchiasm,subjectageyears"
+      PARAM_grouping: ""
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_a LIMIT 100"
+      PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"}}"
+      MODEL_PARAM_design: "factorial"
+      MODEL_PARAM_graph: "pca"
     links:
       - "db:db"
