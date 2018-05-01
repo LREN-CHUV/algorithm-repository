@@ -6,31 +6,31 @@
 
 ```sh
 
-  docker run --rm --env [list of environment variables] hbpmip/r-ggparci:latest compute
+  docker run --rm --env [list of environment variables] hbpmip/r-ggparci:0.2.0 compute
 
 ```
 
 where the environment variables are:
 
-* Input Parameters (for ggparci):  
-   - PARAM_query  : SQL query producing the dataframe to analyse  
+* Input Parameters (for ggparci):
+   - PARAM_query  : SQL query producing the dataframe to analyse
    - PARAM_variables : the grouping variable
    - PARAM_covariables : The variables to be ploted in the parallel coordinates plot.
-* Execution context:  
-   - JOB_ID : ID of the job  
-   - NODE : Node used for the execution of the script  
-   - IN_DBI_DRIVER   : Class name of the DBI driver for input data  
-   - IN_DBI_DBNAME     : Database name for the database connection for input data  
-   - IN_DBI_HOST     : Host name for the database connection for input data  
-   - IN_DBI_PORT     : Port number for the database connection for input data  
-   - IN_DBI_PASSWORD : Password for the database connection for input data  
-   - IN_DBI_USER     : User for the database connection for input data  
-   - OUT_DBI_DRIVER   : Class name of the DBI driver for output data  
-   - OUT_DBI_DBNAME     : Database name for the database connection for output data  
-   - OUT_DBI_HOST     : Host name for the database connection for output data  
-   - OUT_DBI_PORT     : Port number for the database connection for output data  
-   - OUT_DBI_USER     : User for the database connection for output data  
-   - OUT_DBI_PASSWORD : Password for the database connection for output data  
+* Execution context:
+   - JOB_ID : ID of the job
+   - NODE : Node used for the execution of the script
+   - IN_DBI_DRIVER   : Class name of the DBI driver for input data
+   - IN_DATABASE     : Database name for the database connection for input data
+   - IN_HOST         : Host name for the database connection for input data
+   - IN_PORT         : Port number for the database connection for input data
+   - IN_PASSWORD     : Password for the database connection for input data
+   - IN_USER         : User for the database connection for input data
+   - OUT_DBI_DRIVER  : Class name of the DBI driver for output data
+   - OUT_DATABASE    : Database name for the database connection for output data
+   - OUT_HOST        : Host name for the database connection for output data
+   - OUT_PORT        : Port number for the database connection for output data
+   - OUT_USER        : User for the database connection for output data
+   - OUT_PASSWORD    : Password for the database connection for output data
 
 ## Development process
 
@@ -38,7 +38,7 @@ The goal of this project is to create a Docker image containing the full R envir
 
 1. Read parameters from the environment and connect to a database
 2. Query the database and prepare the data
-3. Run the algorithm  
+3. Run the algorithm
 4. Format the results into a format that can be easily shared. Here, svg or html.
 5. Save the results into the result database.
 
