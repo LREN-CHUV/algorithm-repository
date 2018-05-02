@@ -21,9 +21,9 @@ ENV DOCKER_IMAGE=hbpmip/python-summary-statistics:0.3.2 \
     FUNCTION=python-summary-statistics
 
 COPY requirements.txt /requirements.txt
-COPY statistics.py /statistics.py
-
 RUN pip install -r /requirements.txt
+
+COPY statistics.py /statistics.py
 
 ENTRYPOINT ["python", "/statistics.py"]
 
