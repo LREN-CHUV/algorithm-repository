@@ -192,21 +192,21 @@ jobs:
           name: "Test r-ggparci"
           command: |
             PATH=$PATH:/$HOME/.captain/bin/ ./r-ggparci/tests/test.sh
-      - run:
-          name: "Build r-heatmaply"
-          command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./r-heatmaply/build.sh
-      - run:
-          name: "Test r-heatmaply"
-          command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./r-heatmaply/tests/test.sh
+      #- run:
+      #    name: "Build r-heatmaply"
+      #    command: |
+      #      PATH=$PATH:/$HOME/.captain/bin/ ./r-heatmaply/build.sh
+      #- run:
+      #    name: "Test r-heatmaply"
+      #    command: |
+      #      PATH=$PATH:/$HOME/.captain/bin/ ./r-heatmaply/tests/test.sh
 
       # ICM algorithms
-      - run:
-          name: "Build python-longitudinal"
-          command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./python-longitudinal/build.sh
-      - run:
-          name: "Test python-longitudinal"
-          command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./python-longitudinal/tests/test.sh
+      #- run:
+      #    name: "Build python-longitudinal"
+      #    command: |
+      #      PATH=$PATH:/$HOME/.captain/bin/ ./python-longitudinal/build.sh
+      #- run:
+      #    name: "Test python-longitudinal"
+      #    command: |
+      #      PATH=$PATH:/$HOME/.captain/bin/ ./python-longitudinal/tests/test.sh
