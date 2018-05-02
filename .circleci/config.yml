@@ -21,6 +21,7 @@ jobs:
           name: "Validate code quality"
           command: |
             pre-commit run --all-files
+      # CHUV Java algorithms
       - run:
           name: "Build java-rapidminer-knn"
           command: |
@@ -30,15 +31,92 @@ jobs:
           command: |
             PATH=$PATH:/$HOME/.captain/bin/ ./java-rapidminer-knn/tests/test.sh
       - run:
-          name: "Build r-linear-regression"
+          name: "Build java-rapidminer-naivebayes"
           command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./r-linear-regression/build.sh
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-rapidminer-naivebayes/build.sh
       - run:
-          name: "Test r-linear-regression"
+          name: "Test java-rapidminer-naivebayes"
           command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./r-linear-regression/tests/test.sh
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-rapidminer-naivebayes/tests/test.sh
 
-      #JSI METHODS
+      # CHUV Python algorithms
+      - run:
+          name: "Build python-anova"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-anova/build.sh
+      - run:
+          name: "Test python-anova"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-anova/tests/test.sh
+      - run:
+          name: "Build python-correlation-heatmap"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-correlation-heatmap/build.sh
+      - run:
+          name: "Test python-correlation-heatmap"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-correlation-heatmap/tests/test.sh
+      - run:
+          name: "Build python-distributed-kmeans"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-distributed-kmeans/build.sh
+      - run:
+          name: "Test python-distributed-kmeans"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-distributed-kmeans/tests/test.sh
+      - run:
+          name: "Build python-histograms"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-histograms/build.sh
+      - run:
+          name: "Test python-histograms"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-histograms/tests/test.sh
+      - run:
+          name: "Build python-knn"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-knn/build.sh
+      - run:
+          name: "Test python-knn"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-knn/tests/test.sh
+      - run:
+          name: "Build python-linear-regression"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-linear-regression/build.sh
+      - run:
+          name: "Test python-linear-regression"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-linear-regression/tests/test.sh
+      - run:
+          name: "Build python-sgd-regression"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-sgd-regression/build.sh
+      - run:
+          name: "Test python-sgd-regression"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-sgd-regression/tests/test.sh
+      - run:
+          name: "Build python-summary-statistics"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-summary-statistics/build.sh
+      - run:
+          name: "Test python-summary-statistics"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-summary-statistics/tests/test.sh
+      # r-linear-regrssion: deprecated
+
+      # LUMC algorithms
+      - run:
+          name: "Build python-tsne"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-tsne/build.sh
+      - run:
+          name: "Test python-tsne"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-tsne/tests/test.sh
+
+      # JSI METHODS
       - run:
           name: "Build java-jsi-clus-pct"
           command: |
@@ -95,3 +173,39 @@ jobs:
           name: "Test python-jsi-hinmine"
           command: |
             PATH=$PATH:/$HOME/.captain/bin/ ./python-jsi-hinmine/tests/test.sh
+
+      # TAU algorithms
+      - run:
+          name: "Build r-3c"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-r-3c/build.sh
+      - run:
+          name: "Test r-3c"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./r-3c/tests/test.sh
+      - run:
+          name: "Build r-ggparci"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-r-ggparci/build.sh
+      - run:
+          name: "Test r-ggparci"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./r-ggparci/tests/test.sh
+      - run:
+          name: "Build r-heatmaply"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-r-heatmaply/build.sh
+      - run:
+          name: "Test r-heatmaply"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./r-heatmaply/tests/test.sh
+
+      # ICM algorithms
+      - run:
+          name: "Build python-longitudinal"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-longitudinal/build.sh
+      - run:
+          name: "Test python-longitudinal"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-longitudinal/tests/test.sh
