@@ -172,20 +172,26 @@ def _parse_parameters(parameters):
     """Parse parameters for scikit-learn model, e.g. construct lists from strings."""
     for name, value in parameters.items():
         if name == 'class_prior':
-            try:
-                values = [float(v) for v in value.replace(' ', '').split(',')]
-            except ValueError:
-                raise errors.UserError('Wrong format {} for class_prior'.format(value))
-            if sum(values) != 1:
-                raise errors.UserError('Values in class_prior must sum to 1 ({} given)'.format(values))
-            parameters[name] = values
+            if value is not None:
+                value = str(value).strip()
+                if value != '':
+                    try:
+                        values = [float(v) for v in value.replace(' ', '').split(',')]
+                    except ValueError:
+                        raise errors.UserError('Wrong format {} for class_prior'.format(value))
+                    if sum(values) != 1:
+                        raise errors.UserError('Values in class_prior must sum to 1 ({} given)'.format(values))
+                    parameters[name] = values
 
         elif name == 'hidden_layer_sizes':
-            try:
-                values = [int(v) for v in value.replace(' ', '').split(',')]
-            except ValueError:
-                raise errors.UserError('Wrong format {} for hidden_layer_sizes'.format(value))
-            parameters[name] = values
+            if value is not None:
+                value = str(value).strip()
+                if value != '':
+                    try:
+                        values = [int(v) for v in value.replace(' ', '').split(',')]
+                    except ValueError:
+                        raise errors.UserError('Wrong format {} for hidden_layer_sizes'.format(value))
+                    parameters[name] = values
 
         else:
             # try converting it to float or integer if possible
