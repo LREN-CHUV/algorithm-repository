@@ -6,7 +6,7 @@ ENV heatmaply_VERSION=master
 RUN install.r heatmaply
 RUN install.r svglite
 
-FROM hbpmip/r-mip:0.4.1
+FROM hbpmip/r-mip:0.5.1
 
 MAINTAINER ludovic.claude54@gmail.com
 
