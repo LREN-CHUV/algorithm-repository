@@ -176,14 +176,14 @@ jobs:
             PATH=$PATH:/$HOME/.captain/bin/ ./python-jsi-hinmine/tests/test.sh
 
       # TAU algorithms
-      - run:
-          name: "Build r-3c"
-          command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./r-3c/build.sh
-      - run:
-          name: "Test r-3c"
-          command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./r-3c/tests/test.sh
+      #- run:
+      #    name: "Build r-3c"
+      #    command: |
+      #      PATH=$PATH:/$HOME/.captain/bin/ ./r-3c/build.sh
+      #- run:
+      #    name: "Test r-3c"
+      #    command: |
+      #      PATH=$PATH:/$HOME/.captain/bin/ ./r-3c/tests/test.sh
       - run:
           name: "Build r-ggparci"
           command: |
