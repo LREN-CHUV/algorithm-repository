@@ -2,6 +2,7 @@
 
 version: 2
 jobs:
+
   build:
     working_directory: ~/src
     docker:
@@ -178,7 +179,7 @@ jobs:
       - run:
           name: "Build r-3c"
           command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./python-r-3c/build.sh
+            PATH=$PATH:/$HOME/.captain/bin/ ./r-3c/build.sh
       - run:
           name: "Test r-3c"
           command: |
@@ -186,7 +187,7 @@ jobs:
       - run:
           name: "Build r-ggparci"
           command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./python-r-ggparci/build.sh
+            PATH=$PATH:/$HOME/.captain/bin/ ./r-ggparci/build.sh
       - run:
           name: "Test r-ggparci"
           command: |
@@ -194,7 +195,7 @@ jobs:
       - run:
           name: "Build r-heatmaply"
           command: |
-            PATH=$PATH:/$HOME/.captain/bin/ ./python-r-heatmaply/build.sh
+            PATH=$PATH:/$HOME/.captain/bin/ ./r-heatmaply/build.sh
       - run:
           name: "Test r-heatmaply"
           command: |
