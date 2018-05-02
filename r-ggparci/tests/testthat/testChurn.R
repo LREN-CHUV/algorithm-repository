@@ -1,22 +1,27 @@
-Sys.setenv(
-  IN_DBI_DRIVER = "PostgreSQL",
-  IN_DB_DBNAME = "data",
-  IN_DB_HOST   = "localhost",
-  IN_DB_PORT   = 5432,
-  IN_DB_USER   = "data",
-  IN_DB_PASSWORD = "data",
-  OUT_DBI_DRIVER = "PostgreSQL",
-  OUT_DB_DBNAME = "woken",
-  OUT_DB_HOST   = "localhost",
-  OUT_DB_PORT   = 5432,
-  OUT_DB_USER   = "woken",
-  OUT_DB_PASSWORD = "woken")
+print("[Churn test] Starting...")
+
+if (is.null(Sys.getenv("NODE"))) {
+  Sys.setenv(
+    IN_DBI_DRIVER = "PostgreSQL",
+    IN_DATABASE   = "data",
+    IN_HOST       = "localhost",
+    IN_PORT       = 5432,
+    IN_USER       = "data",
+    IN_PASSWORD   = "data",
+    OUT_DBI_DRIVER = "PostgreSQL",
+    OUT_DATABASE   = "woken",
+    OUT_HOST       = "localhost",
+    OUT_PORT       = 5432,
+    OUT_USER       = "woken",
+    OUT_PASSWORD   = "woken")
+}
 
 Sys.setenv(
+  JOB_ID            = "10",
   PARAM_variables   = "churn",
   PARAM_covariables = "",
   PARAM_query       = "SELECT * FROM churn")
 
-source("main.R")
+source("/src/main.R")
 
-print("Success!")
+print("[Churn test] Success!")
