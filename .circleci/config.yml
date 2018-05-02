@@ -57,14 +57,14 @@ jobs:
           name: "Test python-correlation-heatmap"
           command: |
             PATH=$PATH:/$HOME/.captain/bin/ ./python-correlation-heatmap/tests/test.sh
-      #- run:
-      #    name: "Build python-distributed-kmeans"
-      #    command: |
-      #      PATH=$PATH:/$HOME/.captain/bin/ ./python-distributed-kmeans/build.sh
-      #- run:
-      #    name: "Test python-distributed-kmeans"
-      #    command: |
-      #      PATH=$PATH:/$HOME/.captain/bin/ ./python-distributed-kmeans/tests/test.sh
+      - run:
+          name: "Build python-distributed-kmeans"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-distributed-kmeans/build.sh
+      - run:
+          name: "Test python-distributed-kmeans"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./python-distributed-kmeans/tests/test.sh
       - run:
           name: "Build python-histograms"
           command: |
