@@ -143,11 +143,12 @@ def aggregate_kmeans(job_ids):
     data = [json.loads(io_helper.get_results(str(job_id)).data) for job_id in job_ids]
 
     local_centroids = [np.array(x['centroids']) for x in data if x['centroids']]
+    logging.info('Local centroids:\n{}'.format(local_centroids))
     indep_vars = data[0]['indep_vars']
 
     # Aggregate clusters remotely
     remote_centroids = remote.aggregate_clusters(local_centroids)
-    logging.info("Centroids:\n{}".format(remote_centroids))
+    logging.info("Remote centroids:\n{}".format(remote_centroids))
 
     # Create fake KMeans estimator and assign it our centroids
     estimator = KMeans()

@@ -3,6 +3,7 @@ import json
 import numpy as np
 from . import fixtures as fx
 from distributed_kmeans import intermediate_kmeans, aggregate_kmeans
+import dkmeans.local_computations as local
 
 
 @mock.patch('distributed_kmeans.io_helper.fetch_data')
@@ -89,3 +90,13 @@ def test_aggregate_kmeans(mock_save_results, mock_get_results, mock_fetch_data):
     engine, = PFAEngine.fromJson(pfa_dict)
     ret = engine.action({'stress_before_test1': 10., 'iq': 10., 'agegroup': '-50y'})
     assert ret == 1
+
+
+def test_dkmeans_zero_arrays():
+    k = 8
+    X = np.random.random((4, 4))
+
+    cluster_labels = [0] * len(X)
+    local_means = local.compute_mean(X, cluster_labels, k)
+
+    assert np.array(local_means).shape == (k, 4)
