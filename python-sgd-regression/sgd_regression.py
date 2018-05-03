@@ -174,24 +174,36 @@ def _parse_parameters(parameters):
         if name == 'class_prior':
             if value is not None:
                 value = str(value).strip()
-                if value != '':
+                if value == '':
+                    values = None
+                else:
                     try:
                         values = [float(v) for v in value.replace(' ', '').split(',')]
                     except ValueError:
                         raise errors.UserError('Wrong format {} for class_prior'.format(value))
                     if sum(values) != 1:
                         raise errors.UserError('Values in class_prior must sum to 1 ({} given)'.format(values))
-                    parameters[name] = values
+            else:
+                values = None
+
+            parameters[name] = values
 
         elif name == 'hidden_layer_sizes':
             if value is not None:
                 value = str(value).strip()
-                if value != '':
+                if value == '':
+                    # default value
+                    values = (100, )
+                else:
                     try:
                         values = [int(v) for v in value.replace(' ', '').split(',')]
                     except ValueError:
                         raise errors.UserError('Wrong format {} for hidden_layer_sizes'.format(value))
-                    parameters[name] = values
+            else:
+                # default
+                values = (100, )
+
+            parameters[name] = values
 
         else:
             # try converting it to float or integer if possible
