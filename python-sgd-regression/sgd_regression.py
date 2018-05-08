@@ -16,10 +16,11 @@
 
 from mip_helper import io_helper, shapes, errors, utils, parameters
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
-from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding
+from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding, DummyTransform
 from sklearn_to_pfa.mixed_nb import MixedNB
 
 import logging
+import pandas as pd
 from pandas.io import json
 import argparse
 
@@ -123,6 +124,10 @@ def _estimator_metadata(estimator, X, y, featurizer):
         meta['intercept_'] = json.dumps(estimator.intercept_.tolist())
     if hasattr(estimator, 'feature_importances_') and hasattr(featurizer, 'columns'):
         meta['feature_importances_'] = json.dumps(dict(zip(featurizer.columns, estimator.feature_importances_)))
+
+    # add information about data
+    meta['X'] = json.dumps(pd.DataFrame(X, columns=featurizer.columns).describe())
+    meta['y'] = json.dumps(pd.Series(y).describe())
 
     return meta
 
@@ -237,12 +242,18 @@ def _create_featurizer(indep_vars, estimator):
     transforms = []
     for var in indep_vars:
         if var['type']['name'] in ('integer', 'real'):
-            if 'mean' not in var:
-                logging.warning('Mean not available for variable {}, using default value 0.'.format(var['name']))
-            if 'std' not in var:
-                logging.warning('Standard deviation not available for variable {}, using default value 1.'.format(var['name']))
+            # don't standardize data for gradient boosting and naive bayes, others require standardization to work
+            # properly
+            if isinstance(estimator, (MixedNB, GradientBoostingRegressor, GradientBoostingClassifier)):
+                tf = DummyTransform(var['name'])
+            else:
+                if 'mean' not in var:
+                    logging.warning('Mean not available for variable {}, using default value 0.'.format(var['name']))
+                if 'std' not in var:
+                    logging.warning('Standard deviation not available for variable {}, using default value 1.'.format(var['name']))
+                tf = Standardize(var['name'], var.get('mean', 0), var.get('std', 1))
 
-            transforms.append(Standardize(var['name'], var.get('mean', 0), var.get('std', 1)))
+            transforms.append(tf)
         elif var["type"]["name"] in ['polynominal', 'binominal']:
             transforms.append(OneHotEncoding(var['name'], var['type']['enumeration']))
 
@@ -251,10 +262,12 @@ def _create_featurizer(indep_vars, estimator):
         transforms = sorted(transforms, key=lambda x: not isinstance(x, Standardize))
         is_nominal = []
         for tf in transforms:
-            if isinstance(tf, Standardize):
+            if isinstance(tf, (Standardize, DummyTransform)):
                 is_nominal.append(False)
             elif isinstance(tf, OneHotEncoding):
                 is_nominal += [True] * len(tf.enumerations)
+            else:
+                raise NotImplementedError('Unknown transform')
         estimator.is_nominal = is_nominal
 
     return Featurizer(transforms)
