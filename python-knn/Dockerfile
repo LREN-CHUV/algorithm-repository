@@ -18,7 +18,7 @@ RUN pytest tests/ -x --ff --capture=no
 
 FROM hbpmip/python-mip-sklearn:0.3.7
 
-ENV DOCKER_IMAGE=hbpmip/python-knn:0.3.0 \
+ENV DOCKER_IMAGE=hbpmip/python-knn:0.3.1 \
     FUNCTION=python-knn
 
 COPY requirements.txt /requirements.txt
