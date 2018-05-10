@@ -2,7 +2,7 @@ FROM hbpmip/python-mip:0.6.1
 
 MAINTAINER b.van_lew@lumc.nl
 
-ENV DOCKER_IMAGE=hbpmip/python-tsne:0.4.1 \
+ENV DOCKER_IMAGE=hbpmip/python-tsne:0.4.2 \
     FUNCTION=python-tsne
 
 # This COPY may be replaced by a build step when the atsne is open sourced (BvL 19/09/2017)
