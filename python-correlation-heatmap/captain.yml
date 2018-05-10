@@ -7,3 +7,13 @@ target_image:
     - echo "Finished python-correlation-heatmap"
   test:
     - ./tests/test.sh
+
+pca_image:
+  build: Dockerfile.pca
+  image: hbpmip/python-distributed-pca
+  pre:
+    - echo "Preparing python-distributed-pca"
+  post:
+    - echo "Finished python-distributed-pca"
+  test:
+    - ./tests/test_pca.sh

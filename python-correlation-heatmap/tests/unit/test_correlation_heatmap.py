@@ -30,10 +30,10 @@ def round_dict(d, precision=3):
 
 @mock.patch('correlation_heatmap.io_helper.fetch_data')
 @mock.patch('correlation_heatmap.io_helper.save_results')
-def test_compute(mock_save_results, mock_fetch_data):
+def test_compute_heatmap(mock_save_results, mock_fetch_data):
     mock_fetch_data.return_value = fx.inputs_regression(include_categorical=False)
 
-    compute()
+    compute('correlation_heatmap')
     results = json.loads(mock_save_results.call_args[0][0])
     assert round_dict(results) == [
         {
@@ -45,6 +45,16 @@ def test_compute(mock_save_results, mock_fetch_data):
             'zmax': 1
         }
     ]
+
+
+@mock.patch('correlation_heatmap.io_helper.fetch_data')
+@mock.patch('correlation_heatmap.io_helper.save_results')
+def test_compute_pca(mock_save_results, mock_fetch_data):
+    mock_fetch_data.return_value = fx.inputs_regression(include_categorical=False)
+
+    compute('pca')
+    results = json.loads(mock_save_results.call_args[0][0])
+    assert set(results.keys()) == {'layout', 'data'}
 
 
 @mock.patch('correlation_heatmap.io_helper.fetch_data')
