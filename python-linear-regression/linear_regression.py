@@ -12,33 +12,13 @@ from statsmodels.api import OLS
 
 from sklearn.linear_model import SGDRegressor
 from sklearn_to_pfa.sklearn_to_pfa import sklearn_to_pfa
-from sklearn_to_pfa.featurizer import Featurizer, OneHotEncoding, Transform
+from sklearn_to_pfa.featurizer import Featurizer, OneHotEncoding, Transform, DummyTransform
 
 
 DEFAULT_DOCKER_IMAGE = "python-linear-regression"
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
-
-
-# TODO: replace by from sklearn_to_pfa.featurizer import DummyTransform when it gets
-# updated
-class DummyTransform(Transform):
-
-    def __init__(self, col):
-        self.col = col
-
-    @property
-    def columns(self):
-        return [self.col]
-
-    def transform(self, X):
-        return X[[self.col]]
-
-    def pfa(self):
-        return 'u.arr(cast.double(input.{col}))'.format(
-            col=self.col
-        )
 
 
 @utils.catch_user_error
