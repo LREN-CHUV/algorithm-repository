@@ -17,7 +17,7 @@ FROM hbpmip/python-mip:0.6.1
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-summary-statistics:0.3.2 \
+ENV DOCKER_IMAGE=hbpmip/python-summary-statistics:0.3.3 \
     FUNCTION=python-summary-statistics
 
 COPY requirements.txt /requirements.txt
