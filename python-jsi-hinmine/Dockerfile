@@ -1,4 +1,4 @@
-FROM hbpmip/python-mip:0.5.6
+FROM hbpmip/python-mip:0.6.1
 
 MAINTAINER jan.kralj@ijs.si
 
