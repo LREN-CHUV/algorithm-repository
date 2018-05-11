@@ -96,7 +96,7 @@ def main():
 
     results_dict = _construct_results(propositionalized)
 
-    io_helper.save_results(json.dumps(results_dict), shapes.Shapes.TEXT)
+    io_helper.save_results(json.dumps(results_dict), shapes.Shapes.TABULAR_DATA_RESOURCE)
 
 
 if __name__ == '__main__':
