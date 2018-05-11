@@ -7,12 +7,14 @@ HINMine wrapper for the HBP medical platform.
 '''
 
 import logging
-from mip_helper import io_helper, parameters
+from mip_helper import io_helper, parameters, shapes
 
 import numpy as np
+import pandas as pd
 import scipy.sparse as sp
 import networkx as nx
 import json
+from profilehooks import timecall
 
 import cf_netSDM
 
@@ -22,6 +24,7 @@ def adjacency_distance(vector_1, vector_2):
     return np.exp(-np.dot(v, v))
 
 
+@timecall
 def construct_adjacency_graph(item_names, item_features, item_labels):
     graph = nx.Graph()
     for item_name, item_label in zip(item_names, item_labels):
@@ -44,47 +47,56 @@ def construct_adjacency_graph(item_names, item_features, item_labels):
     return structure
 
 
-def main():
-    # configure logging
-    logging.basicConfig(level=logging.INFO)
-    logging.info(cf_netSDM)
-    # Read inputs
-    inputs = io_helper.fetch_data()
-    data = inputs['data']
-    normalize = parameters.get_param('normalize', bool, 'True')
-    damping = parameters.get_param('damping', float, '0.85')
-    data_array = np.zeros((len(data['independent'][0]['series']), len(data['independent'])))
-    col_number = 0
-    row_number = 0
-    for var in data['independent']:
-        for value in var['series']:
-            data_array[row_number, col_number] = value
-            row_number += 1
-        col_number += 1
-        row_number = 0
-    if normalize:
-        for col_number in range(data_array.shape[1]):
-            data_array[:, col_number] = data_array[:, col_number] / np.linalg.norm(data_array[:, col_number])
-    network = construct_adjacency_graph(range(data_array.shape[0]), data_array, data['dependent'][0]['series'])
-    propositionalized = cf_netSDM.hinmine_propositionalize(network, damping)['train_features']['data']
+@timecall
+def _construct_results(propositionalized):
+    n = propositionalized.shape[0]
+    data = pd.DataFrame(propositionalized, columns=["f_{}".format(i + 1) for i in range(n)])
+
+    logging.info('Rounding to 4 decimal places to reduce size of a final object')
+    data = data.round(4)
+
+    data['id'] = range(len(data))
+
     results_dict = {
         'profile': 'tabular-data-resource',
         'name': 'hinmine-features',
-        'data': [],
+        'data': data.to_dict(orient='records'),
         'schema': {
             'fields': [],
             'primaryKey': 'id'
         }
     }
-    n = propositionalized.shape[0]
-    for row_index in range(n):
-        instance = {"id": row_index}
-        for col_index in range(n):
-            instance["feature_%i" % (col_index + 1)] = propositionalized[row_index, col_index]
-        results_dict['data'].append(instance)
+
     for col_index in range(n):
-        results_dict['schema']['fields'].append({'name': 'feature_%i' % (col_index + 1), 'type': 'float'})
-    io_helper.save_results(json.dumps(results_dict), 'text/plain')
+        results_dict['schema']['fields'].append({'name': 'f_{}'.format(col_index + 1), 'type': 'float'})
+
+    return results_dict
+
+
+def main():
+    # configure logging
+    logging.basicConfig(level=logging.INFO)
+    logging.info(cf_netSDM)
+    # Read inputs
+    data = io_helper.fetch_data()['data']
+    X = io_helper.fetch_dataframe(data['independent'])
+    y = io_helper.fetch_dataframe(data['dependent']).iloc[:, 0]
+
+    if len(X) >= 2000:
+        logging.warning('HINMine runs in quadratic time, processing {} samples could be very slow.'.format(len(X)))
+
+    normalize = parameters.get_param('normalize', bool, 'True')
+    damping = parameters.get_param('damping', float, '0.85')
+
+    if normalize:
+        X = X.apply(lambda x: x / np.linalg.norm(x))
+
+    network = construct_adjacency_graph(range(len(X)), X.values, y.values)
+    propositionalized = timecall(cf_netSDM.hinmine_propositionalize)(network, damping)['train_features']['data']
+
+    results_dict = _construct_results(propositionalized)
+
+    io_helper.save_results(json.dumps(results_dict), shapes.Shapes.TEXT)
 
 
 if __name__ == '__main__':

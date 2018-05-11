@@ -5,7 +5,7 @@
 
 # Python Hedwig
 
-Hedwig method for semantic subgroup discovery.
+Hedwig method for semantic subgroup discovery. [Github page](https://github.com/anzev/hedwig).
 
 ## Build (for contributors)
 
