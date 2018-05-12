@@ -12,7 +12,30 @@ def test_main(mock_save_results, mock_fetch_data):
     main()
     output = json.loads(mock_save_results.call_args[0][0])
 
-    assert t.round_dict(fx.output()) == t.round_dict(output)
+    assert t.round_dict(fx.output_regression()) == t.round_dict(output)
+
+
+@mock.patch('linear_regression.io_helper.fetch_data')
+@mock.patch('linear_regression.io_helper.save_results')
+def test_main_logistic(mock_save_results, mock_fetch_data):
+    mock_fetch_data.return_value = t.inputs_classification(limit_to=50, include_nominal=True)
+    main()
+    output = json.loads(mock_save_results.call_args[0][0])
+
+    assert t.round_dict(fx.output_classification()) == t.round_dict(output)
+
+
+@mock.patch('linear_regression.io_helper.fetch_data')
+@mock.patch('linear_regression.io_helper.save_error')
+@mock.patch('sys.exit')
+def test_main_logistic_single_category(mock_exit, mock_save_error, mock_fetch_data):
+    data = t.inputs_classification(limit_to=5, include_nominal=True)
+    # single output
+    data['data']['dependent'][0]['series'] = len(data['data']['dependent'][0]['series']) * ['AD']
+
+    mock_fetch_data.return_value = data
+    main()
+    assert mock_save_error.call_args[0] == ('Not enough data to apply logistic regression.',)
 
 
 @mock.patch('linear_regression.io_helper.fetch_data')
