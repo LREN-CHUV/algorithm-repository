@@ -1,6 +1,7 @@
 import mock
 import json
-from . import fixtures as fx
+from mip_helper import testing as t
+
 from statistics import intermediate_stats, aggregate_stats
 
 
@@ -8,47 +9,43 @@ from statistics import intermediate_stats, aggregate_stats
 @mock.patch('statistics.io_helper.save_results')
 def test_intermediate_stats_real(mock_save_results, mock_fetch_data):
     # input data with some null values
-    data = fx.inputs_regression(include_categorical=True, add_null=True)
-    data['data']['dependent'][0]['series'][0] = None
-    data['data']['independent'][1]['series'][0] = None
+    data = t.inputs_regression(include_nominal=True, add_null=True)
 
     mock_fetch_data.return_value = data
 
     intermediate_stats()
     results = json.loads(mock_save_results.call_args[0][0])
-    assert len(results['data']) == 16
-    assert results['data'][:2] == [
+    assert len(results['data']) == 12
+    res = sorted(results['data'], key=lambda d: (d['index'], tuple(d['group'])))
+    assert t.round_dict(res[:2]) == [
         {
             'index': 'agegroup',
-            'label': 'Age group',
+            'label': 'Age Group',
             'type': 'polynominal',
             'group': ['-50y'],
-            'group_variables': ['Age group'],
+            'group_variables': ['Age Group'],
             'count': 3,
             'unique': 1,
             'top': '-50y',
             'frequency': {
                 '-50y': 3,
-                '59y-': 0,
                 '50-59y': 0
             },
             'null_count': 0
         }, {
-            'index': 'iq',
-            'label': 'IQ',
-            'type': 'real',
-            'group': ['-50y'],
-            'group_variables': ['Age group'],
-            'count': 3,
-            'mean': 73.8895774452,
-            'std': 0.1412026822,
-            'min': 73.7897320711,
-            '25%': 73.8396547582,
-            '50%': 73.8895774452,
-            '75%': 73.9395001323,
-            'max': 73.9894228193,
-            'EX^2': 5459.6796241289,
-            'null_count': 1
+            'index': 'agegroup',
+            'label': 'Age Group',
+            'type': 'polynominal',
+            'group': ['50-59y'],
+            'group_variables': ['Age Group'],
+            'count': 2,
+            'unique': 1,
+            'top': '50-59y',
+            'frequency': {
+                '50-59y': 2,
+                '-50y': 0
+            },
+            'null_count': 0
         }
     ]
 
@@ -56,23 +53,21 @@ def test_intermediate_stats_real(mock_save_results, mock_fetch_data):
 @mock.patch('statistics.io_helper.fetch_data')
 @mock.patch('statistics.io_helper.save_results')
 def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
-    # input data with some null values
-    data = fx.inputs_classification(include_categorical=True)
-    # data['data']['dependent'][0]['series'][0] = None
-    # data['data']['independent'][1]['series'][0] = None
+    data = t.inputs_classification(include_nominal=True)
 
     mock_fetch_data.return_value = data
 
     intermediate_stats()
     results = json.loads(mock_save_results.call_args[0][0])
-    assert len(results['data']) == 16
-    assert results['data'][:2] == [
+    assert len(results['data']) == 12
+    res = sorted(results['data'], key=lambda d: (d['index'], tuple(d['group'])))
+    assert t.round_dict(res[:2]) == [
         {
             'index': 'adnicategory',
             'label': 'ADNI category',
             'type': 'polynominal',
             'group': ['-50y'],
-            'group_variables': ['Age group'],
+            'group_variables': ['Age Group'],
             'count': 3,
             'unique': 3,
             'top': 'Other',
@@ -83,18 +78,18 @@ def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
             },
             'null_count': 0
         }, {
-            'index': 'agegroup',
-            'label': 'Age group',
+            'index': 'adnicategory',
+            'label': 'ADNI category',
             'type': 'polynominal',
-            'group': ['-50y'],
-            'group_variables': ['Age group'],
-            'count': 3,
+            'group': ['50-59y'],
+            'group_variables': ['Age Group'],
+            'count': 2,
             'unique': 1,
-            'top': '-50y',
+            'top': 'Other',
             'frequency': {
-                '-50y': 3,
-                '59y-': 0,
-                '50-59y': 0
+                'Other': 2,
+                'CN': 0,
+                'AD': 0
             },
             'null_count': 0
         }
@@ -103,17 +98,44 @@ def test_intermediate_stats_nominal(mock_save_results, mock_fetch_data):
 
 @mock.patch('statistics.io_helper.fetch_data')
 @mock.patch('statistics.io_helper.save_results')
-@mock.patch('statistics.io_helper.save_error')
-def test_intermediate_stats_empty(mock_save_error, mock_save_results, mock_fetch_data):
-    data = fx.inputs_regression(include_categorical=True, add_null=True)
-    data['data']['dependent'][0]['series'] = []
+def test_intermediate_stats_empty(mock_save_results, mock_fetch_data):
+    data = t.inputs_regression(include_nominal=True, limit_to=0)
     mock_fetch_data.return_value = data
 
-    with mock.patch('sys.exit'):
-        intermediate_stats()
+    intermediate_stats()
 
-    error = mock_save_error.call_args[0]
-    assert error == ('Dependent variable has no values, check your SQL query.',)
+    results = json.loads(mock_save_results.call_args[0][0])
+    assert len(results['data']) == 12
+    res = sorted(results['data'], key=lambda d: (d['index'], tuple(d['group'])))
+    assert t.round_dict(res[:2]) == [
+        {
+            'index': 'agegroup',
+            'label': 'Age Group',
+            'type': 'polynominal',
+            'group': ['-50y'],
+            'group_variables': ['Age Group'],
+            'count': 0,
+            'unique': 0,
+            'frequency': {
+                '50-59y': 0,
+                '-50y': 0
+            },
+            'null_count': 0
+        }, {
+            'index': 'agegroup',
+            'label': 'Age Group',
+            'type': 'polynominal',
+            'group': ['50-59y'],
+            'group_variables': ['Age Group'],
+            'count': 0,
+            'unique': 0,
+            'frequency': {
+                '50-59y': 0,
+                '-50y': 0
+            },
+            'null_count': 0
+        }
+    ]
 
 
 def intermediate_data_1():

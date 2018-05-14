@@ -95,7 +95,7 @@ def intermediate_stats():
     types = _get_types(indep_vars + [dep_var])
 
     if len(dep_var['series']) == 0:
-        raise errors.UserError('Dependent variable has no values, check your SQL query.')
+        logging.warning('Dependent variable has no values, check your SQL query.')
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
