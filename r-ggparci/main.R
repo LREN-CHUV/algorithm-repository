@@ -1,5 +1,5 @@
 #'
-#' This script generates the parallel coordinates vislualization and save it as svg file.
+#' This script generates the parallel coordinates visualization and save it as svg file.
 #' The data are obtained from the local databases using a specific query.
 #' This query will be the same for all nodes.
 #'
