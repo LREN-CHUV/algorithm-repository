@@ -109,7 +109,7 @@ COPY main.R /src/
 COPY tests/testthat.R /src/tests/
 COPY tests/testthat/ /src/tests/testthat/
 
-ENV DOCKER_IMAGE=hbpmip/r-heatmaply:0.1.0 \
+ENV DOCKER_IMAGE=hbpmip/r-heatmaply:0.2.0 \
     FUNCTION=r-heatmaply
 
 RUN chown -R compute:compute /src/ \
