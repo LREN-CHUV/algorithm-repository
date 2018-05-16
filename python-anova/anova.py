@@ -69,7 +69,12 @@ def format_output(statsmodels_dict):
 def compute_anova(dep_var, indep_vars, data, design='factorial'):
     formula = generate_formula(dep_var, indep_vars, design)
     logging.info("Formula: %s" % formula)
-    lm = ols(data=DataFrame(data), formula=formula).fit()
+    data = DataFrame(data)
+
+    if data.empty:
+        raise errors.UserError('SQL returned no data, check your dataset and null values.')
+
+    lm = ols(data=data, formula=formula).fit()
     logging.info(lm.summary())
     return anova_lm(lm)
 
