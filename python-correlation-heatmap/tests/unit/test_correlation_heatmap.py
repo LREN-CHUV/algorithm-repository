@@ -105,7 +105,7 @@ def intermediate_data_2():
 @mock.patch('correlation_heatmap.io_helper.fetch_data')
 @mock.patch('correlation_heatmap.io_helper.get_results')
 @mock.patch('correlation_heatmap.io_helper.save_results')
-def test_aggregate_stats(mock_save_results, mock_get_results, mock_fetch):
+def test_aggregate_stats_correlation_heatmap(mock_save_results, mock_get_results, mock_fetch):
 
     def mock_results(job_id):
         job_id = str(job_id)
@@ -116,7 +116,7 @@ def test_aggregate_stats(mock_save_results, mock_get_results, mock_fetch):
 
     mock_get_results.side_effect = mock_results
 
-    aggregate_stats([1, 2])
+    aggregate_stats([1, 2], graph_type='correlation_heatmap')
     results = json.loads(mock_save_results.call_args[0][0])
     assert round_dict(results) == [
         {
@@ -128,3 +128,22 @@ def test_aggregate_stats(mock_save_results, mock_get_results, mock_fetch):
             'zmax': 1
         }
     ]
+
+
+@mock.patch('correlation_heatmap.io_helper.fetch_data')
+@mock.patch('correlation_heatmap.io_helper.get_results')
+@mock.patch('correlation_heatmap.io_helper.save_results')
+def test_aggregate_stats_pca(mock_save_results, mock_get_results, mock_fetch):
+
+    def mock_results(job_id):
+        job_id = str(job_id)
+        if job_id == '1':
+            return mock.MagicMock(data=json.dumps(intermediate_data_1()))
+        elif job_id == '2':
+            return mock.MagicMock(data=json.dumps(intermediate_data_2()))
+
+    mock_get_results.side_effect = mock_results
+
+    aggregate_stats([1, 2], graph_type='pca')
+    results = json.loads(mock_save_results.call_args[0][0])
+    assert set(results.keys()) == {'layout', 'data'}
