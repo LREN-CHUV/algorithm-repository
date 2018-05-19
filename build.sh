@@ -22,7 +22,7 @@ else
   DOCKER="sudo docker"
 fi
 
-IMAGES="r-summary-stats r-linear-regression java-rapidminer java-jsi-clus-pct java-jsi-clus-pct-ts java-jsi-clus-fire java-jsi-clus-fr python-jsi-hedwig python-jsi-hinmine"
+IMAGES="r-summary-stats r-linear-regression java-rapidminer java-jsi-clus-pct java-jsi-clus-rm java-jsi-clus-pct-ts java-jsi-clus-fire java-jsi-clus-fr python-jsi-hedwig python-jsi-hinmine"
 
 commit_id="$(git rev-parse --short HEAD)"
 

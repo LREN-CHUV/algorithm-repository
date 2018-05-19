@@ -1,0 +1,7 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/java-jsi-clus-rm
+  pre:
+    - echo "Preparing java-jsi-clus-rm"
+  post:
+    - echo "Finished java-jsi-clus-rm"

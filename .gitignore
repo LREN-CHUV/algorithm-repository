@@ -9,3 +9,5 @@ algorithm-repository.Rproj
 **/.Rhistory
 *.orig
 .Rproj.user
+/.metadata/
+/.recommenders/

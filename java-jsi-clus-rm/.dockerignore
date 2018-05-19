@@ -1,0 +1,8 @@
+.git/
+.idea/
+target/
+*~
+.settings
+.project
+deps/rm/
+deps/decompiled/

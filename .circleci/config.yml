@@ -150,14 +150,14 @@ jobs:
           name: "Test java-jsi-clus-fr"
           command: |
             PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-fr/tests/test.sh
-     # - run:
-     #     name: "Build java-jsi-clus-rm"
-     #     command: |
-     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-rm/build.sh
-     # - run:
-     #     name: "Test java-jsi-clus-rm"
-     #     command: |
-     #       PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-rm/tests/test.sh
+      - run:
+          name: "Build java-jsi-clus-rm"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-rm/build.sh
+      - run:
+          name: "Test java-jsi-clus-rm"
+          command: |
+            PATH=$PATH:/$HOME/.captain/bin/ ./java-jsi-clus-rm/tests/test.sh
       - run:
           name: "Build python-jsi-hedwig"
           command: |

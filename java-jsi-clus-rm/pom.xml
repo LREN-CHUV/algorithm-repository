@@ -1,0 +1,252 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>eu.humanbrainproject.mip.algorithms.jsi</groupId>
+	<artifactId>jsi-clus-rm</artifactId>
+	<packaging>jar</packaging>
+	<version>0.0.1</version><!-- bumpversion -->
+	<name>java-jsi-clus-rm</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.version>1.8</jdk.version>
+		<compiler.plugin.version>3.7.0</compiler.plugin.version>
+		<jar.plugin.version>3.0.2</jar.plugin.version>
+		<surefire.plugin.version>2.19</surefire.plugin.version>
+		<assembly.plugin.version>3.1.0</assembly.plugin.version>
+		<site.plugin.version>3.7</site.plugin.version>
+		<info.reports.plugin.version>2.9</info.reports.plugin.version>
+		<surefire.report.plugin.version>2.20</surefire.report.plugin.version>
+		<jxr.plugin.version>2.5</jxr.plugin.version>
+		<junit.version>5.0.0</junit.version>
+		<postgres.version>9.4.1212.jre7</postgres.version>
+		<mip.adapter.version>0.5.7</mip.adapter.version>
+		<weka.version>3.8.1</weka.version>
+	</properties>
+
+	<repositories>
+
+		<repository>
+			<id>localrepository</id>
+			<url>file://${basedir}/deps</url>
+		</repository>
+
+		<repository>
+			<id>maven</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+			<name>Central Maven repository</name>
+		</repository>
+
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray-hbpmedical-mip</id>
+			<name>bintray</name>
+			<url>https://dl.bintray.com/hbpmedical/maven</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.humanbrainproject.mip.algorithms</groupId>
+			<artifactId>adapter</artifactId>
+			<version>${mip.adapter.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgres.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>nz.ac.waikato.cms.weka</groupId>
+			<artifactId>weka-stable</artifactId>
+			<version>${weka.version}</version>
+		</dependency>
+
+
+
+		<!-- REDESCRIPTION MINING DEPENDENCIES -->
+	 	<dependency>
+			<groupId>redescriptionmining</groupId>
+			<artifactId>trove</artifactId>
+			<version>3.1a1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>redescriptionmining</groupId>
+			<artifactId>clusnhmc</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>redescriptionmining</groupId>
+			<artifactId>clusnhmcd</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>redescriptionmining</groupId>
+			<artifactId>jgap</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.javatuples</groupId>
+			<artifactId>javatuples</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.3</version>
+		</dependency>
+
+		
+		<dependency>
+			<groupId>commons-math</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>1.0</version>
+		</dependency>
+ 	</dependencies>
+
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<testResources>
+			<testResource>
+				<directory>src/test/java</directory>
+				<includes>
+					<include>**/expected.html</include>
+					<include>**/SettingsTemplate.set</include>
+					<include>**/JinputInitialTemplate.arff</include>
+				</includes>
+				<filtering>false</filtering>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler.plugin.version}</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${jar.plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire.plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.junit.platform</groupId>
+						<artifactId>junit-platform-surefire-provider</artifactId>
+						<version>1.0.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-engine</artifactId>
+						<version>5.0.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${assembly.plugin.version}</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>${site.plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<finalName>${project.artifactId}-deps</finalName>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>eu.humanbrainproject.mip.algorithms.jsi.clus.rm.Entrypoint</Main-Class>
+										<X-Compile-Source-JDK>${jdk.version}</X-Compile-Source-JDK>
+										<X-Compile-Target-JDK>${jdk.version}</X-Compile-Target-JDK>
+									</manifestEntries>
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+									<resources>
+										<resource>.SF</resource>
+										<resource>.DSA</resource>
+										<resource>.RSA</resource>
+									</resources>
+								</transformer>
+							</transformers>
+							<artifactSet>
+								<excludes>
+									<exclude>org.postgresql:*</exclude>
+									<exclude>javax.mail:*</exclude>
+									<exclude>org.codehaus.groovy:*</exclude>
+									<exclude>org.swinglabs.swingx:*</exclude>
+									<exclude>com.thoughtworks.xstream:*</exclude>
+									<exclude>org.apache.xmlrpc:*</exclude>
+									<exclude>org.apache.avro:*</exclude>
+									<exclude>com.hubspot.jinjava:*</exclude>
+									<exclude>eu.humanbrainproject.mip.algorithms:adapter</exclude>
+								</excludes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>${info.reports.plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${surefire.report.plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${jxr.plugin.version}</version>
+			</plugin>
+		</plugins>
+	</reporting>
+</project>
