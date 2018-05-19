@@ -1,4 +1,4 @@
-FROM hbpmip/python-mip:0.6.1
+FROM hbpmip/python-mip:0.6.4
 
 MAINTAINER anze.vavpetic@ijs.si
 

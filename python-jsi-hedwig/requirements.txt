@@ -1,2 +1,2 @@
-mip_helper==0.6.1
+mip_helper==0.6.4
 pandas==0.22.0

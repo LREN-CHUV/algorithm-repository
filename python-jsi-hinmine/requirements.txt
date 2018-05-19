@@ -1,2 +1,2 @@
-mip_helper==0.6.1
+mip_helper==0.6.4
 profilehooks==1.10.0
