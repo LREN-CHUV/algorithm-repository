@@ -88,6 +88,15 @@ services:
       MODEL_PARAM_design: "factorial"
       MODEL_PARAM_graph: "correlation_heatmap"
 
+  correlation-heatmap-single:
+    extends: correlation-heatmap-base
+    container_name: "correlation-heatmap-single"
+    environment:
+      JOB_ID: '1'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_a LIMIT 100"
+    links:
+      - "db:db"
+
   correlation-heatmap-a:
     extends: correlation-heatmap-base
     container_name: "correlation-heatmap-a"
@@ -114,7 +123,7 @@ services:
     links:
       - "db:db"
 
-  distributed-pca:
+  distributed-pca-base:
     image: "hbpmip/python-distributed-pca:latest"
     container_name: "distributed-pca"
     restart: "no"
@@ -136,9 +145,42 @@ services:
       PARAM_variables: "lefthippocampus"
       PARAM_covariables: "minimentalstate,opticchiasm,subjectageyears"
       PARAM_grouping: ""
-      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_a LIMIT 100"
       PARAM_meta: "{\"lefthippocampus\":{\"code\":\"lefthippocampus\",\"type\":\"real\",\"mean\":3.0,\"std\":0.35},\"minimentalstate\":{\"code\":\"minimentalstate\",\"type\":\"real\",\"mean\":24.0,\"std\":5.0},\"opticchiasm\":{\"code\":\"opticchiasm\",\"type\":\"real\",\"mean\":0.08,\"std\":0.009},\"subjectage\":{\"code\":\"subjectage\",\"type\":\"real\",\"mean\":71.0,\"std\":8.0},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"}}"
       MODEL_PARAM_design: "factorial"
       MODEL_PARAM_graph: "pca"
+
+  distributed-pca-single:
+    extends: distributed-pca-base
+    container_name: "distributed-pca-single"
+    environment:
+      JOB_ID: '1'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_a LIMIT 100"
+    links:
+      - "db:db"
+
+  distributed-pca-a:
+    extends: distributed-pca-base
+    container_name: "distributed-pca-a"
+    environment:
+      JOB_ID: '1'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_a LIMIT 100"
+    links:
+      - "db:db"
+
+  distributed-pca-b:
+    extends: distributed-pca-base
+    container_name: "distributed-pca-b"
+    environment:
+      JOB_ID: '2'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_b LIMIT 100"
+    links:
+      - "db:db"
+
+  distributed-pca-agg:
+    extends: distributed-pca-base
+    container_name: "distributed-pca-agg"
+    environment:
+      JOB_ID: '3'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_b LIMIT 100"
     links:
       - "db:db"

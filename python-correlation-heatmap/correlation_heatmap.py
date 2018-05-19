@@ -107,7 +107,7 @@ def _compute_intermediate_result(inputs):
 
 
 @utils.catch_user_error
-def aggregate_stats(job_ids):
+def aggregate_stats(job_ids, graph_type=None):
     """Get all partial statistics from all nodes and aggregate them.
     :input job_ids: list of job_ids with intermediate results
     """
@@ -117,12 +117,14 @@ def aggregate_stats(job_ids):
 
     corr, columns = _aggregate_results(results)
 
-    graph_type = parameters.get_parameter('MODEL_PARAM_graph', str, 'correlation_heatmap')
+    graph_type = graph_type or parameters.get_parameter('graph', str, 'correlation_heatmap')
 
     if graph_type == 'correlation_heatmap':
         _save_corr_heatmap(corr, columns)
     elif graph_type == 'pca':
-        raise errors.UserError('MODEL_PARAM_graph=pca is not yet supported for distributed mode.')
+        # save PCA graphs, but leave out the one with PCA scores
+        logging.warning('Sample scores graph is not yet implemented for distributed PCA.')
+        _save_pca(corr, columns, X=None)
     else:
         raise errors.UserError('MODEL_PARAM_graph only supports values `correlation_heatmap` and `pca`')
 
@@ -168,7 +170,7 @@ def _save_corr_heatmap(corr, columns):
     logging.info("DONE")
 
 
-def _pca(corr, X):
+def _pca(corr, X=None):
     # calculate eigenvectors and eigenvalues
     eig_vals, eig_vecs = np.linalg.eig(corr)
 
@@ -187,43 +189,55 @@ def _pca(corr, X):
 
     # convert original data to scores
     # NOTE: since we are working with correlation matrix, original data must be standardized first!
-    X_std = (X - X.mean()) / X.std()
-    Y = X_std.dot(W)
+    if X is not None:
+        X_std = (X - X.mean()) / X.std()
+        Y = X_std.dot(W)
+    else:
+        Y = None
 
     return eig_vals, eig_vecs, Y
 
 
-def _figure(eig_vals, eig_vecs, Y, X):
+def _figure(eig_vals, eig_vecs, Y, columns):
+    show_scores = Y is not None
+
+    titles = ['Scree plot', 'Eigen-components', 'Variables scores']
+    titles.append('Samples scores' if show_scores else 'Samples scores <br>(not available in distributed mode)')
+
     # plotting
     fig = tools.make_subplots(
-        rows=2, cols=2, subplot_titles=('Samples scores', 'Variables scores', 'Scree plot', 'Eigen-components')
+        rows=2, cols=2, subplot_titles=titles
     )
 
-    for d in _biplot_samples(Y.values):
+    for d in _screeplot(eig_vals):
         fig.append_trace(d, 1, 1)
 
-    for d in _biplot_variables(eig_vecs, list(X.columns)):
+    for d in _eigencomponents(eig_vecs, columns):
         fig.append_trace(d, 1, 2)
 
-    for d in _screeplot(eig_vals):
+    for d in _biplot_variables(eig_vecs, columns):
         fig.append_trace(d, 2, 1)
 
-    for d in _eigencomponents(eig_vecs, list(X.columns)):
-        fig.append_trace(d, 2, 2)
+    # only show sample scores in single node mode
+    if show_scores:
+        for d in _biplot_samples(Y.values):
+            fig.append_trace(d, 2, 2)
 
     var_exp = _explained_variance(eig_vals)
 
-    fig['layout']['xaxis1'].update(title='PC1 ({:.1%})'.format(var_exp[0]))
-    fig['layout']['yaxis1'].update(title='PC2 ({:.1%})'.format(var_exp[1]))
-    fig['layout']['xaxis2'].update(title='PC1 ({:.1%})'.format(var_exp[0]), range=[-1.05, 1.05])
-    fig['layout']['yaxis2'].update(title='PC2 ({:.1%})'.format(var_exp[1]), range=[-1.05, 1.05])
-    fig['layout']['yaxis3'].update(title='Explained variance in percent')
+    fig['layout']['yaxis1'].update(title='Explained variance in percent')
+    fig['layout']['xaxis3'].update(title='PC1 ({:.1%})'.format(var_exp[0]), range=[-1.05, 1.05])
+    fig['layout']['yaxis3'].update(title='PC2 ({:.1%})'.format(var_exp[1]), range=[-1.05, 1.05])
+
+    if show_scores:
+        fig['layout']['xaxis4'].update(title='PC1 ({:.1%})'.format(var_exp[0]))
+        fig['layout']['yaxis4'].update(title='PC2 ({:.1%})'.format(var_exp[1]))
 
     # unit-circle for biplot
     circle = {
         'type': 'circle',
-        'xref': 'x2',
-        'yref': 'y2',
+        'xref': 'x3',
+        'yref': 'y3',
         'x0': -1,
         'y0': -1,
         'x1': 1,
@@ -238,10 +252,10 @@ def _figure(eig_vals, eig_vecs, Y, X):
     return fig
 
 
-def _save_pca(corr, columns, X):
+def _save_pca(corr, columns, X=None):
     """Generate PCA visualization in plotly format. Inspired by https://plot.ly/ipython-notebooks/principal-component-analysis/"""
     eig_vals, eig_vecs, Y = _pca(corr, X)
-    fig = _figure(eig_vals, eig_vecs, Y, X)
+    fig = _figure(eig_vals, eig_vecs, Y, columns)
 
     logging.info("Results:\n{}".format(fig))
     io_helper.save_results(json.dumps(fig), shapes.Shapes.PLOTLY)
