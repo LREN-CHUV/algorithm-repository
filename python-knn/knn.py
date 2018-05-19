@@ -78,7 +78,7 @@ def aggregate_knn(job_ids):
     """
     # Read intermediate inputs from jobs
     logging.info("Fetching intermediate data...")
-    pfas = _load_intermediate_data(job_ids)
+    pfas = io_helper.load_intermediate_json_results(job_ids)
 
     # Put all PFAs together by combining `points`
     pfa = _combine_knn_pfas(pfas)
@@ -96,24 +96,6 @@ def _combine_knn_pfas(pfas):
     for pfa in pfas[1:]:
         combined_pfa['cells']['codebook']['init'] += pfa['cells']['codebook']['init']
     return combined_pfa
-
-
-def _load_intermediate_data(job_ids):
-    data = []
-    for job_id in job_ids:
-        job_result = io_helper.get_results(job_id)
-
-        # log errors (e.g. about missing data), but do not reraise them
-        if job_result.error:
-            logging.warning(job_result.error)
-        else:
-            pfa = json.loads(job_result.data)
-            data.append(pfa)
-
-    if not data:
-        raise errors.UserError('All jobs {} returned an error.'.format(job_ids))
-
-    return data
 
 
 def _create_estimator(job_type, parameters):
