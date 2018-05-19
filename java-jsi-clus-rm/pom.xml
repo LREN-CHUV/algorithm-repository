@@ -5,7 +5,7 @@
 	<groupId>eu.humanbrainproject.mip.algorithms.jsi</groupId>
 	<artifactId>jsi-clus-rm</artifactId>
 	<packaging>jar</packaging>
-	<version><version>0.0.1</version><!-- bumpversion --></version><!-- bumpversion -->
+	<version>0.0.1</version><!-- bumpversion -->
 	<name>java-jsi-clus-rm</name>
 
 	<properties>
