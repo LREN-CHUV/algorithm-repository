@@ -2,7 +2,7 @@ FROM hbpmip/python-mip:0.6.1
 
 MAINTAINER jan.kralj@ijs.si
 
-ENV DOCKER_IMAGE=hbpmip/python-jsi-hinmine:0.2.3 \
+ENV DOCKER_IMAGE=hbpmip/python-jsi-hinmine:0.3.0 \
     FUNCTION=python-jsi-hinmine
 
 # Install system packages
@@ -37,6 +37,6 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.version="$VERSION" \
       org.label-schema.vendor="JSI KT" \
-      org.label-schema.license="AGPLv3" \
+      org.label-schema.license="MIT" \
       org.label-schema.docker.dockerfile="Dockerfile" \
       org.label-schema.schema-version="1.0"

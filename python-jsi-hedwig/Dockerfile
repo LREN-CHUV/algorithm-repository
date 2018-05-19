@@ -2,7 +2,7 @@ FROM hbpmip/python-mip:0.6.1
 
 MAINTAINER anze.vavpetic@ijs.si
 
-ENV DOCKER_IMAGE=hbpmip/python-jsi-hedwig:1.0.6 \
+ENV DOCKER_IMAGE=hbpmip/python-jsi-hedwig:1.0.7 \
     FUNCTION=python-jsi-hedwig
 
 COPY requirements.txt /src/requirements.txt
@@ -34,6 +34,6 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.version="$VERSION" \
       org.label-schema.vendor="JSI KT" \
-      org.label-schema.license="AGPLv3" \
+      org.label-schema.license="MIT" \
       org.label-schema.docker.dockerfile="Dockerfile" \
       org.label-schema.schema-version="1.0"

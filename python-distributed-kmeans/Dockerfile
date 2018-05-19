@@ -17,7 +17,7 @@ FROM hbpmip/python-mip-sklearn:0.3.7
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-distributed-kmeans:0.0.2 \
+ENV DOCKER_IMAGE=hbpmip/python-distributed-kmeans:0.1.0 \
     FUNCTION=python-distributed-kmeans
 
 RUN apt-get update

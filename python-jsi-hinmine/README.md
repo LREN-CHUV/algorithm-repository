@@ -18,6 +18,12 @@ The algorithm has two parameters:
   - normalize: [default value True] This parameter is a boolean parameter which tells the algorithm whether it should first normalize the data. Data normalization normalizes the range of each feature to [-1, 1] and can be useful when comparing two instances. However, if two features have different values for a non-arbitrary reason, normalization should not be performed
   - damping: [default value 0.85] This parameter is the damping factor of the PageRank algorithm used in calculating feature values for the data instances. It represents the probability of a random walker in a network to continue its random walk as oposed to teleporting to a random node
 
+### Computational complexity
+
+HINMine complexity is quadratic in number of samples, both in time and in memory. Output JSON it generates has about 17 MB for
+1000 samples, but compression could reduce its size by 98%.
+
+
 ## Build (for contributors)
 
 Run: `./build.sh`

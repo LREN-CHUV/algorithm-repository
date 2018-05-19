@@ -4,6 +4,8 @@
 
 # Python linear-regression
 
+## Continuous target
+
 Python implementation of multivariate linear regression. It supports both nominal and categorical variables and implicitly
 drop null values in data. Both single-node and distributed mode return JSON with structure such as
 ```
@@ -21,6 +23,35 @@ drop null values in data. Both single-node and distributed mode return JSON with
         't_values': 23.0859342033
     },
     ...
+}
+```
+
+## Categorical target
+
+[Multinominal logistic regression](https://en.wikipedia.org/wiki/Multinomial_logistic_regression) implemented as a
+[log-linear model](https://en.wikipedia.org/wiki/Multinomial_logistic_regression#As_a_log-linear_model) by fitting
+logistic regressions on one class versus the others. Only single-node mode is supported, for distributed mode use SGD
+regression.
+
+The output is JSON where each category has its own coefficients
+```
+{
+  'AD': {
+    'agegroup_50-59y': {
+        'coef': 3.2571304466,
+        'p_values': 0.7387901953,
+        'std_err': 9.5993224941,
+        't_values': 0.3393083677
+    },
+    'intercept': {
+        'coef': 1042.2837545842,
+        'p_values': 0.0,
+        'std_err': 45.1479998776,
+        't_values': 23.0859342033
+    },
+    ...
+  },
+  'CN': ...
 }
 ```
 

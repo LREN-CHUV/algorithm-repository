@@ -1,4 +1,4 @@
-[![CHUV](https://img.shields.io/badge/CHUV-LREN-AF4C64.svg)](https://www.unil.ch/lren/en/home.html) [![DockerHub](https://img.shields.io/badge/docker-hbpmip%r--heatmaply-008bb8.svg)](https://hub.docker.com/r/hbpmip/r-ggparci) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/r-heatmaply.svg)](https://hub.docker.com/r/hbpmip/r-heatmaply/tags "hbpmip/r-heatmaply image tags") [![](https://images.microbadger.com/badges/version/hbpmip/r-heatmaply.svg)](https://microbadger.com/images/hbpmip/r-heatmaply "Get your own version badge on microbadger.com") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/r-heatmaply.svg)](https://microbadger.com/#/images/hbpmip/r-heatmaply "hbpmip/r-heatmaply on microbadger")
+[![TAU](https://img.shields.io/badge/TAU-ICTAF-AD2C32.svg)](http://ictaf.tau.ac.il/index.asp?lang=eng) [![DockerHub](https://img.shields.io/badge/docker-hbpmip%r--heatmaply-008bb8.svg)](https://hub.docker.com/r/hbpmip/r-ggparci) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/r-heatmaply.svg)](https://hub.docker.com/r/hbpmip/r-heatmaply/tags "hbpmip/r-heatmaply image tags") [![](https://images.microbadger.com/badges/version/hbpmip/r-heatmaply.svg)](https://microbadger.com/images/hbpmip/r-heatmaply "Get your own version badge on microbadger.com") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/r-heatmaply.svg)](https://microbadger.com/#/images/hbpmip/r-heatmaply "hbpmip/r-heatmaply on microbadger")
 
 # heatmaply Docker for MIP
 
@@ -6,7 +6,7 @@
 
 ```sh
 
-  docker run --rm --env [list of environment variables] hbpmip/r-heatmaply:latest compute
+  docker run --rm --env [list of environment variables] hbpmip/r-heatmaply:0.2.0 compute
 
 ```
 
@@ -17,21 +17,21 @@ where the environment variables are:
    - PARAM_variables : Ignored.
    - PARAM_covariables : The variables to be ploted in the heatmap (as string, comma seperated, eg : "a,b,c")
    - PARAM_* : any other parameters to pass to the R function. See example in the docker-compose file.
-* Execution context:  
-   - JOB_ID : ID of the job  
-   - NODE : Node used for the execution of the script  
-   - IN_DBI_DRIVER   : Class name of the DBI driver for input data  
-   - IN_DBI_DBNAME     : Database name for the database connection for input data  
-   - IN_DBI_HOST     : Host name for the database connection for input data  
-   - IN_DBI_PORT     : Port number for the database connection for input data  
-   - IN_DBI_PASSWORD : Password for the database connection for input data  
-   - IN_DBI_USER     : User for the database connection for input data  
-   - OUT_DBI_DRIVER   : Class name of the DBI driver for output data  
-   - OUT_DBI_DBNAME     : Database name for the database connection for output data  
-   - OUT_DBI_HOST     : Host name for the database connection for output data  
-   - OUT_DBI_PORT     : Port number for the database connection for output data  
-   - OUT_DBI_USER     : User for the database connection for output data  
-   - OUT_DBI_PASSWORD : Password for the database connection for output data  
+* Execution context:
+   - JOB_ID : ID of the job
+   - NODE : Node used for the execution of the script
+   - IN_DBI_DRIVER   : Class name of the DBI driver for input data
+   - IN_DATABASE     : Database name for the database connection for input data
+   - IN_HOST         : Host name for the database connection for input data
+   - IN_PORT         : Port number for the database connection for input data
+   - IN_PASSWORD     : Password for the database connection for input data
+   - IN_USER         : User for the database connection for input data
+   - OUT_DBI_DRIVER  : Class name of the DBI driver for output data
+   - OUT_DATABASE    : Database name for the database connection for output data
+   - OUT_HOST        : Host name for the database connection for output data
+   - OUT_PORT        : Port number for the database connection for output data
+   - OUT_USER        : User for the database connection for output data
+   - OUT_PASSWORD    : Password for the database connection for output data
 
 ## Development process
 
@@ -39,7 +39,7 @@ The goal of this project is to create a Docker image containing the full R envir
 
 1. Read parameters from the environment and connect to a database
 2. Query the database and prepare the data
-3. Run the algorithm  
+3. Run the algorithm
 4. Format the results into a format that can be easily shared. Here, svg or html.
 5. Save the results into the result database.
 

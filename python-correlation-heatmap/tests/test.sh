@@ -46,10 +46,12 @@ echo "Initialise the databases..."
 $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
+## single-node mode
 echo
-echo "Run the distributed-pca algorithm..."
-$DOCKER_COMPOSE run distributed-pca compute
+echo "Run the correlation-heatmap algorithm on single node..."
+$DOCKER_COMPOSE run correlation-heatmap-single compute
 
+## distributed mode
 # echo
 # echo "Run the correlation-heatmap-a..."
 # $DOCKER_COMPOSE run correlation-heatmap-a compute --mode intermediate

@@ -7,24 +7,24 @@ Hedwig wrapper for the HBP medical platform.
 import tempfile
 import logging
 from subprocess import call
-from mip_helper import io_helper, parameters
-
+from mip_helper import io_helper, parameters, shapes
 
 import preprocess
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
 
 DEFAULT_DOCKER_IMAGE = 'python-jsi-hedwig'
 
 
 if __name__ == '__main__':
-    # Configure logging
-    logging.basicConfig(level=logging.INFO)
-
     # Read inputs
     inputs = io_helper.fetch_data()
     data = inputs["data"]
 
-    beam = parameters.get_param('beam', int, 10)
-    support = parameters.get_param('support', float, '0.00001')
+    beam = parameters.get_parameter('beam', int, 10)
+    support = parameters.get_parameter('support', float, '0.00001')
     out_file = 'input.csv'
     rules_out_file = 'rules.txt'
 
@@ -49,5 +49,5 @@ if __name__ == '__main__':
 
     with open(rules_out_file) as f:
         results = f.read()
-    # TODO: add text/plain to mime types in shapes.Shapes
-    io_helper.save_results(results.replace('less_than', '<'), 'text/plain')
+
+    io_helper.save_results(results.replace('less_than', '<'), shapes.Shapes.TEXT)

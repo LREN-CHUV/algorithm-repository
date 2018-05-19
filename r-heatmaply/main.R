@@ -14,17 +14,17 @@
 #'    - JOB_ID : ID of the job
 #'    - NODE : Node used for the execution of the script
 #'    - IN_DBI_DRIVER   : Class name of the DBI driver for input data
-#'    - IN_DBI_DBNAME     : Database name for the database connection for input data
-#'    - IN_DBI_HOST     : Host name for the database connection for input data
-#'    - IN_DBI_PORT     : Port number for the database connection for input data
-#'    - IN_DBI_PASSWORD : Password for the database connection for input data
-#'    - IN_DBI_USER     : User for the database connection for input data
-#'    - OUT_DBI_DRIVER   : Class name of the DBI driver for output data
-#'    - OUT_DBI_DBNAME     : Database name for the database connection for output data
-#'    - OUT_DBI_HOST     : Host name for the database connection for output data
-#'    - OUT_DBI_PORT     : Port number for the database connection for output data
-#'    - OUT_DBI_USER     : User for the database connection for output data
-#'    - OUT_DBI_PASSWORD : Password for the database connection for output data
+#'    - IN_DATABASE     : Database name for the database connection for input data
+#'    - IN_HOST         : Host name for the database connection for input data
+#'    - IN_PORT         : Port number for the database connection for input data
+#'    - IN_PASSWORD     : Password for the database connection for input data
+#'    - IN_USER         : User for the database connection for input data
+#'    - OUT_DBI_DRIVER  : Class name of the DBI driver for output data
+#'    - OUT_DATABASE    : Database name for the database connection for output data
+#'    - OUT_HOST        : Host name for the database connection for output data
+#'    - OUT_PORT        : Port number for the database connection for output data
+#'    - OUT_USER        : User for the database connection for output data
+#'    - OUT_PASSWORD    : Password for the database connection for output data
 
 library(rmipadaptor)
 library(heatmaply)

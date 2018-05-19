@@ -31,10 +31,8 @@ import jsonpickle
 import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
 
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
-
 
 DEFAULT_DOCKER_IMAGE = "python-sgd-regression"
 
@@ -83,6 +81,10 @@ def main(job_id, generate_pfa):
         else:
             if not generate_pfa:
                 logging.warning('{} does not support partial fit.'.format(estimator))
+            if isinstance(estimator, GradientBoostingClassifier) and len(set(y)) == 1:
+                raise errors.UserError(
+                    'All outputs have single category ({}), Gradient boosting cannot fit that.'.format(y.iloc[0])
+                )
             estimator.fit(X, y)
 
     if generate_pfa:
@@ -250,7 +252,9 @@ def _create_featurizer(indep_vars, estimator):
                 if 'mean' not in var:
                     logging.warning('Mean not available for variable {}, using default value 0.'.format(var['name']))
                 if 'std' not in var:
-                    logging.warning('Standard deviation not available for variable {}, using default value 1.'.format(var['name']))
+                    logging.warning(
+                        'Standard deviation not available for variable {}, using default value 1.'.format(var['name'])
+                    )
                 tf = Standardize(var['name'], var.get('mean', 0), var.get('std', 1))
 
             transforms.append(tf)

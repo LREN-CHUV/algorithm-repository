@@ -48,7 +48,7 @@ services:
       - db
 
   woken_db_setup:
-    image: "hbpmip/woken-db-setup:1.1.0"
+    image: "hbpmip/woken-db-setup:1.2.1"
     container_name: "woken-db-setup"
     restart: "no"
     environment:
@@ -69,21 +69,17 @@ services:
       NODE: job_test
       JOB_ID: 1
       IN_DBI_DRIVER: PostgreSQL
-      IN_JDBC_DRIVER: org.postgresql.Driver
-      IN_JDBC_URL: jdbc:postgresql://db:5432/features
-      IN_DB_HOST: db
-      IN_DB_PORT: 5432
-      IN_DB_NAME: features
-      IN_DB_USER: features
-      IN_DB_PASSWORD: featurespwd
+      IN_HOST: db
+      IN_PORT: 5432
+      IN_DATABASE: features
+      IN_USER: features
+      IN_PASSWORD: featurespwd
       OUT_DBI_DRIVER: PostgreSQL
-      OUT_JDBC_DRIVER: org.postgresql.Driver
-      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
-      OUT_DB_HOST: db
-      OUT_DB_PORT: 5432
-      OUT_DB_NAME: woken
-      OUT_DB_USER: woken
-      OUT_DB_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
       PARAM_variables: ""
       PARAM_covariables: "sepal_length,sepal_width,petal_length,petal_width"
       PARAM_query: "SELECT * FROM iris"
@@ -108,17 +104,17 @@ services:
       NODE: job_test
       JOB_ID: 1
       IN_DBI_DRIVER: PostgreSQL
-      IN_DB_HOST: db
-      IN_DB_PORT: 5432
-      IN_DB_NAME: features
-      IN_DB_USER: features
-      IN_DB_PASSWORD: featurespwd
+      IN_HOST: db
+      IN_PORT: 5432
+      IN_DATABASE: features
+      IN_USER: features
+      IN_PASSWORD: featurespwd
       OUT_DBI_DRIVER: PostgreSQL
-      OUT_DB_HOST: db
-      OUT_DB_PORT: 5432
-      OUT_DB_NAME: woken
-      OUT_DB_USER: woken
-      OUT_DB_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
     links:
       - "db:db"
 
@@ -131,11 +127,11 @@ services:
     environment:
       JOB_ID: 1
       OUT_DBI_DRIVER: PostgreSQL
-      OUT_DB_HOST: db
-      OUT_DB_PORT: 5432
-      OUT_DB_NAME: woken
-      OUT_DB_USER: woken
-      OUT_DB_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
     volumes:
       - "./tmp:/data/out/"
     links:
