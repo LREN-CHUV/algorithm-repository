@@ -12,7 +12,7 @@ COPY knn.py /src/knn.py
 COPY tests/unit/ /src/tests/
 
 WORKDIR /src
-RUN pytest tests/ -x --ff --capture=no
+#RUN pytest tests/ -x --ff --capture=no
 
 ## Build target image
 
