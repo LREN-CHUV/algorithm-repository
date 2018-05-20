@@ -160,6 +160,36 @@ def test_main_classification_empty(
     assert mock_save_error.call_args[0] == ('Model was not fitted on any data, cannot generate PFA.', )
 
 
+@pytest.mark.parametrize("method,name", [
+    ("linear_model", "SGDRegressor"),
+    ("neural_network", "MLPRegressor"),
+])
+@mock.patch('sgd_regression.io_helper.fetch_data')
+@mock.patch('sgd_regression.io_helper.get_results')
+@mock.patch('sgd_regression.io_helper.save_results')
+@mock.patch('sgd_regression.parameters.fetch_parameters')
+def test_main_distributed(mock_parameters, mock_save_results, mock_get_results, mock_fetch_data, method, name):
+    mock_parameters.return_value = {'type': method}
+    mock_fetch_data.return_value = fx.inputs_regression()
+    mock_get_results.return_value = None
+
+    # run intermediate job
+    main(job_id=None, generate_pfa=False)
+
+    mock_get_results.return_value = mock.MagicMock(data=mock_save_results.call_args[0][0])
+
+    # generate PFA
+    main(job_id='1', generate_pfa=True)
+
+    pfa = mock_save_results.call_args_list[1][0][0]
+    pfa_dict = json.loads(pfa)
+
+    # make some prediction with PFA
+    from titus.genpy import PFAEngine
+    engine, = PFAEngine.fromJson(pfa_dict)
+    engine.action({'stress_before_test1': 10., 'iq': 10., 'agegroup': '-50y'})
+
+
 def test_deserialize_sklearn_estimator():
     X, y = datasets.make_regression(n_samples=100, n_features=10)
     estimator = SGDRegressor().fit(X, y)
