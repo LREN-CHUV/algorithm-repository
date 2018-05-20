@@ -59,18 +59,14 @@ def intermediate_data_2():
 
 
 @mock.patch('distributed_kmeans.io_helper.fetch_data')
-@mock.patch('distributed_kmeans.io_helper.get_results')
+@mock.patch('distributed_kmeans.io_helper.load_intermediate_json_results')
 @mock.patch('distributed_kmeans.io_helper.save_results')
-def test_aggregate_kmeans(mock_save_results, mock_get_results, mock_fetch_data):
+def test_aggregate_kmeans(mock_save_results, mock_load_intermediate_json_results, mock_fetch_data):
     mock_fetch_data.return_value = fx.inputs_regression(include_categorical=True)
 
-    def mock_results(job_id):
-        if job_id == '1':
-            return mock.MagicMock(data=json.dumps(intermediate_data_1()))
-        elif job_id == '2':
-            return mock.MagicMock(data=json.dumps(intermediate_data_2()))
-
-    mock_get_results.side_effect = mock_results
+    mock_load_intermediate_json_results.return_value = [
+        intermediate_data_1(), intermediate_data_2()
+    ]
 
     aggregate_kmeans([1, 2])
     pfa_dict = json.loads(mock_save_results.call_args[0][0])

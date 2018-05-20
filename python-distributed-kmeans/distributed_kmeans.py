@@ -140,7 +140,7 @@ def aggregate_kmeans(job_ids):
     """
     # Read intermediate inputs from jobs
     logging.info("Fetching intermediate data...")
-    data = [json.loads(io_helper.get_results(str(job_id)).data) for job_id in job_ids]
+    data = io_helper.load_intermediate_json_results(map(str, job_ids))
 
     local_centroids = [np.array(x['centroids']) for x in data if x['centroids']]
     logging.info('Local centroids:\n{}'.format(local_centroids))
