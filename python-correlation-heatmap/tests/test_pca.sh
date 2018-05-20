@@ -47,9 +47,9 @@ $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
 # single-node mode
-# echo
-# echo "Run the distributed-pca algorithm on single node..."
-# $DOCKER_COMPOSE run distributed-pca-single compute
+echo
+echo "Run the distributed-pca algorithm on single node..."
+$DOCKER_COMPOSE run distributed-pca-single compute
 
 ## distributed mode
 echo
