@@ -1,4 +1,4 @@
-FROM hbpmip/python-mip-sklearn:0.3.9
+FROM hbpmip/python-mip-sklearn:0.3.10
 
 COPY requirements-dev.txt /requirements-dev.txt
 RUN pip install -r /requirements-dev.txt
@@ -13,7 +13,7 @@ WORKDIR /src
 RUN pytest tests/ -x --ff --capture=no
 
 
-FROM hbpmip/python-mip-sklearn:0.3.9
+FROM hbpmip/python-mip-sklearn:0.3.10
 
 MAINTAINER mirco.nasuti@chuv.ch
 

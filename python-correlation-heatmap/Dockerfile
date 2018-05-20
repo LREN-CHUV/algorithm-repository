@@ -16,7 +16,7 @@ RUN pytest tests/ -x --ff --capture=no
 
 ## Build target image
 
-FROM hbpmip/python-mip:0.6.4
+FROM hbpmip/python-mip:0.6.5
 
 MAINTAINER mirco.nasuti@chuv.ch
 

@@ -67,20 +67,18 @@ def test_compute_empty(mock_exit, mock_save_error, mock_fetch_data):
 @mock.patch('knn.io_helper.fetch_data')
 @mock.patch('knn.io_helper.get_results')
 @mock.patch('knn.io_helper.save_results')
-def test_aggregate_knn(mock_save_results, mock_get_results, mock_fetch_data):
+@mock.patch('knn.io_helper.load_intermediate_json_results')
+def test_aggregate_knn(mock_save_results, mock_get_results, mock_fetch_data, mock_load_intermediate_json_results):
     # get one PFA
     mock_fetch_data.return_value = fx.inputs_regression(include_integer=True)
     mock_get_results.return_value = None
     compute()
     pfa = mock_save_results.call_args[0][0]
 
-    def mock_results(job_id):
-        if job_id == '1':
-            return mock.MagicMock(data=pfa, error='')
-        elif job_id == '2':
-            return mock.MagicMock(data=pfa, error='')
-
-    mock_get_results.side_effect = mock_results
+    mock_load_intermediate_json_results.return_value = [
+        mock.MagicMock(data=pfa, error=''),
+        mock.MagicMock(data=pfa, error='')
+    ]
 
     aggregate_knn(['1', '2'])
 
