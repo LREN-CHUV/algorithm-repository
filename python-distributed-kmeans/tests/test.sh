@@ -48,6 +48,11 @@ $DOCKER_COMPOSE run woken_db_setup
 
 
 echo
+echo "Run the distributed-kmeans-single..."
+$DOCKER_COMPOSE run distributed-kmeans-single compute
+
+
+echo
 echo "Run the distributed-kmeans-a..."
 $DOCKER_COMPOSE run distributed-kmeans-a compute --mode intermediate
 echo "Run the distributed-kmeans-b..."
