@@ -86,6 +86,15 @@ services:
       MODEL_PARAM_class_prior: ""
       MODEL_PARAM_alpha: 1
 
+  sgd-regression-single:
+    extends: sgd-regression-base
+    container_name: "sgd-regression-single"
+    environment:
+      JOB_ID: '0'
+      PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears, alzheimerbroadcategory, adnicategory FROM cde_features_a LIMIT 100"
+    links:
+      - "db:db"
+
   sgd-regression-a:
     extends: sgd-regression-base
     container_name: "sgd-regression-a"
