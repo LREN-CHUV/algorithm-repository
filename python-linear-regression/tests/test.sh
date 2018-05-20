@@ -52,12 +52,12 @@ echo "Run the linear-regression algorithm..."
 $DOCKER_COMPOSE run linear-regression-single compute
 
 # distributed mode
-# echo "Run the linear-regression-a..."
-# $DOCKER_COMPOSE run linear-regression-a compute --mode intermediate
-# echo "Run the linear-regression-b..."
-# $DOCKER_COMPOSE run linear-regression-b compute --mode intermediate
-# echo "Run the linear-regression-agg..."
-# $DOCKER_COMPOSE run linear-regression-agg compute --mode aggregate --job-ids 1 2
+echo "Run the linear-regression-a..."
+$DOCKER_COMPOSE run linear-regression-a compute --mode intermediate
+echo "Run the linear-regression-b..."
+$DOCKER_COMPOSE run linear-regression-b compute --mode intermediate
+echo "Run the linear-regression-agg..."
+$DOCKER_COMPOSE run linear-regression-agg compute --mode aggregate --job-ids 1 2
 
 echo
 # Cleanup

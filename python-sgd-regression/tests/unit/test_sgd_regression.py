@@ -56,7 +56,7 @@ def test_main_partial(mock_parameters, mock_save_results, mock_get_results, mock
 
     main(job_id=None, generate_pfa=False)
 
-    js = mock_save_results.call_args[0][0]
+    js = json.loads(mock_save_results.call_args[0][0])
     estimator = deserialize_sklearn_estimator(js['estimator'])
     assert estimator.__class__.__name__ == name
 

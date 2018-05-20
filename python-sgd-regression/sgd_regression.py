@@ -53,7 +53,7 @@ def main(job_id, generate_pfa):
         job_result = io_helper.get_results(job_id=str(job_id))
 
         logging.info('Loading existing estimator')
-        estimator = deserialize_sklearn_estimator(job_result.data['estimator'])
+        estimator = deserialize_sklearn_estimator(json.loads(job_result.data)['estimator'])
     else:
         logging.info('Creating new estimator')
         estimator = _create_estimator(job_type)
@@ -110,7 +110,7 @@ def main(job_id, generate_pfa):
     else:
         # Save or update job_result
         logging.info('Saving serialized estimator into job_results table')
-        io_helper.save_results(_estimator_metadata(estimator, X, y, featurizer), shapes.Shapes.JSON)
+        io_helper.save_results(json.dumps(_estimator_metadata(estimator, X, y, featurizer)), shapes.Shapes.JSON)
 
 
 def _estimator_metadata(estimator, X, y, featurizer):
