@@ -18,7 +18,7 @@ WORKDIR /src
 
 FROM hbpmip/python-mip-sklearn:0.3.10
 
-ENV DOCKER_IMAGE=hbpmip/python-knn:0.3.2 \
+ENV DOCKER_IMAGE=hbpmip/python-knn:0.4.0 \
     FUNCTION=python-knn
 
 COPY requirements.txt /requirements.txt
