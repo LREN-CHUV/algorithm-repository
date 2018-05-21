@@ -54,11 +54,11 @@ $DOCKER_COMPOSE run sgd-regression-single compute
 
 echo
 echo "Run the sgd-regression-a algorithm..."
-$DOCKER_COMPOSE run sgd-regression-a compute --mode partial
+$DOCKER_COMPOSE run sgd-regression-a compute --mode intermediate
 echo "Run the sgd-regression-b algorithm..."
-$DOCKER_COMPOSE run sgd-regression-b compute --mode partial --job-id 1
+$DOCKER_COMPOSE run sgd-regression-b compute --mode intermediate --job-id 1
 echo "Run the sgd-regression-c algorithm..."
-$DOCKER_COMPOSE run sgd-regression-c compute --mode final --job-id 2
+$DOCKER_COMPOSE run sgd-regression-c compute --mode aggregate --job-id 2
 
 echo
 # Cleanup

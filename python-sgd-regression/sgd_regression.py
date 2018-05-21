@@ -280,14 +280,14 @@ def _create_featurizer(indep_vars, estimator):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('compute', choices=['compute'])
-    parser.add_argument('--mode', choices=['partial', 'final'], default='final')
+    parser.add_argument('--mode', choices=['intermediate', 'aggregate'], default='aggregate')
     parser.add_argument('--job-id', type=str)
 
     args = parser.parse_args()
 
-    # > compute partial --job-id 12
-    if args.mode == 'partial':
+    # > compute intermediate --job-id 12
+    if args.mode == 'intermediate':
         main(args.job_id, generate_pfa=False)
-    # > compute final --job-id 13
-    elif args.mode == 'final':
+    # > compute aggregate --job-id 13
+    elif args.mode == 'aggregate':
         main(args.job_id, generate_pfa=True)
