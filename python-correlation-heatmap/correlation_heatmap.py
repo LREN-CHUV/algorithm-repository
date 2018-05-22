@@ -18,9 +18,12 @@ from mip_helper import io_helper, shapes, utils, errors, parameters
 
 import argparse
 import logging
+import itertools
 from pandas.io import json
+import pandas as pd
 import plotly.graph_objs as go
 from plotly import tools
+import plotly.figure_factory as ff
 import numpy as np
 
 # Configure logging
@@ -37,17 +40,21 @@ def compute(graph_type=None):
     indep_vars = inputs["data"]["independent"]
 
     result = _compute_intermediate_result(inputs)
-    corr, columns = _aggregate_results([result])
+    corr, columns, crosstab = _aggregate_results([result])
 
     graph_type = graph_type or parameters.get_parameter('graph', str, 'correlation_heatmap')
 
     if graph_type == 'correlation_heatmap':
-        _save_corr_heatmap(corr, columns)
+        fig = _fig_corr_heatmap(corr, columns, crosstab)
     elif graph_type == 'pca':
         X = io_helper.fetch_dataframe([dep_var] + indep_vars)
-        _save_pca(corr, columns, X)
+        fig = _fig_pca(corr, columns, X)
     else:
         raise errors.UserError('MODEL_PARAM_graph only supports values `correlation_heatmap` and `pca`')
+
+    logging.info("Results:\n{}".format(fig))
+    io_helper.save_results(json.dumps(fig), shapes.Shapes.PLOTLY)
+    logging.info("DONE")
 
 
 @utils.catch_user_error
@@ -66,43 +73,49 @@ def _compute_intermediate_result(inputs):
     dep_var = inputs["data"]["dependent"][0]
     indep_vars = inputs["data"]["independent"]
 
-    # Use only numeric variables
-    variables = []
+    nominal_vars = []
+    numeric_vars = []
     for var in [dep_var] + indep_vars:
         if utils.is_nominal(var):
-            logging.warning(
-                'Correlation heatmap works only with numerical types ({} is {})'.format(
-                    var['name'], var['type']['name']
-                )
-            )
+            nominal_vars.append(var['name'])
         else:
-            variables.append(var)
+            numeric_vars.append(var['name'])
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
-    X = io_helper.fetch_dataframe(variables=variables)
+    X = io_helper.fetch_dataframe(variables=[dep_var] + indep_vars)
 
     logging.info('Dropping NULL values')
     X = utils.remove_nulls(X, errors='ignore')
 
     # Generate results
     logging.info("Generating results...")
+    result = {
+        'columns': numeric_vars,
+        'nominal_columns': nominal_vars,
+    }
     if len(X):
-        result = {
-            'columns': list(X.columns),
-            'means': X.mean().values,
-            'X^T * X': X.T.dot(X.values).values,
+        result.update({
+            'means': X[numeric_vars].mean().values,
+            'X^T * X': X[numeric_vars].T.dot(X[numeric_vars].values).values,
             'count': len(X),
-        }
+        })
+        if nominal_vars:
+            result['crosstab'] = X[nominal_vars].groupby(nominal_vars).size()\
+                                                .reset_index()\
+                                                .rename(columns={0: 'count'})\
+                                                .to_dict(orient='records')
+        else:
+            result['crosstab'] = []
     else:
         logging.warning('All values are NAN, returning zero values')
-        k = X.shape[1]
-        result = {
-            'columns': list(X.columns),
+        k = len(result['columns'])
+        result.update({
             'means': np.zeros(k),
             'X^T * X': np.zeros((k, k)),
             'count': 0,
-        }
+            'crosstab': [],
+        })
     return result
 
 
@@ -115,18 +128,22 @@ def aggregate_stats(job_ids, graph_type=None):
     logging.info("Fetching intermediate data...")
     results = [json.loads(io_helper.get_results(str(job_id)).data) for job_id in job_ids]
 
-    corr, columns = _aggregate_results(results)
+    corr, columns, crosstab = _aggregate_results(results)
 
     graph_type = graph_type or parameters.get_parameter('graph', str, 'correlation_heatmap')
 
     if graph_type == 'correlation_heatmap':
-        _save_corr_heatmap(corr, columns)
+        fig = _fig_corr_heatmap(corr, columns, crosstab)
     elif graph_type == 'pca':
         # save PCA graphs, but leave out the one with PCA scores
         logging.warning('Sample scores graph is not yet implemented for distributed PCA.')
-        _save_pca(corr, columns, X=None)
+        fig = _fig_pca(corr, columns, X=None)
     else:
         raise errors.UserError('MODEL_PARAM_graph only supports values `correlation_heatmap` and `pca`')
+
+    logging.info("Results:\n{}".format(fig))
+    io_helper.save_results(json.dumps(fig), shapes.Shapes.PLOTLY)
+    logging.info("DONE")
 
 
 def _aggregate_results(results):
@@ -135,14 +152,21 @@ def _aggregate_results(results):
     n = 0
     sumx = 0
     columns = None
+    nominal_columns = None
+    crosstab = []
     for result in results:
         # make sure columns are consistent
         columns = columns or result['columns']
         assert columns == result['columns']
 
+        nominal_columns = nominal_columns or result['nominal_columns']
+        assert nominal_columns == result['nominal_columns']
+
         XXT += np.array(result['X^T * X'])
         n += np.array(result['count'])
         sumx += np.array(result['means']) * result['count']
+
+        crosstab += result['crosstab']
 
     mu = sumx / n
     cov = (XXT - n * np.outer(mu, mu)) / (n - 1)
@@ -150,11 +174,78 @@ def _aggregate_results(results):
     # create correlation matrix
     sigma = np.sqrt(np.diag(cov))
     corr = np.diag(1 / sigma) @ cov @ np.diag(1 / sigma)
-    return corr, columns
+    return corr, columns, crosstab
 
 
-def _save_corr_heatmap(corr, columns):
+def _fig_corr_heatmap(corr, columns, crosstab):
     """Generate heatmap from correlation matrix and return it in plotly format"""
+    # create correlation heatmap figure
+    fig = _corr_heatmap(corr, columns)
+
+    crosstab = pd.DataFrame(crosstab)
+
+    # add crosstabs to figure for all pairs of nominal variables
+    if not crosstab.empty:
+        k = 2
+        for a, b in itertools.combinations(crosstab.columns.drop('count'), 2):
+            ct = _make_crosstab(crosstab, a, b, xaxis=f'x{k}', yaxis=f'y{k}')
+            fig = _update_fig_with_crosstab(fig, ct, k, a, b)
+            k += 1
+
+    return fig
+
+
+def _update_fig_with_crosstab(fig, ct, k, col_a, col_b):
+    for anot in ct.layout.annotations:
+        anot.update(xref=f'x{k}', yref=f'y{k}')
+
+    fig.data[0].update(colorbar={'len': 1 / k, 'y': 1 - 0.5 / k})
+
+    fig['data'].extend(ct.data)
+    fig.layout.annotations.extend(ct.layout.annotations)
+    fig.layout[f'xaxis{k}'] = ct.layout.xaxis
+    fig.layout[f'yaxis{k}'] = ct.layout.yaxis
+
+    # Edit layout for subplots
+    rr = np.linspace(0, 1, k + 1)
+    for i in range(k):
+        ax = 'yaxis' if k - i == 1 else 'yaxis{}'.format(k - i)
+        lower = rr[i] + 0.1 / k if rr[i] != 0 else 0
+        upper = rr[i + 1] - 0.05 / k if rr[i + 1] != 1 else 1
+        fig.layout[ax].update({'domain': [lower, upper]})
+
+    # The graph's yaxis2 MUST BE anchored to the graph's xaxis2 and vice versa
+    fig.layout.yaxis.update({'anchor': 'x1'})
+    fig.layout.xaxis.update({'anchor': 'y1'})
+    fig.layout[f'yaxis{k}'].update({'anchor': f'x{k}'})
+    fig.layout[f'xaxis{k}'].update({'anchor': f'y{k}'})
+    fig.layout[f'yaxis{k}'].update({'title': col_a, 'anchor': f'x{k}'})
+    ax = 'xaxis' if k - 1 == 1 else f'xaxis{k-1}'
+
+    fig.layout[ax].update({'title': col_b})
+
+    # Update the margins to add a title and see graph x-labels.
+    fig.layout.margin.update({'t': 75, 'l': 120})
+    fig.layout.update({'height': k * 500, 'width': 800})
+
+    return fig
+
+
+def _make_crosstab(df, col_a, col_b, **kwargs):
+    ct = df.groupby([col_a, col_b])['count'].sum().unstack().fillna(0).astype(int)
+    ct['All'] = ct.sum(axis=1)
+    s = ct.sum(axis=0)
+    s.name = 'All'
+    ct = ct.append(s)
+
+    ct = ct.astype(str)
+    ct.iloc[-1] = ['<b>{}</b>'.format(x) for x in ct.iloc[-1]]
+    ct.iloc[:, -1] = ['<b>{}</b>'.format(x) for x in ct.iloc[:, -1]]
+
+    return ff.create_table(ct, index=True, **kwargs)
+
+
+def _corr_heatmap(corr, columns):
     # revert y-axis so that diagonal goes from top left to bottom right
     trace = go.Heatmap(
         z=corr[::-1, :],
@@ -162,12 +253,12 @@ def _save_corr_heatmap(corr, columns):
         y=columns[::-1],
         zmin=-1,
         zmax=1,
+        xaxis='x1',
+        yaxis='y1',
     )
-    data = [trace]
-
-    logging.info("Results:\n{}".format(data))
-    io_helper.save_results(json.dumps(data), shapes.Shapes.PLOTLY)
-    logging.info("DONE")
+    fig = go.Figure(data=[trace])
+    fig.layout.update({'title': 'Correlation heatmap'})
+    return fig
 
 
 def _pca(corr, X=None):
@@ -252,14 +343,11 @@ def _figure(eig_vals, eig_vecs, Y, columns):
     return fig
 
 
-def _save_pca(corr, columns, X=None):
+def _fig_pca(corr, columns, X=None):
     """Generate PCA visualization in plotly format. Inspired by https://plot.ly/ipython-notebooks/principal-component-analysis/"""
     eig_vals, eig_vecs, Y = _pca(corr, X)
     fig = _figure(eig_vals, eig_vecs, Y, columns)
-
-    logging.info("Results:\n{}".format(fig))
-    io_helper.save_results(json.dumps(fig), shapes.Shapes.PLOTLY)
-    logging.info("DONE")
+    return fig
 
 
 def _screeplot(eig_vals, max_components=5):
