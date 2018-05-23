@@ -55,6 +55,15 @@ def test_main(mock_save_results, mock_fetch_data):
 @mock.patch('anova.io_helper.fetch_data')
 @mock.patch('anova.io_helper.save_error')
 @mock.patch('sys.exit')
+def test_main_signular_matrix(mock_exit, mock_save_error, mock_fetch_data):
+    mock_fetch_data.return_value = t.inputs_regression(limit_to=1, include_nominal=False)
+    main()
+    mock_save_error.assert_called_with('Too many factors (4) for too little data (1). Use less covariables or different design.')
+
+
+@mock.patch('anova.io_helper.fetch_data')
+@mock.patch('anova.io_helper.save_error')
+@mock.patch('sys.exit')
 def test_main_empty_input(mock_exit, mock_save_error, mock_fetch_data):
     mock_fetch_data.return_value = t.inputs_regression(limit_to=0)
     main()
