@@ -76,6 +76,14 @@ def compute_anova(dep_var, indep_vars, data, design='factorial'):
 
     lm = ols(data=data, formula=formula).fit()
     logging.info(lm.summary())
+
+    if lm.df_resid == 0:
+        raise errors.UserError(
+            'Too many factors ({}) for too little data ({}). Use less covariables or different design.'.format(
+                len(lm.params), len(data)
+            )
+        )
+
     return anova_lm(lm)
 
 
