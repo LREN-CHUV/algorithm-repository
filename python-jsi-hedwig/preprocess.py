@@ -1,3 +1,4 @@
+import pandas as pd
 from scipy import stats
 import logging
 
@@ -72,8 +73,6 @@ def to_matrix(data, do_binarize=True, bins=4):
 
 def dump_to_csv(data, attributes, out_file):
     ''' Output to csv for hedwig '''
-    with open(out_file, 'w') as f:
-        f.write('{}\n'.format(';'.join(['id'] + attributes)))
-
-        for id, example in enumerate(data):
-            f.write('{}\n'.format(';'.join([str(id)] + example)))
+    df = pd.DataFrame(data, columns=attributes)
+    df.index.name = 'id'
+    df.to_csv(out_file, sep=';')

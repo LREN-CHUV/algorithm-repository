@@ -14,5 +14,5 @@ def test_dump_to_csv(tmpdir):
         '3.05825less_than=lefthippocampusless_than3.2659249999999997',
         '3.2659249999999997less_than=lefthippocampusless_than3.4736', '63.0less_than=subjectageyearsless_than67.0',
         '67.0less_than=subjectageyearsless_than71.0', '71.0less_than=subjectageyearsless_than75.0',
-        '75.0less_than=subjectageyearsless_than79.0', 'alzheimerbroadcategory'
+        '75.0less_than=subjectageyearsless_than79.0', 'apoe4', 'alzheimerbroadcategory'
     ]

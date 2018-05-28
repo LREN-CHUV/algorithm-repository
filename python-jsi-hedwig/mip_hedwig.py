@@ -5,9 +5,10 @@ Hedwig wrapper for the HBP medical platform.
 '''
 
 import tempfile
+import os
 import logging
 from subprocess import call
-from mip_helper import io_helper, parameters, shapes
+from mip_helper import io_helper, parameters, shapes, utils
 
 import preprocess
 
@@ -18,7 +19,11 @@ logging.basicConfig(level=logging.INFO)
 DEFAULT_DOCKER_IMAGE = 'python-jsi-hedwig'
 
 
-if __name__ == '__main__':
+@utils.catch_user_error
+def main(clean_files=False):
+    """
+    :param clean_files: if True, clean files afterwards
+    """
     # Read inputs
     inputs = io_helper.fetch_data()
     data = inputs["data"]
@@ -50,4 +55,12 @@ if __name__ == '__main__':
     with open(rules_out_file) as f:
         results = f.read()
 
+    if clean_files:
+        os.remove(out_file)
+        os.remove(rules_out_file)
+
     io_helper.save_results(results.replace('less_than', '<'), shapes.Shapes.TEXT)
+
+
+if __name__ == '__main__':
+    main()
