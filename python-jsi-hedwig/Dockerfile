@@ -19,9 +19,9 @@ COPY doc/ /src/doc/
 WORKDIR /src/hedwig
 RUN pip install -r requirements.txt
 
+RUN python setup.py install
 COPY preprocess.py /src/hedwig/
 COPY mip_hedwig.py /src/hedwig/
-RUN python setup.py install
 
 ENTRYPOINT ["python", "/src/hedwig/mip_hedwig.py"]
 
