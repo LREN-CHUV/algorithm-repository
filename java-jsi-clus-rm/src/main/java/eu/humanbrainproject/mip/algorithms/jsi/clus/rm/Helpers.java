@@ -16,10 +16,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+
 /**
- * 
- * @author Martin Breskvar
- *
+ * @author <a href="mailto:martin.breskvar@ijs.si">Martin Breskvar</a> and <a href="mailto:matej.mihelcic@irb.hr">Matej
+ *         Mihelčić</a>
  */
 public class Helpers {
 

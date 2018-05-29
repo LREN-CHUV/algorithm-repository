@@ -11,8 +11,9 @@ import java.nio.file.Paths;
 import org.apache.commons.compress.utils.Charsets;
 
 
-/** @author Matej Mihelčić */
-
+/**
+ * @author <a href="mailto:matej.mihelcic@irb.hr">Matej Mihelčić</a>
+ */
 public class RedescriptionSetLoader {
 
     private File inputFile;

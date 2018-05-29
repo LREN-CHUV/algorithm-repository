@@ -16,7 +16,10 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-
+/**
+ * @author <a href="mailto:martin.breskvar@ijs.si">Martin Breskvar</a> and <a href="mailto:matej.mihelcic@irb.hr">Matej
+ *         Mihelčić</a>
+ */
 public class RMTest {
 
     private final List<String> tmpFiles = new ArrayList<String>(Arrays.asList(
@@ -45,14 +48,6 @@ public class RMTest {
             /* */
             "preference.txt"));
 
-//    private final List<String> tmpFiles = new ArrayList<String>(Arrays.asList(
-//            /* */
-//            //"rm" + File.separator + "clusrm" + File.separator + "1.0.0" + File.separator + "clusrm-1.0.0.jar",
-//            "clusrm-1.0.0.jar",
-//            /* */
-//            "distances.csv",
-//            /* */
-//            "preference.txt"));
 
     @Test
     @DisplayName("CLUS-RM redescription mining algorithm")
@@ -100,6 +95,6 @@ public class RMTest {
 
         assertEquals(expected, html, "Output does not match the expected redescripition set!");
 
-        //Helpers.removeAllTempFiles(workDir);
+        Helpers.removeAllTempFiles(workDir);
     }
 }

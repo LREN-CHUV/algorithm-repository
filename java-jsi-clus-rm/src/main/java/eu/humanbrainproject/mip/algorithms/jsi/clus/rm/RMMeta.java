@@ -18,9 +18,8 @@ import eu.humanbrainproject.mip.algorithms.Configuration;
 
 
 /**
- * @author Matej Mihelčić (based on design of Martin Breskvar)
- *         <p>
- *         This class sets the algorithm parameters
+ * @author <a href="mailto:martin.breskvar@ijs.si">Martin Breskvar</a> and <a href="mailto:matej.mihelcic@irb.hr">Matej
+ *         Mihelčić</a>
  */
 public class RMMeta {
 
