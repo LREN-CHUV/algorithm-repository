@@ -211,6 +211,8 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
         minimum = dep_var.get('minValue', values.min())
         maximum = dep_var.get('maxValue', values.max())
 
+        logging.info('Using min/max = {}/{} for variable {}'.format(minimum, maximum, dep_var))
+
         all_nulls = values.isnull().all()
 
         if all_nulls:
@@ -225,6 +227,8 @@ def compute_categories(dep_var, nb_bins=DEFAULT_BINS):
                 step = (maximum - minimum) / nb_bins
                 categories = list(arange(minimum, maximum, step).tolist())
                 categories_labels = ["%s - %s" % ("{:.2f}".format(v), "{:.2f}".format(v + step)) for v in categories]
+
+            if len(categories) <= len(categories_labels):
                 categories.append(categories[-1] + step)
 
             if has_nulls:

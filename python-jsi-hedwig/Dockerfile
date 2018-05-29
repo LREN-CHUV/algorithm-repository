@@ -2,7 +2,7 @@ FROM hbpmip/python-mip:0.6.5
 
 MAINTAINER anze.vavpetic@ijs.si
 
-ENV DOCKER_IMAGE=hbpmip/python-jsi-hedwig:1.0.7 \
+ENV DOCKER_IMAGE=hbpmip/python-jsi-hedwig:1.0.8 \
     FUNCTION=python-jsi-hedwig
 
 COPY requirements.txt /src/requirements.txt
@@ -19,9 +19,9 @@ COPY doc/ /src/doc/
 WORKDIR /src/hedwig
 RUN pip install -r requirements.txt
 
+RUN python setup.py install
 COPY preprocess.py /src/hedwig/
 COPY mip_hedwig.py /src/hedwig/
-RUN python setup.py install
 
 ENTRYPOINT ["python", "/src/hedwig/mip_hedwig.py"]
 

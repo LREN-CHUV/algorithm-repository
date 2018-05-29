@@ -92,7 +92,7 @@ services:
     extends: correlation-heatmap-base
     container_name: "correlation-heatmap-single"
     environment:
-      JOB_ID: '1'
+      JOB_ID: '0'
       PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_a LIMIT 100"
     links:
       - "db:db"
@@ -153,7 +153,7 @@ services:
     extends: distributed-pca-base
     container_name: "distributed-pca-single"
     environment:
-      JOB_ID: '1'
+      JOB_ID: '0'
       PARAM_query: "SELECT lefthippocampus, minimentalstate, opticchiasm, subjectageyears FROM cde_features_a LIMIT 100"
     links:
       - "db:db"

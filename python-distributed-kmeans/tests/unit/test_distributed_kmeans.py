@@ -2,8 +2,27 @@ import mock
 import json
 import numpy as np
 from . import fixtures as fx
-from distributed_kmeans import intermediate_kmeans, aggregate_kmeans
+from distributed_kmeans import intermediate_kmeans, aggregate_kmeans, compute
 import dkmeans.local_computations as local
+
+
+@mock.patch('distributed_kmeans.io_helper.fetch_data')
+@mock.patch('distributed_kmeans.io_helper.save_results')
+@mock.patch('distributed_kmeans.parameters.get_param')
+def test_compute(mock_get_param, mock_save_results, mock_fetch_data):
+    # create mock objects from database
+    mock_get_param.return_value = 2
+    mock_fetch_data.return_value = fx.inputs_regression(include_categorical=True)
+
+    compute()
+
+    pfa = mock_save_results.call_args[0][0]
+    pfa_dict = json.loads(pfa)
+
+    # make some prediction with PFA
+    from titus.genpy import PFAEngine
+    engine, = PFAEngine.fromJson(pfa_dict)
+    engine.action({'stress_before_test1': 10., 'iq': 10., 'agegroup': '-50y'})
 
 
 @mock.patch('distributed_kmeans.io_helper.fetch_data')

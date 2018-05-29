@@ -38,11 +38,11 @@ def test_compute_heatmap(mock_save_results, mock_fetch_data):
     assert round_dict(results) == [
         {
             'type': 'heatmap',
-            'z': [[-0.429, -0.543, 1.0], [0.417, 1.0, -0.543], [1.0, 0.417, -0.429]],
-            'x': ['iq', 'score_test1', 'stress_before_test1'],
-            'y': ['stress_before_test1', 'score_test1', 'iq'],
-            'zmin': -1,
-            'zmax': 1
+            'x': ['score_test1', 'stress_before_test1', 'iq'],
+            'y': ['iq', 'stress_before_test1', 'score_test1'],
+            'z': [[0.417, -0.429, 1.0], [-0.543, 1.0, -0.429], [1.0, -0.543, 0.417]],
+            'zmax': 1,
+            'zmin': -1
         }
     ]
 
@@ -80,12 +80,12 @@ def test_intermediate_stats(mock_save_results, mock_fetch_data):
     intermediate_stats()
     results = json.loads(mock_save_results.call_args[0][0])
     assert round_dict(results) == {
-        'columns': ['iq', 'score_test1', 'stress_before_test1'],
-        'means': [73.882, 1096.505, 52.93],
         'X^T * X':
-        [[32751.417, 486164.936, 23458.891], [486164.936, 7321018.913, 345715.383], [23458.891, 345715.383, 17009.122]],
+        [[7321018.913, 345715.383, 486164.936], [345715.383, 17009.122, 23458.891], [486164.936, 23458.891, 32751.417]],
+        'columns': ['score_test1', 'stress_before_test1', 'iq'],
         'count':
-        6
+        6,
+        'means': [1096.505, 52.93, 73.882]
     }
 
 

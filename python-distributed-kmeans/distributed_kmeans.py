@@ -62,6 +62,47 @@ logging.basicConfig(level=logging.INFO)
 OPTIMIZATION = 'lloyd'
 EPSILON = 0.00001
 LR = 0.01  # learning rate for gradient descent, not used for Lloyd version
+DEFAULT_N_CLUSTERS = 8
+
+# if `mean` and `std` are not available in metadata, normalize variables if DEFAULT_NORMALIZE is True, if False then
+# keep them as they are
+DEFAULT_NORMALIZE = True
+
+
+@utils.catch_user_error
+def compute():
+    """Create PFA for kNN."""
+    # Read intermediate inputs from jobs
+    logging.info("Fetching intermediate data...")
+
+    inputs = io_helper.fetch_data()
+    indep_vars = inputs["data"]["independent"]
+
+    # Extract hyperparameters from ENV variables
+    k = parameters.get_param('n_clusters', int, DEFAULT_N_CLUSTERS)
+
+    # featurization
+    featurizer = _create_featurizer(indep_vars)
+
+    # convert variables into dataframe
+    X = io_helper.fetch_dataframe(variables=indep_vars)
+    X = utils.remove_nulls(X, errors='ignore')
+    X = featurizer.transform(X)
+
+    estimator = KMeans(n_clusters=k)
+    estimator.fit(X)
+
+    # Generate PFA for kmeans
+    types = [(var['name'], var['type']['name']) for var in indep_vars]
+    pfa = sklearn_to_pfa(estimator, types, featurizer.generate_pretty_pfa())
+
+    # Add centroids as metadata
+    pfa['metadata'] = {'centroids': json.dumps(estimator.cluster_centers_.tolist())}
+
+    # Save or update job_result
+    logging.info('Saving PFA to job_results table')
+    io_helper.save_results(json.dumps(pfa), shapes.Shapes.PFA)
+    logging.info("DONE")
 
 
 @utils.catch_user_error
@@ -73,7 +114,7 @@ def intermediate_kmeans():
     indep_vars = inputs["data"]["independent"]
 
     # Extract hyperparameters from ENV variables
-    k = parameters.get_param('n_clusters', int, 8)
+    k = parameters.get_param('n_clusters', int, DEFAULT_N_CLUSTERS)
 
     # Load data into a Pandas dataframe
     logging.info("Loading data...")
@@ -81,9 +122,16 @@ def intermediate_kmeans():
 
     # Return variables info, but remove actual data points
     results = {'indep_vars': []}
-    for iv in indep_vars:
-        del iv['series']
-        results['indep_vars'].append(iv)
+    for var in indep_vars:
+        if var['type']['name'] in ('integer', 'real'):
+            new_var = {k: v for k, v in var.items() if k != 'series'}
+            mean, std = _get_moments(var)
+            new_var['mean'] = mean
+            new_var['std'] = std
+        else:
+            new_var = var
+
+        results['indep_vars'].append(new_var)
 
     # Drop NaN values
     X = utils.remove_nulls(X, errors='ignore')
@@ -173,24 +221,52 @@ def _create_featurizer(indep_vars):
     transforms = []
     for var in indep_vars:
         if var['type']['name'] in ('integer', 'real'):
-            transforms.append(Standardize(var['name'], var['mean'], var['std']))
+            mean, std = _get_moments(var)
+            tf = Standardize(var['name'], mean, std)
+            transforms.append(tf)
         elif var["type"]["name"] in ['polynominal', 'binominal']:
             transforms.append(OneHotEncoding(var['name'], var['type']['enumeration']))
+
     return Featurizer(transforms)
+
+
+def _get_moments(var):
+    # TODO: DRY with the same function in `sgd_regression.py`
+    s = [x for x in var.get('series', []) if x is not None]
+
+    if 'mean' in var:
+        mean = var['mean']
+    else:
+        if DEFAULT_NORMALIZE and len(s):
+            mean = np.mean(s)
+        else:
+            mean = 0.
+        logging.warning('Mean not available for variable {}, using default value {}.'.format(var['name'], mean))
+
+    if 'std' in var:
+        std = var['std']
+    else:
+        if DEFAULT_NORMALIZE and len(s):
+            std = np.std(s)
+        else:
+            std = 1.
+        logging.warning('Standard deviation not available for variable {}, using default value {}'.format(var['name'], std))
+    return mean, std
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('compute', choices=['compute'])
-    parser.add_argument('--mode', choices=['intermediate', 'aggregate'], default='intermediate')
-    # QUESTION: (job_id, node) is a primary key of `job_result` table. Does it mean I'll need node ids as well in order
-    # to query unique job?
+    parser.add_argument('--mode', choices=['single', 'intermediate', 'aggregate'], default='single')
     parser.add_argument('--job-ids', type=str, nargs="*", default=[])
 
     args = parser.parse_args()
 
+    # > compute
+    if args.mode == 'single':
+        compute()
     # > compute --mode intermediate
-    if args.mode == 'intermediate':
+    elif args.mode == 'intermediate':
         intermediate_kmeans()
     # > compute --mode aggregate --job-ids 12 13 14
     elif args.mode == 'aggregate':

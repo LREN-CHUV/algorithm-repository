@@ -20,6 +20,7 @@ from sklearn_to_pfa.featurizer import Featurizer, Standardize, OneHotEncoding, D
 from sklearn_to_pfa.mixed_nb import MixedNB
 
 import logging
+import numpy as np
 import pandas as pd
 from pandas.io import json
 import argparse
@@ -35,6 +36,10 @@ jsonpickle_numpy.register_handlers()
 logging.basicConfig(level=logging.INFO)
 
 DEFAULT_DOCKER_IMAGE = "python-sgd-regression"
+
+# if `mean` and `std` are not available in metadata, normalize variables if DEFAULT_NORMALIZE is True, if False then
+# keep them as they are
+DEFAULT_NORMALIZE = True
 
 
 @utils.catch_user_error
@@ -53,7 +58,7 @@ def main(job_id, generate_pfa):
         job_result = io_helper.get_results(job_id=str(job_id))
 
         logging.info('Loading existing estimator')
-        estimator = deserialize_sklearn_estimator(job_result.data['estimator'])
+        estimator = deserialize_sklearn_estimator(json.loads(job_result.data)['estimator'])
     else:
         logging.info('Creating new estimator')
         estimator = _create_estimator(job_type)
@@ -110,7 +115,7 @@ def main(job_id, generate_pfa):
     else:
         # Save or update job_result
         logging.info('Saving serialized estimator into job_results table')
-        io_helper.save_results(_estimator_metadata(estimator, X, y, featurizer), shapes.Shapes.JSON)
+        io_helper.save_results(json.dumps(_estimator_metadata(estimator, X, y, featurizer)), shapes.Shapes.JSON)
 
 
 def _estimator_metadata(estimator, X, y, featurizer):
@@ -249,13 +254,8 @@ def _create_featurizer(indep_vars, estimator):
             if isinstance(estimator, (MixedNB, GradientBoostingRegressor, GradientBoostingClassifier)):
                 tf = DummyTransform(var['name'])
             else:
-                if 'mean' not in var:
-                    logging.warning('Mean not available for variable {}, using default value 0.'.format(var['name']))
-                if 'std' not in var:
-                    logging.warning(
-                        'Standard deviation not available for variable {}, using default value 1.'.format(var['name'])
-                    )
-                tf = Standardize(var['name'], var.get('mean', 0), var.get('std', 1))
+                mean, std = _get_moments(var)
+                tf = Standardize(var['name'], mean, std)
 
             transforms.append(tf)
         elif var["type"]["name"] in ['polynominal', 'binominal']:
@@ -277,17 +277,39 @@ def _create_featurizer(indep_vars, estimator):
     return Featurizer(transforms)
 
 
+def _get_moments(var):
+    s = [x for x in var['series'] if x is not None]
+    if 'mean' in var:
+        mean = var['mean']
+    else:
+        if DEFAULT_NORMALIZE and len(s):
+            mean = np.mean(s)
+        else:
+            mean = 0.
+        logging.warning('Mean not available for variable {}, using default value {}.'.format(var['name'], mean))
+
+    if 'std' in var:
+        std = var['std']
+    else:
+        if DEFAULT_NORMALIZE and len(s):
+            std = np.std(s)
+        else:
+            std = 1.
+        logging.warning('Standard deviation not available for variable {}, using default value {}'.format(var['name'], std))
+    return mean, std
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('compute', choices=['compute'])
-    parser.add_argument('--mode', choices=['partial', 'final'], default='final')
+    parser.add_argument('--mode', choices=['intermediate', 'aggregate'], default='aggregate')
     parser.add_argument('--job-id', type=str)
 
     args = parser.parse_args()
 
-    # > compute partial --job-id 12
-    if args.mode == 'partial':
+    # > compute intermediate --job-id 12
+    if args.mode == 'intermediate':
         main(args.job_id, generate_pfa=False)
-    # > compute final --job-id 13
-    elif args.mode == 'final':
+    # > compute aggregate --job-id 13
+    elif args.mode == 'aggregate':
         main(args.job_id, generate_pfa=True)
