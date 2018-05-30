@@ -113,7 +113,7 @@ def aggregate_stats(job_ids, graph_type=None):
     """
     # Read intermediate inputs from jobs
     logging.info("Fetching intermediate data...")
-    results = [json.loads(io_helper.get_results(str(job_id)).data) for job_id in job_ids]
+    results = io_helper.load_intermediate_json_results(map(str, job_ids))
 
     corr, columns = _aggregate_results(results)
 
