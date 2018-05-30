@@ -9,6 +9,7 @@ COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
 COPY anova.py /src/anova.py
+COPY distributed_anova.py /src/distributed_anova.py
 COPY tests/unit/ /src/tests/
 
 WORKDIR /src
@@ -28,6 +29,7 @@ COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
 COPY anova.py /anova.py
+COPY distributed_anova.py /distributed_anova.py
 
 ENTRYPOINT ["python", "/anova.py"]
 

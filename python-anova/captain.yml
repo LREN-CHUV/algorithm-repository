@@ -2,6 +2,7 @@ target_image:
   build: Dockerfile
   image: hbpmip/python-anova
   pre:
+    - find . -name \*.pyc -delete
     - echo "Preparing python-anova"
   post:
     - echo "Finished python-anova"

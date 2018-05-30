@@ -61,13 +61,11 @@ services:
     depends_on:
       - db
 
-  anova:
+  anova-base:
     image: "hbpmip/python-anova:latest"
-    container_name: "anova"
     restart: "no"
     environment:
       NODE: job_test
-      JOB_ID: 1
       IN_DBAPI_DRIVER: postgresql
       IN_USER: features
       IN_PASSWORD: featurespwd
@@ -80,11 +78,69 @@ services:
       OUT_HOST: db
       OUT_PORT: 5432
       OUT_DATABASE: woken
-      PARAM_variables: "subjectageyears"
-      PARAM_covariables: "lefthippocampus,leftthalamusproper,leftacgganteriorcingulategyrus,leftententorhinalarea"
+      PARAM_variables: "lefthippocampus"
+      PARAM_covariables: "agegroup"
       PARAM_grouping: ""
-      PARAM_query: "SELECT subjectageyears,lefthippocampus,leftthalamusproper,leftacgganteriorcingulategyrus,leftententorhinalarea FROM cde_features_a"
-      PARAM_meta: "{\"rightphgparahippocampalgyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right parahippocampal gyrus\",\"code\":\"rightphgparahippocampalgyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"lefthippocampus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left Hippocampus\",\"code\":\"lefthippocampus\",\"units\":\"cm3\",\"type\":\"real\"},\"rightthalamusproper\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right Thalamus\",\"code\":\"rightthalamusproper\",\"units\":\"cm3\",\"type\":\"real\"},\"rightacgganteriorcingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right anterior cingulate gyrus\",\"code\":\"rightacgganteriorcingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"leftthalamusproper\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left Thalamus\",\"code\":\"leftthalamusproper\",\"units\":\"cm3\",\"type\":\"real\"},\"leftphgparahippocampalgyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left parahippocampal gyrus\",\"code\":\"leftphgparahippocampalgyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"rightmcggmiddlecingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right middle cingulate gyrus\",\"code\":\"rightmcggmiddlecingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"leftacgganteriorcingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left anterior cingulate gyrus\",\"code\":\"leftacgganteriorcingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"leftmcggmiddlecingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left middle cingulate gyrus\",\"code\":\"leftmcggmiddlecingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"leftententorhinalarea\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left entorhinal area\",\"code\":\"leftententorhinalarea\",\"units\":\"cm3\",\"type\":\"real\"},\"rightpcggposteriorcingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right posterior cingulate gyrus\",\"code\":\"rightpcggposteriorcingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"leftpcggposteriorcingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left posterior cingulate gyrus\",\"code\":\"leftpcggposteriorcingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"},\"righthippocampus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right Hippocampus\",\"code\":\"righthippocampus\",\"units\":\"cm3\",\"type\":\"real\"},\"rightententorhinalarea\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right entorhinal area\",\"code\":\"rightententorhinalarea\",\"units\":\"cm3\",\"type\":\"real\"}}"
+      PARAM_meta: "{\"rightphgparahippocampalgyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right parahippocampal gyrus\",\"code\":\"rightphgparahippocampalgyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"lefthippocampus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left Hippocampus\",\"code\":\"lefthippocampus\",\"units\":\"cm3\",\"type\":\"real\"},\"rightthalamusproper\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right Thalamus\",\"code\":\"rightthalamusproper\",\"units\":\"cm3\",\"type\":\"real\"},\"rightacgganteriorcingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right anterior cingulate gyrus\",\"code\":\"rightacgganteriorcingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"leftthalamusproper\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left Thalamus\",\"code\":\"leftthalamusproper\",\"units\":\"cm3\",\"type\":\"real\"},\"leftphgparahippocampalgyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left parahippocampal gyrus\",\"code\":\"leftphgparahippocampalgyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"rightmcggmiddlecingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right middle cingulate gyrus\",\"code\":\"rightmcggmiddlecingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"leftacgganteriorcingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left anterior cingulate gyrus\",\"code\":\"leftacgganteriorcingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"leftmcggmiddlecingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left middle cingulate gyrus\",\"code\":\"leftmcggmiddlecingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"leftententorhinalarea\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left entorhinal area\",\"code\":\"leftententorhinalarea\",\"units\":\"cm3\",\"type\":\"real\"},\"rightpcggposteriorcingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right posterior cingulate gyrus\",\"code\":\"rightpcggposteriorcingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"leftpcggposteriorcingulategyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left posterior cingulate gyrus\",\"code\":\"leftpcggposteriorcingulategyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"},\"righthippocampus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right Hippocampus\",\"code\":\"righthippocampus\",\"units\":\"cm3\",\"type\":\"real\"},\"rightententorhinalarea\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right entorhinal area\",\"code\":\"rightententorhinalarea\",\"units\":\"cm3\",\"type\":\"real\"}, \"agegroup\":{\"enumerations\":[{\"code\":\"-50y\",\"label\":\"-50y\"},{\"code\":\"50-59y\",\"label\":\"50-59y\"},{\"code\":\"60-69y\",\"label\":\"60-69y\"},{\"code\":\"70-79y\",\"label\":\"70-79y\"},{\"code\":\"+80y\",\"label\":\"+80y\"}],\"description\":\"Age Group\",\"methodology\":\"mip-cde\",\"label\":\"Age Group\",\"code\":\"agegroup\",\"type\":\"polynominal\"}}"
       MODEL_PARAM_design: "factorial"
+
+  anova-single:
+    extends: anova-base
+    container_name: "anova-single"
+    environment:
+      JOB_ID: '0'
+      PARAM_query: "SELECT lefthippocampus, agegroup FROM cde_features_a WHERE lefthippocampus is not null and agegroup is not null LIMIT 100"
+    links:
+      - "db:db"
+
+  anova-a-1:
+    extends: anova-base
+    container_name: "anova-a-1"
+    environment:
+      JOB_ID: '1'
+      PARAM_query: "SELECT lefthippocampus, agegroup FROM cde_features_a WHERE lefthippocampus is not null and agegroup is not null LIMIT 100"
+    links:
+      - "db:db"
+
+  anova-b-1:
+    extends: anova-base
+    container_name: "anova-b-1"
+    environment:
+      JOB_ID: '2'
+      PARAM_query: "SELECT lefthippocampus, agegroup FROM cde_features_b WHERE lefthippocampus is not null and agegroup is not null LIMIT 100"
+    links:
+      - "db:db"
+
+  anova-agg-1:
+    extends: anova-base
+    container_name: "anova-agg-1"
+    environment:
+      JOB_ID: '3'
+    links:
+      - "db:db"
+
+  anova-a-2:
+    extends: anova-base
+    container_name: "anova-a-2"
+    environment:
+      JOB_ID: '4'
+      PARAM_query: "SELECT lefthippocampus, agegroup FROM cde_features_a WHERE lefthippocampus is not null and agegroup is not null LIMIT 100"
+    links:
+      - "db:db"
+
+  anova-b-2:
+    extends: anova-base
+    container_name: "anova-b-2"
+    environment:
+      JOB_ID: '5'
+      PARAM_query: "SELECT lefthippocampus, agegroup FROM cde_features_b WHERE lefthippocampus is not null and agegroup is not null LIMIT 100"
+    links:
+      - "db:db"
+
+  anova-agg-2:
+    extends: anova-base
+    container_name: "anova-agg-2"
+    environment:
+      JOB_ID: '6'
     links:
       - "db:db"
