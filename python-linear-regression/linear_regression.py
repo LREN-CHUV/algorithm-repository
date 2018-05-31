@@ -84,20 +84,25 @@ def main():
         # Add metadata from model
         pfa['metadata'] = metadata
 
-        # TODO: save multiple outputs - PFA and coeficients
+    logging.info('Saving to job_results table...')
+    _store_multiple_results(result, pfa)
 
-    # Store results
-    io_helper.save_results(json.dumps(result), 'application/json')
+
+def _store_multiple_results(result, pfa):
+    io_helper.save_results(
+        json.dumps(result), shapes.Shapes.JSON, result_name='coefficients', result_title='Linear regression summary'
+    )
+    io_helper.save_results(
+        json.dumps(pfa), shapes.Shapes.PFA, result_name='model', result_title='PFA'
+    )
+    io_helper.results_complete()
 
 
 def _fit_regression(X, y):
     lm = OLS(y, X)
     flm = lm.fit()
     logging.info(flm.summary())
-    metadata = {
-        'summary': str(flm.summary()),
-        'summary2': str(flm.summary2())
-    }
+    metadata = {'summary': str(flm.summary()), 'summary2': str(flm.summary2())}
     return format_output(flm), metadata
 
 
@@ -108,10 +113,7 @@ def _fit_logit(X, y):
         flm = lm.fit(method='bfgs')
         logging.info(flm.summary())
         output = format_output(flm)
-        metadata = {
-            'summary': str(flm.summary()),
-            'summary2': str(flm.summary2())
-        }
+        metadata = {'summary': str(flm.summary()), 'summary2': str(flm.summary2())}
     except (np.linalg.linalg.LinAlgError, PerfectSeparationError, ValueError) as e:
         # Perfect separation or singular matrix - use NaN
         logging.warning(e)
@@ -120,7 +122,8 @@ def _fit_logit(X, y):
             "std_err": None,
             "t_values": None,
             "p_values": None,
-        } for col in X.columns}
+        }
+                  for col in X.columns}
 
     return output, metadata
 
@@ -223,7 +226,7 @@ def intermediate():
         }
 
     # Store results
-    io_helper.save_results(json.dumps(result), 'application/json')
+    io_helper.save_results(json.dumps(result), shapes.Shapes.JSON)
 
 
 def format_output(flm):
@@ -260,7 +263,7 @@ def aggregate(job_ids):
 
     # Save job_result
     logging.info('Saving PFA to job_results table...')
-    io_helper.save_results(json.dumps(result), shapes.Shapes.PFA)
+    _store_multiple_results(result, pfa)
 
 
 def _combine_estimates(results):
