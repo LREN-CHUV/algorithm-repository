@@ -19,17 +19,38 @@ from mip_helper.shapes import Shapes
 
 import argparse
 import logging
-import json
 
-from pandas import DataFrame
+import pandas as pd
+from pandas.io import json
 from statsmodels.formula.api import ols
 from statsmodels.stats.anova import anova_lm
+from tableschema import validate, exceptions
 
 DESIGN_PARAM = "design"
 DEFAULT_DESIGN = "factorial"
 MAX_FACTORIAL_COVARIABLES = 8
 
 DEFAULT_DOCKER_IMAGE = "python-anova"
+
+
+def _validate_schema(schema):
+    try:
+        validate(schema)
+    except exceptions.ValidationError as exception:
+        for error in exception.errors:
+            raise error
+
+
+OUTPUT_SCHEMA = {
+    'fields': [
+        {'name': 'Variable', 'type': 'string'},
+        {'name': 'Sum²', 'type': 'number'},
+        {'name': 'Degrees of freedom', 'type': 'integer'},
+        {'name': 'F-value', 'type': 'number'},
+        {'name': 'P-value', 'type': 'number'},
+    ]
+}
+_validate_schema(OUTPUT_SCHEMA)
 
 
 @utils.catch_user_error
@@ -51,10 +72,12 @@ def main():
     data = format_data(inputs["data"])
 
     # Compute anova
-    anova_results = format_output(compute_anova(dep_var, inped_vars, data, design).to_dict())
+    results = format_output(compute_anova(dep_var, inped_vars, data, design))
 
     # Store results
-    io_helper.save_results(anova_results, Shapes.JSON)
+    logging.info("Results:\n{}".format(results))
+    io_helper.save_results(json.dumps(results), Shapes.TABULAR_DATA_RESOURCE)
+    logging.info("DONE")
 
 
 def format_data(input_data):
@@ -63,14 +86,44 @@ def format_data(input_data):
     return data
 
 
-def format_output(statsmodels_dict):
-    return json.dumps(DataFrame.from_dict(statsmodels_dict).transpose().fillna("NaN").to_dict())
+def _format_pvalue(pval):
+    if pval <= 0.001:
+        return '{:.3f} (★★★)'.format(pval)
+    elif pval <= 0.01:
+        return '{:.3f} (★★)'.format(pval)
+    elif pval <= 0.1:
+        return '{:.3f} (★)'.format(pval)
+    else:
+        return '{:.3f}'.format(pval)
+
+
+def format_output(anova_table):
+    anova_table['df'] = anova_table['df'].astype(int)
+
+    data = []
+    for row in anova_table.reset_index().to_dict(orient='records'):
+        d = {
+            'Variable': row['index'],
+            'Sum²': row['sum_sq'],
+            'Degrees of freedom': row['df'],
+        }
+        if pd.notnull(row['F']):
+            d['F-value'] = row['F']
+        if pd.notnull(row['PR(>F)']):
+            d['P-value'] = _format_pvalue(row['PR(>F)'])
+
+        data.append(d)
+
+    return {
+        'schema': OUTPUT_SCHEMA,
+        'data': data,
+    }
 
 
 def compute_anova(dep_var, indep_vars, data, design='factorial'):
     formula = generate_formula(dep_var, indep_vars, design)
     logging.info("Formula: %s" % formula)
-    data = DataFrame(data)
+    data = pd.DataFrame(data)
 
     if data.empty:
         raise errors.UserError('SQL returned no data, check your dataset and null values.')

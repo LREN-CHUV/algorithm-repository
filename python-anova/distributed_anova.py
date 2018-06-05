@@ -144,10 +144,10 @@ def aggregate_anova(job_ids):
     anova_tab = anova_models(sub_ss)
 
     # Store ANOVA table
-    anova_results = anova.format_output(anova_tab.to_dict())
+    anova_results = anova.format_output(anova_tab)
 
     # Store results
-    io_helper.save_results(anova_results, Shapes.JSON)
+    io_helper.save_results(json.dumps(anova_results), Shapes.TABULAR_DATA_RESOURCE)
 
 
 def _combine_squares(local_ss_list):
