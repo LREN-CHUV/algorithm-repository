@@ -10,7 +10,7 @@ COPY src/ /project/src
 RUN cp /usr/share/maven/ref/settings-docker.xml /root/.m2/settings.xml \
     && mvn -Dmaven.test.skip=true package site
 
-FROM hbpmip/java-jsi-clus:0.4.4
+FROM hbpmip/java-jsi-clus:0.4.5
 
 MAINTAINER martin.breskvar@ijs.si
 
