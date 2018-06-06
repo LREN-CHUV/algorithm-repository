@@ -18,6 +18,15 @@ get_script_dir () {
 
 cd "$(get_script_dir)"
 
+cleanup=1
+for param in "$@"
+do
+  if [ "--no-cleanup" == "$param" ]; then
+    cleanup=0
+    echo "INFO: --no-cleanup option detected !"
+  fi
+done
+
 if [[ $NO_SUDO || -n "$CIRCLECI" ]]; then
   DOCKER_COMPOSE="docker-compose"
 elif groups $USER | grep &>/dev/null '\bdocker\b'; then
@@ -34,7 +43,10 @@ function _cleanup() {
   $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null | true
   exit $error_code
 }
+
+if [[ "$cleanup" == 1 ]]; then
 trap _cleanup EXIT INT TERM
+fi
 
 echo "Starting the databases..."
 $DOCKER_COMPOSE up -d --remove-orphans db
@@ -51,18 +63,20 @@ echo "Run the CLUS PCT algorithm for single-target classification..."
 $DOCKER_COMPOSE run clus_pct_classification_st compute
 echo "Run the CLUS PCT algorithm for single-target regression..."
 $DOCKER_COMPOSE run clus_pct_regression_st compute
-echo "Run the CLUS PCT algorithm for multi-target classification..."
-$DOCKER_COMPOSE run clus_pct_classification_mt compute
-echo "Run the CLUS PCT algorithm for multi-target regression..."
-$DOCKER_COMPOSE run clus_pct_regression_mt compute
+# echo "Run the CLUS PCT algorithm for multi-target classification..."
+# $DOCKER_COMPOSE run clus_pct_classification_mt compute
+# echo "Run the CLUS PCT algorithm for multi-target regression..."
+# $DOCKER_COMPOSE run clus_pct_regression_mt compute
 
-#echo
+echo
 echo "Running PFA validation..."
 $DOCKER_COMPOSE run pfa_validator_classification_st
 $DOCKER_COMPOSE run pfa_validator_regression_st
-$DOCKER_COMPOSE run pfa_validator_classification_mt
-$DOCKER_COMPOSE run pfa_validator_regression_mt
+# $DOCKER_COMPOSE run pfa_validator_classification_mt
+# $DOCKER_COMPOSE run pfa_validator_regression_mt
 
 echo
 # Cleanup
+if [[ "$cleanup" == 1 ]]; then
 _cleanup
+fi
