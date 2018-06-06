@@ -5,7 +5,7 @@
 	<groupId>eu.humanbrainproject.mip.algorithms.jsi</groupId>
 	<artifactId>jsi-clus-fire</artifactId>
 	<packaging>jar</packaging>
-	<version>0.9.7</version><!-- bumpversion -->
+	<version>0.9.8</version><!-- bumpversion -->
 	<name>java-jsi-clus-fire</name>
 
 	<properties>
