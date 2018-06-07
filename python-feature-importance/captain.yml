@@ -1,0 +1,10 @@
+target_image:
+  build: Dockerfile
+  image: hbpmip/python-feature-importance
+  pre:
+    - find . -name \*.pyc -delete
+    - echo "Preparing python-feature-importance"
+  post:
+    - echo "Finished python-feature-importance"
+  test:
+    - ./tests/test.sh

@@ -2,6 +2,7 @@ target_image:
   build: Dockerfile
   image: hbpmip/python-linear-regression
   pre:
+    - find . -name \*.pyc -delete
     - echo "Preparing python-linear-regression"
   post:
     - echo "Finished python-linear-regression"
