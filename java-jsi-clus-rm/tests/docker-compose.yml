@@ -82,4 +82,3 @@ services:
       FUNCTION: java-jsi-clus-rm
     links:
       - "db:db"
-
