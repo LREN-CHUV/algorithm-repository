@@ -13,7 +13,7 @@ WORKDIR /src
 RUN pytest tests/
 
 
-FROM hbpmip/python-mip:0.6.5
+FROM hbpmip/python-mip:0.6.8
 
 MAINTAINER mirco.nasuti@chuv.ch
 
