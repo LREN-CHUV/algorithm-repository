@@ -46,9 +46,26 @@ echo "Initialise the databases..."
 $DOCKER_COMPOSE run sample_data_db_setup
 $DOCKER_COMPOSE run woken_db_setup
 
+# single-node mode
 echo
 echo "Run the Anova algorithm..."
-$DOCKER_COMPOSE run anova compute
+$DOCKER_COMPOSE run anova-single compute
+
+# distributed mode - 1st phase
+echo "Run the anova-a-1..."
+$DOCKER_COMPOSE run anova-a-1 compute --mode intermediate-models
+echo "Run the anova-b-1..."
+$DOCKER_COMPOSE run anova-b-1 compute --mode intermediate-models
+echo "Run the anova-agg-1..."
+$DOCKER_COMPOSE run anova-agg-1 compute --mode aggregate-models --job-ids 1 2
+
+# distributed mode - 2nd phase
+echo "Run the anova-a-2..."
+$DOCKER_COMPOSE run anova-a-2 compute --mode intermediate-anova --job-ids 3
+echo "Run the anova-b-2..."
+$DOCKER_COMPOSE run anova-b-2 compute --mode intermediate-anova --job-ids 3
+echo "Run the anova-agg-2..."
+$DOCKER_COMPOSE run anova-agg-2 compute --mode aggregate-anova --job-ids 4 5
 
 echo
 # Cleanup
