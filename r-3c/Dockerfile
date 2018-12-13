@@ -61,7 +61,7 @@ RUN chown -R compute:compute /src/ \
 LABEL eu.humanbrainproject.function=r-3c \
       eu.humanbrainproject.function.location=node \
       eu.humanbrainproject.function.version=0.1 \
-      eu.humanbrainproject.function.author="Shay Yaacoby, Loduvic Claude" \
+      eu.humanbrainproject.function.author="Shay Yaacoby, Ludovic Claude" \
       eu.humanbrainproject.function.organisation="" \
       eu.humanbrainproject.function.date="" \
       org.label-schema.build-date=$BUILD_DATE \
