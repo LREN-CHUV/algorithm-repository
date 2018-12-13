@@ -2,7 +2,7 @@ FROM hbpmip/python-mip:0.6.8
 
 MAINTAINER jan.kralj@ijs.si
 
-ENV DOCKER_IMAGE=hbpmip/python-jsi-hinmine:0.3.0 \
+ENV DOCKER_IMAGE=hbpmip/python-jsi-hinmine:0.3.1 \
     FUNCTION=python-jsi-hinmine
 
 # Install system packages
