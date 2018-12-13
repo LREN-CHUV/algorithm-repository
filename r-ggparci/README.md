@@ -6,7 +6,7 @@
 
 ```sh
 
-  docker run --rm --env [list of environment variables] hbpmip/r-ggparci:0.2.1 compute
+  docker run --rm --env [list of environment variables] hbpmip/r-ggparci:0.2.2 compute
 
 ```
 
