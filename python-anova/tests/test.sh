@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+#
+# Launch the integration tests
+#
+# Option:
+#   --no-cleanup: Do not cleanup after execution of the suite, useful for debugging
+#        as you can view the execution logs of all Docker containers, using
+#        docker ps -a then docker logs
+#
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
@@ -18,21 +27,32 @@ get_script_dir () {
 
 cd "$(get_script_dir)"
 
+cleanup=1
+for param in "$@"
+do
+  if [ "--no-cleanup" == "$param" ]; then
+    cleanup=0
+    echo "INFO: --no-cleanup option detected !"
+  fi
+done
+
 if [[ $NO_SUDO || -n "$CIRCLECI" ]]; then
   DOCKER_COMPOSE="docker-compose"
-elif groups $USER | grep &>/dev/null '\bdocker\b'; then
+elif groups "$USER" | grep &>/dev/null '\bdocker\b'; then
   DOCKER_COMPOSE="docker-compose"
 else
   DOCKER_COMPOSE="sudo docker-compose"
 fi
 
 function _cleanup() {
-  local error_code="$?"
-  echo "Stopping the containers..."
-  $DOCKER_COMPOSE stop | true
-  $DOCKER_COMPOSE down | true
-  $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null | true
-  exit $error_code
+  if [ $cleanup == 1 ]; then
+    local error_code="$?"
+    echo "Stopping the containers..."
+    $DOCKER_COMPOSE stop | true
+    $DOCKER_COMPOSE down | true
+    $DOCKER_COMPOSE rm -f > /dev/null 2> /dev/null | true
+    exit $error_code
+  fi
 }
 trap _cleanup EXIT INT TERM
 
@@ -53,3 +73,4 @@ $DOCKER_COMPOSE run anova compute
 echo
 # Cleanup
 _cleanup
+
