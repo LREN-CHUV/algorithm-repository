@@ -1,6 +1,7 @@
 import pytest
 import mock
 import json
+import os
 from anova import generate_formula, main
 from mip_helper import errors
 from mip_helper import testing as t
@@ -70,3 +71,13 @@ def test_main_empty_input(mock_exit, mock_save_error, mock_fetch_data):
 
     mock_exit.assert_called_once_with(1)
     mock_save_error.assert_called_once()
+
+@mock.patch('anova.io_helper.save_results')
+def test_main_my_data(mock_save_results):
+    os.environ['INPUT_FILE'] = 'tests/unit/data.csv'
+    os.environ['PARAM_variables'] = 'a'
+    os.environ['PARAM_covariables'] = 'b,c'
+    os.environ['PARAM_meta'] = "{\"a\":{\"description\":\"\",\"code\":\"a\",\"type\":\"real\"},\"b\":{\"description\":\"\",\"code\":\"b\",\"type\":\"real\"},\"c\":{\"description\":\"\",\"code\":\"c\",\"type\":\"real\"}}"
+    main()
+    result = json.loads(mock_save_results.call_args[0][0])
+    # assert result ...

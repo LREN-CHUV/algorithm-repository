@@ -14,8 +14,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from mip_helper import io_helper, errors, utils, parameters
+from mip_helper import io_helper, errors, utils
 from mip_helper.shapes import Shapes
+from mip_helper.parameters import get_parameter
 
 import logging
 import json
@@ -40,7 +41,7 @@ def main():
     inputs = io_helper.fetch_data()
     dep_var = inputs["data"]["dependent"][0]
     inped_vars = inputs["data"]["independent"]
-    design = parameters.get_parameter(DESIGN_PARAM, str, DEFAULT_DESIGN)
+    design = get_parameter(DESIGN_PARAM, str, DEFAULT_DESIGN)
 
     # Check dependent variable type (should be continuous)
     if dep_var["type"]["name"] not in ["integer", "real"]:
