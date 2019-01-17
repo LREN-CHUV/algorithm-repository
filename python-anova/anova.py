@@ -17,7 +17,6 @@
 from mip_helper import io_helper, errors, utils, parameters
 from mip_helper.shapes import Shapes
 
-import argparse
 import logging
 import json
 
@@ -28,6 +27,8 @@ from statsmodels.stats.anova import anova_lm
 DESIGN_PARAM = "design"
 DEFAULT_DESIGN = "factorial"
 MAX_FACTORIAL_COVARIABLES = 8
+ANOVA_TYPE_PARAM = "type"
+ANOVA_TYPE_DEFAULT = "III"
 
 DEFAULT_DOCKER_IMAGE = "python-anova"
 
@@ -42,17 +43,19 @@ def main():
     dep_var = inputs["data"]["dependent"][0]
     inped_vars = inputs["data"]["independent"]
     design = parameters.get_parameter(DESIGN_PARAM, str, DEFAULT_DESIGN)
+    anova_type = parameters.get_parameter(ANOVA_TYPE_PARAM, str, ANOVA_TYPE_DEFAULT)
 
     # Check dependent variable type (should be continuous)
-    if utils.is_nominal(dep_var):
+    if dep_var["type"]["name"] not in ["integer", "real"]:
         raise errors.UserError('Dependent variable should be continuous!')
 
     # Extract data and parameters from inputs
     data = format_data(inputs["data"])
 
-    # Compute anova
-    anova_results = format_output(compute_anova(dep_var, inped_vars, data, design).to_dict())
-
+    # Compute anova and generate PFA output
+    anova_results = format_output(compute_anova(dep_var, inped_vars, data, design, anova_type).to_dict())
+    
+    #logging.info(anova_results)  
     # Store results
     io_helper.save_results(anova_results, Shapes.JSON)
 
@@ -67,7 +70,7 @@ def format_output(statsmodels_dict):
     return json.dumps(DataFrame.from_dict(statsmodels_dict).transpose().fillna("NaN").to_dict())
 
 
-def compute_anova(dep_var, indep_vars, data, design='factorial'):
+def compute_anova(dep_var, indep_vars, data, design=DEFAULT_DESIGN, anova_type=ANOVA_TYPE_DEFAULT):
     formula = generate_formula(dep_var, indep_vars, design)
     logging.info("Formula: %s" % formula)
     data = DataFrame(data)
@@ -76,7 +79,7 @@ def compute_anova(dep_var, indep_vars, data, design='factorial'):
         raise errors.UserError('SQL returned no data, check your dataset and null values.')
 
     lm = ols(data=data, formula=formula).fit()
-    logging.info(lm.summary())
+#    logging.info(lm.summary())
 
     if lm.df_resid == 0:
         raise errors.UserError(
@@ -85,7 +88,7 @@ def compute_anova(dep_var, indep_vars, data, design='factorial'):
             )
         )
 
-    return anova_lm(lm)
+    return anova_lm(lm, type = anova_type)
 
 
 def generate_formula(dep_var, indep_vars, design):
@@ -103,42 +106,14 @@ def generate_formula(dep_var, indep_vars, design):
             )
         )
 
-    terms = []
-    for var in indep_vars:
-        if utils.is_nominal(var):
-            terms.append("C({}, levels={})".format(var["name"], var['type']['enumeration']))
-        else:
-            terms.append(var['name'])
-
-    return "{} ~ {}".format(dep_var["name"], op.join(terms))
+    dep_var = dep_var["name"]
+    indep_vars = [
+        v["name"] if v["type"]["name"] in ["integer", "real"] else str.format("C(%s)" % v["name"]) for v in indep_vars
+    ]
+    indep_vars = op.join(indep_vars)
+    indep_vars = indep_vars.strip(op)
+    return str.format("%s ~ %s" % (dep_var, indep_vars))
 
 
 if __name__ == '__main__':
-    import distributed_anova
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('compute', choices=['compute'])
-    parser.add_argument(
-        '--mode',
-        choices=['single', 'intermediate-models', 'aggregate-models', 'intermediate-anova', 'aggregate-anova'],
-        default='single'
-    )
-    parser.add_argument('--job-ids', type=str, nargs="*", default=[])
-
-    args = parser.parse_args()
-
-    # > compute
-    if args.mode == 'single':
-        main()
-    # > compute --mode intermediate-models
-    elif args.mode == 'intermediate-models':
-        distributed_anova.intermediate_models()
-    # > compute --mode aggregate-models --job-ids 1 2 3
-    elif args.mode == 'aggregate-models':
-        distributed_anova.aggregate_models(args.job_ids)
-    # > compute --mode intermediate-anova --job-ids 4
-    elif args.mode == 'intermediate-anova':
-        distributed_anova.intermediate_anova(args.job_ids)
-    # > compute --mode aggregate-anova --job-ids 5 6 7
-    elif args.mode == 'aggregate-anova':
-        distributed_anova.aggregate_anova(args.job_ids)
+    main()
