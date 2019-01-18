@@ -88,7 +88,7 @@ def compute_anova(dep_var, indep_vars, data, design=DEFAULT_DESIGN, anova_type=A
             )
         )
 
-    return anova_lm(lm, type = anova_type)
+    return anova_lm(lm, typ = anova_type)
 
 
 def generate_formula(dep_var, indep_vars, design):
@@ -108,7 +108,7 @@ def generate_formula(dep_var, indep_vars, design):
 
     dep_var = dep_var["name"]
     indep_vars = [
-        v["name"] if v["type"]["name"] in ["integer", "real"] else str.format("C(%s)" % v["name"]) for v in indep_vars
+        v["name"] if v["type"]["name"] in ["integer", "real"] else str.format("C(%s, Sum)" % v["name"]) for v in indep_vars
     ]
     indep_vars = op.join(indep_vars)
     indep_vars = indep_vars.strip(op)

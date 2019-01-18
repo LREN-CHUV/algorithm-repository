@@ -5,6 +5,7 @@ from statsmodels.stats.anova import anova_lm
 import patsy
 import json
 import mock
+import os
 
 from mip_helper import testing as t
 from distributed_anova import anova_models, intermediate_models, aggregate_models, intermediate_anova, aggregate_anova, _sum_of_squares
@@ -106,6 +107,8 @@ def test_distributed_anova(mock_save_results, mock_load_intermediate_json_result
 
     # ANOVA on single node
     mock_fetch_data.return_value = _inputs_regression(limit_to=20, include_nominal=True, columns=columns)
+    os.environ['MODEL_PARAM_type'] = "I"
+    os.environ['MODEL_PARAM_design'] = "factorial"
     main()
     anova_single = json.loads(mock_save_results.call_args[0][0])
 
