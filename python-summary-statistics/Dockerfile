@@ -13,11 +13,11 @@ WORKDIR /src
 RUN pytest tests/
 
 
-FROM hbpmip/python-mip:0.6.5
+FROM hbpmip/python-mip:0.6.8
 
 MAINTAINER mirco.nasuti@chuv.ch
 
-ENV DOCKER_IMAGE=hbpmip/python-summary-statistics:0.4.0 \
+ENV DOCKER_IMAGE=hbpmip/python-summary-statistics:0.4.1 \
     FUNCTION=python-summary-statistics
 
 COPY requirements.txt /requirements.txt

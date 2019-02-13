@@ -132,7 +132,7 @@ services:
      - db
 
  sample_data_db_setup:
-   image: "hbpmip/sample-data-db-setup:0.6.1"
+   image: "hbpmip/sample-data-db-setup:0.6.2"
    container_name: "data-db-setup"
    restart: "no"
    environment:

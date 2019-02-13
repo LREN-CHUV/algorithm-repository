@@ -3,7 +3,8 @@ import mock
 import json
 import numpy as np
 from . import fixtures as fx
-from histograms import main, compute_categories, aggregate_histograms, _align_categories, INCLUDE_NO_DATA
+from mip_helper import testing as t
+from histograms import main, compute_categories, aggregate_histograms, _align_categories, INCLUDE_NO_DATA, compute_histograms
 from mip_helper.utils import UserError
 
 
@@ -41,7 +42,8 @@ def get_output_real(add_null=True):
             'chart': {
                 'type': 'column'
             },
-            'label': 'Histogram - Age Group',
+            'label':
+            'Histogram - Age Group',
             'title': {
                 'text': 'Score test 1 histogram by Age Group'
             },
@@ -192,8 +194,9 @@ def get_output_aggregate(add_null=True):
                 'categories': [
                     '700.00 - 730.00', '730.00 - 760.00', '760.00 - 790.00', '790.00 - 820.00', '820.00 - 850.00',
                     '850.00 - 880.00', '880.00 - 910.00', '910.00 - 940.00', '940.00 - 970.00', '970.00 - 1000.00',
-                    '1000.00 - 1030.00', '1030.00 - 1060.00', '1060.00 - 1090.00', '1090.00 - 1120.00', '1120.00 - 1150.00',
-                    '1150.00 - 1180.00', '1180.00 - 1210.00', '1210.00 - 1240.00', '1240.00 - 1270.00', '1270.00 - 1300.00'
+                    '1000.00 - 1030.00', '1030.00 - 1060.00', '1060.00 - 1090.00', '1090.00 - 1120.00',
+                    '1120.00 - 1150.00', '1150.00 - 1180.00', '1180.00 - 1210.00', '1210.00 - 1240.00',
+                    '1240.00 - 1270.00', '1270.00 - 1300.00'
                 ]
             },
             'yAxis': {
@@ -211,7 +214,8 @@ def get_output_aggregate(add_null=True):
             'chart': {
                 'type': 'column'
             },
-            'label': 'Histogram - Age Group',
+            'label':
+            'Histogram - Age Group',
             'title': {
                 'text': 'Score test 1 histogram by Age Group'
             },
@@ -219,8 +223,9 @@ def get_output_aggregate(add_null=True):
                 'categories': [
                     '700.00 - 730.00', '730.00 - 760.00', '760.00 - 790.00', '790.00 - 820.00', '820.00 - 850.00',
                     '850.00 - 880.00', '880.00 - 910.00', '910.00 - 940.00', '940.00 - 970.00', '970.00 - 1000.00',
-                    '1000.00 - 1030.00', '1030.00 - 1060.00', '1060.00 - 1090.00', '1090.00 - 1120.00', '1120.00 - 1150.00',
-                    '1150.00 - 1180.00', '1180.00 - 1210.00', '1210.00 - 1240.00', '1240.00 - 1270.00', '1270.00 - 1300.00'
+                    '1000.00 - 1030.00', '1030.00 - 1060.00', '1060.00 - 1090.00', '1090.00 - 1120.00',
+                    '1120.00 - 1150.00', '1150.00 - 1180.00', '1180.00 - 1210.00', '1210.00 - 1240.00',
+                    '1240.00 - 1270.00', '1270.00 - 1300.00'
                 ]
             },
             'yAxis': {
@@ -265,6 +270,63 @@ def test_aggregate_histograms(mock_save_results, mock_get_results):
     aggregate_histograms(['1', '2'])
     results = json.loads(mock_save_results.call_args[0][0])
     assert results == get_output_aggregate(add_null=INCLUDE_NO_DATA)
+
+
+def test_compute_histograms():
+    inputs = t.inputs_regression(include_integer=True, include_nominal=True)
+    dep_var = inputs['data']['independent'][-2]
+    assert dep_var['name'] == 'minimentalstate'
+    histograms_results = compute_histograms(dep_var, inputs['data']['independent'], 3)
+    assert histograms_results == [
+        {
+            'chart': {
+                'type': 'column'
+            },
+            'label': 'Histogram',
+            'series': [{
+                'data': [0, 2, 3],
+                'name': 'all'
+            }],
+            'title': {
+                'text': 'MMSE Total scores histogram'
+            },
+            'xAxis': {
+                'categories': ['0 - 10', '10 - 20', '20 - 30']
+            },
+            'yAxis': {
+                'allowDecimals': False,
+                'min': 0,
+                'title': {
+                    'text': 'Number of participants'
+                }
+            }
+        }, {
+            'chart': {
+                'type': 'column'
+            },
+            'label': 'Histogram - Age Group',
+            'series': [{
+                'data': [0, 1, 2],
+                'name': '-50y'
+            }, {
+                'data': [0, 1, 1],
+                'name': '50-59y'
+            }],
+            'title': {
+                'text': 'MMSE Total scores histogram by Age Group'
+            },
+            'xAxis': {
+                'categories': ['0 - 10', '10 - 20', '20 - 30']
+            },
+            'yAxis': {
+                'allowDecimals': False,
+                'min': 0,
+                'title': {
+                    'text': 'Number of participants'
+                }
+            }
+        }
+    ]
 
 
 def test_compute_categories_empty():
@@ -320,38 +382,20 @@ def test_main_categories_empty(mock_save_results, mock_get_results, mock_fetch_d
 
 
 def test_align_categories():
-    ha = {
-        'xAxis': {'categories': []},
-        'series': [{'data': []}]
-    }
-    hb = {
-        'xAxis': {'categories': ['1-2', '3-4']},
-        'series': [{'data': [2, 3]}]
-    }
+    ha = {'xAxis': {'categories': []}, 'series': [{'data': []}]}
+    hb = {'xAxis': {'categories': ['1-2', '3-4']}, 'series': [{'data': [2, 3]}]}
     ha, hb = _align_categories(ha, hb)
     assert ha == {'series': [{'data': [0, 0]}], 'xAxis': {'categories': ['1-2', '3-4']}}
     assert hb == {'xAxis': {'categories': ['1-2', '3-4']}, 'series': [{'data': [2, 3]}]}
 
-    ha = {
-        'xAxis': {'categories': ['No data']},
-        'series': [{'data': [1]}]
-    }
-    hb = {
-        'xAxis': {'categories': ['1-2', '3-4']},
-        'series': [{'data': [2, 3]}]
-    }
+    ha = {'xAxis': {'categories': ['No data']}, 'series': [{'data': [1]}]}
+    hb = {'xAxis': {'categories': ['1-2', '3-4']}, 'series': [{'data': [2, 3]}]}
     ha, hb = _align_categories(ha, hb)
     assert ha == {'series': [{'data': [0, 0, 1]}], 'xAxis': {'categories': ['1-2', '3-4', 'No data']}}
     assert hb == {'xAxis': {'categories': ['1-2', '3-4', 'No data']}, 'series': [{'data': [2, 3, 0]}]}
 
-    ha = {
-        'xAxis': {'categories': ['No data']},
-        'series': [{'data': [1]}]
-    }
-    hb = {
-        'xAxis': {'categories': ['No data']},
-        'series': [{'data': [2]}]
-    }
+    ha = {'xAxis': {'categories': ['No data']}, 'series': [{'data': [1]}]}
+    hb = {'xAxis': {'categories': ['No data']}, 'series': [{'data': [2]}]}
     ha, hb = _align_categories(ha, hb)
     assert ha == {'xAxis': {'categories': ['No data']}, 'series': [{'data': [1]}]}
     assert hb == {'xAxis': {'categories': ['No data']}, 'series': [{'data': [2]}]}

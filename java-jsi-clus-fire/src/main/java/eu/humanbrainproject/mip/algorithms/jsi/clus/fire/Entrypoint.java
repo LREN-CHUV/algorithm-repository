@@ -1,7 +1,5 @@
 package eu.humanbrainproject.mip.algorithms.jsi.clus.fire;
 
-import java.util.logging.Logger;
-
 import eu.humanbrainproject.mip.algorithms.jsi.Main;
 import eu.humanbrainproject.mip.algorithms.jsi.common.ClusMeta;
 import eu.humanbrainproject.mip.algorithms.jsi.common.InputData;
@@ -9,6 +7,8 @@ import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusDescriptiveSe
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusGenericSerializer;
 import eu.humanbrainproject.mip.algorithms.jsi.serializers.pfa.ClusModelPFASerializer;
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
+
+import java.util.logging.Logger;
 
 /** @author Martin Breskvar */
 public final class Entrypoint {
@@ -30,7 +30,13 @@ public final class Entrypoint {
       entry.run();
 
     } catch (Exception e) {
-      LOGGER.severe(e.getMessage());
+      String errorMessage = e.getMessage();
+      if(errorMessage != null) {
+        LOGGER.severe(errorMessage);
+      }
+      else {
+        e.printStackTrace();
+      }
       System.exit(1);
     }
   }

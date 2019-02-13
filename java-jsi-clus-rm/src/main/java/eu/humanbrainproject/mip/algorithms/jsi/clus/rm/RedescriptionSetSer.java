@@ -4,8 +4,9 @@ package eu.humanbrainproject.mip.algorithms.jsi.clus.rm;
 import java.util.ArrayList;
 
 
-/** @author Matej Mihelčić */
-
+/**
+ * @author <a href="mailto:matej.mihelcic@irb.hr">Matej Mihelčić</a>
+ */
 public class RedescriptionSetSer {
 
     ArrayList<RedescriptionSer> redescriptions;

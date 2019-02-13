@@ -15,7 +15,10 @@ import eu.humanbrainproject.mip.algorithms.db.DBException;
 import eu.humanbrainproject.mip.algorithms.db.OutputDataConnector;
 
 
-/** @author Martin Breskvar modified by Matej Mihelčić */
+/**
+ * @author <a href="mailto:martin.breskvar@ijs.si">Martin Breskvar</a> and <a href="mailto:matej.mihelcic@irb.hr">Matej
+ *         Mihelčić</a>
+ */
 public final class Entrypoint {
 
     private static final Logger LOGGER = Logger.getLogger(Entrypoint.class.getName());

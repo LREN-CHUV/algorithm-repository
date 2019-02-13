@@ -34,7 +34,7 @@ services:
       - db
 
   sample_data_db_setup:
-    image: "hbpmip/sample-data-db-setup:0.6.1"
+    image: "hbpmip/sample-data-db-setup:0.6.2"
     container_name: "data-db-setup"
     restart: "no"
     environment:
@@ -48,7 +48,7 @@ services:
       - db
 
   woken_db_setup:
-    image: "hbpmip/woken-db-setup:latest"
+    image: "hbpmip/woken-db-setup:1.2.2"
     container_name: "woken-db-setup"
     restart: "no"
     environment:
@@ -63,125 +63,83 @@ services:
 
   clus_pct_regression_st:
     image: "hbpmip/java-jsi-clus-pct:latest"
-    container_name: "clus-pct-regression-st"
     restart: "no"
     environment:
       NODE: job_test
       JOB_ID: 1
-      IN_JDBC_DRIVER: org.postgresql.Driver
       IN_JDBC_URL: jdbc:postgresql://db:5432/features
-      IN_JDBC_USER: features
-      IN_JDBC_PASSWORD: featurespwd
-      OUT_JDBC_DRIVER: org.postgresql.Driver
+      IN_DBAPI_DRIVER: postgresql
+      IN_USER: features
+      IN_PASSWORD: featurespwd
+      IN_HOST: db
+      IN_PORT: 5432
+      IN_DATABASE: features
       OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
-      OUT_JDBC_USER: woken
-      OUT_JDBC_PASSWORD: wokenpwd
-      PARAM_variables: "score_test1"
-      PARAM_covariables: "stress_before_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
-      PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
-      FUNCTION: java-jsi-clus-pct
+      OUT_DBAPI_DRIVER: postgresql
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
+      PARAM_variables: "minimentalstate"
+      PARAM_covariables: "subjectageyears,rightsogsuperioroccipitalgyrus"
+      PARAM_query: "SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') EXCEPT ALL (SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') OFFSET 349 LIMIT 349)"
+      PARAM_meta: "{\"rightsogsuperioroccipitalgyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right superior occipital gyrus\",\"code\":\"rightsogsuperioroccipitalgyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"},\"minimentalstate\":{\"description\":\"The Mini–Mental State Examination (MMSE) or Folstein test is a 30-point questionnaire that is used extensively in clinical and research settings to measure cognitive impairment. It is commonly used to screen for dementia.\",\"methodology\":\"mip-cde\",\"label\":\"MMSE - Mini Mental State Examination\",\"minValue\":0,\"code\":\"minimentalstate\",\"maxValue\":30.0,\"type\":\"integer\"}}"
       MODEL_PARAM_pruned: "yes"
       MODEL_PARAM_minobj: 4
+
+  pfa_validator_regression_st:
+    image: "hbpmip/pfa-validator:0.10.1-2"
+    container_name: "pfa-validator"
+    environment:
+      INPUT_METHOD: POSTGRESQL
+      JOB_ID: 1
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: woken
+      DB_USER: woken
+      DB_PASSWORD: wokenpwd
+      DB_TABLE: job_result
+      DB_COLUMN: data
+      FEATURES_DB_HOST: db
+      FEATURES_DB_PORT: 5432
+      FEATURES_DB_NAME: features
+      FEATURES_DB_USER: features
+      FEATURES_DB_PASSWORD: featurespwd
+      FEATURES_DB_TABLE: cde_features_a
     links:
       - "db:db"
 
   clus_pct_classification_st:
     image: "hbpmip/java-jsi-clus-pct:latest"
-    container_name: "clus-pct-classification-st"
     restart: "no"
     environment:
       NODE: job_test
       JOB_ID: 2
-      IN_JDBC_DRIVER: org.postgresql.Driver
       IN_JDBC_URL: jdbc:postgresql://db:5432/features
-      IN_JDBC_USER: features
-      IN_JDBC_PASSWORD: featurespwd
-      OUT_JDBC_DRIVER: org.postgresql.Driver
+      IN_DBAPI_DRIVER: postgresql
+      IN_USER: features
+      IN_PASSWORD: featurespwd
+      IN_HOST: db
+      IN_PORT: 5432
+      IN_DATABASE: features
       OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
-      OUT_JDBC_USER: woken
-      OUT_JDBC_PASSWORD: wokenpwd
-      PARAM_variables: "name"
-      PARAM_covariables: "sepal_length,sepal_width,petal_length,petal_width"
-      PARAM_query: "SELECT * FROM iris"
-      FUNCTION: java-jsi-clus-pct
+      OUT_DBAPI_DRIVER: postgresql
+      OUT_USER: woken
+      OUT_PASSWORD: wokenpwd
+      OUT_HOST: db
+      OUT_PORT: 5432
+      OUT_DATABASE: woken
+      PARAM_variables: "alzheimerbroadcategory"
+      PARAM_covariables: "subjectageyears,rightsogsuperioroccipitalgyrus"
+      PARAM_query: "SELECT alzheimerbroadcategory,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE alzheimerbroadcategory IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') EXCEPT ALL (SELECT alzheimerbroadcategory,subjectageyears,rightsogsuperioroccipitalgyrus FROM cde_features_a WHERE alzheimerbroadcategory IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') OFFSET 349 LIMIT 349)"
+      PARAM_meta: "{\"rightsogsuperioroccipitalgyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right superior occipital gyrus\",\"code\":\"rightsogsuperioroccipitalgyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"},\"alzheimerbroadcategory\":{\"description\":\"Whatever\",\"methodology\":\"mip-cde\",\"label\":\"Alzheimer Broad Category\",\"code\":\"alzheimerbroadcategory\",\"type\":\"polynominal\",\"enumerations\":[{\"code\":\"AD\",\"label\":\"Alzheimer''s disease\"},{\"code\":\"CN\",\"label\":\"Cognitively Normal\"},{\"code\":\"Other\",\"label\":\"Other\"}]}}"
       MODEL_PARAM_pruned: "yes"
       MODEL_PARAM_minobj: 4
-    links:
-      - "db:db"
-
-  clus_pct_regression_mt:
-    image: "hbpmip/java-jsi-clus-pct:latest"
-    container_name: "clus-pct-regression-mt"
-    restart: "no"
-    environment:
-      NODE: job_test
-      JOB_ID: 3
-      IN_JDBC_DRIVER: org.postgresql.Driver
-      IN_JDBC_URL: jdbc:postgresql://db:5432/features
-      IN_JDBC_USER: features
-      IN_JDBC_PASSWORD: featurespwd
-      OUT_JDBC_DRIVER: org.postgresql.Driver
-      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
-      OUT_JDBC_USER: woken
-      OUT_JDBC_PASSWORD: wokenpwd
-      PARAM_variables: "score_test1,stress_before_test1,iq"
-      PARAM_covariables: "cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2"
-      PARAM_query: "SELECT stress_before_test1,score_test1,iq,cognitive_task2,practice_task2,response_time_task2,college_math,score_math_course1,score_math_course2 FROM SAMPLE_DATA"
-      FUNCTION: java-jsi-clus-pct
-      MODEL_PARAM_pruned: "yes"
-      MODEL_PARAM_minobj: 2
-    links:
-      - "db:db"
-
-  clus_pct_classification_mt:
-    image: "hbpmip/java-jsi-clus-pct:latest"
-    container_name: "clus-pct-classification-mt"
-    restart: "no"
-    environment:
-      NODE: job_test
-      JOB_ID: 4
-      IN_JDBC_DRIVER: org.postgresql.Driver
-      IN_JDBC_URL: jdbc:postgresql://db:5432/features
-      IN_JDBC_USER: features
-      IN_JDBC_PASSWORD: featurespwd
-      OUT_JDBC_DRIVER: org.postgresql.Driver
-      OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
-      OUT_JDBC_USER: woken
-      OUT_JDBC_PASSWORD: wokenpwd
-      PARAM_variables: "area_code,intl_plan"
-      PARAM_covariables: "vmail_plan,day_mins,night_charge"
-      PARAM_query: "SELECT area_code,intl_plan,vmail_plan,day_mins,night_charge FROM churn LIMIT 50"
-      FUNCTION: java-jsi-clus-pct
-      MODEL_PARAM_pruned: "yes"
-      MODEL_PARAM_minobj: 4
-    links:
-      - "db:db"
-
-  pfa_validator_regression_st:
-    image: "hbpmip/pfa-validator:0.10.1"
-    container_name: "pfa-validator-regression-st"
-    environment:
-      INPUT_METHOD: POSTGRESQL
-      JOB_ID: 1
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: woken
-      DB_USER: woken
-      DB_PASSWORD: wokenpwd
-      DB_TABLE: job_result
-      DB_COLUMN: data
-      FEATURES_DB_HOST: db
-      FEATURES_DB_PORT: 5432
-      FEATURES_DB_NAME: features
-      FEATURES_DB_USER: features
-      FEATURES_DB_PASSWORD: featurespwd
-      FEATURES_DB_TABLE: sample_data
-    links:
-      - "db:db"
 
   pfa_validator_classification_st:
-    image: "hbpmip/pfa-validator:0.10.1"
-    container_name: "pfa-validator-classification-st"
+    image: "hbpmip/pfa-validator:0.10.1-2"
+    container_name: "pfa-validator"
     environment:
       INPUT_METHOD: POSTGRESQL
       JOB_ID: 2
@@ -197,50 +155,55 @@ services:
       FEATURES_DB_NAME: features
       FEATURES_DB_USER: features
       FEATURES_DB_PASSWORD: featurespwd
-      FEATURES_DB_TABLE: iris
+      FEATURES_DB_TABLE: cde_features_a
     links:
       - "db:db"
 
-  pfa_validator_regression_mt:
-    image: "hbpmip/pfa-validator:latest"
-    container_name: "pfa-validator-regression-mt"
-    environment:
-      INPUT_METHOD: POSTGRESQL
-      JOB_ID: 3
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: woken
-      DB_USER: woken
-      DB_PASSWORD: wokenpwd
-      DB_TABLE: job_result
-      DB_COLUMN: data
-      FEATURES_DB_HOST: db
-      FEATURES_DB_PORT: 5432
-      FEATURES_DB_NAME: features
-      FEATURES_DB_USER: features
-      FEATURES_DB_PASSWORD: featurespwd
-      FEATURES_DB_TABLE: sample_data
-    links:
-      - "db:db"
+#   clus_pct_regression_mt:
+#     image: "hbpmip/java-jsi-clus-pct:latest"
+#     restart: "no"
+#     environment:
+#       NODE: job_test
+#       JOB_ID: 3
+#       IN_JDBC_URL: jdbc:postgresql://db:5432/features
+#       IN_DBAPI_DRIVER: postgresql
+#       IN_USER: features
+#       IN_PASSWORD: featurespwd
+#       IN_HOST: db
+#       IN_PORT: 5432
+#       IN_DATABASE: features
+#       OUT_JDBC_URL: jdbc:postgresql://db:5432/woken
+#       OUT_DBAPI_DRIVER: postgresql
+#       OUT_USER: woken
+#       OUT_PASSWORD: wokenpwd
+#       OUT_HOST: db
+#       OUT_PORT: 5432
+#       OUT_DATABASE: woken
+#       PARAM_variables: "minimentalstate,subjectageyears"
+#       PARAM_covariables: "rightsogsuperioroccipitalgyrus,leftsogsuperioroccipitalgyrus"
+#       PARAM_query: "SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus,leftsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND leftsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') EXCEPT ALL (SELECT minimentalstate,subjectageyears,rightsogsuperioroccipitalgyrus,leftsogsuperioroccipitalgyrus FROM cde_features_a WHERE minimentalstate IS NOT NULL AND subjectageyears IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND rightsogsuperioroccipitalgyrus IS NOT NULL AND dataset IN ('desd-synthdata') OFFSET 349 LIMIT 349)"
+#       PARAM_meta: "{\"leftsogsuperioroccipitalgyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Left superior occipital gyrus\",\"code\":\"leftsogsuperioroccipitalgyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"rightsogsuperioroccipitalgyrus\":{\"description\":\"\",\"methodology\":\"lren-nmm-volumes\",\"label\":\"Right superior occipital gyrus\",\"code\":\"rightsogsuperioroccipitalgyrus\",\"units\":\"cm3\",\"type\":\"real\"},\"subjectageyears\":{\"description\":\"Subject age in years.\",\"methodology\":\"mip-cde\",\"label\":\"Age Years\",\"minValue\":0,\"code\":\"subjectageyears\",\"units\":\"years\",\"length\":3,\"maxValue\":130.0,\"type\":\"integer\"},\"minimentalstate\":{\"description\":\"The Mini–Mental State Examination (MMSE) or Folstein test is a 30-point questionnaire that is used extensively in clinical and research settings to measure cognitive impairment. It is commonly used to screen for dementia.\",\"methodology\":\"mip-cde\",\"label\":\"MMSE - Mini Mental State Examination\",\"minValue\":0,\"code\":\"minimentalstate\",\"maxValue\":30.0,\"type\":\"integer\"}}"
+#       MODEL_PARAM_pruned: "yes"
+#       MODEL_PARAM_minobj: 2
 
-  pfa_validator_classification_mt:
-    image: "hbpmip/pfa-validator:latest"
-    container_name: "pfa-validator-classification-mt"
-    environment:
-      INPUT_METHOD: POSTGRESQL
-      JOB_ID: 4
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: woken
-      DB_USER: woken
-      DB_PASSWORD: wokenpwd
-      DB_TABLE: job_result
-      DB_COLUMN: data
-      FEATURES_DB_HOST: db
-      FEATURES_DB_PORT: 5432
-      FEATURES_DB_NAME: features
-      FEATURES_DB_USER: features
-      FEATURES_DB_PASSWORD: featurespwd
-      FEATURES_DB_TABLE: churn
-    links:
-      - "db:db"
+#   pfa_validator_regression_mt:
+#     image: "hbpmip/pfa-validator:0.10.1-2"
+#     container_name: "pfa-validator"
+#     environment:
+#       INPUT_METHOD: POSTGRESQL
+#       JOB_ID: 3
+#       DB_HOST: db
+#       DB_PORT: 5432
+#       DB_NAME: woken
+#       DB_USER: woken
+#       DB_PASSWORD: wokenpwd
+#       DB_TABLE: job_result
+#       DB_COLUMN: data
+#       FEATURES_DB_HOST: db
+#       FEATURES_DB_PORT: 5432
+#       FEATURES_DB_NAME: features
+#       FEATURES_DB_USER: features
+#       FEATURES_DB_PASSWORD: featurespwd
+#       FEATURES_DB_TABLE: cde_features_a
+#     links:
+#       - "db:db"

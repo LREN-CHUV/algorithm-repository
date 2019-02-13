@@ -4,7 +4,10 @@ package eu.humanbrainproject.mip.algorithms.jsi.clus.rm;
 import java.util.ArrayList;
 
 
-/** @author Martin Breskvar modified by Matej Mihelčić */
+/**
+ * @author <a href="mailto:martin.breskvar@ijs.si">Martin Breskvar</a> and <a href="mailto:matej.mihelcic@irb.hr">Matej
+ *         Mihelčić</a>
+ */
 
 public class CLUSRMDescriptiveSerializer {
 

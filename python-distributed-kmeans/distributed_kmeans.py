@@ -64,6 +64,10 @@ EPSILON = 0.00001
 LR = 0.01  # learning rate for gradient descent, not used for Lloyd version
 DEFAULT_N_CLUSTERS = 8
 
+# if `mean` and `std` are not available in metadata, normalize variables if DEFAULT_NORMALIZE is True, if False then
+# keep them as they are
+DEFAULT_NORMALIZE = True
+
 
 @utils.catch_user_error
 def compute():
@@ -118,9 +122,16 @@ def intermediate_kmeans():
 
     # Return variables info, but remove actual data points
     results = {'indep_vars': []}
-    for iv in indep_vars:
-        del iv['series']
-        results['indep_vars'].append(iv)
+    for var in indep_vars:
+        if var['type']['name'] in ('integer', 'real'):
+            new_var = {k: v for k, v in var.items() if k != 'series'}
+            mean, std = _get_moments(var)
+            new_var['mean'] = mean
+            new_var['std'] = std
+        else:
+            new_var = var
+
+        results['indep_vars'].append(new_var)
 
     # Drop NaN values
     X = utils.remove_nulls(X, errors='ignore')
@@ -177,7 +188,7 @@ def aggregate_kmeans(job_ids):
     """
     # Read intermediate inputs from jobs
     logging.info("Fetching intermediate data...")
-    data = [json.loads(io_helper.get_results(str(job_id)).data) for job_id in job_ids]
+    data = io_helper.load_intermediate_json_results(map(str, job_ids))
 
     local_centroids = [np.array(x['centroids']) for x in data if x['centroids']]
     logging.info('Local centroids:\n{}'.format(local_centroids))
@@ -210,10 +221,37 @@ def _create_featurizer(indep_vars):
     transforms = []
     for var in indep_vars:
         if var['type']['name'] in ('integer', 'real'):
-            transforms.append(Standardize(var['name'], var['mean'], var['std']))
+            mean, std = _get_moments(var)
+            tf = Standardize(var['name'], mean, std)
+            transforms.append(tf)
         elif var["type"]["name"] in ['polynominal', 'binominal']:
             transforms.append(OneHotEncoding(var['name'], var['type']['enumeration']))
+
     return Featurizer(transforms)
+
+
+def _get_moments(var):
+    # TODO: DRY with the same function in `sgd_regression.py`
+    s = [x for x in var.get('series', []) if x is not None]
+
+    if 'mean' in var:
+        mean = var['mean']
+    else:
+        if DEFAULT_NORMALIZE and len(s):
+            mean = np.mean(s)
+        else:
+            mean = 0.
+        logging.warning('Mean not available for variable {}, using default value {}.'.format(var['name'], mean))
+
+    if 'std' in var:
+        std = var['std']
+    else:
+        if DEFAULT_NORMALIZE and len(s):
+            std = np.std(s)
+        else:
+            std = 1.
+        logging.warning('Standard deviation not available for variable {}, using default value {}'.format(var['name'], std))
+    return mean, std
 
 
 if __name__ == '__main__':

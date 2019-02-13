@@ -15,7 +15,10 @@ import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 
 
-/** @author Martin Breskvar modified by Matej Mihelčić */
+/**
+ * @author <a href="mailto:martin.breskvar@ijs.si">Martin Breskvar</a> and <a href="mailto:matej.mihelcic@irb.hr">Matej
+ *         Mihelčić</a>
+ */
 
 public class DataAndSettingsWritter {
 

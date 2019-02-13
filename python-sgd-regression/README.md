@@ -19,17 +19,17 @@ Implemented methods:
 It has two modes
 
 ```sh
-docker run --rm --env [list of environment variables] hbpmip/python-sgd-regression:VERSION compute --mode partial --job-id 12
+docker run --rm --env [list of environment variables] hbpmip/python-sgd-regression:VERSION compute --mode intermediate --job-id 12
 ```
 
 which calls `partial_fit` of scikit-learn estimator and saves intermediate results into `job_results` table. If
 `--job-id` is specified, it will first load the estimator and continue its training. If not, it will start from scratch.
 
 ```sh
-docker run --rm --env [list of environment variables] hbpmip/python-sgd-regression:VERSION compute --mode final --job-id 13
+docker run --rm --env [list of environment variables] hbpmip/python-sgd-regression:VERSION compute --mode aggregate --job-id 13
 ```
 
-this mode in addition converts estimator into PFA. If you have only one node, calling `naive_bayes` with `compute final`
+this mode in addition converts estimator into PFA. If you have only one node, calling `naive_bayes` with `compute aggregate`
 will be equivalent to running Naive Bayes in a non-distributed way.
 
 Environment variables are:
@@ -59,7 +59,7 @@ Environment variables are:
 
 ### Naive bayes
 
-For Naive bayes it is enough to go over all data points once (call `--mode partial` on all nodes).
+For Naive bayes it is enough to go over all data points once (call `--mode intermediate` on all nodes).
 
 ### SGDRegression, SGDClassifier, MLPRegressor and MLPClassifier
 
