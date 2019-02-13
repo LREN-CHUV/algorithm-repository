@@ -22,15 +22,26 @@ The format of the results should be easily shared.
 
 # List of algorithms
 
-# [hbpmip/python-anova](./python-anova/): Anova algorithm
+## [hbpmip/python-anova](./python-anova/): Anova algorithm
+[![DockerHub](https://img.shields.io/badge/docker-hbpmip%2Fpython--anova-008bb8.svg)](https://hub.docker.com/r/hbpmip/python-anova/) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/python-anova.svg)](https://hub.docker.com/r/hbpmip/python-anova/tags "hbpmip/python-anova image tags") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/python-anova.svg)](https://microbadger.com/#/images/hbpmip/python-anova "hbpmip/python-anova on microbadger")
 
 This is a Python implementation of Anova.
 
-# [hbpmip/python-correlation-heatmap](./python-correlation-heatmap/): Correlation heatmap and PCA
+## [hbpmip/python-correlation-heatmap](./python-correlation-heatmap/): Correlation heatmap
+[![DockerHub](https://img.shields.io/badge/docker-hbpmip%2Fpython--correlation--heatmap-008bb8.svg)](https://hub.docker.com/r/hbpmip/python-correlation-heatmap/) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/python-correlation-heatmap.svg)](https://hub.docker.com/r/hbpmip/python-correlation-heatmap/tags "hbpmip/python-correlation-heatmap image tags") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/python-correlation-heatmap.svg)](https://microbadger.com/#/images/hbpmip/python-correlation-heatmap "hbpmip/python-correlation-heatmap on microbadger")
 
 Calculate correlation heatmap, only works for real variables.
 Run it on single node or in a distributed mode.
 First, intermediate mode calculates covariance matrix from a single node, then aggregate mode is used after intermediate to combine statistics from multiple jobs and produce the final graph.
+
+## [hbpmip/python-distributed-pca](./python-correlation-heatmap/): PCA - principal components analysis
+[![DockerHub](https://img.shields.io/badge/docker-hbpmip%2Fpython--distributed--pca-008bb8.svg)](https://hub.docker.com/r/hbpmip/python-distributed-pca/) [![ImageVersion](https://images.microbadger.com/badges/version/hbpmip/python-distributed-pca.svg)](https://hub.docker.com/r/hbpmip/python-distributed-pca/tags "hbpmip/python-distributed-pca image tags") [![ImageLayers](https://images.microbadger.com/badges/image/hbpmip/python-distributed-pca.svg)](https://microbadger.com/#/images/hbpmip/python-distributed-pca "hbpmip/python-distributed-pca on microbadger")
+
+Calculate PCA, only works for real variables.
+Run it on single node or in a distributed mode.
+First, intermediate mode calculates covariance matrix from a single node, then aggregate mode is used after intermediate to combine statistics from multiple jobs and produce the final graph.
+
+Code is shared with [hbpmip/python-correlation-heatmap](./python-correlation-heatmap/)
 
 python-distributed-kmeans
 Implementation of distributed k-means clustering (https://github.com/MRN-Code/dkmeans) in Python. It uses Single-Shot Decentralized LLoyd (https://github.com/MRN-Code/dkmeans#single-shot-decentralized-lloyd).
@@ -70,6 +81,10 @@ It calculates various summary statistics for entire dataset and also for all sub
 
 python-tsne
 The python-tsne is a wrapper for the the A-tSNE algorithm developed by N. Pezzotti. The underlying algorithm is an improvement on the Barnes-Hut tSNE (http://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf) using an approximated k-nearest neighbor calculation.
+
+# Algorithm capabilities
+
+
 
 
 # Acknowledgements
