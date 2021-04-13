@@ -4,3 +4,4 @@ pytest
 ipdb
 # ligthweight version of hadrian that only contains titus package
 #git+https://github.com/Marigold/hadrian.git@light#egg=titus&subdirectory=titus
+pygments>=2.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
