@@ -1,6 +1,6 @@
 argparse==1.2.1
 bitarray==0.8.1
-html5lib==1.0b3
+html5lib==0.99999999
 isodate==0.6.0
 numpy>=1.14.2
 scipy==1.0.1
