@@ -20,7 +20,7 @@
 		<jxr.plugin.version>2.5</jxr.plugin.version>
 		<hadrian.version>0.8.5</hadrian.version>
 		<junit.version>5.0.0</junit.version>
-		<postgres.version>9.4.1212.jre7</postgres.version>
+		<postgres.version>42.2.26.jre6</postgres.version>
 		<jackson.version>2.7.0</jackson.version>
 		<mip.adapter.version>0.5.7</mip.adapter.version>
 		<clus.version>1.0.0</clus.version>
