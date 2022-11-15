@@ -1,3 +1,4 @@
 mock
 pytest
 ipdb
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
