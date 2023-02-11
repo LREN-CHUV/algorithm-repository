@@ -2,3 +2,4 @@ pre-commit>=0.13
 mock
 pytest
 ipdb
+ipython>=8.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
