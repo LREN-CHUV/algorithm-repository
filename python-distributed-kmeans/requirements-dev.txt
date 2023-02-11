@@ -3,3 +3,4 @@ pytest
 ipdb
 # dkmeans package
 git+https://github.com/Marigold/dkmeans.git@restructure#egg=dkmeans
+ipython>=8.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
