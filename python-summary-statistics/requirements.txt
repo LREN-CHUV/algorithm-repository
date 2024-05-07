@@ -1,4 +1,7 @@
-numpy>=1.14.2
+numpy>=1.21.0rc1
 pandas==0.22.0
 mip_helper==0.6.8
 tableschema
+certifi>=2023.7.22 # not directly required, pinned by Snyk to avoid a vulnerability
+idna>=3.7 # not directly required, pinned by Snyk to avoid a vulnerability
+requests>=2.31.0 # not directly required, pinned by Snyk to avoid a vulnerability
