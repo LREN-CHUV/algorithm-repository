@@ -2,3 +2,4 @@ numpy>=1.14.2
 pandas==0.22.0
 mip_helper==0.6.8
 tableschema
+requests>=2.32.0 # not directly required, pinned by Snyk to avoid a vulnerability
